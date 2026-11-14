@@ -77,6 +77,9 @@ The Vue packages are not emitted: `ui` exports its sources and is type-checked b
   to `packages/daemon/vendor/lima`. `limactl` must keep the `com.apple.security.virtualization` entitlement it ships
   with, or Lima's vz driver cannot start the VM: the ad-hoc signed bundle leaves it as is, and a signing setup must
   re-sign it with that entitlement.
+- The bundled plugins (design D36) come from the app the same way: the bundle carries `packages/daemon/plugins` as a
+  resource on every platform (`tauri.conf.json`), passed as `POWERAGENTS_PLUGINS_DIR`, which in development defaults to
+  that folder (empty for now; the tests' plugins are in `packages/daemon/src/plugins/fixtures`).
 - The first start downloads what the sandbox needs (the VM's Ubuntu image, then the agent's image built in the VM);
   the installer carries no image. `POWERAGENTS_LIMA_HOME` (the VM, default `~/.poweragents/lima`; the agent's password
   sits in the folder above it) and `POWERAGENTS_DATA_ROOT` move a first start into a scratch folder, leaving the real VM

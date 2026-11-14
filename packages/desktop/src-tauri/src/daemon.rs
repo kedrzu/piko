@@ -12,6 +12,11 @@ const SIDECAR: &str = "poweragents-daemon";
 #[cfg(all(not(debug_assertions), target_os = "macos"))]
 const LIMA_RESOURCE: &str = "lima";
 
+/// The plugins that ship with the app, bundled in its resources (`bundle.resources` in `tauri.conf.json`) from
+/// `packages/daemon/plugins`. The daemon reads them from there (`POWERAGENTS_PLUGINS_DIR`).
+#[cfg(not(debug_assertions))]
+const PLUGINS_RESOURCE: &str = "plugins";
+
 /// The port the daemon listens on: `DAEMON_PORT` in `packages/common/src/daemonAddress.ts`, which the daemon overrides
 /// with `POWERAGENTS_DAEMON_PORT`.
 #[cfg(all(not(debug_assertions), target_os = "macos"))]
@@ -208,19 +213,21 @@ fn wait_until_free(port: u16) -> bool {
 #[cfg(not(debug_assertions))]
 fn spawn(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
     use std::process::Stdio;
+    use tauri::Manager;
     use tauri_plugin_shell::ShellExt;
 
-    // The daemon reports it on `/status`, which is how the next launch of the app knows it is outdated.
-    let command = app.shell().sidecar(SIDECAR)?.env(
-        "POWERAGENTS_VERSION",
-        app.package_info().version.to_string(),
-    );
+    let resources = app.path().resource_dir()?;
+    let command = app
+        .shell()
+        .sidecar(SIDECAR)?
+        // The daemon reports it on `/status`, which is how the next launch of the app knows it is outdated.
+        .env(
+            "POWERAGENTS_VERSION",
+            app.package_info().version.to_string(),
+        )
+        .env("POWERAGENTS_PLUGINS_DIR", resources.join(PLUGINS_RESOURCE));
     #[cfg(target_os = "macos")]
-    let command = {
-        use tauri::Manager;
-        let lima_dir = app.path().resource_dir()?.join(LIMA_RESOURCE);
-        command.env("POWERAGENTS_LIMA_DIR", lima_dir)
-    };
+    let command = command.env("POWERAGENTS_LIMA_DIR", resources.join(LIMA_RESOURCE));
     // Nobody reads the daemon's output, and a pipe would break once the app quits while the daemon goes on: it gets
     // none, and writes its log to a file (`DaemonLoggerTransport`).
     let mut command = std::process::Command::from(command);

@@ -1,0 +1,25 @@
+{
+    "name": "email-sorting",
+    "level": "project",
+    "tags": ["email", "organizing"],
+    "marketplace": {
+        "pl": {
+            "title": "email-sorting (pl)",
+            "description": "Opis email-sorting."
+        },
+        "en": {
+            "title": "email-sorting",
+            "description": "Describes email-sorting."
+        }
+    },
+    "onboarding": "setup",
+    "environment": {
+        "cli": "cli",
+        "npm": {
+            "left-pad": "1.3.0"
+        },
+        "python": {
+            "requests": "2.31.0"
+        }
+    }
+}

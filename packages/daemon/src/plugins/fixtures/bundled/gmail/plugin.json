@@ -1,0 +1,16 @@
+{
+    "name": "gmail",
+    "level": "profile",
+    "tags": ["email"],
+    "marketplace": {
+        "pl": {
+            "title": "gmail (pl)",
+            "description": "Opis gmail."
+        },
+        "en": {
+            "title": "gmail",
+            "description": "Describes gmail."
+        }
+    },
+    "onboarding": "connect"
+}
