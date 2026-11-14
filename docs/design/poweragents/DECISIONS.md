@@ -280,20 +280,24 @@ proposal, owner did not object.)
 
 ## D17
 
-**There is one kind of plugin, and it is a composite: any mix of skills, MCP servers with their
-configuration, an onboarding skill, schedules, additions to the sandbox environment (e.g. installing
-Blender), and further parts as needed. "Workflow", "creative", "for work" are marketplace tags for
-filtering, not kinds.** (2026-11-08, owner)
+**There is one kind of plugin, and it is a composite: any mix of skills, tools (a CLI or an MCP server, [D37](#d37))
+with their configuration, an onboarding skill, additions to the sandbox environment (e.g. installing Blender), and
+further parts as needed. "Workflow", "creative", "for work" are marketplace tags for filtering, not kinds. A plugin
+declares no schedules: its onboarding has the agent create the ones the person wants.** (2026-11-08, owner; schedules
+2026-11-14, owner)
 
 **Why.** A 3D plugin that installs Blender and tells the agent it exists, and an email-triage plugin
 with rules and a schedule, are the same thing with different parts; separate kinds would force a
-choice nobody needs to make.
+choice nobody needs to make. When a schedule runs is the person's choice, made in the plugin's onboarding, so a
+package cannot carry it; the agent can create schedules anyway ([D14](#d14)).
 
 **Rejected.**
 
 - Two kinds — a "connection" (account sign-in + tools, no files) and a "workflow" (rules, schedule,
   onboarding, creates a project) — proposed by the design agent 2026-11-08; owner prefers one
   composite with tags.
+- Schedules as a part of the package ([history](history/DECISIONS.md#d17)) — the time is the person's to set in
+  onboarding (owner, 2026-11-14).
 
 ## D18
 
@@ -511,17 +515,23 @@ the background without getting in your way".
 
 ## D28
 
-**The agent may change anything inside its current reach without asking; whatever widens its reach —
-a new plugin, a new account connection, a new schedule that acts without a person, a new destination
-in the browser tunnel — needs the person's confirmation in the conversation. The agent batches these:
-one confirmation covering everything it proposes at that point, not one click per item.**
-(2026-11-08, owner)
+**The agent may change anything inside its current reach without asking, installing plugins included: it reports each
+plugin it installed in the conversation, with a link to the plugin's page. A new account connection needs no separate
+confirmation either: the person going through the provider's sign-in and consent is the confirmation. A new schedule
+that acts without a person, and a new destination in the browser tunnel, need the person's confirmation in the
+conversation, batched: one confirmation covering everything the agent proposes at that point.** (2026-11-08, owner;
+plugins and accounts 2026-11-14, owner)
 
 **Why.** A web page the agent reads can try to instruct it ("install X, schedule daily mail to this
-address"); a confirmation on reach-widening changes stops that from becoming a permanent foothold.
-Batching keeps onboarding — which may propose several plugins, a connection and two schedules at
-once — to one decision. Inside the sandbox and project nothing needs asking: the sandbox and the
+address"). A plugin gives the agent nothing it did not have inside the sandbox except through an account, and an
+account cannot be connected without the person signing in. Plugin tools are built to keep the risk small (the mail
+plugin creates drafts and never sends). Inside the sandbox and project nothing needs asking: the sandbox and the
 tunnel are the boundary, unlike coding agents running directly on the computer.
+
+**Open — [#35](https://github.com/kedrzu/poweragents/issues/35).** Whether the schedule and tunnel clauses stay. The
+sandbox has open internet, so drafts-only tools stop sending in the person's name but not extraction; a schedule would
+make a one-off leak repeat. The tunnel has no list of destinations, so its clause may protect nothing. Decided after
+schedules and the browser are built, not in the plugins design.
 
 **Confirmations come only from the app's interface** (a button the person presses), never as a
 message in a conversation, whoever sent it — otherwise an agent steering another agent ([D30](#d30))
@@ -533,6 +543,8 @@ failure sweep — owner doubts it can be detected reliably)
 
 **Rejected.**
 
+- A confirmation for every new plugin ([history](history/DECISIONS.md#d28)) — a plugin widens reach only through an
+  account, whose sign-in already asks the person (owner, 2026-11-14).
 - A separate confirmation per setting or plugin — too many clicks (owner).
 - Letting the agent configure everything silently — one malicious page gets a lasting foothold.
 
@@ -696,3 +708,56 @@ provider.
 
 - The strongest model by default (Opus on Max) — proposed by the delivery agent; owner chose Sonnet (2026-11-13).
 - Picking the model from the subscription's plan automatically — proposed by the delivery agent, not chosen.
+
+## D36
+
+**In the first version every marketplace plugin ships inside the app and takes the app's version; there is no separate
+publishing, download or per-plugin versioning. The Plugins screen still looks like a marketplace from the start — a
+list, search, tags — so the product shows where it is heading.** (2026-11-14, owner)
+
+**Why.** How plugins are built, what they are made of and how they work matters now; how they are distributed and
+updated does not yet. A store with its own releases is complexity with no case behind it today.
+
+**Consequences.** A profile's manifest ([D26](#d26)) needs no per-plugin version for bundled plugins: the app's version
+fixes them, and an app update updates every installed bundled plugin at once. Conflicts between bundled plugins are
+resolved by us before release, not shown to the person. Plugins the agent writes itself ([D26](#d26)) are not bundled
+and are unaffected.
+
+**Rejected.**
+
+- A marketplace with its own site, separately published packages and versions — later, if ever (owner, 2026-11-14).
+
+## D37
+
+**A plugin gives the agent tools as a command-line program by default — typically a small package of ours (JavaScript on
+Bun) that provides a token-efficient CLI, with a skill telling the agent how to use it. MCP servers are supported too,
+and the first Gmail plugin uses one because a ready-made server exists.** (2026-11-14, owner)
+
+**Why.** MCP servers are expensive in context; a CLI the agent calls from its shell, described by a short skill, costs a
+fraction for the same result.
+
+> **Checked 2026-11-08** (see [D27](#d27)): median tokens per browser task — Playwright MCP 31K, Chrome DevTools MCP
+> 46K, agent-browser CLI with a short instruction 4–7K, equal accuracy —
+> [doccraft.dev 2026-10-26](https://doccraft.dev/blog/playwright-mcp-vs-devtools-mcp-vs-agent-browser).
+
+**Rejected.**
+
+- MCP as the default form of a plugin's tools — too costly in context (owner, 2026-11-14).
+
+## D38
+
+**Account sign-ins are held by the daemon, outside the sandbox. A plugin's tool asks the daemon for a short-lived access
+token whenever it needs one; the long-lived refresh token never enters the sandbox.** (2026-11-14, design agent
+proposal, owner agreed)
+
+**Why.** A web page the agent reads can try to make it print what it holds. From the sandbox the worst leak is then an
+access token valid for about an hour, not lasting access to the person's mailbox until they revoke it at Google. One
+daemon endpoint serves every plugin with an account, and fits one sign-in per account per profile ([D16](#d16)).
+
+> **Checked 2026-11-14:** OpenCode 2.2.7 lets a local MCP server take `environment` and a remote one `headers`
+> (`packages/schema/src/mcp.ts:32,60` in anomalyco/opencode), so a token we obtain ourselves can be handed to an MCP
+> server as well as to a CLI.
+
+**Rejected.**
+
+- The refresh token stored in the sandbox for tools to use directly — a leak means lasting access.

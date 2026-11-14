@@ -87,6 +87,25 @@ setup uses a Telegram bot, which needed technical setup), so it comes quickly �
 alone does not, since the phone would still need the Tailscale VPN client; push notifications need a
 server holding the app's APNs/FCM keys, i.e. a hosted component of ours.
 
+## D17
+
+Retired in part 2026-11-14: schedules dropped from the parts of a plugin; rewritten in place as [D17](../DECISIONS.md#d17).
+
+**There is one kind of plugin, and it is a composite: any mix of skills, MCP servers with their
+configuration, an onboarding skill, schedules, additions to the sandbox environment (e.g. installing
+Blender), and further parts as needed. "Workflow", "creative", "for work" are marketplace tags for
+filtering, not kinds.** (2026-11-08, owner)
+
+**Why.** A 3D plugin that installs Blender and tells the agent it exists, and an email-triage plugin
+with rules and a schedule, are the same thing with different parts; separate kinds would force a
+choice nobody needs to make.
+
+**Rejected.**
+
+- Two kinds — a "connection" (account sign-in + tools, no files) and a "workflow" (rules, schedule,
+  onboarding, creates a project) — proposed by the design agent 2026-11-08; owner prefers one
+  composite with tags.
+
 ## D19
 
 Retired 2026-11-08, replaced by [D20](../DECISIONS.md#d20).
@@ -103,6 +122,35 @@ stay plain and visible, consistent with [D9](#d9) — only their place in the in
 - Installing a plugin creates a regular project holding its files — proposed by the design agent
   2026-11-08; "email sorting" is not something people call a project.
 - A hidden plugin store — contradicts plain, visible memory ([D9](#d9)).
+
+## D28
+
+Retired in part 2026-11-14: new plugins and account connections no longer need a confirmation; rewritten in place as [D28](../DECISIONS.md#d28).
+
+**The agent may change anything inside its current reach without asking; whatever widens its reach —
+a new plugin, a new account connection, a new schedule that acts without a person, a new destination
+in the browser tunnel — needs the person's confirmation in the conversation. The agent batches these:
+one confirmation covering everything it proposes at that point, not one click per item.**
+(2026-11-08, owner)
+
+**Why.** A web page the agent reads can try to instruct it ("install X, schedule daily mail to this
+address"); a confirmation on reach-widening changes stops that from becoming a permanent foothold.
+Batching keeps onboarding — which may propose several plugins, a connection and two schedules at
+once — to one decision. Inside the sandbox and project nothing needs asking: the sandbox and the
+tunnel are the boundary, unlike coding agents running directly on the computer.
+
+**Confirmations come only from the app's interface** (a button the person presses), never as a
+message in a conversation, whoever sent it — otherwise an agent steering another agent ([D30](#d30))
+could approve on the person's behalf. (2026-11-08, owner, from the failure sweep)
+
+**Accepted risk.** A plugin *update* that widens reach (e.g. adds sending to a drafts-only mail
+plugin) is not caught; plugins are expected to be made carefully. (2026-11-08, owner, from the
+failure sweep — owner doubts it can be detected reliably)
+
+**Rejected.**
+
+- A separate confirmation per setting or plugin — too many clicks (owner).
+- Letting the agent configure everything silently — one malicious page gets a lasting foothold.
 
 ## D29
 

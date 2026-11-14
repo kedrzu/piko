@@ -159,3 +159,32 @@ Append-only. One line per turn that settled something, was rejected, or got an a
 - 2026-11-13 — Conversations design round from .context/conversation-brief.md: screens 56–61 (agent working, finished, a project's conversations with *Nowa rozmowa* in the sidebar, the agent could not answer, signed out of Claude, usage limit) and five step and error molecules; log in history/conversations.md.
 - 2026-11-13 — Checked with the owner: sandbox conversations draw from the Claude plan, not extra usage (D2).
 - 2026-11-14 — Memory and App setup design round from .context/memory-app-setup-brief.md: screens 63–66 (Memory with files and empty, day one in App setup and the sidebar filling in), a sidebar with the Memory entry, the Memory file row and a "new" project row; log in history/memory-and-app-setup.md.
+- 2026-11-14 — Plugins design session (#25) started. Proposed to the owner: a plugin is three things — the package
+  (immutable, versioned contents), the installation (a profile manifest entry: version, level, config, attached
+  projects, account) and its data (files in projects, owned by the person); updates replace the package, never data.
+  Raised the tension in D28: "a new plugin needs confirmation" vs "inside the sandbox nothing needs asking"; offered A
+  (confirmation follows the parts — accounts, unattended schedules, tunnel destinations) vs B (every plugin), recommended A.
+  Checked 2026-11-14 against anomalyco/opencode v2.2.7 source (subagent, local clone): per-directory config merged over
+  global (`packages/core/src/config/discovery.ts`); per-agent and per-session `permission` rulesets with wildcards
+  (`"mymcp_*": "deny"`, `permission.skill`), session API takes `permissions` (`packages/protocol/src/groups/session.ts:176,308`);
+  `OPENCODE_CONFIG_CONTENT`/`OPENCODE_CONFIG_DIR` process-wide; `PUT /api/experimental/mcp/:server` adds an MCP server
+  at runtime per directory; `claude-agent` gets OpenCode's tools incl. MCP as one in-process MCP server `opencode`,
+  Claude Code's own tools/settings off (`specs/v2/claude-agent-provider.md`, `.../claude-agent/claude/query-options.ts:62-104`);
+  MCP OAuth tokens in `opencode.db`, local MCP takes `environment`, remote `headers` (`packages/schema/src/mcp.ts:32,60`);
+  OpenCode JS plugins add nothing for visibility. Unverified: a denied tool never reaching claude-agent's offered list.
+- 2026-11-14 — Owner: no real marketplace in v1 — plugins ship with the app, versioned with it; UI looks like a
+  marketplace (list, search); distribution and updates are not the focus, how plugins are built and work is (D36).
+- 2026-11-14 — Owner: plugin tools default to token-efficient CLIs (often a Bun package giving a CLI plus skills), MCP
+  supported, Gmail starts as MCP (D37). Owner on confirmations: the only gate a plugin install needs is the account
+  sign-in itself (the person goes through the provider's consent); the agent installs plugins on its own and reports
+  it, e.g. a generative-UI card linking to the plugin page. Not yet answered: schedules out of the package; whether
+  unattended schedules and tunnel destinations still need confirmation (D28 rewrite pending).
+- 2026-11-14 — Owner: tools get short-lived tokens from the daemon, refresh token stays out of the sandbox (D38);
+  schedules are not part of a plugin package, onboarding creates them (D17 rewritten, old form to history). Owner's
+  safety line: tools are built to minimise injection and extraction risk (Gmail: drafts only). Raised: the sandbox has
+  open internet (`packages/daemon/src/sandbox/buildHostFirewall.ts` closes only private ranges), so drafts-only stops
+  sending in the person's name but not extraction.
+- 2026-11-14 — Owner: schedule confirmation and the tunnel clause are not the plugins design's to settle (a parallel
+  agent builds schedules); follow-up issue #35 created (Backlog, blocked by #21, #25). D28 rewritten for plugins:
+  installs need no confirmation (agent reports them with a link), account connection is confirmed by the sign-in
+  itself; schedule and tunnel clauses kept as they were, open in #35. Old D28 to history.
