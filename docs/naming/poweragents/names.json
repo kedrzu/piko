@@ -48575,7 +48575,8 @@
       "verdict": "liked",
       "feedback": [
         "\"zapisz oba i szukaj dalej\" — Lupo and Lupeto both kept (round 22)",
-        "user dislikes the -eto ending in general (round 23) — Lupeto kept as saved earlier, but its ending is now a known negative"
+        "user dislikes the -eto ending in general (round 23) — Lupeto kept as saved earlier, but its ending is now a known negative",
+        "\"na chwile obecna chyba najbardziej podoba mi sie jednak lupeto\" (2026-11-14)"
       ]
     },
     "Otso": {
@@ -54441,6 +54442,1849 @@
       },
       "verdict": "dropped",
       "reason": "Japanese 'banchō' = delinquent gang boss"
+    },
+    "Lobinho": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "lobinho.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lobinho.app": {
+          "status": "taken",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lobinho.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lobinho.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getlobinho.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Ursinho": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "ursinho.com": {
+          "status": "taken",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "ursinho.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "ursinho.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "ursinho.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getursinho.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Gatinho": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "gatinho.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "gatinho.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "gatinho.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "gatinho.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getgatinho.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Raposinho": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "raposinho.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "raposinho.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "raposinho.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "raposinho.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getraposinho.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Coelhinho": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "coelhinho.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "coelhinho.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "coelhinho.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "coelhinho.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getcoelhinho.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Esquilinho": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "esquilinho.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "esquilinho.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "esquilinho.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "esquilinho.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getesquilinho.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Tatuzinho": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "tatuzinho.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "tatuzinho.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "tatuzinho.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "tatuzinho.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "gettatuzinho.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Llopet": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "llopet.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "llopet.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "llopet.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "llopet.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getllopet.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Lupulus": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "lupulus.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lupulus.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lupulus.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lupulus.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getlupulus.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Lupillo": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "lupillo.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lupillo.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lupillo.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lupillo.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getlupillo.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "Lupillo Rivera (singer); derived from Lupo"
+    },
+    "Vulpecula": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "vulpecula.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "vulpecula.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "vulpecula.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "vulpecula.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getvulpecula.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Ursulo": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "ursulo.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "ursulo.app": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "ursulo.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "ursulo.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getursulo.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Catulus": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "catulus.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "catulus.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "catulus.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "catulus.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getcatulus.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Leunculus": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "leunculus.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "leunculus.app": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "leunculus.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "leunculus.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getleunculus.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Volpino": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "volpino.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "volpino.app": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "volpino.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "volpino.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getvolpino.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [
+        {
+          "who": "search 'volpino ai': only the Volpino Italiano dog breed and the Volpini F1 team",
+          "space": "AI",
+          "severity": "noise",
+          "url": "https://en.wikipedia.org/wiki/Volpino_Italiano",
+          "checked_at": "2026-11-14"
+        }
+      ],
+      "phonetics": "Italian 'little fox' (and a small Italian spitz breed); vol-PEE-no"
+    },
+    "Gattino": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "gattino.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "gattino.app": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "gattino.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "gattino.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getgattino.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [
+        {
+          "who": "Gattino — a meowing cat chatbot on Shapes (Discord novelty bot)",
+          "space": "AI bots",
+          "severity": "notable",
+          "url": "https://shapes.inc/gattino/fun-facts",
+          "checked_at": "2026-11-14"
+        }
+      ],
+      "phonetics": "Italian 'kitten'; gat-TEE-no"
+    },
+    "Leprotto": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "leprotto.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "leprotto.app": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "leprotto.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "leprotto.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getleprotto.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Cerbiatto": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "cerbiatto.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "cerbiatto.app": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "cerbiatto.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "cerbiatto.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getcerbiatto.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Pulcino": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "pulcino.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "pulcino.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "pulcino.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "pulcino.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getpulcino.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "Pulcino Pio"
+    },
+    "Coniglietto": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "coniglietto.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "coniglietto.app": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "coniglietto.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "coniglietto.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getconiglietto.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Passerotto": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "passerotto.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "passerotto.app": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "passerotto.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "passerotto.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getpasserotto.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Gufetto": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "gufetto.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "gufetto.app": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "gufetto.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "gufetto.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getgufetto.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Lobillo": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "lobillo.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lobillo.app": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lobillo.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "lobillo.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getlobillo.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [
+        {
+          "who": "search 'lobillo ai': nothing named Lobillo; Lobo Intelligence (AI companion robot) and Lobe nearby",
+          "space": "AI",
+          "severity": "notable",
+          "url": "https://www.crunchbase.com/organization/lobo-intelligence",
+          "checked_at": "2026-11-14"
+        }
+      ],
+      "phonetics": "Spanish 'little wolf'; Spanish lo-BEE-yo, English readers lo-BIL-lo; even lobillo.com is unregistered"
+    },
+    "Zorrillo": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "zorrillo.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "zorrillo.app": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "zorrillo.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "zorrillo.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getzorrillo.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "'skunk'"
+    },
+    "Patito": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "patito.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "patito.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "patito.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "patito.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getpatito.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [],
+      "phonetics": "Spanish 'duckling'; pa-TEE-to"
+    },
+    "Pollito": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "pollito.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "pollito.app": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "pollito.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "pollito.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getpollito.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Lobezno": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "lobezno.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lobezno.app": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lobezno.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lobezno.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getlobezno.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "Wolverine in Spanish"
+    },
+    "Osezno": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "osezno.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "osezno.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "osezno.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "osezno.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getosezno.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Cervatillo": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "cervatillo.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "cervatillo.app": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "cervatillo.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "cervatillo.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getcervatillo.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Ardillita": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "ardillita.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "ardillita.app": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "ardillita.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "ardillita.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getardillita.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Kogitsune": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "kogitsune.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "kogitsune.app": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "kogitsune.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "kogitsune.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getkogitsune.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Koguma": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "koguma.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "koguma.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "koguma.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "koguma.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getkoguma.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [
+        {
+          "who": "koguma.ai — 'cute AI for travelers', a little-bear translation app",
+          "space": "consumer AI",
+          "severity": "blocking",
+          "url": "https://koguma.ai",
+          "checked_at": "2026-11-14"
+        }
+      ],
+      "phonetics": "Japanese 'bear cub'",
+      "verdict": "dropped",
+      "reason": "blocking: koguma.ai — 'cute AI for travelers', a little-bear translation app"
+    },
+    "Kotori": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "kotori.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "kotori.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "kotori.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "kotori.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getkotori.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Koneko": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "koneko.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "koneko.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "koneko.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "koneko.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getkoneko.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Lykaki": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "lykaki.com": {
+          "status": "taken",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lykaki.app": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lykaki.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lykaki.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getlykaki.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Lukaki": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "lukaki.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lukaki.app": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lukaki.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lukaki.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getlukaki.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "Lukaku"
+    },
+    "Ursulet": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "ursulet.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "ursulet.app": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "ursulet.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "ursulet.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getursulet.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Lupusor": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "lupusor.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lupusor.app": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lupusor.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lupusor.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getlupusor.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "derived from Lupo"
+    },
+    "Vulpita": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "vulpita.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "vulpita.app": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "vulpita.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "vulpita.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getvulpita.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Orsacchio": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "orsacchio.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "orsacchio.app": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "orsacchio.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "orsacchio.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getorsacchio.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Lupacchiotto": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "lupacchiotto.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lupacchiotto.app": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lupacchiotto.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lupacchiotto.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getlupacchiotto.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Volpacchiotto": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "volpacchiotto.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "volpacchiotto.app": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "volpacchiotto.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "volpacchiotto.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getvolpacchiotto.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Lupotto": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "lupotto.com": {
+          "status": "taken",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lupotto.app": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lupotto.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lupotto.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getlupotto.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "derived from Lupo"
+    },
+    "Orsotto": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "orsotto.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "orsotto.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "orsotto.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "orsotto.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getorsotto.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Lupello": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "lupello.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lupello.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lupello.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lupello.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getlupello.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "derived from Lupo"
+    },
+    "Lupicino": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "lupicino.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lupicino.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lupicino.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lupicino.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getlupicino.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "derived from Lupo"
+    },
+    "Lupito": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "lupito.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lupito.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lupito.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lupito.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getlupito.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "derived from Lupo"
+    },
+    "Ursino": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "ursino.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "ursino.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "ursino.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "ursino.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getursino.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [
+        {
+          "who": "search 'ursino ai': only researcher Domenico Ursino (Marche Polytechnic)",
+          "space": "AI",
+          "severity": "noise",
+          "url": "https://dii.univpm.it/ra_08/",
+          "checked_at": "2026-11-14"
+        }
+      ],
+      "phonetics": "Italian/Latin 'little bear'; oor-SEE-no"
+    },
+    "Ursello": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "ursello.com": {
+          "status": "taken",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "ursello.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "ursello.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "ursello.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getursello.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Vulpino": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "vulpino.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "vulpino.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "vulpino.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "vulpino.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getvulpino.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Vulpello": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "vulpello.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "vulpello.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "vulpello.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "vulpello.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getvulpello.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Gufino": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "gufino.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "gufino.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "gufino.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "gufino.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getgufino.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Tassino": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "tassino.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "tassino.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "tassino.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "tassino.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "gettassino.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Merlino": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "merlino.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "merlino.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "merlino.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "merlino.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getmerlino.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "Merlin"
+    },
+    "Corvino": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "corvino.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "corvino.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "corvino.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "corvino.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getcorvino.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Falchetto": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "falchetto.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "falchetto.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "falchetto.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "falchetto.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getfalchetto.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Delfinetto": {
+      "direction": "animal diminutives in other languages, Lupeto's style",
+      "round": 27,
+      "domains": {
+        "delfinetto.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "delfinetto.app": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "delfinetto.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "delfinetto.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getdelfinetto.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
     }
   }
 }

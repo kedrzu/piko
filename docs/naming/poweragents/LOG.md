@@ -591,3 +591,21 @@ Neb (pending US class-9 filing), Lupeto (disliked -eto ending, Lupo's lupo.ai); 
 liked — Oberon (oberon.ai), Alonso (alonso.ai), Zib (EU trademark), Nib (nib.gg). Note: since `.so`
 joined the checked TLDs, the generated SHORTLIST.md lists every non-dropped name with any open TLD
 (650) — the liked set above is the working shortlist.
+
+## Round 27 — 2026-11-14
+
+**User.** Lupeto is the current favourite after all; find more in its style — an animal's name in
+another language. Recorded in BRIEF.
+**Directions.** Animal diminutives in Italian (-ino, -etto, -otto, -acchiotto), Spanish (-ito, -illo,
+-ezno), Portuguese (-inho), Catalan, Latin (-ulus), Romanian, Greek and Japanese (ko-) — ≈60. Lup*
+variants dropped up front because lupo.ai is an AI-agent platform.
+**What came out.** Diminutives are wide open: most have .app, .ai, .so and get…com, a few even .com
+(lobillo.com, orsotto.com, vulpello.com). Portuguese -inho and Italian -acchiotto are hard for English
+speakers. "<name> ai" + .ai site: **Koguma** ('bear cub') is koguma.ai, a cute-bear AI travel app
+(blocking); **Gattino** ('kitten') is a meowing Shapes chatbot; **Volpino** ('little fox'), **Ursino**
+('little bear') and **Lobillo** ('little wolf') are clean.
+**Where I looked.** DNS; whois.nic.ai (7); .ai site fetch (kotori, koguma); web search "volpino ai",
+"ursino ai", "gattino ai", "lobillo ai".
+**Best.** Volpino (all four TLDs, .ai confirmed; closest to Lupeto's shape), Ursino (.ai, .so,
+get…com), Lobillo (all five incl. .com; the wolf again, without "lupo").
+**Proposed next.** Show these three next to Lupeto; deepen whichever animal the user prefers.

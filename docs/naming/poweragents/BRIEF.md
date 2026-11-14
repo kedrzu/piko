@@ -69,6 +69,8 @@ mascot.
   Lupo, Sancho, Tancho, Camillo, Ilario, Oberon, Neb, Nib, Zib — share soft onsets (l, s, t, c, n),
   open vowels and no consonant cluster at the start. *(Pattern inferred by the agent.)*
 
+- **Lupeto is the current favourite** (2026-11-14) despite the -eto dislike; wants more in its style — an animal's name in another language, often a diminutive.
+
 ## Rejected directions
 
 - The Esperanto -eto ending (Urseto, Vulpeto, Nubeto…) — "I don't like that ending" (round 23).
