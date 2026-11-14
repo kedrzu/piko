@@ -117,7 +117,7 @@ async function paste() {
   align-items: center;
   min-height: 48px;
   padding: 0 calc($spacing-06 - 1px) 0 calc($spacing-14 - 1px);
-  border: 1px solid $color-border-strong;
+  border: 1px solid $color-field-border;
   border-radius: $radius-m;
   background: $color-surface;
 
