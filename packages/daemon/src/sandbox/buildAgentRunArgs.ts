@@ -35,11 +35,19 @@ const OPENCODE_PORT = 4096;
  * the same way, `POWERAGENTS_BROWSER_TOKEN=…`), with the profile's data root and two named volumes keeping Claude's login and OpenCode's
  * conversations across container recreation. The secrets never appear in the arguments, which other processes can
  * read.
+ *
+ * OpenCode runs as `serve --stdio` because only that mode deletes the password from its own environment after reading
+ * it (OpenCode 2.2.7); plain `serve` keeps it there, and the agent's shell and Claude Code inherit it. `--stdio` stops
+ * the server when its stdin ends, so the container keeps stdin open on a TTY (`--interactive --tty`; nerdctl refuses
+ * `--interactive` with `--detach` alone). The agent can still read the server's initial environment from
+ * `/proc/1/environ`, being root in the same container: only running its tools as another user would close that.
  * @__NO_SIDE_EFFECTS__
  */
 export function buildAgentRunArgs(image: string): AgentRunArgs {
     const options = [
         '--detach',
+        '--interactive',
+        '--tty',
         '--name',
         AGENT_CONTAINER,
         '--publish',
@@ -61,6 +69,7 @@ export function buildAgentRunArgs(image: string): AgentRunArgs {
         image,
         'opencode',
         'serve',
+        '--stdio',
         '--hostname',
         '0.0.0.0',
         '--port',
