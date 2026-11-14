@@ -689,3 +689,18 @@ finds only a tiny Python library (ErmAI). **Fenny**: fenny.ai, fenny.so, getfenn
 **Proposed next.** Rilky is the most open name of the whole search. Suggest moving Rilky, Ermy,
 Fenny, Lupi (and Tancho, Lancho) to depth checks: registrar prices, a hearing test for spelling
 (Rilky in particular), user-run TMview.
+
+## Round 32 — 2026-11-14
+
+**User.** Find more names that sound like the latest shortlist additions (Rilky, Ermy, Fenny, Lupi).
+**Directions.** Systematic sweep of their shape: optional consonant + vowel + soft cluster (lk, lm,
+lp, lv, rm, rn, nn, mm, sk, st…) + -y/-i — 3,545 candidates, .ai filtered first (DNS), then .app,
+.so, get…com; survivors' .ai confirmed at whois.nic.ai.
+**What came out.** 1,062 passed the .ai filter; most read as clumsy (Bormy, Wirpy). Closest to Rilky
+by ear: **Nilky**, **Belky**, **Kelky** — all four TLDs open, and "<name> ai" finds nothing under
+their own name (only loose sound-alikes: Nily AI, Belva AI, KelAI). **Solky** sits next to Soly AI
+(Solana agents). Silby, Kermy (Kermit), Silmy are open but unsearched.
+**Where I looked.** DNS sweep; whois.nic.ai (8); App Store (6); web search "nilky ai", "belky ai",
+"kelky ai", "solky ai".
+**Proposed next.** Show Nilky, Belky, Kelky next to Rilky. If the user still wants breadth, the -lky
+family is deep; otherwise move the shortlist to depth checks.

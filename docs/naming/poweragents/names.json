@@ -60304,6 +60304,269 @@
         }
       ],
       "phonetics": "RIL-kee; echoes Rilke (the poet); spelling risk: Rilky/Rilkey/Rilkie"
+    },
+    "Nilky": {
+      "direction": "sweep of Rilky/Ermy/Fenny-shaped names (CVC-cluster + y/i), .ai pre-filtered",
+      "round": 32,
+      "domains": {
+        "nilky.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "nilky.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "nilky.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "nilky.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getnilky.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [
+        {
+          "who": "search 'nilky ai': only a Hugging Face hobby profile; Nily AI (marketers' assistant), nilAI (Nillion) nearby",
+          "space": "AI",
+          "severity": "noise",
+          "url": "https://huggingface.co/NILKNARFGonzo/datasets",
+          "checked_at": "2026-11-14"
+        }
+      ],
+      "phonetics": "NIL-kee; rhymes with Rilky and milky"
+    },
+    "Belky": {
+      "direction": "sweep of Rilky/Ermy/Fenny-shaped names (CVC-cluster + y/i), .ai pre-filtered",
+      "round": 32,
+      "domains": {
+        "belky.com": {
+          "status": "taken",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "belky.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "belky.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "belky.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getbelky.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [
+        {
+          "who": "search 'belky ai': nothing named Belky; Belva AI nearby; App Store returns 'belly' apps (sound-alike)",
+          "space": "AI",
+          "severity": "noise",
+          "url": "https://www.cbinsights.com/company/belva-ai",
+          "checked_at": "2026-11-14"
+        }
+      ],
+      "phonetics": "BEL-kee; echoes Belka, the Soviet space dog; English ear may hear 'belly'"
+    },
+    "Kelky": {
+      "direction": "sweep of Rilky/Ermy/Fenny-shaped names (CVC-cluster + y/i), .ai pre-filtered",
+      "round": 32,
+      "domains": {
+        "kelky.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "kelky.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "kelky.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "kelky.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getkelky.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [
+        {
+          "who": "search 'kelky ai': nothing named Kelky; KelAI, Kel CLI, KellyAI, Kelvin AI nearby",
+          "space": "AI",
+          "severity": "noise",
+          "url": "https://www.tooljunction.io/ai-tools/kelai",
+          "checked_at": "2026-11-14"
+        }
+      ],
+      "phonetics": "KEL-kee"
+    },
+    "Solky": {
+      "direction": "sweep of Rilky/Ermy/Fenny-shaped names (CVC-cluster + y/i), .ai pre-filtered",
+      "round": 32,
+      "domains": {
+        "solky.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "solky.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "solky.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "solky.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getsolky.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [
+        {
+          "who": "Soly AI — Solana AI-agent platform/token (sound-alike)",
+          "space": "AI agents (crypto)",
+          "severity": "notable",
+          "url": "https://solanacompass.com/projects/solyai",
+          "checked_at": "2026-11-14"
+        }
+      ],
+      "phonetics": "SOL-kee"
+    },
+    "Silby": {
+      "direction": "sweep of Rilky/Ermy/Fenny-shaped names (CVC-cluster + y/i), .ai pre-filtered",
+      "round": 32,
+      "domains": {
+        "silby.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "silby.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "silby.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "silby.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getsilby.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [],
+      "phonetics": "SIL-bee"
+    },
+    "Kermy": {
+      "direction": "sweep of Rilky/Ermy/Fenny-shaped names (CVC-cluster + y/i), .ai pre-filtered",
+      "round": 32,
+      "domains": {
+        "kermy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "kermy.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "kermy.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "kermy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getkermy.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [],
+      "phonetics": "KER-mee; Kermit"
+    },
+    "Silmy": {
+      "direction": "sweep of Rilky/Ermy/Fenny-shaped names (CVC-cluster + y/i), .ai pre-filtered",
+      "round": 32,
+      "domains": {
+        "silmy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "silmy.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "silmy.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "silmy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getsilmy.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [],
+      "phonetics": "SIL-mee"
     }
   }
 }

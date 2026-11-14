@@ -61,6 +61,7 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Bassani | surnames of Italian and Spanish artists and composers | bassani.app likely-free, bassani.ai unknown, bassani.so likely-free, getbassani.com likely-free | none found |  |
 | Beb | short punchy coinages, 3 letters (CVC), one spelling | beb.so likely-free, getbeb.com likely-free | none found |  |
 | Bedivere | names from Shakespeare, Arthurian legend and fairy tales | bedivere.ai unknown, bedivere.so likely-free, getbedivere.com likely-free | none found |  |
+| Belky | sweep of Rilky/Ermy/Fenny-shaped names (CVC-cluster + y/i), .ai pre-filtered | belky.app likely-free, belky.ai likely-free, belky.so likely-free, getbelky.com likely-free | none found | BEL-kee; echoes Belka, the Soviet space dog; English ear may hear 'belly' |
 | Bellino | first names shaped like Sancho and Camillo | bellino.app likely-free, bellino.so likely-free, getbellino.com likely-free | none found | Italian 'pretty little one'; bel-LEE-no |
 | Benlo | coined first names, 2–3 syllables | benlo.app unknown, benlo.so likely-free | none found |  |
 | Benon | coined two-syllable names, soft consonants, no clusters (systematic sweep, .ai free) | benon.app likely-free, benon.ai unknown, benon.so likely-free, getbenon.com likely-free | none found | BEN-on; a rare Ugandan first name |
@@ -309,8 +310,10 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Kateto | Esperanto diminutives and young-animal words (-eto, -ido), Lupeto's family | kateto.app likely-free, kateto.ai unknown, kateto.so likely-free, getkateto.com likely-free | none found |  |
 | Katu | animal words from many languages in Lupo's shape (Esperanto, Basque, Finnish, Greek, Latin, Portuguese) | katu.so likely-free | none found |  |
 | Kaveri | words for help, friend or strength from other languages, easy in English | kaveri.so likely-free, getkaveri.com likely-free | none found |  |
+| Kelky | sweep of Rilky/Ermy/Fenny-shaped names (CVC-cluster + y/i), .ai pre-filtered | kelky.app likely-free, kelky.ai likely-free, kelky.so likely-free, getkelky.com likely-free | none found | KEL-kee |
 | Kem | short punchy coinages, 3 letters (CVC), one spelling | kem.so likely-free, kem.to likely-free | none found |  |
 | Kenji | broader real first names: international and Polish, easy for English speakers | kenji.so likely-free | none found |  |
+| Kermy | sweep of Rilky/Ermy/Fenny-shaped names (CVC-cluster + y/i), .ai pre-filtered | kermy.app likely-free, kermy.ai likely-free, kermy.so likely-free, getkermy.com likely-free | none found | KER-mee; Kermit |
 | Kib | short punchy coinages, 3 letters (CVC), one spelling | getkib.com likely-free, kib.so free ($57.50/yr), kib.to likely-free | KIB — Kuwait International Bank apps; KiBee (kibee.ai) support agent (notable); KIB marks in class 9: Kuwait International Bank (EU), American Technology Components (US) (notable) | Kib/Kibb/Cib; reads like 'kibble' |
 | Kind Hand | a helper with real power: helper nouns with a warm adjective | kindhand.app likely-free, kindhand.ai unknown, getkindhand.com likely-free | none found |  |
 | Kitsi | generated cute animal-stem names (stem + vowel), .ai pre-filtered | kitsi.app likely-free, kitsi.ai likely-free, kitsi.so likely-free, getkitsi.com likely-free | Kitsy AI Bedtime Stories (iOS, 84 ratings) — sound-alike (notable) | from kitsune 'fox'; KIT-see |
@@ -466,6 +469,7 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Nettuno | Italian forms of mythological names | nettuno.so likely-free, getnettuno.com likely-free | none found |  |
 | Nguvu | words for help, friend or strength from other languages, easy in English | nguvu.ai unknown, nguvu.so likely-free, getnguvu.com likely-free | none found |  |
 | Nibling | like Nib: tiny marks, dots and bits (mascot-shaped words) | nibling.ai likely-free, getnibling.com likely-free | Nibl AI — iOS calorie-tracking app (sound-alike) (notable) | gender-neutral word for a niece or nephew; contains 'nib'; heard as 'nibbling' |
+| Nilky | sweep of Rilky/Ermy/Fenny-shaped names (CVC-cluster + y/i), .ai pre-filtered | nilky.app likely-free, nilky.ai likely-free, nilky.so likely-free, getnilky.com likely-free | none found | NIL-kee; rhymes with Rilky and milky |
 | Nimue | names from Shakespeare, Arthurian legend and fairy tales | nimue.so likely-free | none found |  |
 | Ninni | real Spanish, Italian and Portuguese nicknames (hypocoristics) | ninni.so likely-free | none found |  |
 | Nino | real Spanish, Italian and Portuguese nicknames (hypocoristics) | nino.so likely-free | none found |  |
@@ -625,11 +629,14 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Sganarelle | names of famous helpers and sidekicks in literature | sganarelle.app likely-free, sganarelle.ai unknown, sganarelle.so likely-free, getsganarelle.com likely-free | none found |  |
 | Shakti | words for help, friend or strength from other languages, easy in English | shakti.so likely-free | none found |  |
 | Siegfried | names from Shakespeare, Arthurian legend and fairy tales | siegfried.ai unknown, siegfried.so likely-free | none found |  |
+| Silby | sweep of Rilky/Ermy/Fenny-shaped names (CVC-cluster + y/i), .ai pre-filtered | silby.app likely-free, silby.ai likely-free, silby.so likely-free, getsilby.com likely-free | none found | SIL-bee |
+| Silmy | sweep of Rilky/Ermy/Fenny-shaped names (CVC-cluster + y/i), .ai pre-filtered | silmy.app likely-free, silmy.ai likely-free, silmy.so likely-free, getsilmy.com likely-free | none found | SIL-mee |
 | Silvio | first names shaped like Sancho and Camillo | silvio.so likely-free | none found |  |
 | Sito | real Spanish, Italian and Portuguese nicknames (hypocoristics) | sito.so likely-free | none found |  |
 | Small Lever | plain compounds: easy yet powerful | smalllever.com likely-free, smalllever.app likely-free, smalllever.ai unknown, getsmalllever.com likely-free | none found | 'smalllever' has a triple l in the domain; heard as 'small lever' or 'smaller' — risky |
 | Smidgen | like Nib: tiny marks, dots and bits (mascot-shaped words) | smidgen.ai likely-free | smidgen.io — x402 micropayment paywalls for humans and AI agents (notable) | Smidgen/Smidgeon/Smidgin — several spellings |
 | Socio | words for 'buddy' and 'mate' in Spanish, Italian, Portuguese and French slang | socio.so likely-free | none found |  |
+| Solky | sweep of Rilky/Ermy/Fenny-shaped names (CVC-cluster + y/i), .ai pre-filtered | solky.app likely-free, solky.ai likely-free, solky.so likely-free, getsolky.com likely-free | Soly AI — Solana AI-agent platform/token (sound-alike) (notable) | SOL-kee |
 | Somerville | surnames of famous scientists and inventors | somerville.app likely-free, somerville.so likely-free, getsomerville.com likely-free | none found |  |
 | Sorolla | surnames of Italian and Spanish artists and composers | sorolla.ai unknown, sorolla.so likely-free, getsorolla.com likely-free | none found |  |
 | Sorriso | short Italian/Spanish/Latin nouns that sound like names, Lupo-shaped (two syllables, ends in -o) | sorriso.so likely-free, getsorriso.com likely-free | none found |  |
