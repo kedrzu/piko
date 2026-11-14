@@ -12,14 +12,16 @@ conversation that runs right after installing it, and programs added to the agen
 "creative", "for work" are only tags for browsing the marketplace ([why one kind](DECISIONS.md#d17)).
 
 Three plugins show the range. **Gmail** gives the agent the person's mail: tools that read it and create drafts but never
-send, a short skill on how to use them, and a Google sign-in. **Email sorting** is a workflow: it creates a project
-called "Poczta", where it keeps the sorting rules it learns, carries the skill that sorts and a setup conversation, and
+send, a short skill on how to use them, and a Google sign-in. **Email sorting** is a workflow: it lives in a project
+such as "Poczta", where it keeps the sorting rules it learns, carries the skill that sorts and a setup conversation, and
 needs a mail plugin to work with — Gmail or Outlook. **Blender** adds the program to the environment and a skill for
 driving it from scripts.
 
-On disk a plugin is a folder: a `plugin.json` describing it (its marketplace text in every app language, tags, whether it
-belongs to the profile or to a project, the project it creates, the plugins it works with, the accounts it uses, what it
-adds to the environment), its skills, and the code of its tools ([the plugin's folder](DECISIONS.md#d39)).
+On disk a plugin is a folder: a `plugin.json` describing it, its skills, and the code of its tools. `plugin.json` holds
+only what the app itself acts on: its marketplace text in every app language, tags, whether it belongs to the profile
+or to a project, which skill is its setup conversation, and what it adds to the environment, at fixed versions.
+Everything else — which projects it sets up, where it keeps what it learns, which plugins it works with — is written in
+its setup skill, and the agent does it with the tools it always has ([the plugin's folder](DECISIONS.md#d39)).
 
 ## Tools cost context, so they are programs first
 
@@ -46,8 +48,8 @@ tags — because that is where this is heading ([plugins ship with the app](DECI
 
 The other source is the agent. Asked to cut a video, it may need `ffmpeg`; it never installs anything loose, because
 the environment is rebuilt from the list of installed plugins and a loose install would vanish
-([why the environment is declared](DECISIONS.md#d25)). Instead it writes a small plugin of its own: a folder in the profile, which is installed by being there. These
-plugins live with the person's data, survive a rebuilt environment, and appear in the
+([why the environment is declared](DECISIONS.md#d25)). Instead it writes a small plugin of its own: a folder in the profile, which is installed by being there, always for the
+whole profile. These plugins live with the person's data, survive a rebuilt environment, and appear in the
 same list as the bundled ones, marked as the person's own — "Twój plugin" — since they asked for it
 ([plugins the agent writes](DECISIONS.md#d40)). When the agent improves the skill of such a plugin, the next
 conversation already uses it.
@@ -68,7 +70,9 @@ the same way, so that a page trying to steer the agent has as little to work wit
 
 ## Setting up, running, removing
 
-A plugin with a setup conversation starts it right after installation, in its project: email sorting asks which mail
+A plugin's setup conversation is an ordinary conversation led by its setup skill, and it starts right after
+installation. When the agent installs the plugin, the setup carries on in the same conversation; when the person
+installs it from the Plugins screen, a new conversation opens in the project they picked. Email sorting asks which mail
 provider, starts that provider's sign-in, asks what kinds of mail arrive and what should happen to them, and when it
 should run. The rules it learns go into the project as ordinary files the person can open and correct. Running it again
 from the plugin's page changes the setup ([setup is a conversation](DECISIONS.md#d18)).
