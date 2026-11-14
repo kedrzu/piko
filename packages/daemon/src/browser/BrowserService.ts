@@ -15,6 +15,7 @@ import { waitUntil } from '@nzyme/utils/waitUntil.js';
 
 import { BROWSER_PROXY_PORT, DOWNLOADS_FOLDER, POWERAGENTS_DATA_ROOT, POWERAGENTS_LIMA_HOME } from '../env.js';
 import { isErrorCode } from '../utils/isErrorCode.js';
+import { isRealFolder } from '../utils/isRealFolder.js';
 import { buildChromiumArgs } from './buildChromiumArgs.js';
 import { CdpError } from './CdpTypes.js';
 import type { CdpErrorReply, CdpEvent } from './CdpTypes.js';
@@ -53,6 +54,21 @@ export interface BrowserServiceShape {
     exited: EventEmitter<[]>;
     /** Which conversation owns each page and which originator each session; reset when the browser exits. */
     ownership: TargetOwnership;
+    /**
+     * Brings the conversation's last-used page (its most recently created one when nothing was used yet) to the front:
+     * its window is restored from minimized and the browser activated, for when the person must step in. Never touches
+     * another conversation's window. Resolves `false`, doing nothing, when the conversation has no page.
+     */
+    bringToFront(conversationId: string): Promise<boolean>;
+    /** Minimizes the conversation's last-used page's window again and gives focus back to the person's app. */
+    putBack(conversationId: string): Promise<void>;
+    /**
+     * A JPEG of the conversation's last-used page, taken while its window stays minimized; `null` when the
+     * conversation has no page or the browser is not running.
+     */
+    thumbnail(conversationId: string): Promise<Uint8Array | null>;
+    /** Creates the Downloads folder in the data root when it is missing; rejects when it is not a real folder (a link). */
+    ensureDownloadsFolder(): Promise<void>;
 }
 
 /** How the browser is launched; tests replace it to run headless against their own proxy. */
@@ -91,6 +107,8 @@ interface PendingCall {
 const STALE_EXIT_TIMEOUT_MS = 5000;
 /** How much of the browser's stderr is kept for the exit log. */
 const STDERR_TAIL_LENGTH = 2000;
+/** JPEG quality of a thumbnail: small enough to ship often, sharp enough to recognise the page. */
+const THUMBNAIL_QUALITY = 60;
 /** A download guid as the browser makes it; anything else never becomes part of a path. */
 const DOWNLOAD_GUID = /^[\w-]+$/;
 
@@ -125,7 +143,83 @@ export const BrowserService = defineService({
             event: eventEmitter.event,
             exited: exitedEmitter.event,
             ownership,
+            bringToFront,
+            putBack,
+            thumbnail,
+            ensureDownloadsFolder,
         };
+
+        async function bringToFront(conversationId: string) {
+            const targetId = ownership.lastUsed(conversationId);
+            if (targetId == null) {
+                return false;
+            }
+            await setWindowState(targetId, 'normal');
+            await withDaemonSession(targetId, sessionId => send('Page.bringToFront', {}, sessionId));
+            return true;
+        }
+
+        async function putBack(conversationId: string) {
+            const targetId = ownership.lastUsed(conversationId);
+            if (targetId != null) {
+                await setWindowState(targetId, 'minimized');
+            }
+            focusKeeper.restore();
+        }
+
+        async function thumbnail(conversationId: string) {
+            const targetId = ownership.lastUsed(conversationId);
+            if (targetId == null || !run?.ready) {
+                return null;
+            }
+            const reply = await withDaemonSession(targetId, sessionId =>
+                send('Page.captureScreenshot', { format: 'jpeg', quality: THUMBNAIL_QUALITY }, sessionId),
+            );
+            const data = isPlainObject(reply) ? reply['data'] : undefined;
+            if (typeof data !== 'string') {
+                throw new TypeError('Page.captureScreenshot gave no image');
+            }
+            return Buffer.from(data, 'base64');
+        }
+
+        async function ensureDownloadsFolder() {
+            await mkdir(downloadsFolder, { recursive: true });
+            if (!(await isRealFolder(downloadsFolder))) {
+                throw new Error('The Downloads folder is not a real folder');
+            }
+        }
+
+        async function setWindowState(targetId: string, windowState: 'normal' | 'minimized') {
+            const window = await send('Browser.getWindowForTarget', { targetId });
+            const windowId = isPlainObject(window) ? window['windowId'] : undefined;
+            if (typeof windowId !== 'number') {
+                throw new TypeError('Browser.getWindowForTarget gave no window id');
+            }
+            await send('Browser.setWindowBounds', { windowId, bounds: { windowState } });
+        }
+
+        /** Runs `action` on a session of the daemon's own, so its events never reach a client; detaches afterwards. */
+        async function withDaemonSession<T>(targetId: string, action: (sessionId: string) => Promise<T>) {
+            const release = ownership.expectAttach({ type: 'daemon' }, targetId);
+            let reply: unknown;
+            try {
+                reply = await send('Target.attachToTarget', { targetId, flatten: true });
+            } finally {
+                release();
+            }
+            const sessionId = isPlainObject(reply) ? reply['sessionId'] : undefined;
+            if (typeof sessionId !== 'string') {
+                throw new TypeError('Target.attachToTarget gave no session id');
+            }
+            ownership.claimSession({ type: 'daemon' }, sessionId, targetId);
+            try {
+                return await action(sessionId);
+            } finally {
+                await send('Target.detachFromTarget', { sessionId }).catch((error: unknown) =>
+                    logger.debug('A daemon session could not be detached', { error }),
+                );
+            }
+        }
 
         function send(method: string, params?: object, sessionId?: string) {
             if (!run?.ready) {

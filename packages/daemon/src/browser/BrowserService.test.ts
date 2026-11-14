@@ -1,4 +1,4 @@
-import { mkdtemp, readdir, readFile, rm } from 'node:fs/promises';
+import { mkdir, mkdtemp, readdir, readFile, rm, symlink } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 
@@ -163,6 +163,90 @@ test('the browser reaches loopback only through the proxy, which refuses it', as
     expect(await evaluate(browser, sessionId, 'document.body.innerText')).not.toContain('secret');
 }, 30_000);
 
+test('a thumbnail is a JPEG of the conversation own page, taken from a minimized window', async () => {
+    const { browser } = await startBrowser();
+    const small = await openPage(browser, 'conv-a');
+    const large = await openPage(browser, 'conv-b');
+    await setContent(browser, small, 'red');
+    await setContent(browser, large, 'blue');
+    const targetA = browser.ownership.getTargets('conv-a')[0] ?? '';
+
+    const a = await browser.thumbnail('conv-a');
+    const b = await browser.thumbnail('conv-b');
+
+    expect(a?.slice(0, 3)).toEqual(new Uint8Array([0xff, 0xd8, 0xff]));
+    expect(b?.slice(0, 3)).toEqual(new Uint8Array([0xff, 0xd8, 0xff]));
+    expect(Buffer.from(a ?? []).equals(Buffer.from(b ?? []))).toBe(false);
+    expect(await getWindowState(browser, targetA)).toBe('minimized');
+}, 30_000);
+
+test('a thumbnail is null without a page or a running browser', async () => {
+    const { browser, stateFolder } = await startBrowser();
+    expect(await browser.thumbnail('nobody')).toBeNull();
+
+    await openPage(browser, 'conv-a');
+    process.kill(await readPid(stateFolder), 'SIGKILL');
+    await waitUntil(() => !browser.isRunning(), { timeoutMs: TIMEOUT_MS });
+
+    expect(await browser.thumbnail('conv-a')).toBeNull();
+}, 30_000);
+
+test('bringToFront and putBack act on the conversation own last-used page only', async () => {
+    const { browser, focusKeeper } = await startBrowser();
+    const targetA1 = await createPage(browser, 'conv-a');
+    const targetA2 = await createPage(browser, 'conv-a');
+    const targetB = await createPage(browser, 'conv-b');
+    browser.ownership.touch('conv-a', targetA1);
+
+    expect(await browser.bringToFront('conv-a')).toBe(true);
+    expect(await getWindowState(browser, targetA1)).toBe('normal');
+    expect(await getWindowState(browser, targetA2)).toBe('minimized');
+    expect(await getWindowState(browser, targetB)).toBe('minimized');
+
+    await browser.putBack('conv-a');
+    expect(await getWindowState(browser, targetA1)).toBe('minimized');
+    expect(focusKeeper.restore).toHaveBeenCalled();
+}, 30_000);
+
+test('bringToFront falls back to the newest page and reports a conversation without one', async () => {
+    const { browser } = await startBrowser();
+    await createPage(browser, 'conv-a');
+    const newest = await createPage(browser, 'conv-a');
+
+    expect(await browser.bringToFront('conv-a')).toBe(true);
+    expect(await getWindowState(browser, newest)).toBe('normal');
+    expect(await browser.bringToFront('nobody')).toBe(false);
+}, 30_000);
+
+test('the daemon sessions of a handoff are detached and claimed for the daemon', async () => {
+    const { browser } = await startBrowser();
+    await createPage(browser, 'conv-a');
+    const originators: unknown[] = [];
+    browser.event.on(event => {
+        if (event.method === 'Target.attachedToTarget' && isPlainObject(event.params)) {
+            const sessionId = event.params['sessionId'];
+            originators.push(typeof sessionId === 'string' && browser.ownership.getSessionOriginator(sessionId));
+        }
+    });
+
+    await browser.thumbnail('conv-a');
+
+    expect(originators).toEqual([{ type: 'daemon' }]);
+}, 30_000);
+
+test('ensureDownloadsFolder creates the folder and refuses a link', async () => {
+    const { browser, dataRoot } = await startBrowser();
+
+    await browser.ensureDownloadsFolder();
+    expect(await listFolder(path.join(dataRoot, 'downloads'))).toEqual([]);
+    await browser.ensureDownloadsFolder();
+
+    await rm(path.join(dataRoot, 'downloads'), { recursive: true });
+    await mkdir(path.join(dataRoot, 'elsewhere'));
+    await symlink(path.join(dataRoot, 'elsewhere'), path.join(dataRoot, 'downloads'));
+    await expect(browser.ensureDownloadsFolder()).rejects.toThrow('not a real folder');
+}, 30_000);
+
 test('start rejects while the browser is not installed', async () => {
     const { browser } = await startBrowser({ executable: null, launch: false });
 
@@ -261,6 +345,10 @@ async function evaluate(browser: Resolved<typeof BrowserService>, sessionId: str
     const reply = await browser.send('Runtime.evaluate', { expression, returnByValue: true }, sessionId);
     const result = isPlainObject(reply) ? reply['result'] : undefined;
     return isPlainObject(result) ? result['value'] : undefined;
+}
+
+async function setContent(browser: Resolved<typeof BrowserService>, sessionId: string, color: string) {
+    await evaluate(browser, sessionId, `document.body.style.background = '${color}'; 1`);
 }
 
 async function getWindowState(browser: Resolved<typeof BrowserService>, targetId: string) {
