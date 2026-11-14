@@ -631,3 +631,25 @@ and **Ursu** (Romanian 'the bear') are clean with .ai, .app, .so, get…com free
 web search "lupi ai", "Lupi app", "orsi ai", "volpo ai", "lioni ai".
 **Proposed next.** Report Lupi's conflicts honestly (usable, but crowded with small "Lupi" apps and
 next to lupo.ai); offer Volpo, Lioni, Ursu as variations; deepen the one the user likes.
+
+## Round 29 — 2026-11-14
+
+**User on round 28.** Did not mean Lupi as a plural — just a good-sounding modification of an animal
+name. Proposed **Urso** (found no conflict in a quick search). Volpo rejected ("doesn't sound good").
+Wants short animal names that sound cute rather than odd. BRIEF updated.
+**Urso, checked.** urso.so, geturso.com, heyurso.com, useurso.com, tryurso.com, urso.to likely-free;
+urso.com, urso.app, urso.co, urso.me, ursoapp.com taken; **urso.ai registered 2025-03-28, no site**.
+Conflict: **"Urso: Self Care Virtual Pet"** — an iOS self-care app built around a cute bear mascot,
+by PRAKTIKA, INC. (Product Hunt, Dec 2023, ~600 votes) — same name, same mascot idea (notable, close
+to blocking for a mascot-led brand). "urso ai" otherwise returns Italy's minister Adolfo Urso.
+**Directions.** Cute short modifications of animal names (≈70): clipped, -i/-y/-o forms, Japanese
+fluffy words.
+**What came out.** The cute short forms are mostly taken on .ai by someone: Tanu (tanu.ai, live AI),
+Mofu (Mofu AI — a Japanese dog-owner AI app), Fenni (Fenwick's internal AI), Orsy, Lonti; Lutri sits
+next to Lutra AI. **Urzo** — a softened Urso — has urzo.ai (confirmed free), urzo.app, urzo.so,
+geturzo.com and nothing in AI under its name.
+**Where I looked.** DNS; whois.nic.ai (7); site fetch (urso.*, fenni/mofu/tanu/orsy/lonti .ai);
+App Store; web search "urso ai", "Urso app", "urzo ai", "fenni ai", "mofu ai".
+**Proposed next.** Tell the user about the Urso self-care bear app; offer Urzo. Keep generating cute
+animal-derived shapes, but pre-filter by .ai at the registry, since most cute short forms are AI
+startups already.

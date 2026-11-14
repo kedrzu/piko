@@ -8,7 +8,7 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Ilario | good-sounding Italian, Spanish and Latin first names | ilario.app free ($14.50/yr), ilario.ai free ($85.60/yr), ilario.so likely-free, getilario.com likely-free | none found | **liked** / Italian 'cheerful' (Hilary); ee-LAH-ree-oh / "ilario calkiem spoko, ale musimy pisac lowercase zeby sie nie mylilo L z I" (round 16) |
 | Lancho | systematic sweep of Sancho/Lupo-shaped coinages (consonant-vowel-cluster-o), .ai unregistered | lancho.app likely-free, lancho.ai likely-free, lancho.so likely-free, getlancho.com likely-free | none found | **liked** / LAHN-cho; Sancho/Tancho rhythm; Spanish 'lancha' = motorboat / "dodaj to luncho do shortlisty" (round 26; voice input, means Lancho) |
 | Lupeto | animal words from many languages in Lupo's shape (Esperanto, Basque, Finnish, Greek, Latin, Portuguese) | lupeto.app likely-free, lupeto.ai likely-free, lupeto.so likely-free, getlupeto.com likely-free | search 'lupeto ai': nothing named Lupeto; Lupi AI, LupaxAI, Lupus are nearby (notable); derived from Lupo, which lupo.ai (AI agents platform) already uses (notable) | **liked** / Esperanto 'little wolf' (lupo + -eto); loo-PEH-to; one t, unlike Italian Lupetto / "zapisz oba i szukaj dalej" — Lupo and Lupeto both kept (round 22) / user dislikes the -eto ending in general (round 23) — Lupeto kept as saved earlier, but its ending is now a known negative / "na chwile obecna chyba najbardziej podoba mi sie jednak lupeto" (2026-11-14) |
-| Lupi | user's own find: morphological variation of Lupo | lupi.so likely-free, getlupi.com likely-free, lupi.to likely-free, uselupi.com likely-free, trylupi.com likely-free | Lupi AI – Relationship Coach (iOS, Lifestyle); Lupi: AI Bedtime Stories (iOS); Lupi: Bills & Subscriptions (iOS) (notable); Lupi AI — Georgian ed-tech startup (teachers' grading assistant, founded 2019) (notable); lupi.ai registered 2024 (no site); lupi.com = Lupi's Pizza Pies (Chattanooga) (notable); Lupi = Italian plural of lupo ('wolves'); lupo.ai is an AI-agent platform (Knowledge-to-Execution) (notable) | **liked** / LOO-pee; Italian 'wolves'; one spelling (Lupi/Loopy risk: 'loopy' = slightly crazy in English) / user found it: "bardzo fajnie brzmi, jest krotka" — a variation on Lupo (2026-11-14) |
+| Lupi | user's own find: morphological variation of Lupo | lupi.so likely-free, getlupi.com likely-free, lupi.to likely-free, uselupi.com likely-free, trylupi.com likely-free | Lupi AI – Relationship Coach (iOS, Lifestyle); Lupi: AI Bedtime Stories (iOS); Lupi: Bills & Subscriptions (iOS) (notable); Lupi AI — Georgian ed-tech startup (teachers' grading assistant, founded 2019) (notable); lupi.ai registered 2024 (no site); lupi.com = Lupi's Pizza Pies (Chattanooga) (notable); Lupi = Italian plural of lupo ('wolves'); lupo.ai is an AI-agent platform (Knowledge-to-Execution) (notable) | **liked** / LOO-pee; Italian 'wolves'; one spelling (Lupi/Loopy risk: 'loopy' = slightly crazy in English) / user found it: "bardzo fajnie brzmi, jest krotka" — a variation on Lupo (2026-11-14) / user did not mean the plural — just a good-sounding modification of an animal name (2026-11-14) |
 | Neb | short punchy coinages, 3 letters (CVC), one spelling | getneb.com free ($8.99 first year, $11 renewal), neb.so free ($57.50/yr), heyneb.com likely-free | Trademark NEB — USPTO application 50085789, filed 2026-09-02 by New Epic Base Co., classes 9, 16, 25, 38, 41 (pending) (notable); Trademark NEB — New England Biolabs, USPTO 85706291 and WIPO 1261950, classes 1, 42 (registered) (notable); Trademark ONE NEB — Ingeniatrics, EUIPO 017045642 and USPTO, classes 9, 35 (notable); NEB Compute (Nebula Data, Australia) — GPU compute and token services; neb GitHub repo 'explore AI agents' (8 stars) (notable) | **liked** / one spelling mostly (Neb/Nebb); an old word for beak or nose; close to Nib in sound / "neb, zib fajne" (round 8) |
 | Sancho | names of famous helpers and sidekicks in literature | sancho.so likely-free | sanch.io — startup reported by the user (my web search found nothing about it); SanchoSQL listed on BetaList (notable) | **liked** / Sancho Panza, Don Quixote's down-to-earth, loyal helper; SAN-cho; one spelling / "sancho brzmi super, ale jest juz startup sanch.io - mimo to zapisz" (round 14) |
 | Tancho | first names shaped like Sancho and Camillo | tancho.app free ($14.50/yr), tancho.ai free ($85.60/yr), tancho.so likely-free, gettancho.com free ($8.99 first year, $11.62 renewal) | Tanka — 'agent platform for founders' iOS app (sound-alike, 1.3k Product Hunt votes) (notable); search 'tancho ai': nothing named Tancho; TANKA (AI that remembers commitments) is the sound-alike (notable) | **liked** / Japanese tanchō, the red-crowned crane (luck, long life); TAHN-cho; Sancho's sound / "tancho tez niezle" (round 15) |
@@ -85,6 +85,7 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Brunello | first names shaped like Sancho and Camillo | brunello.so likely-free, getbrunello.com likely-free | none found |  |
 | Brunhild | names from Shakespeare, Arthurian legend and fairy tales | brunhild.app likely-free, brunhild.ai unknown, brunhild.so likely-free, getbrunhild.com likely-free | none found |  |
 | Bubi | morphological variations of animal words (not exact translations), Lupi-style | bubi.so likely-free | none found |  |
+| Bubo | cute short modifications of animal names (Lupi/Urso style) | bubo.so likely-free | none found |  |
 | Buffo | short Italian/Spanish/Latin nouns that sound like names, Lupo-shaped (two syllables, ends in -o) | buffo.so likely-free | none found |  |
 | Buho | animal words that work as Italian, Spanish or Latin first names (Lupo's family) | buho.so likely-free | none found |  |
 | Busy Hands | a helper with real power: helper nouns with a warm adjective | busyhands.app likely-free, getbusyhands.com likely-free | none found |  |
@@ -183,6 +184,7 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Erinaco | Esperanto diminutives and young-animal words (-eto, -ido), Lupeto's family | erinaco.app unknown, erinaco.ai unknown, erinaco.so likely-free, geterinaco.com likely-free | none found |  |
 | Erizo | animal words that work as Italian, Spanish or Latin first names (Lupo's family) | erizo.ai unknown, erizo.so likely-free, geterizo.com likely-free | none found |  |
 | Ermes | Italian forms of mythological names | ermes.so likely-free | none found |  |
+| Ermi | cute short modifications of animal names (Lupi/Urso style) | ermi.app likely-free, ermi.so likely-free, getermi.com likely-free | none found |  |
 | Esquilinho | animal diminutives in other languages, Lupeto's style | esquilinho.app likely-free, esquilinho.ai unknown, esquilinho.so likely-free, getesquilinho.com likely-free | none found |  |
 | Estela | good-sounding Italian, Spanish and Latin first names | estela.so likely-free | none found |  |
 | Ettore | Italian forms of mythological names | ettore.app likely-free, ettore.ai unknown, ettore.so likely-free | none found |  |
@@ -200,6 +202,8 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Feli | morphological variations of animal words (not exact translations), Lupi-style | feli.so likely-free, getfeli.com likely-free | none found |  |
 | Felico | Esperanto diminutives and young-animal words (-eto, -ido), Lupeto's family | felico.app unknown, felico.ai unknown, felico.so likely-free, getfelico.com likely-free | none found |  |
 | Fellini | surnames of Italian and Spanish artists and composers | fellini.ai unknown, fellini.so likely-free, getfellini.com likely-free | none found |  |
+| Fenek | cute short modifications of animal names (Lupi/Urso style) | fenek.so likely-free | none found |  |
+| Fenni | cute short modifications of animal names (Lupi/Urso style) | fenni.so likely-free, getfenni.com likely-free | Fenni — Fenwick & West's internal AI knowledge assistant; fenni.ai registered (empty) (notable) | from fennec fox; FEN-nee |
 | Fep | short punchy coinages, 3 letters (CVC), one spelling | fep.so likely-free, getfep.com likely-free, fep.to likely-free | none found |  |
 | Ferdinand | names from Shakespeare, Arthurian legend and fairy tales | ferdinand.so likely-free | none found |  |
 | Ferro | short Italian/Spanish/Latin nouns that sound like names, Lupo-shaped (two syllables, ends in -o) | ferro.so likely-free | none found |  |
@@ -221,6 +225,8 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Fortiter | soft and strong in one word (music, Latin) | fortiter.app likely-free, fortiter.ai unknown, fortiter.so likely-free, getfortiter.com likely-free | none found |  |
 | Fortulo | Esperanto diminutives and young-animal words (-eto, -ido), Lupeto's family | fortulo.app unknown, fortulo.ai unknown, fortulo.so likely-free, getfortulo.com likely-free | none found |  |
 | Fourier | surnames of famous scientists and inventors | fourier.so likely-free | none found |  |
+| Foxi | cute short modifications of animal names (Lupi/Urso style) | foxi.so likely-free | none found |  |
+| Foxo | cute short modifications of animal names (Lupi/Urso style) | foxo.ai unknown, foxo.so likely-free | none found |  |
 | Fratello | words for 'buddy' and 'mate' in Spanish, Italian, Portuguese and French slang | fratello.app likely-free, fratello.so likely-free, getfratello.com likely-free | none found |  |
 | Fringuello | animal words that work as Italian, Spanish or Latin first names (Lupo's family) | fringuello.app likely-free, fringuello.ai unknown, fringuello.so likely-free, getfringuello.com likely-free | none found |  |
 | Fulmine | short Italian/Spanish/Latin nouns that sound like names, Lupo-shaped (two syllables, ends in -o) | fulmine.so likely-free, getfulmine.com likely-free | none found |  |
@@ -294,6 +300,7 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Kaha | words for help, friend or strength from other languages, easy in English | kaha.so likely-free | none found |  |
 | Kakapo | animal words from many languages in Lupo's shape (Esperanto, Basque, Finnish, Greek, Latin, Portuguese) | kakapo.so likely-free | none found |  |
 | Kalo | Japanese, Hawaiian and Basque names and animal words that sound easy in English (Tancho's neighbours) | kalo.so likely-free | none found |  |
+| Kapi | cute short modifications of animal names (Lupi/Urso style) | kapi.so likely-free | none found |  |
 | Kastoro | Esperanto diminutives and young-animal words (-eto, -ido), Lupeto's family | kastoro.so likely-free, getkastoro.com likely-free | none found |  |
 | Kateto | Esperanto diminutives and young-animal words (-eto, -ido), Lupeto's family | kateto.app likely-free, kateto.ai unknown, kateto.so likely-free, getkateto.com likely-free | none found |  |
 | Katu | animal words from many languages in Lupo's shape (Esperanto, Basque, Finnish, Greek, Latin, Portuguese) | katu.so likely-free | none found |  |
@@ -305,6 +312,7 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Koali | morphological variations of animal words (not exact translations), Lupi-style | koali.so likely-free | none found |  |
 | Kogitsune | animal diminutives in other languages, Lupeto's style | kogitsune.app unknown, kogitsune.ai unknown, kogitsune.so likely-free, getkogitsune.com likely-free | none found |  |
 | Koldo | Japanese, Hawaiian and Basque names and animal words that sound easy in English (Tancho's neighbours) | koldo.so likely-free, getkoldo.com likely-free | none found |  |
+| Koli | cute short modifications of animal names (Lupi/Urso style) | koli.so likely-free | none found |  |
 | Kolibro | Esperanto diminutives and young-animal words (-eto, -ido), Lupeto's family | kolibro.app unknown, kolibro.so likely-free, getkolibro.com likely-free | none found |  |
 | Kolombo | animal words from many languages in Lupo's shape (Esperanto, Basque, Finnish, Greek, Latin, Portuguese) | kolombo.ai likely-free, kolombo.so likely-free, getkolombo.com likely-free | none found |  |
 | Koneko | animal diminutives in other languages, Lupeto's style | koneko.so likely-free | none found |  |
@@ -325,6 +333,7 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Leandro | good-sounding Italian, Spanish and Latin first names | leandro.ai unknown, leandro.so likely-free, getleandro.com likely-free | none found | lay-AN-dro; Hero and Leander |
 | Leave It To Me | what a helper says: 'on it', 'sorted' | leaveittome.app likely-free, getleaveittome.com likely-free | none found |  |
 | Lele | real Spanish, Italian and Portuguese nicknames (hypocoristics) | lele.so likely-free | none found |  |
+| Lemmi | cute short modifications of animal names (Lupi/Urso style) | lemmi.so likely-free | none found |  |
 | Lemur | animal words from many languages in Lupo's shape (Esperanto, Basque, Finnish, Greek, Latin, Portuguese) | lemur.so likely-free | none found |  |
 | Lenzo | names and words in Lupo's and Sancho's sound: soft onset, open vowels, -o | lenzo.so likely-free | none found |  |
 | Leone | good-sounding Italian, Spanish and Latin first names | leone.app likely-free, leone.so likely-free, getleone.com likely-free | search 'leone ai': Leon AI — open-source personal assistant (sound-alike, v2.0 in 2026); Leonardo AI; Leo AI (notable) | Italian 'lion'; LAY-oh-neh, often reduced to 'Leon' |
@@ -356,10 +365,12 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Lobillo | animal diminutives in other languages, Lupeto's style | lobillo.com likely-free, lobillo.app unknown, lobillo.ai likely-free, lobillo.so likely-free, getlobillo.com likely-free | search 'lobillo ai': nothing named Lobillo; Lobo Intelligence (AI companion robot) and Lobe nearby (notable) | Spanish 'little wolf'; Spanish lo-BEE-yo, English readers lo-BIL-lo; even lobillo.com is unregistered |
 | Lobinho | animal diminutives in other languages, Lupeto's style | lobinho.ai unknown, lobinho.so likely-free, getlobinho.com likely-free | none found |  |
 | Lobito | animal words that work as Italian, Spanish or Latin first names (Lupo's family) | lobito.so likely-free, getlobito.com likely-free | none found |  |
+| Lobo | cute short modifications of animal names (Lupi/Urso style) | lobo.so likely-free | none found |  |
 | Lohengrin | names from Shakespeare, Arthurian legend and fairy tales | lohengrin.app likely-free, lohengrin.ai unknown, lohengrin.so likely-free, getlohengrin.com likely-free | none found |  |
 | Lolo | names and words in Lupo's and Sancho's sound: soft onset, open vowels, -o | lolo.so likely-free | none found |  |
 | Lom | short punchy coinages, 3 letters (CVC), one spelling | lom.so likely-free, getlom.com likely-free | none found |  |
 | Long Lever | plain compounds: easy yet powerful | longlever.app likely-free, getlonglever.com likely-free | none found |  |
+| Lonti | cute short modifications of animal names (Lupi/Urso style) | lonti.app likely-free, lonti.so likely-free, getlonti.com likely-free | lonti.ai registered (empty) (notable) | from lontra 'otter'; LON-tee |
 | Lorenzo | first names shaped like Sancho and Camillo | lorenzo.so likely-free, getlorenzo.com likely-free | none found |  |
 | Lucano | names and words in Lupo's and Sancho's sound: soft onset, open vowels, -o | lucano.ai unknown, lucano.so likely-free, getlucano.com likely-free | none found |  |
 | Lucco | names and words in Lupo's and Sancho's sound: soft onset, open vowels, -o | lucco.so likely-free, getlucco.com likely-free | none found |  |
@@ -380,6 +391,7 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Lupulus | animal diminutives in other languages, Lupeto's style | lupulus.ai unknown, lupulus.so likely-free, getlupulus.com likely-free | none found |  |
 | Lupus | animal words that work as Italian, Spanish or Latin first names (Lupo's family) | lupus.so likely-free, getlupus.com likely-free | none found |  |
 | Lusso | names and words in Lupo's and Sancho's sound: soft onset, open vowels, -o | lusso.so likely-free | none found |  |
+| Lutro | cute short modifications of animal names (Lupi/Urso style) | lutro.so likely-free, getlutro.com likely-free | none found |  |
 | Lykaki | animal diminutives in other languages, Lupeto's style | lykaki.app unknown, lykaki.ai unknown, lykaki.so likely-free, getlykaki.com likely-free | none found |  |
 | Lyki | morphological variations of animal words (not exact translations), Lupi-style | lyki.app likely-free, lyki.ai likely-free, lyki.so likely-free, getlyki.com likely-free | none found | from Greek lykos 'wolf'; LEE-kee — English readers may say LIKE-ee |
 | Lyko | morphological variations of animal words (not exact translations), Lupi-style | lyko.so likely-free | none found |  |
@@ -395,6 +407,7 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Masetto | faithful helpers and companions from world literature and legend | masetto.app likely-free, masetto.so likely-free, getmasetto.com likely-free | none found | the peasant in Don Giovanni; ma-ZET-to |
 | Massimo | good-sounding Italian, Spanish and Latin first names | massimo.so likely-free | none found |  |
 | Matteo | first names shaped like Sancho and Camillo | matteo.so likely-free | none found |  |
+| Meli | cute short modifications of animal names (Lupi/Urso style) | meli.so likely-free | none found |  |
 | Mendel | surnames of famous scientists and inventors | mendel.ai unknown, mendel.so likely-free | none found |  |
 | Meo | real Spanish, Italian and Portuguese nicknames (hypocoristics) | meo.so likely-free | none found |  |
 | Mercator | surnames of famous scientists and inventors | mercator.so likely-free | none found |  |
@@ -428,6 +441,7 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Mupo | names and words in Lupo's and Sancho's sound: soft onset, open vowels, -o | mupo.so likely-free, getmupo.com likely-free | none found |  |
 | Murillo | surnames of Italian and Spanish artists and composers | murillo.app likely-free, murillo.ai unknown, murillo.so likely-free, getmurillo.com likely-free | none found | the Sevillian painter; Spanish moo-REE-yo, English readers say moo-RIL-lo |
 | Museto | Esperanto diminutives and young-animal words (-eto, -ido), Lupeto's family | museto.app likely-free, museto.ai unknown, museto.so likely-free, getmuseto.com likely-free | none found |  |
+| Mustelo | cute short modifications of animal names (Lupi/Urso style) | mustelo.app likely-free, mustelo.ai unknown, mustelo.so likely-free, getmustelo.com likely-free | none found |  |
 | Mysa | words for help, friend or strength from other languages, easy in English | mysa.so likely-free | none found |  |
 | Nachito | real Spanish, Italian and Portuguese nicknames (hypocoristics) | nachito.ai unknown, nachito.so likely-free, getnachito.com likely-free | none found |  |
 | Namin | coined two-syllable names, soft consonants, no clusters (systematic sweep, .ai free) | namin.app likely-free, namin.ai unknown, namin.so likely-free, getnamin.com likely-free | none found | NAH-min |
@@ -448,6 +462,7 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Nino | real Spanish, Italian and Portuguese nicknames (hypocoristics) | nino.so likely-free | none found |  |
 | Nita | real Spanish, Italian and Portuguese nicknames (hypocoristics) | nita.so likely-free | none found |  |
 | Nocti | morphological variations of animal words (not exact translations), Lupi-style | nocti.so likely-free | none found |  |
+| Nocto | cute short modifications of animal names (Lupi/Urso style) | nocto.so likely-free, getnocto.com likely-free | none found |  |
 | Numbat | animal words from many languages in Lupo's shape (Esperanto, Basque, Finnish, Greek, Latin, Portuguese) | numbat.so likely-free | none found |  |
 | Nuno | names and words in Lupo's and Sancho's sound: soft onset, open vowels, -o | nuno.so likely-free | none found |  |
 | Nupo | names and words in Lupo's and Sancho's sound: soft onset, open vowels, -o | nupo.so likely-free, getnupo.com likely-free | none found |  |
@@ -464,10 +479,14 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Orsetto | animal words that work as Italian, Spanish or Latin first names (Lupo's family) | orsetto.app likely-free, orsetto.ai unknown, orsetto.so likely-free, getorsetto.com likely-free | none found | 'teddy bear'; or-SET-to |
 | Orsino | names from Shakespeare, Arthurian legend and fairy tales | orsino.so likely-free, getorsino.com likely-free | none found |  |
 | Orsotto | animal diminutives in other languages, Lupeto's style | orsotto.com likely-free, orsotto.app likely-free, orsotto.ai unknown, orsotto.so likely-free, getorsotto.com likely-free | none found |  |
+| Orsy | cute short modifications of animal names (Lupi/Urso style) | orsy.app likely-free, orsy.so likely-free, getorsy.com likely-free | orsy.ai — Southbrucke consulting site; Würth ORSY (shelving/ordering system) (notable) | from orso; OR-see |
 | Osezno | animal diminutives in other languages, Lupeto's style | osezno.ai unknown, osezno.so likely-free, getosezno.com likely-free | none found |  |
+| Osi | cute short modifications of animal names (Lupi/Urso style) | osi.so likely-free | none found |  |
 | Osito | animal words that work as Italian, Spanish or Latin first names (Lupo's family) | osito.ai unknown, osito.so likely-free | none found |  |
 | Ottavia | good-sounding Italian, Spanish and Latin first names | ottavia.so likely-free, getottavia.com likely-free | none found |  |
 | Ottavio | first names shaped like Sancho and Camillo | ottavio.so likely-free, getottavio.com likely-free | none found |  |
+| Ottero | cute short modifications of animal names (Lupi/Urso style) | ottero.so likely-free, getottero.com likely-free | none found |  |
+| Otti | cute short modifications of animal names (Lupi/Urso style) | otti.so likely-free | none found |  |
 | Ottone | first names shaped like Sancho and Camillo | ottone.ai unknown, ottone.so likely-free, getottone.com likely-free | none found |  |
 | Overnight | folklore household helpers that work while you sleep | overnight.app likely-free | 'overnight agent' is a common phrase in the category: claude-overnight (PyPI), JoeBro 'Night Shift', many guides (notable) | one spelling; everyday word; suggests work done while you sleep and change 'overnight' |
 | Pab | short punchy coinages, 3 letters (CVC), one spelling | pab.so likely-free, getpab.com likely-free, pab.to likely-free | none found |  |
@@ -477,6 +496,7 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Paganini | surnames of Italian and Spanish artists and composers | paganini.so likely-free, getpaganini.com likely-free | none found |  |
 | Paloma | good-sounding Italian, Spanish and Latin first names | paloma.so likely-free | none found |  |
 | Panchito | real Spanish, Italian and Portuguese nicknames (hypocoristics) | panchito.app likely-free, panchito.ai unknown, panchito.so likely-free, getpanchito.com likely-free | none found |  |
+| Pandi | cute short modifications of animal names (Lupi/Urso style) | pandi.so likely-free | none found |  |
 | Papageno | faithful helpers and companions from world literature and legend | papageno.so likely-free, getpapageno.com likely-free | none found |  |
 | Paquito | real Spanish, Italian and Portuguese nicknames (hypocoristics) | paquito.ai unknown, paquito.so likely-free, getpaquito.com likely-free | none found |  |
 | Parce | words for 'buddy' and 'mate' in Spanish, Italian, Portuguese and French slang | parce.so likely-free, getparce.com likely-free | none found |  |
@@ -509,6 +529,7 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Piero | good-sounding Italian, Spanish and Latin first names | piero.so likely-free, getpiero.com likely-free | none found |  |
 | Pietro | good-sounding Italian, Spanish and Latin first names | pietro.so likely-free, getpietro.com likely-free | none found |  |
 | Pina | real Spanish, Italian and Portuguese nicknames (hypocoristics) | pina.so likely-free | none found |  |
+| Pinga | cute short modifications of animal names (Lupi/Urso style) | pinga.so likely-free | none found |  |
 | Pingi | morphological variations of animal words (not exact translations), Lupi-style | pingi.so likely-free, getpingi.com likely-free | none found |  |
 | Pingveno | Esperanto diminutives and young-animal words (-eto, -ido), Lupeto's family | pingveno.app unknown, pingveno.ai unknown, pingveno.so likely-free, getpingveno.com likely-free | none found |  |
 | Pipino | real Spanish, Italian and Portuguese nicknames (hypocoristics) | pipino.app likely-free, pipino.ai unknown, pipino.so likely-free, getpipino.com likely-free | none found |  |
@@ -620,6 +641,7 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Tanzo | names and words in Lupo's and Sancho's sound: soft onset, open vowels, -o | tanzo.so likely-free, gettanzo.com likely-free | none found |  |
 | Tapir | animal words from many languages in Lupo's shape (Esperanto, Basque, Finnish, Greek, Latin, Portuguese) | tapir.so likely-free | none found |  |
 | Tartini | surnames of Italian and Spanish artists and composers | tartini.app likely-free, tartini.so likely-free, gettartini.com likely-free | none found |  |
+| Tassi | cute short modifications of animal names (Lupi/Urso style) | tassi.so likely-free | none found |  |
 | Tassino | animal diminutives in other languages, Lupeto's style | tassino.app likely-free, tassino.ai unknown, tassino.so likely-free, gettassino.com likely-free | none found |  |
 | Tasso | animal words that work as Italian, Spanish or Latin first names (Lupo's family) | tasso.so likely-free, gettasso.com likely-free | none found |  |
 | Tato | short Italian/Spanish/Latin nouns that sound like names, Lupo-shaped (two syllables, ends in -o) | tato.so likely-free | none found |  |
@@ -664,7 +686,10 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Tsuru | Japanese, Hawaiian and Basque names and animal words that sound easy in English (Tancho's neighbours) | tsuru.so likely-free | none found |  |
 | Tuca | real Spanish, Italian and Portuguese nicknames (hypocoristics) | tuca.so likely-free, gettuca.com likely-free | none found |  |
 | Tucano | animal words from many languages in Lupo's shape (Esperanto, Basque, Finnish, Greek, Latin, Portuguese) | tucano.so likely-free, gettucano.com likely-free | Tucanos Brazilian Grill (app); Embraer Tucano aircraft (notable) | Portuguese/Italian 'toucan'; too-KAH-no |
+| Tuffi | cute short modifications of animal names (Lupi/Urso style) | tuffi.app likely-free, tuffi.ai unknown, tuffi.so likely-free, gettuffi.com likely-free | none found |  |
 | Tui | animal words from many languages in Lupo's shape (Esperanto, Basque, Finnish, Greek, Latin, Portuguese) | tui.so likely-free | none found |  |
+| Tuki | cute short modifications of animal names (Lupi/Urso style) | tuki.so likely-free | none found |  |
+| Tuko | cute short modifications of animal names (Lupi/Urso style) | tuko.so likely-free | none found |  |
 | Tulio | names and words in Lupo's and Sancho's sound: soft onset, open vowels, -o | tulio.so likely-free, gettulio.com likely-free | none found |  |
 | Tullio | first names shaped like Sancho and Camillo | tullio.so likely-free, gettullio.com likely-free | none found |  |
 | Tulo | names and words in Lupo's and Sancho's sound: soft onset, open vowels, -o | tulo.so likely-free | none found |  |
@@ -679,17 +704,20 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Ulisse | Italian forms of mythological names | ulisse.so likely-free, getulisse.com likely-free | none found |  |
 | Ulvi | morphological variations of animal words (not exact translations), Lupi-style | ulvi.so likely-free, getulvi.com likely-free | none found |  |
 | Ungaretti | surnames of Italian and Spanish artists and composers | ungaretti.app likely-free, ungaretti.ai unknown, ungaretti.so likely-free, getungaretti.com likely-free | none found |  |
+| Urs | cute short modifications of animal names (Lupi/Urso style) | urs.so likely-free | none found |  |
 | Ursello | animal diminutives in other languages, Lupeto's style | ursello.app likely-free, ursello.ai unknown, ursello.so likely-free, getursello.com likely-free | none found |  |
 | Ursi | morphological variations of animal words (not exact translations), Lupi-style | ursi.so likely-free, getursi.com likely-free | none found |  |
 | Ursido | Esperanto diminutives and young-animal words (-eto, -ido), Lupeto's family | ursido.app likely-free, ursido.ai unknown, ursido.so likely-free, getursido.com likely-free | none found |  |
 | Ursinho | animal diminutives in other languages, Lupeto's style | ursinho.app likely-free, ursinho.ai unknown, ursinho.so likely-free, getursinho.com likely-free | none found |  |
 | Ursino | animal diminutives in other languages, Lupeto's style | ursino.ai likely-free, ursino.so likely-free, getursino.com likely-free | none found | Italian/Latin 'little bear'; oor-SEE-no |
-| Urso | animal words from many languages in Lupo's shape (Esperanto, Basque, Finnish, Greek, Latin, Portuguese) | urso.so likely-free, geturso.com likely-free | none found |  |
+| Urso | animal words from many languages in Lupo's shape (Esperanto, Basque, Finnish, Greek, Latin, Portuguese) | urso.so likely-free, geturso.com likely-free, urso.to likely-free, heyurso.com likely-free, useurso.com likely-free, tryurso.com likely-free | Urso: Self Care Virtual Pet — iOS app built around a cute bear mascot, by PRAKTIKA, INC. (Product Hunt 2023, ~600 votes) (notable); urso.ai registered 2025 (no site); urso.com, urso.app, urso.co, urso.me taken (notable) | Portuguese 'bear'; OOR-so; one spelling / user proposed it: no conflict in their quick search (2026-11-14) |
 | Ursu | morphological variations of animal words (not exact translations), Lupi-style | ursu.app likely-free, ursu.ai likely-free, ursu.so likely-free, getursu.com likely-free | none found | Romanian 'the bear' (urs + -u); OOR-soo |
 | Ursulet | animal diminutives in other languages, Lupeto's style | ursulet.app unknown, ursulet.ai unknown, ursulet.so likely-free, getursulet.com likely-free | none found |  |
 | Ursulo | animal diminutives in other languages, Lupeto's style | ursulo.app unknown, ursulo.ai unknown, ursulo.so likely-free, getursulo.com likely-free | none found |  |
 | Ursus | animal words that work as Italian, Spanish or Latin first names (Lupo's family) | ursus.so likely-free, getursus.com likely-free | none found |  |
+| Ursy | cute short modifications of animal names (Lupi/Urso style) | ursy.so likely-free, getursy.com likely-free | none found |  |
 | Urubu | animal words from many languages in Lupo's shape (Esperanto, Basque, Finnish, Greek, Latin, Portuguese) | urubu.so likely-free, geturubu.com likely-free | none found |  |
+| Urzo | cute short modifications of animal names (Lupi/Urso style) | urzo.app likely-free, urzo.ai likely-free, urzo.so likely-free, geturzo.com likely-free | none found | a softened Urso; OOR-zo |
 | Vab | short punchy coinages, 3 letters (CVC), one spelling | vab.so likely-free, getvab.com likely-free, vab.co likely-free | none found |  |
 | Valerio | good-sounding Italian, Spanish and Latin first names | valerio.so likely-free | none found |  |
 | Vargi | morphological variations of animal words (not exact translations), Lupi-style | vargi.ai unknown, vargi.so likely-free, getvargi.com likely-free | none found |  |
@@ -706,7 +734,6 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Volpacchiotto | animal diminutives in other languages, Lupeto's style | volpacchiotto.com likely-free, volpacchiotto.app unknown, volpacchiotto.ai unknown, volpacchiotto.so likely-free, getvolpacchiotto.com likely-free | none found |  |
 | Volpe | animal words that work as Italian, Spanish or Latin first names (Lupo's family) | volpe.so likely-free | none found |  |
 | Volpino | animal diminutives in other languages, Lupeto's style | volpino.app unknown, volpino.ai likely-free, volpino.so likely-free, getvolpino.com likely-free | none found | Italian 'little fox' (and a small Italian spitz breed); vol-PEE-no |
-| Volpo | morphological variations of animal words (not exact translations), Lupi-style | volpo.app likely-free, volpo.so likely-free, getvolpo.com likely-free | volpo.ai parked; search 'volpo ai': nothing named Volpo; VOLO (AI services), Volare AI nearby (notable) | from volpe 'fox', shaped like Lupo; VOL-po |
 | Vulpecula | animal diminutives in other languages, Lupeto's style | vulpecula.so likely-free, getvulpecula.com likely-free | none found |  |
 | Vulpello | animal diminutives in other languages, Lupeto's style | vulpello.com likely-free, vulpello.app likely-free, vulpello.ai unknown, vulpello.so likely-free, getvulpello.com likely-free | none found |  |
 | Vulpes | animal words that work as Italian, Spanish or Latin first names (Lupo's family) | vulpes.so likely-free | none found |  |

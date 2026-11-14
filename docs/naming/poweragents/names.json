@@ -211,8 +211,15 @@
           "status": "taken",
           "method": "rdap",
           "checked_at": "2026-11-13"
+        },
+        "otto.so": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
         }
-      }
+      },
+      "verdict": "dropped",
+      "reason": "common name/brand"
     },
     "Theo": {
       "direction": "warm human first names",
@@ -6109,6 +6116,11 @@
           "status": "taken",
           "method": "dns",
           "checked_at": "2026-11-13"
+        },
+        "nemo.so": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
         }
       }
     },
@@ -48357,8 +48369,9 @@
         },
         "urso.ai": {
           "status": "taken",
-          "method": "dns",
-          "checked_at": "2026-11-13"
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14",
+          "note": "registered 2025-03-28, no site"
         },
         "urso.so": {
           "status": "likely-free",
@@ -48369,8 +48382,70 @@
           "status": "likely-free",
           "method": "rdap",
           "checked_at": "2026-11-13"
+        },
+        "urso.co": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "urso.me": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "urso.to": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "heyurso.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "useurso.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "tryurso.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "ursoapp.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
         }
-      }
+      },
+      "feedback": [
+        "user proposed it: no conflict in their quick search (2026-11-14)"
+      ],
+      "conflicts": [
+        {
+          "who": "Urso: Self Care Virtual Pet — iOS app built around a cute bear mascot, by PRAKTIKA, INC. (Product Hunt 2023, ~600 votes)",
+          "space": "consumer app with a mascot",
+          "severity": "notable",
+          "url": "https://apps.apple.com/us/app/id6450211570",
+          "checked_at": "2026-11-14"
+        },
+        {
+          "who": "urso.ai registered 2025 (no site); urso.com, urso.app, urso.co, urso.me taken",
+          "space": "domains",
+          "severity": "notable",
+          "url": "https://urso.ai",
+          "checked_at": "2026-11-14"
+        },
+        {
+          "who": "Adolfo Urso — Italian minister, often quoted on AI policy",
+          "space": "press",
+          "severity": "noise",
+          "url": "https://www.agenzianova.com/en/news/urso-artificial-intelligence-puts-humans-at-the-center-of-the-process/",
+          "checked_at": "2026-11-14"
+        }
+      ],
+      "phonetics": "Portuguese 'bear'; OOR-so; one spelling"
     },
     "Leono": {
       "direction": "animal words from many languages in Lupo's shape (Esperanto, Basque, Finnish, Greek, Latin, Portuguese)",
@@ -56371,7 +56446,8 @@
       },
       "verdict": "liked",
       "feedback": [
-        "user found it: \"bardzo fajnie brzmi, jest krotka\" — a variation on Lupo (2026-11-14)"
+        "user found it: \"bardzo fajnie brzmi, jest krotka\" — a variation on Lupo (2026-11-14)",
+        "user did not mean the plural — just a good-sounding modification of an animal name (2026-11-14)"
       ],
       "conflicts": [
         {
@@ -56582,7 +56658,11 @@
           "checked_at": "2026-11-14"
         }
       ],
-      "phonetics": "from volpe 'fox', shaped like Lupo; VOL-po"
+      "phonetics": "from volpe 'fox', shaped like Lupo; VOL-po",
+      "verdict": "rejected",
+      "feedback": [
+        "\"Wolpo to nie brzmi dobrze\" (2026-11-14)"
+      ]
     },
     "Volpa": {
       "direction": "morphological variations of animal words (not exact translations), Lupi-style",
@@ -58213,6 +58293,1617 @@
           "checked_at": "2026-11-14"
         },
         "gettupi.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Pandi": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "pandi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "pandi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "pandi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "pandi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getpandi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Pando": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "pando.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "pando.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "pando.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "pando.so": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "getpando.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Otti": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "otti.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "otti.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "otti.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "otti.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getotti.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Lonti": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "lonti.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lonti.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lonti.ai": {
+          "status": "taken",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "lonti.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getlonti.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [
+        {
+          "who": "lonti.ai registered (empty)",
+          "space": "domains",
+          "severity": "notable",
+          "url": "https://lonti.ai",
+          "checked_at": "2026-11-14"
+        }
+      ],
+      "phonetics": "from lontra 'otter'; LON-tee"
+    },
+    "Conni": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "conni.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "conni.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "conni.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "conni.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getconni.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "Conni children's books"
+    },
+    "Bali": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "bali.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "bali.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "bali.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "bali.so": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "getbali.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Farfi": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "farfi.com": {
+          "status": "taken",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "farfi.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "farfi.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "farfi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getfarfi.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "'far-/fart' in English"
+    },
+    "Orsy": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "orsy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "orsy.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "orsy.ai": {
+          "status": "taken",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "orsy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getorsy.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [
+        {
+          "who": "orsy.ai — Southbrucke consulting site; Würth ORSY (shelving/ordering system)",
+          "space": "services",
+          "severity": "notable",
+          "url": "https://orsy.ai",
+          "checked_at": "2026-11-14"
+        }
+      ],
+      "phonetics": "from orso; OR-see"
+    },
+    "Bubo": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "bubo.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "bubo.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "bubo.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "bubo.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getbubo.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Nocto": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "nocto.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "nocto.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "nocto.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "nocto.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getnocto.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Tanu": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "tanu.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "tanu.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "tanu.ai": {
+          "status": "taken",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "tanu.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "gettanu.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [
+        {
+          "who": "tanu.ai — 'Tanu AI' live site",
+          "space": "AI",
+          "severity": "blocking",
+          "url": "https://tanu.ai",
+          "checked_at": "2026-11-14"
+        }
+      ],
+      "phonetics": "from tanuki",
+      "verdict": "dropped",
+      "reason": "blocking: tanu.ai — 'Tanu AI' live site"
+    },
+    "Osi": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "osi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "osi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "osi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "osi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getosi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Lobo": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "lobo.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lobo.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lobo.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lobo.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getlobo.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Tigi": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "tigi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "tigi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "tigi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "tigi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "gettigi.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "TIGI haircare"
+    },
+    "Koli": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "koli.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "koli.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "koli.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "koli.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getkoli.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Fenni": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "fenni.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "fenni.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "fenni.ai": {
+          "status": "taken",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "fenni.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getfenni.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [
+        {
+          "who": "Fenni — Fenwick & West's internal AI knowledge assistant; fenni.ai registered (empty)",
+          "space": "AI assistant",
+          "severity": "notable",
+          "url": "https://www.fenwick.com/news/Pages/How-Fenwick-Labs-Growth-is-a-Microcosm-of-Legal-Techs-Evolution.aspx",
+          "checked_at": "2026-11-14"
+        }
+      ],
+      "phonetics": "from fennec fox; FEN-nee"
+    },
+    "Fenek": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "fenek.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "fenek.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "fenek.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "fenek.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getfenek.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Lemmi": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "lemmi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lemmi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lemmi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lemmi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getlemmi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Capi": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "capi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "capi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "capi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "capi.so": {
+          "status": "taken",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getcapi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Capy": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "capy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "capy.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "capy.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "capy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getcapy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "generic capybara slang"
+    },
+    "Kapi": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "kapi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "kapi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "kapi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "kapi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getkapi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Foxi": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "foxi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "foxi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "foxi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "foxi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getfoxi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Foxo": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "foxo.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "foxo.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "foxo.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "foxo.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getfoxo.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Urzo": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "urzo.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "urzo.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "urzo.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "urzo.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "geturzo.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [
+        {
+          "who": "search 'urzo ai': nothing named Urzo; Zurro AI Studio is the nearest",
+          "space": "AI",
+          "severity": "noise",
+          "url": "https://futuretools.io/tools/zurro-ai-studio-bd7c5669",
+          "checked_at": "2026-11-14"
+        }
+      ],
+      "phonetics": "a softened Urso; OOR-zo"
+    },
+    "Urs": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "urs.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "urs.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "urs.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "urs.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "geturs.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Ursy": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "ursy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "ursy.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "ursy.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "ursy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getursy.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Pingo": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "pingo.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "pingo.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "pingo.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "pingo.so": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "getpingo.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Pinga": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "pinga.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "pinga.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "pinga.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "pinga.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getpinga.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Pengo": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "pengo.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "pengo.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "pengo.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "pengo.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getpengo.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "old game"
+    },
+    "Ottero": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "ottero.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "ottero.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "ottero.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "ottero.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getottero.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Lutri": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "lutri.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lutri.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lutri.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lutri.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getlutri.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [
+        {
+          "who": "Lutra AI — productivity agent (sound-alike; lutra = otter)",
+          "space": "AI agents",
+          "severity": "blocking",
+          "url": "https://www.startuphub.ai/startups/lutra-ai",
+          "checked_at": "2026-11-14"
+        }
+      ],
+      "phonetics": "from lutra 'otter'",
+      "verdict": "dropped",
+      "reason": "blocking: Lutra AI — productivity agent (sound-alike; lutra = otter)"
+    },
+    "Lutro": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "lutro.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lutro.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lutro.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lutro.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getlutro.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Mustelo": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "mustelo.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "mustelo.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "mustelo.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "mustelo.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getmustelo.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Ermi": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "ermi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "ermi.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "ermi.ai": {
+          "status": "taken",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "ermi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getermi.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Martin": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "martin.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "martin.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "martin.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "martin.so": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "getmartin.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Tassi": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "tassi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "tassi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "tassi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "tassi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "gettassi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Meli": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "meli.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "meli.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "meli.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "meli.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getmeli.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Api": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "api.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "api.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "api.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "api.so": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "getapi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Ape": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "ape.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "ape.app": {
+          "status": "taken",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "ape.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "ape.so": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "getape.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Luma": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "luma.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "luma.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "luma.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "luma.so": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "getluma.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Tuki": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "tuki.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "tuki.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "tuki.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "tuki.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "gettuki.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Tuko": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "tuko.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "tuko.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "tuko.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "tuko.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "gettuko.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Riso": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "riso.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "riso.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "riso.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "riso.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getriso.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "'rice'"
+    },
+    "Mofu": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "mofu.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "mofu.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "mofu.ai": {
+          "status": "taken",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "mofu.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getmofu.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [
+        {
+          "who": "Mofu AI (もふAI) — Japanese consumer AI app for dog owners on LINE; mofu.ai is a Salla store",
+          "space": "consumer AI app",
+          "severity": "blocking",
+          "url": "https://page.line.me/096fnhgn",
+          "checked_at": "2026-11-14"
+        }
+      ],
+      "phonetics": "Japanese 'fluffy' (mofumofu)",
+      "verdict": "dropped",
+      "reason": "blocking: Mofu AI (もふAI) — Japanese consumer AI app for dog owners on LINE; mofu.ai is a S"
+    },
+    "Mochi": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "mochi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "mochi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "mochi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "mochi.so": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "getmochi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Boba": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "boba.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "boba.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "boba.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "boba.so": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "getboba.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Pippi": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "pippi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "pippi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "pippi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "pippi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getpippi.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "Pippi Longstocking"
+    },
+    "Poppi": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "poppi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "poppi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "poppi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "poppi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getpoppi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "Poppi soda"
+    },
+    "Tuffi": {
+      "direction": "cute short modifications of animal names (Lupi/Urso style)",
+      "round": 29,
+      "domains": {
+        "tuffi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "tuffi.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "tuffi.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "tuffi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "gettuffi.com": {
           "status": "likely-free",
           "method": "rdap",
           "checked_at": "2026-11-14"

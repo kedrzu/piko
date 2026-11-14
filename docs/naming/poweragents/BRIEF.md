@@ -71,6 +71,8 @@ mascot.
 
 - **Lupeto is the current favourite** (2026-11-14) despite the -eto dislike; wants more in its style — an animal's name in another language, often a diminutive.
 
+- Wants a good-sounding *modification* of an animal name (Lupi, Urso), not a grammatical form; short animal names that sound cute rather than odd ("Volpo doesn't sound good") (2026-11-14).
+
 ## Rejected directions
 
 - The Esperanto -eto ending (Urseto, Vulpeto, Nubeto…) — "I don't like that ending" (round 23).
