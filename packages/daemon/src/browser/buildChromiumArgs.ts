@@ -15,6 +15,9 @@ export interface BuildChromiumArgsOptions {
  * proxy carries no UDP. `--use-mock-keychain` keeps the macOS Keychain out: without it the first network request waits
  * on a Keychain access prompt for the cookie key, which either steals focus or, from a background daemon, never
  * resolves; the profile's cookies are then protected by the private folder they live in, not by the Keychain.
+ * `PaintHolding` off: after a navigation Chrome drops input until the new page is first painted, and a page in a
+ * minimized window is never painted, so without it the agent's clicks and keys would never reach a page it opened
+ * (checked 2026-11-14 on Chrome for Testing 157: a click on a minimized example.com lands only with it disabled).
  * @__NO_SIDE_EFFECTS__
  */
 export function buildChromiumArgs(options: BuildChromiumArgsOptions) {
@@ -29,6 +32,7 @@ export function buildChromiumArgs(options: BuildChromiumArgsOptions) {
         '--disable-quic',
         '--force-webrtc-ip-handling-policy=disable_non_proxied_udp',
         '--use-mock-keychain',
+        '--disable-features=PaintHolding',
         ...(options.extraArgs ?? []),
     ];
 }

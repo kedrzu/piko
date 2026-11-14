@@ -101,6 +101,24 @@ test('tunnels CONNECT both ways to the address it checked', async () => {
     expect(target.connections()).toBe(1);
 });
 
+test('falls back to the next checked address when the first one refuses the connection', async () => {
+    // The server listens on IPv6 loopback only: the IPv4 address, dialled first, is refused at once.
+    const target = await startEchoServer('::1');
+    const proxyPort = await startProxy({
+        resolve: host => Promise.resolve(host === 'flaky.test' ? ['::1', '127.0.0.1'] : []),
+        isAllowed: address => address === '::1' || address === '127.0.0.1',
+    });
+
+    const socket = connect(proxyPort, '127.0.0.1');
+    cleanups.push(() => void socket.destroy());
+    const reader = readFrom(socket);
+    socket.write(`CONNECT flaky.test:${target.port} HTTP/1.1\r\n\r\n`);
+    expect(await reader.until('\r\n\r\n')).toBe('HTTP/1.1 200 Connection Established\r\n\r\n');
+
+    socket.write('ping');
+    expect(await reader.until('pong:ping')).toBe('pong:ping');
+});
+
 test('forwards an absolute-form request in origin form without proxy headers', async () => {
     const seen: { path: string; body: string; headers: Record<string, string> }[] = [];
     const origin = Bun.serve({
@@ -160,7 +178,7 @@ async function startProxy(destinations: BrowserDestinationPolicy) {
 }
 
 /** A TCP server answering `pong:<data>`, counting the connections it gets. */
-async function startEchoServer() {
+async function startEchoServer(host = '127.0.0.1') {
     let connections = 0;
     const sockets = new Set<Socket>();
     const server = createServer(socket => {
@@ -170,7 +188,7 @@ async function startEchoServer() {
         socket.on('close', () => sockets.delete(socket));
     });
     await new Promise<void>(resolve => {
-        server.listen(0, '127.0.0.1', resolve);
+        server.listen(0, host, resolve);
     });
     cleanups.push(async () => {
         for (const socket of sockets) {

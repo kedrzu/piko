@@ -11,13 +11,14 @@ import { createSingleRunner } from '@nzyme/utils/createSingleRunner.js';
 import { createStopwatch } from '@nzyme/utils/createStopwatch.js';
 import { waitUntil } from '@nzyme/utils/waitUntil.js';
 
-import { POWERAGENTS_DATA_ROOT, POWERAGENTS_LIMA_DIR, POWERAGENTS_LIMA_HOME } from '../env.js';
+import { BROWSER_TUNNEL_PORT, POWERAGENTS_DATA_ROOT, POWERAGENTS_LIMA_DIR, POWERAGENTS_LIMA_HOME } from '../env.js';
 import {
     AGENT_CONTAINER,
     AGENT_DATA_ROOT,
     AGENT_HOST_PORT,
     AGENT_SPEC_LABEL,
     buildAgentRunArgs,
+    HOST_GATEWAY,
 } from './buildAgentRunArgs.js';
 import { buildHostFirewall } from './buildHostFirewall.js';
 import type { FirewallOpening } from './buildHostFirewall.js';
@@ -35,13 +36,12 @@ const IMAGE_REPOSITORY = 'poweragents-agent';
  * can take from the computer, not what it takes on average. Lima reads it only when it creates the VM.
  */
 const VM_MEMORY_GIB = 3;
-/** The host as the VM sees it (`host.lima.internal`): Lima's user-mode network gateway, forwarding to the host. */
-const HOST_GATEWAY = '192.168.5.2';
 /**
  * The private addresses the sandbox may reach (design D8: the agent sees nothing else of the computer or its networks).
- * A port on the computer is `{ address: HOST_GATEWAY, port }`; a LAN device's is its address. None yet.
+ * A port on the computer is `{ address: HOST_GATEWAY, port }`; a LAN device's is its address. Now only the daemon's
+ * browser tunnel.
  */
-const FIREWALL_OPENINGS: FirewallOpening[] = [];
+const FIREWALL_OPENINGS: FirewallOpening[] = [{ address: HOST_GATEWAY, port: BROWSER_TUNNEL_PORT }];
 /** The VM's boot-time nftables ruleset; it holds only the sandbox's rules, so it never flushes Lima's own. */
 const FIREWALL_FILE = '/etc/nftables.conf';
 const AGENT_READY_TIMEOUT_MS = 120_000;
@@ -83,6 +83,7 @@ export const LimaSandbox = defineService({
     setup({ logger, env, limaDir, limaHome, dataRoot }): Sandbox {
         const limactlPath = path.join(limaDir, 'bin', 'limactl');
         const passwordFile = path.join(path.dirname(limaHome), 'agent-password');
+        const browserTokenFile = path.join(path.dirname(limaHome), 'browser-token');
         const limactlEnv = { ...env, LIMA_HOME: limaHome };
 
         let state: SandboxState = { status: 'stopped' };
@@ -331,6 +332,7 @@ export const LimaSandbox = defineService({
         async function startAgent(image: string): Promise<SandboxEndpoint> {
             const stopwatch = createStopwatch();
             const password = await readOrCreatePassword(passwordFile);
+            const browserToken = await readOrCreatePassword(browserTokenFile);
             const endpoint: SandboxEndpoint = {
                 url: `http://127.0.0.1:${AGENT_HOST_PORT}`,
                 username: 'opencode',
@@ -344,7 +346,9 @@ export const LimaSandbox = defineService({
             }
 
             await limactl(shellArgs('nerdctl', 'rm', '--force', AGENT_CONTAINER), { allowFailure: true });
-            await limactl(shellArgs('nerdctl', ...run.args), { stdin: `OPENCODE_SERVER_PASSWORD=${password}\n` });
+            await limactl(shellArgs('nerdctl', ...run.args), {
+                stdin: `OPENCODE_SERVER_PASSWORD=${password}\nPOWERAGENTS_BROWSER_TOKEN=${browserToken}\n`,
+            });
 
             await waitUntil(() => isAgentReady(endpoint), {
                 intervalMs: 500,

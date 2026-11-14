@@ -45,6 +45,9 @@ const MAX_HEAD_BYTES = 16 * 1024;
 
 const HEAD_END = Buffer.from('\r\n\r\n');
 
+/** How long one address may take to accept a connection before the next one is tried. */
+const CONNECT_TIMEOUT_MS = 5000;
+
 /** Request headers meant for the proxy, or replaced by `Connection: close`, never forwarded to the server. */
 const DROPPED_HEADERS = new Set(['proxy-connection', 'proxy-authorization', 'connection', 'keep-alive']);
 
@@ -120,47 +123,73 @@ export const BrowserNetworkGuard = defineService({
                 return;
             }
 
-            const address = addresses[0];
-            if (address == null || !addresses.every(candidate => destinations.isAllowed(candidate))) {
+            if (addresses.length === 0 || !addresses.every(candidate => destinations.isAllowed(candidate))) {
                 logger.debug('The browser proxy refused a destination', { host: target.host });
                 refuse(client, 403);
                 return;
             }
 
-            if (client.destroyed) {
+            const upstream = await connectToFirst(sortIPv4First(addresses), target.port).catch(() => null);
+            if (!upstream) {
+                refuse(client, 502);
                 return;
             }
-            let connected = false;
-            const upstream = createConnection({ host: address, port: target.port });
-            upstream.on('error', () => {
-                if (!connected) {
-                    refuse(client, 502);
-                }
+            if (client.destroyed) {
                 upstream.destroy();
-            });
-            upstream.once('connect', () => {
-                connected = true;
-                if (target.head == null) {
-                    client.write('HTTP/1.1 200 Connection Established\r\n\r\n');
-                } else {
-                    upstream.write(target.head);
-                }
-                if (rest.length > 0) {
-                    upstream.write(rest);
-                }
-                client.pipe(upstream);
-                upstream.pipe(client);
-            });
+                return;
+            }
+
+            if (target.head == null) {
+                client.write('HTTP/1.1 200 Connection Established\r\n\r\n');
+            } else {
+                upstream.write(target.head);
+            }
+            if (rest.length > 0) {
+                upstream.write(rest);
+            }
+            upstream.on('error', () => upstream.destroy());
+            client.pipe(upstream);
+            upstream.pipe(client);
             client.once('close', () => upstream.destroy());
-            // Before the connection is up, the 502 refusal ends the client instead.
-            upstream.once('close', () => {
-                if (connected) {
-                    client.destroy();
-                }
-            });
+            upstream.once('close', () => client.destroy());
         }
     },
 });
+
+/**
+ * Connects to the first of the checked addresses that answers, in order, so a host whose first address is unreachable
+ * (an IPv6 address on a network without IPv6) still loads. Only these addresses are ever dialled: no lookup happens here.
+ */
+async function connectToFirst(addresses: string[], port: number): Promise<Socket> {
+    let lastError: unknown = new Error('No address to connect to');
+    for (const address of addresses) {
+        try {
+            return await connectTo(address, port);
+        } catch (error) {
+            lastError = error;
+        }
+    }
+    throw lastError;
+}
+
+/** One connection attempt, given up after `CONNECT_TIMEOUT_MS`. */
+function connectTo(address: string, port: number): Promise<Socket> {
+    return new Promise((resolve, reject) => {
+        const socket = createConnection({ host: address, port });
+        socket.setTimeout(CONNECT_TIMEOUT_MS, () => socket.destroy(new Error(`Timed out connecting to ${address}`)));
+        socket.once('error', reject);
+        socket.once('connect', () => {
+            socket.setTimeout(0);
+            socket.off('error', reject);
+            resolve(socket);
+        });
+    });
+}
+
+/** IPv4 addresses first: most networks reach them, while IPv6 often has no route. Order is otherwise kept. */
+function sortIPv4First(addresses: string[]) {
+    return [...addresses.filter(address => isIP(address) === 4), ...addresses.filter(address => isIP(address) !== 4)];
+}
 
 /**
  * Reads a proxy request head: `CONNECT host:port` for a tunnel, or an absolute-form `http://` request, rewritten to
