@@ -24,6 +24,11 @@ export const AGENT_PROJECTS_DIR = path.posix.join(AGENT_DATA_ROOT, PROJECTS_FOLD
 export const AGENT_DAEMON_DIR = path.posix.join(AGENT_DATA_ROOT, DAEMON_FOLDER);
 /** The skill copies the agent loads; the global `opencode.json` of `agent.Containerfile` names the same folder. */
 export const AGENT_SKILLS_DIR = path.posix.join(AGENT_DAEMON_DIR, 'skills');
+/**
+ * The plugins' environment as the agent sees it, on the `poweragents-env` volume: Node packages in `node/`, a Python venv
+ * in `python/`. The image's `PATH` (`agent.Containerfile`) leads with their bin folders.
+ */
+export const AGENT_ENV_DIR = '/opt/poweragents/env';
 /** The port the agent is published on, on the VM's loopback (Lima forwards it to the host's), next to the daemon's. */
 export const AGENT_HOST_PORT = 47611;
 
@@ -59,7 +64,7 @@ export function buildAgentRunArgs(image: string): AgentRunArgs {
         '--volume',
         'poweragents-opencode:/root/.local/share/opencode',
         '--volume',
-        'poweragents-env:/opt/poweragents/env',
+        `poweragents-env:${AGENT_ENV_DIR}`,
         '--env',
         'CLAUDE_CONFIG_DIR=/root/.claude',
         '--env',

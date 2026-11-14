@@ -268,9 +268,114 @@ test('syncs even when the sandbox cannot be told, with a warning', async () => {
     ]);
 });
 
+test('a failed environment apply keeps the installation, returns the error and shows it on the plugins with an environment; the next apply clears it', async () => {
+    const { plugins, projects, sandbox } = await setup({ ready: true });
+    const projectId = await createProject(projects, 'Praca');
+    sandbox.failing.add('bun install');
+
+    const result = await plugins.install({ name: 'email-sorting', projectId });
+
+    expect(result.added).toBe(true);
+    expect(result.environmentError).toMatchObject({ code: 'applyFailed', part: 'npm', exitCode: 1, output: 'offline' });
+    expect(await installsOf(plugins, 'email-sorting')).toEqual([{ projectId }]);
+    const listed = await plugins.list();
+    expect(listed.find(plugin => plugin.name === 'email-sorting')?.environmentError).toEqual(result.environmentError);
+    // An installed plugin without an environment has no error.
+    expect(listed.find(plugin => plugin.name === 'my-notes')?.environmentError).toBeNull();
+
+    // What the daemon runs when the sandbox next becomes ready.
+    sandbox.failing.clear();
+    expect(await plugins.applyEnvironment()).toEqual({ applied: true, errors: new Map() });
+    expect((await plugins.list()).every(plugin => plugin.environmentError === null)).toBe(true);
+});
+
+test("installing applies the bundled plugin's environment from its copy, and removing it applies the environment without it", async () => {
+    const { plugins, projects, sandbox } = await setup({ ready: true });
+    const projectId = await createProject(projects, 'Praca');
+
+    await plugins.install({ name: 'email-sorting', projectId });
+
+    expect(sandbox.packageJsons.at(-1)).toEqual({
+        private: true,
+        dependencies: {
+            '@poweragents-plugins/email-sorting': 'file:/Poweragents/.poweragents/plugins/email-sorting/cli',
+            'left-pad': '1.3.0',
+        },
+    });
+    expect(sandbox.requirements.at(-1)).toBe('requests==2.31.0\n');
+
+    await plugins.remove({ name: 'email-sorting', projectId });
+
+    expect(sandbox.packageJsons.at(-1)).toEqual({ private: true, dependencies: {} });
+    expect(sandbox.commands.at(-1)?.slice(0, 3)).toEqual(['rm', '-rf', '/opt/poweragents/env/python']);
+});
+
+test('installing an own plugin applies its environment from its folder', async () => {
+    const { plugins, dataRoot, sandbox } = await setup({ ready: true });
+    await writeFile(
+        path.join(dataRoot, 'plugins', 'my-notes', 'plugin.json'),
+        JSON.stringify({
+            name: 'my-notes',
+            level: 'profile',
+            tags: ['test'],
+            marketplace: {
+                pl: { title: 'my-notes (pl)', description: 'Opis my-notes.' },
+                en: { title: 'my-notes', description: 'Describes my-notes.' },
+            },
+            environment: { cli: 'tools/cli' },
+        }),
+    );
+
+    const result = await plugins.install({ name: 'my-notes' });
+
+    expect(result.environmentError).toBeNull();
+    expect(sandbox.packageJsons.at(-1)).toEqual({
+        private: true,
+        dependencies: { '@poweragents-plugins/my-notes': 'file:/Poweragents/plugins/my-notes/tools/cli' },
+    });
+});
+
+test('installing or removing a bundled plugin without an environment applies nothing; an own plugin and the ready apply always do', async () => {
+    const { plugins, sandbox } = await setup({ ready: true });
+
+    expect(await plugins.install({ name: 'gmail' })).toMatchObject({ added: true, environmentError: null });
+    await plugins.remove({ name: 'gmail' });
+    expect(sandbox.commands).toEqual([]);
+
+    // `my-notes` declares no environment either: installing an own plugin is the agent asking for an apply.
+    await plugins.install({ name: 'my-notes' });
+    expect(sandbox.packageJsons).toEqual([{ private: true, dependencies: {} }]);
+
+    await plugins.applyEnvironment();
+    expect(sandbox.packageJsons).toHaveLength(2);
+});
+
+test('with the sandbox not ready an installation succeeds and applies nothing', async () => {
+    const { plugins, sandbox } = await setup();
+
+    const result = await plugins.install({ name: 'gmail' });
+
+    expect(result).toMatchObject({ added: true, environmentError: null });
+    expect(sandbox.commands).toEqual([]);
+});
+
+/** What the fake sandbox records, and the commands it fails. */
+interface FakeSandbox {
+    notified: number;
+    /** Every command run in the container. */
+    commands: string[][];
+    /** Every `package.json` and `requirements.in` written into the environment, the first parsed. */
+    packageJsons: unknown[];
+    requirements: string[];
+    /** Commands, by their first two words, that fail with the output `offline`. */
+    failing: Set<string>;
+}
+
 interface SetupOptions {
     /** The fake sandbox rejects when told the skills changed. */
     notifyFails?: boolean;
+    /** The sandbox is ready, so the environment is applied; otherwise it is stopped. */
+    ready?: boolean;
 }
 
 async function setup(options: SetupOptions = {}) {
@@ -282,16 +387,40 @@ async function setup(options: SetupOptions = {}) {
         POWERAGENTS_DATA_ROOT: dataRoot,
         POWERAGENTS_PLUGINS_DIR: path.join(FIXTURES, 'bundled'),
     });
-    const sandbox = { notified: 0 };
-    const state: SandboxState = { status: 'stopped' };
+    const sandbox: FakeSandbox = { notified: 0, commands: [], packageJsons: [], requirements: [], failing: new Set() };
+    const state: SandboxState = options.ready
+        ? { status: 'ready', endpoint: { url: 'http://127.0.0.1:1', username: 'u', password: 'p' } }
+        : { status: 'stopped' };
     container.set(Sandbox, {
         getState: () => state,
         getVerifiedState: () => Promise.resolve(state),
         stateChanged: createEventEmitter<[state: SandboxState]>().event,
         start: () => Promise.reject(new Error('not used')),
         stop: () => Promise.resolve(),
-        exec: () => {
-            throw new Error('not used');
+        exec: ({ command: timed }) => {
+            // Every step runs under `timeout <deadline>`; recorded without it.
+            const command = timed.slice(3);
+            sandbox.commands.push(command);
+            const failed = sandbox.failing.has(command.slice(0, 2).join(' '));
+            let stdin = '';
+            return {
+                stdin: {
+                    write: chunk => {
+                        stdin += typeof chunk === 'string' ? chunk : new TextDecoder().decode(chunk);
+                    },
+                    end: () => {
+                        if (command[1]?.endsWith('package.json')) {
+                            sandbox.packageJsons.push(JSON.parse(stdin));
+                        } else if (command[1]?.endsWith('requirements.in')) {
+                            sandbox.requirements.push(stdin);
+                        }
+                    },
+                },
+                stdout: new Blob([]).stream(),
+                stderr: new Blob([failed ? 'offline' : '']).stream(),
+                exited: Promise.resolve(failed ? 1 : 0),
+                kill: () => undefined,
+            };
         },
         notifySkillsChanged: () => {
             sandbox.notified++;

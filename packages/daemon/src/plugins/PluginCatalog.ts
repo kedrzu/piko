@@ -111,6 +111,7 @@ export const PluginCatalog = defineService({
                 details: null,
                 installs: [],
                 errors: [],
+                environmentError: null,
                 dir,
                 manifest: null,
             };

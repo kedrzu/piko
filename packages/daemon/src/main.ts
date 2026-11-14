@@ -48,10 +48,8 @@ await container
 
 // The daemon's folder holds the copies of the installed plugins before the agent starts, and an own plugin's skill
 // changed while the daemon was down reaches it. A failure is logged and the daemon keeps serving, without plugins.
-await container
-    .resolve(PluginService)
-    .sync()
-    .catch((error: unknown) => logger.error('Plugin folder could not be synced', { error }));
+const plugins = container.resolve(PluginService);
+await plugins.sync().catch((error: unknown) => logger.error('Plugin folder could not be synced', { error }));
 
 // The agent's browser (design D27). Downloads land in the data root's Downloads folder, which exists before the agent
 // looks for it. Every browser request goes through the network guard, so it listens before the browser can launch; the
@@ -78,10 +76,17 @@ container
 // The sandbox comes up in the background while the daemon already answers. A failure is logged by the sandbox and
 // leaves it `failed`; the daemon keeps serving. The VM is deliberately not stopped on exit: the daemon is long-lived,
 // and `bun --watch` restarts it on every edit, where a VM stop and start would cost ~14 s each time.
-container
-    .resolve(Sandbox)
-    .start()
-    .catch(() => undefined);
+// The plugins' environment lives in the container, so it is applied every time the sandbox becomes ready: a container
+// recreated, or an apply that failed or was skipped before, catches up then.
+const sandbox = container.resolve(Sandbox);
+sandbox.stateChanged.on(state => {
+    if (state.status === 'ready') {
+        plugins
+            .applyEnvironment()
+            .catch((error: unknown) => logger.error('Plugin environment could not be applied', { error }));
+    }
+});
+sandbox.start().catch(() => undefined);
 
 // It listens on loopback only: the desktop app reaches it on this machine, and remote clients (the phone) will come
 // through the relay, never through an open port. `/status` stays open to any caller: it reveals only that the daemon

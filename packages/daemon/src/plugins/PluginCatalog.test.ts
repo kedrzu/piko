@@ -46,6 +46,7 @@ test('lists both sources sorted by name; an own plugin that conflicts, declares 
         },
         installs: [],
         errors: [],
+        environmentError: null,
     };
     expect(plugins[0]!).toMatchObject(emailSorting);
     expect(plugins[0]!.dir).toBe(path.join(FIXTURES, 'bundled', 'email-sorting'));

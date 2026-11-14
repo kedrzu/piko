@@ -10,16 +10,20 @@ import { assert } from '@nzyme/utils/assert.js';
 import { createEventEmitter } from '@nzyme/utils/createEventEmitter.js';
 
 import type { PluginsChangedEvent } from '@poweragents/common/api/DaemonEventTypes.js';
-import type { PluginInfo, PluginInstall } from '@poweragents/common/api/PluginTypes.js';
+import type { PluginEnvironmentError, PluginInfo, PluginInstall } from '@poweragents/common/api/PluginTypes.js';
 
-import { DAEMON_FOLDER, POWERAGENTS_DATA_ROOT } from '../env.js';
+import { DAEMON_FOLDER, PLUGINS_FOLDER, POWERAGENTS_DATA_ROOT } from '../env.js';
 import { ProjectService } from '../projects/ProjectService.js';
+import { AGENT_DAEMON_DIR, AGENT_DATA_ROOT } from '../sandbox/buildAgentRunArgs.js';
 import { Sandbox, SKILLS_SYNC_FILE } from '../sandbox/Sandbox.js';
 import { isErrorCode } from '../utils/isErrorCode.js';
 import { isRealFolder } from '../utils/isRealFolder.js';
 import { PluginCatalog } from './PluginCatalog.js';
 import type { LocalPlugin } from './PluginCatalog.js';
+import { PluginEnvironment } from './PluginEnvironment.js';
+import type { PluginEnvironmentApplyResult } from './PluginEnvironment.js';
 import { PLUGIN_NAME_PATTERN } from './parsePluginManifest.js';
+import type { EnvironmentPlugin } from './utils/buildEnvironmentFiles.js';
 
 /** A plugin to install or remove: a `profile` plugin without a project, a `project` plugin in one project. */
 export interface PluginInstallParams {
@@ -36,6 +40,11 @@ export interface PluginInstallResult {
      * installed by its folder being there.
      */
     added: boolean;
+    /**
+     * Why the plugin's environment is not applied, from the apply the installation ran; the installation stays recorded
+     * either way. `null` also when the sandbox is not ready: the environment is applied when it is.
+     */
+    environmentError: PluginEnvironmentError | null;
 }
 
 /**
@@ -50,15 +59,28 @@ export interface PluginInstallResult {
  * `PluginNotInstalled`.
  */
 export interface PluginServiceShape {
-    /** Every plugin of the catalog with where it is installed. A missing or unreadable manifest is no installations. */
+    /**
+     * Every plugin of the catalog with where it is installed and the last apply's environment error. A missing or
+     * unreadable manifest is no installations.
+     */
     list(): Promise<PluginInfo[]>;
-    /** Records an installation and syncs the daemon's folder; installing what is installed already changes nothing. */
+    /**
+     * Records an installation, syncs the daemon's folder and applies the environment when the plugin has one;
+     * installing what is installed already changes nothing but applies it again. An own plugin's installation always
+     * applies the environment: that is all installing it does.
+     */
     install(params: PluginInstallParams): Promise<PluginInstallResult>;
     /**
-     * Removes one installation of a bundled plugin and syncs the daemon's folder. Nothing but the manifest entry and the
-     * copies goes: an own plugin is removed by deleting its folder.
+     * Removes one installation of a bundled plugin, syncs the daemon's folder and applies the environment when the
+     * plugin has one. Nothing but the manifest entry, the copies and the plugin's packages goes: an own plugin is
+     * removed by deleting its folder.
      */
     remove(params: PluginInstallParams): Promise<void>;
+    /**
+     * Applies the environment of the loaded plugins (each installed bundled plugin and each own plugin without errors)
+     * to the sandbox: what runs after every installation and removal, and whenever the sandbox becomes ready.
+     */
+    applyEnvironment(): Promise<PluginEnvironmentApplyResult>;
     /**
      * Makes the daemon's `plugins/` and `skills/` hold exactly the copies of what is installed, so an own plugin's
      * changed skill reaches the agent at the next sync, and tells a running agent when its skills changed. Returns
@@ -100,8 +122,9 @@ export const PluginService = defineService({
         catalog: PluginCatalog,
         projects: ProjectService,
         sandbox: Sandbox,
+        environment: PluginEnvironment,
     },
-    setup({ logger, dataRoot, catalog, projects, sandbox }): PluginServiceShape {
+    setup({ logger, dataRoot, catalog, projects, sandbox, environment }): PluginServiceShape {
         const daemonDir = path.resolve(dataRoot, DAEMON_FOLDER);
         const manifestFile = path.join(daemonDir, MANIFEST_FILE);
         const copiesDir = path.join(daemonDir, COPIES_FOLDER);
@@ -110,25 +133,67 @@ export const PluginService = defineService({
         /** Changes run one at a time: two installations cannot each write the manifest without the other's entry. */
         let queue: Promise<unknown> = Promise.resolve();
 
-        return { list, install, remove, sync, listen };
+        return { list, install, remove, applyEnvironment, sync, listen };
 
         async function list() {
             const [plugins, installed] = await Promise.all([catalog.list(), readInstalled()]);
-            return plugins.map((plugin): PluginInfo => ({
-                name: plugin.name,
-                source: plugin.source,
-                details: plugin.details,
-                installs: installsOf(plugin, installed),
-                errors: plugin.errors,
-            }));
+            const environmentErrors = environment.getErrors();
+            return plugins.map((plugin): PluginInfo => {
+                const installs = installsOf(plugin, installed);
+                return {
+                    name: plugin.name,
+                    source: plugin.source,
+                    details: plugin.details,
+                    installs,
+                    errors: plugin.errors,
+                    // An error of a plugin removed since is not its anymore.
+                    environmentError: installs.length > 0 ? (environmentErrors.get(plugin.name) ?? null) : null,
+                };
+            });
         }
 
-        function install(params: PluginInstallParams) {
-            return exclusive(() => installPlugin(params));
+        async function install(params: PluginInstallParams): Promise<PluginInstallResult> {
+            const result = await exclusive(() => installPlugin(params));
+            // An own plugin's installation is how the agent asks for its environment to be applied (design D40).
+            if (result.plugin.source === 'bundled' && !result.plugin.manifest?.environment) {
+                return { ...result, environmentError: null };
+            }
+            const applied = await applyEnvironment();
+            return {
+                ...result,
+                environmentError: applied.applied ? (applied.errors.get(params.name) ?? null) : null,
+            };
         }
 
-        function remove(params: PluginInstallParams) {
-            return exclusive(() => removePlugin(params));
+        async function remove(params: PluginInstallParams) {
+            await exclusive(() => removePlugin(params));
+            // A plugin no longer in the catalog may have had an environment: applied then too.
+            const plugin = await catalog.get(params.name);
+            if (!plugin?.manifest || plugin.manifest.environment) {
+                await applyEnvironment();
+            }
+        }
+
+        async function applyEnvironment() {
+            const [installed, plugins] = await Promise.all([readInstalled(), catalog.list()]);
+            const { loaded } = loadedPlugins(plugins, installed);
+            const environmentPlugins: EnvironmentPlugin[] = [];
+            for (const plugin of loaded) {
+                const pluginEnvironment = plugin.manifest?.environment;
+                if (pluginEnvironment) {
+                    environmentPlugins.push({
+                        name: plugin.name,
+                        // Where the container sees the plugin: a bundled one's copy in the read-only daemon's folder,
+                        // an own one where it is.
+                        dir:
+                            plugin.source === 'bundled'
+                                ? path.posix.join(AGENT_DAEMON_DIR, COPIES_FOLDER, plugin.name)
+                                : path.posix.join(AGENT_DATA_ROOT, PLUGINS_FOLDER, plugin.name),
+                        environment: pluginEnvironment,
+                    });
+                }
+            }
+            return environment.apply(environmentPlugins);
         }
 
         function sync() {
@@ -147,7 +212,7 @@ export const PluginService = defineService({
             return result;
         }
 
-        async function installPlugin({ name, projectId }: PluginInstallParams): Promise<PluginInstallResult> {
+        async function installPlugin({ name, projectId }: PluginInstallParams) {
             const plugin = await catalog.get(name);
             if (!plugin) {
                 throw new HttpError(404, { error: 'PluginNotFound', message: 'No plugin with this name' });
@@ -210,27 +275,20 @@ export const PluginService = defineService({
         async function syncFolder() {
             await ensureFolders();
             const [installed, plugins] = await Promise.all([readInstalled(), catalog.list()]);
-            const installedNames = new Set(installed.map(entry => entry.name));
+            const { loaded, missing } = loadedPlugins(plugins, installed);
 
             const copies = new Map<string, string>();
             const skills = new Map<string, string>();
-            for (const plugin of plugins) {
-                // An own plugin with errors (a conflicting one, say) is not loaded, nor is a broken bundled one.
-                if (!plugin.details || plugin.errors.length > 0) {
-                    continue;
-                }
+            for (const plugin of loaded) {
                 if (plugin.source === 'bundled') {
-                    if (!installedNames.delete(plugin.name)) {
-                        continue;
-                    }
                     copies.set(plugin.name, plugin.dir);
                 }
-                for (const skill of plugin.details.skills) {
+                for (const skill of plugin.details?.skills ?? []) {
                     // The skill's id, which the agent sees, is its folder's name.
                     skills.set(`${plugin.name}:${skill}`, path.join(plugin.dir, SKILLS_FOLDER, skill));
                 }
             }
-            for (const name of installedNames) {
+            for (const name of missing) {
                 logger.warn('Installed plugin not loaded, not copied', { plugin: name });
             }
 
@@ -390,6 +448,26 @@ export const PluginService = defineService({
         }
     },
 });
+
+/**
+ * The plugins the agent has: each installed bundled plugin and each own plugin, without errors (an own plugin
+ * conflicting with a bundled one, say). `missing` names the installed plugins not loaded.
+ * @__NO_SIDE_EFFECTS__
+ */
+function loadedPlugins(plugins: LocalPlugin[], installed: InstalledPlugin[]) {
+    const missing = new Set(installed.map(entry => entry.name));
+    const loaded: LocalPlugin[] = [];
+    for (const plugin of plugins) {
+        if (!plugin.details || plugin.errors.length > 0) {
+            continue;
+        }
+        if (plugin.source === 'bundled' && !missing.delete(plugin.name)) {
+            continue;
+        }
+        loaded.push(plugin);
+    }
+    return { loaded, missing };
+}
 
 /** @__NO_SIDE_EFFECTS__ */
 function installsOf(plugin: LocalPlugin, installed: InstalledPlugin[]): PluginInstall[] {

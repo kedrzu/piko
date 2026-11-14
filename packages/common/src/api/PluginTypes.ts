@@ -57,6 +57,26 @@ export type PluginError =
     /** The onboarding skill is not among the plugin's skills. */
     | { code: 'onboardingMissing'; skill: string };
 
+/** A part of the agent's environment: Node packages (npm pins and plugin CLIs) or Python packages. */
+export type PluginEnvironmentPart = 'npm' | 'python';
+
+/**
+ * Why a plugin's additions to the agent's environment (its CLI, npm and Python packages) are not there. The plugin stays
+ * installed and its skills work; the daemon applies the environment again when the sandbox next becomes ready and after
+ * every installation or removal.
+ */
+export type PluginEnvironmentError =
+    /**
+     * The plugin pins `package` at another version than `plugin` does, which comes first by name and wins: none of this
+     * plugin's environment is applied.
+     */
+    | { code: 'conflict'; part: PluginEnvironmentPart; package: string; plugin: string }
+    /**
+     * Installing `part` failed for every plugin adding to it. `output` is the end of what the failed command printed
+     * (bounded), for the agent or the person to read; `exitCode` is `null` when the command could not be run at all.
+     */
+    | { code: 'applyFailed'; part: PluginEnvironmentPart; exitCode: number | null; output: string };
+
 /** A plugin as the app lists it, from either source. */
 export interface PluginInfo {
     /** The plugin's folder name, which a valid plugin's `plugin.json` repeats. */
@@ -68,4 +88,6 @@ export interface PluginInfo {
     installs: PluginInstall[];
     /** Why the plugin is not loaded; empty for a plugin that is. A plugin with errors is never installed nor used. */
     errors: PluginError[];
+    /** Why its environment is not applied, from the last apply; `null` when it is, or the plugin is not installed. */
+    environmentError: PluginEnvironmentError | null;
 }

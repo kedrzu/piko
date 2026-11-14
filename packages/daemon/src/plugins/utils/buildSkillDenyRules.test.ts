@@ -58,6 +58,7 @@ function plugin({ name, level, skills, installs }: PluginParams): PluginInfo {
         },
         installs,
         errors: [],
+        environmentError: null,
     };
 }
 
