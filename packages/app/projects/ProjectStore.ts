@@ -210,6 +210,7 @@ export const ProjectStore = defineService({
                     break;
                 case 'memoryChanged':
                 case 'pluginsChanged':
+                case 'pluginInstalled':
                 case 'conversationCreated':
                 case 'conversationRenamed':
                 case 'runningChanged':

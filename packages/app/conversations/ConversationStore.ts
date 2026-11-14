@@ -118,6 +118,7 @@ export const ConversationStore = defineService({
                 case 'projectsChanged':
                 case 'memoryChanged':
                 case 'pluginsChanged':
+                case 'pluginInstalled':
                     // Not about conversations.
                     break;
                 default:

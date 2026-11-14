@@ -326,7 +326,12 @@ export function useConversation(options: UseConversationOptions): ConversationVi
     }
 
     function onEvent(event: DaemonEvent) {
-        if (event.type === 'projectsChanged' || event.type === 'memoryChanged' || event.type === 'pluginsChanged') {
+        if (
+            event.type === 'projectsChanged' ||
+            event.type === 'memoryChanged' ||
+            event.type === 'pluginsChanged' ||
+            event.type === 'pluginInstalled'
+        ) {
             return;
         }
         if (event.type === 'runFinished' || (event.type === 'runningChanged' && !event.running)) {

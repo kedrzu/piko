@@ -35,10 +35,18 @@ import { buildLimaConfig } from './buildLimaConfig.js';
 import { readOrCreatePassword } from './readOrCreatePassword.js';
 import AGENT_CONTAINERFILE_BASE from '../../sandbox/agent.Containerfile' with { type: 'text' };
 import GENERATIVE_UI_SKILL from '../../sandbox/generative-ui.skill.gen.md' with { type: 'text' };
+// A text import: Bun inlines the script as a string (`containerfile.d.ts`), while `import/default` reads the file as the
+// module it would be when run, which has no default export.
+// oxlint-disable-next-line import/default
+import POWERAGENTS_CLI from '../../sandbox/poweragents.js' with { type: 'text' };
 import { Sandbox, SKILLS_SYNC_FILE } from './Sandbox.js';
 import type { SandboxEndpoint, SandboxExecParams, SandboxProcess, SandboxState } from './Sandbox.js';
 
-const AGENT_CONTAINERFILE = buildAgentContainerfile(AGENT_CONTAINERFILE_BASE, GENERATIVE_UI_SKILL);
+const AGENT_CONTAINERFILE = buildAgentContainerfile({
+    base: AGENT_CONTAINERFILE_BASE,
+    skill: GENERATIVE_UI_SKILL,
+    cli: POWERAGENTS_CLI,
+});
 
 const INSTANCE = 'poweragents-default';
 /** The agent's images, tagged by `getImageTag()`. */

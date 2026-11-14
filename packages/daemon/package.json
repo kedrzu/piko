@@ -18,7 +18,8 @@
         "start": "bun ./dist/main.js",
         "sidecar": "tsgo --build && bun ../../scripts/bundleDaemonSidecar.ts",
         "fetch-lima": "bun ../../scripts/fetchLima.ts",
-        "codegen": "bun ../../scripts/generateGenerativeUiSkill.ts"
+        "codegen": "bun ../../scripts/generateGenerativeUiSkill.ts",
+        "typecheck": "tsgo -p sandbox"
     },
     "dependencies": {
         "@nzyme/fetch-utils": "workspace:*",

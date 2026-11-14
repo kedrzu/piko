@@ -15,6 +15,7 @@ import { PluginService } from './plugins/PluginService.js';
 import { LimaSandbox } from './sandbox/LimaSandbox.js';
 import { Sandbox } from './sandbox/Sandbox.js';
 import { SandboxOpencodeConnection } from './sandbox/SandboxOpencodeConnection.js';
+import { SandboxApiService } from './sandboxApi/SandboxApiService.js';
 import { shutdown } from './shutdown.js';
 import { createStatusResponse } from './statusResponse.js';
 
@@ -67,6 +68,12 @@ try {
     container.resolve(BrowserTunnelService).listen();
 } catch (error) {
     logger.error('The browser tunnel could not start', { error });
+}
+// What the agent's `poweragents` command calls from the sandbox. A failure is logged and the daemon keeps serving.
+try {
+    container.resolve(SandboxApiService).listen();
+} catch (error) {
+    logger.error('The sandbox API could not start', { error });
 }
 container
     .resolve(ChromiumInstall)

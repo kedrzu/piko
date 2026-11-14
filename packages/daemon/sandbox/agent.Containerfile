@@ -253,4 +253,6 @@ projects they need. Do not repeat the introduction, and do not create a project 
 EOF_SKILL
 
 # The `generative-ui` skill is appended after this file by the daemon (`buildAgentContainerfile`), from the generated
-# `generative-ui.skill.gen.md`; `bun run codegen` writes it from the component library.
+# `generative-ui.skill.gen.md`; `bun run codegen` writes it from the component library. So is the `poweragents` command
+# (`poweragents.js`), at `/usr/local/bin/poweragents`: the agent manages its plugins with it, through the daemon's
+# sandbox API (`POWERAGENTS_DAEMON_URL`, with the same token as the browser).

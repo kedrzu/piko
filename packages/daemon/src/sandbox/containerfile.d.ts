@@ -9,3 +9,10 @@ declare module '*.gen.md' {
     const content: string;
     export default content;
 }
+
+// The `poweragents` command imported as text the same way (`sandbox/poweragents.js`): it runs inside the agent's image,
+// never in the daemon. `sandbox/tsconfig.json` type-checks it.
+declare module '*/poweragents.js' {
+    const content: string;
+    export default content;
+}

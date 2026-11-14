@@ -1,5 +1,5 @@
 import { expect, mock, test } from 'bun:test';
-import { mkdtempSync } from 'node:fs';
+import { mkdtempSync, writeFileSync } from 'node:fs';
 import { mkdir, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -14,14 +14,20 @@ import type { DaemonEvent } from '@poweragents/common/api/DaemonEventTypes.js';
 import type { SandboxStatus } from '@poweragents/common/api/SandboxTypes.js';
 import { OpencodeEventSubscribeCommand } from '@poweragents/opencode/OpencodeEventSubscribeCommand.js';
 import type { OpencodeEvent } from '@poweragents/opencode/OpencodeEventSubscribeCommand.js';
+import { OpencodeSessionGetCommand } from '@poweragents/opencode/OpencodeSessionGetCommand.js';
+import type { OpencodeSession } from '@poweragents/opencode/OpencodeTypes.js';
 import { readSseData } from '@poweragents/opencode/utils/readSseData.js';
 
+import { toAgentDir } from '../conversations/utils/toAgentDir.js';
 import { PluginService } from '../plugins/PluginService.js';
+import { ProjectService } from '../projects/ProjectService.js';
 import { Sandbox } from '../sandbox/Sandbox.js';
 import type { SandboxState } from '../sandbox/Sandbox.js';
+import { SandboxApiService } from '../sandboxApi/SandboxApiService.js';
 import { ApiService } from './ApiService.js';
 
 const PASSWORD = 'agent-password-must-not-leave-7c2e';
+const SANDBOX_TOKEN = 'abcdefghijklmnopqrstuvwxyz012345';
 const STATUS_URL = 'http://127.0.0.1:47610/api/sandbox/status';
 const EVENTS_URL = 'http://127.0.0.1:47610/api/events';
 
@@ -66,6 +72,36 @@ test('streams a change of the installed plugins', async () => {
 
     const expected: DaemonEvent[] = [{ type: 'pluginsChanged' }];
     expect((await frames).map((frame): unknown => JSON.parse(frame))).toEqual(expected);
+});
+
+test('streams an installation the agent asked for from a conversation', async () => {
+    const { api, container, sessions } = setup();
+    const created = await container.resolve(ProjectService).create('Praca');
+    if (!('created' in created)) {
+        throw new Error('Project not created');
+    }
+    const project = await container.resolve(ProjectService).get(created.created.id);
+    sessions.push({ id: 'ses_work', directory: toAgentDir(project!.dir), createdAt: 0, updatedAt: 0 });
+    const sandboxApi = container.resolve(SandboxApiService).listen(0);
+
+    try {
+        const response = await api.handle(new Request(EVENTS_URL, { headers: { Origin: 'tauri://localhost' } }));
+        const frames = readFrames(response, 2);
+        const installed = await fetch(`http://127.0.0.1:${sandboxApi.port}/plugins/install`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${SANDBOX_TOKEN}`, 'X-Opencode-Session': 'ses_work' },
+            body: JSON.stringify({ name: 'gmail' }),
+        });
+        expect(installed.status).toBe(200);
+
+        const expected: DaemonEvent[] = [
+            { type: 'pluginsChanged' },
+            { type: 'pluginInstalled', plugin: 'gmail', projectId: created.created.id, conversationId: 'ses_work' },
+        ];
+        expect((await frames).map((frame): unknown => JSON.parse(frame))).toEqual(expected);
+    } finally {
+        await sandboxApi.close();
+    }
 });
 
 test.each([
@@ -182,9 +218,13 @@ function setup(agentEvents: OpencodeEvent[] = [], getVerifiedState?: () => Promi
     const { container, logs } = createTestContainer();
     // The event stream watches the data root: a fresh one, never the person's.
     const dataRoot = mkdtempSync(path.join(os.tmpdir(), 'poweragents-api-'));
+    // The sandbox's token beside Lima's home, as `LimaSandbox` keeps it.
+    const stateFolder = mkdtempSync(path.join(os.tmpdir(), 'poweragents-api-state-'));
+    writeFileSync(path.join(stateFolder, 'browser-token'), SANDBOX_TOKEN);
     container.set(EnvVariables, {
         POWERAGENTS_DATA_ROOT: dataRoot,
         POWERAGENTS_PLUGINS_DIR: path.join(import.meta.dirname, '../plugins/fixtures/bundled'),
+        POWERAGENTS_LIMA_HOME: path.join(stateFolder, 'lima'),
     });
     const state: SandboxState = {
         status: 'ready',
@@ -207,7 +247,17 @@ function setup(agentEvents: OpencodeEvent[] = [], getVerifiedState?: () => Promi
         await Promise.withResolvers<void>().promise;
     });
     container.set(OpencodeEventSubscribeCommand, subscribe);
-    return { api: container.resolve(ApiService), plugins: container.resolve(PluginService), logs, subscribe, dataRoot };
+    const sessions: OpencodeSession[] = [];
+    container.set(OpencodeSessionGetCommand, id => Promise.resolve(sessions.find(item => item.id === id) ?? null));
+    return {
+        api: container.resolve(ApiService),
+        plugins: container.resolve(PluginService),
+        container,
+        logs,
+        subscribe,
+        dataRoot,
+        sessions,
+    };
 }
 
 /** Reads the `data` of `count` events from a server-sent events response (skipping comments), then disconnects. */
