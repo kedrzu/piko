@@ -85,7 +85,7 @@ export interface PluginServiceShape {
      * Makes the daemon's `plugins/` and `skills/` hold exactly the copies of what is installed, so an own plugin's
      * changed skill reaches the agent at the next sync, and tells a running agent when its skills changed. Starts applying
      * the environment again, without waiting for it, when the own plugins' environments differ from the last apply's: an own plugin's folder deleted,
-     * added or changed takes its packages along. Returns whether the folder changed.
+     * added or changed takes its packages along. Announces `pluginsChanged` and returns `true` when the folder changed.
      */
     sync(): Promise<boolean>;
     /** Calls `listener` after every installation and removal, until the returned function is called. */
@@ -209,6 +209,10 @@ export const PluginService = defineService({
 
         async function sync() {
             const changed = await exclusive(syncFolder);
+            if (changed) {
+                // An own plugin's folder appeared, went or changed: nothing else announces it to the app.
+                emitter.emit({ type: 'pluginsChanged' });
+            }
             const [installed, plugins] = await Promise.all([readInstalled(), catalog.list()]);
             if (ownEnvironmentsKey(loadedPlugins(plugins, installed).loaded) !== appliedOwnEnvironments) {
                 // Not awaited: a conversation being created must not wait for packages to install. An apply records its

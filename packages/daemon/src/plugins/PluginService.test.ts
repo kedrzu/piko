@@ -126,13 +126,16 @@ test.each([
     await expect(plugins.remove(params)).rejects.toMatchObject({ payload: { error: 'PluginNotInstalled' } });
 });
 
-test('sync makes the folder match: drops stray entries, restores changed copies, takes changed own skills', async () => {
+test('sync makes the folder match: drops stray entries, restores changed copies, takes changed own skills, and says so', async () => {
     const { plugins, daemonDir, dataRoot } = await setup();
     await plugins.install({ name: 'gmail' });
     const copied = path.join(daemonDir, 'skills', 'gmail:connect', 'SKILL.md');
     const original = await readFile(copied, 'utf8');
+    const events: PluginsChangedEvent[] = [];
+    plugins.listen(event => events.push(event));
 
     expect(await plugins.sync()).toBe(false);
+    expect(events).toEqual([]);
 
     await mkdir(path.join(daemonDir, 'skills', 'stale:skill'));
     await writeFile(path.join(daemonDir, 'plugins', 'stray.txt'), 'stray');
@@ -140,6 +143,8 @@ test('sync makes the folder match: drops stray entries, restores changed copies,
     await writeFile(path.join(dataRoot, 'plugins', 'my-notes', 'skills', 'take-note', 'SKILL.md'), '# Edited\n');
 
     expect(await plugins.sync()).toBe(true);
+    // The app hears of an own plugin changed in its folder only through this.
+    expect(events).toEqual([{ type: 'pluginsChanged' }]);
     expect(await readdir(path.join(daemonDir, 'plugins'))).toEqual(['gmail']);
     expect((await readdir(path.join(daemonDir, 'skills'))).toSorted()).toEqual([
         'gmail:connect',
