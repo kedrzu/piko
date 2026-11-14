@@ -122,6 +122,9 @@ export const BrowserTunnelService = defineService({
                 return new Response('Forbidden', { status: 403 });
             }
             if (install.getExecutable() == null) {
+                // Joins a download in progress, or starts it again after one that failed: the agent asking is the
+                // retry, so a failed first download does not wait for the daemon's next start.
+                install.ensure().catch(() => undefined);
                 return new Response('The browser is still being prepared, try again in a few minutes', {
                     status: 503,
                 });
@@ -142,7 +145,10 @@ export const BrowserTunnelService = defineService({
             return given.length === expected.length && timingSafeEqual(given, expected);
         }
 
-        /** Read on every upgrade, so a token the sandbox rotates applies at once; `null` while none is usable. */
+        /**
+         * Read on every upgrade, since `LimaSandbox` creates the file and may do so after the tunnel starts; `null` while
+         * none is usable.
+         */
         async function readToken() {
             try {
                 const token = await readFile(tokenFile, 'utf8');

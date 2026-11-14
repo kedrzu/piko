@@ -66,8 +66,8 @@ test('an upgrade is refused while the token file is missing or holds no valid to
     expect(await upgrade(port, '/session/ses_a', { authorization: 'Bearer ' })).toBe(401);
 });
 
-test('before the browser is installed an upgrade is refused with 503, saying it is being prepared', async () => {
-    const { port } = await startTunnel({ executable: null });
+test('before the browser is installed an upgrade is refused with 503 and the download is retried', async () => {
+    const { port, ensureCalls } = await startTunnel({ executable: null });
 
     const response = await fetch(`http://127.0.0.1:${port}/session/ses_a`, {
         headers: { ...upgradeHeaders(), authorization: `Bearer ${TOKEN}` },
@@ -75,6 +75,7 @@ test('before the browser is installed an upgrade is refused with 503, saying it 
 
     expect(response.status).toBe(503);
     expect(await response.text()).toContain('still being prepared');
+    expect(ensureCalls()).toBe(1);
 });
 
 test('clients of two conversations see and drive only their own pages and sessions', async () => {
@@ -203,7 +204,14 @@ async function startTunnel(options: StartTunnelOptions = {}) {
         POWERAGENTS_LIMA_HOME: path.join(stateFolder, 'lima'),
         POWERAGENTS_DATA_ROOT: path.join(work, 'data'),
     });
-    container.set(ChromiumInstall, { ensure: () => Promise.resolve(), getExecutable: () => executable });
+    let ensured = 0;
+    container.set(ChromiumInstall, {
+        ensure: () => {
+            ensured++;
+            return Promise.resolve();
+        },
+        getExecutable: () => executable,
+    });
     container.set(FocusKeeper, { start: mock(() => {}), restore: mock(() => {}) });
     container.set(BrowserLaunch, { proxyPort: proxy.port, extraArgs: HEADLESS_ARGS });
 
@@ -211,7 +219,7 @@ async function startTunnel(options: StartTunnelOptions = {}) {
     const tunnel = container.resolve(BrowserTunnelService).listen(0);
     cleanups.push(() => killBrowser(stateFolder));
     cleanups.push(() => tunnel.close());
-    return { port: tunnel.port, browser, stateFolder, tokenFile };
+    return { port: tunnel.port, browser, stateFolder, tokenFile, ensureCalls: () => ensured };
 }
 
 /** A tunnel client as agent-browser is one: a WebSocket with the bearer token and no Origin. */
