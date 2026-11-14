@@ -1,0 +1,218 @@
+# Builds the desktop app (packages/desktop) for Apple Silicon Macs into a draft release that already exists: the bundle,
+# which uploads the installer and the signed updater bundle, then the release's `latest.json` from what it uploaded.
+# Called by `development.yml`.
+#
+# The actions in `bundle` that see the secrets are pinned by commit, because a moved tag would reach the key every update
+# is trusted by.
+#
+# Secrets: `TAURI_SIGNING_PRIVATE_KEY` and `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` sign the updater bundle (the public half
+# is `plugins.updater.pubkey` in `tauri.conf.json`). The Apple ones (`APPLE_CERTIFICATE`, `APPLE_CERTIFICATE_PASSWORD`,
+# `APPLE_SIGNING_IDENTITY`, `APPLE_ID`, `APPLE_PASSWORD`, `APPLE_TEAM_ID`) sign and notarize the app; without them it is
+# ad-hoc signed (`bundle.macOS.signingIdentity: "-"`), which macOS opens as from an "unidentified developer".
+name: Desktop build
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: The commit to build
+        type: string
+        required: true
+      tag:
+        description: The release's tag, which names it in `latest.json`'s download URLs
+        type: string
+        required: true
+      version:
+        description: The version written into the app and its files
+        type: string
+        required: true
+      release-id:
+        description: The draft release to upload to
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  bundle:
+    # `macos-latest` is Apple Silicon: the daemon sidecar and Lima are built and fetched for the machine they run on.
+    runs-on: macos-latest
+    timeout-minutes: 60
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.ref }}
+          # The gitlink is the pin; nzyme is public, so the default token clones it.
+          submodules: recursive
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+
+      - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
+        with:
+          toolchain: stable
+          targets: aarch64-apple-darwin
+
+      - uses: swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
+        with:
+          workspaces: packages/desktop/src-tauri -> target
+
+      # The build CI's `Build` job runs, which on macOS also fetches Lima into packages/daemon/vendor/lima. The
+      # `fetch-lima` in `beforeBuildCommand` then finds it there and leaves the file "Sign Lima" signs alone.
+      - name: Build
+        run: bash setup.build.sh
+
+      # The version, and the signed updater bundle, left out of the committed config so a local build needs no signing
+      # key. `beforeBuildCommand` stays: it builds the app and the daemon sidecar the bundle carries.
+      - name: Configure the release build
+        run: |
+          config=packages/desktop/src-tauri/tauri.conf.json
+          jq --arg version "$VERSION" '.version = $version | .bundle.createUpdaterArtifacts = true' \
+            "$config" > "$RUNNER_TEMP/tauri.conf.json"
+          mv "$RUNNER_TEMP/tauri.conf.json" "$config"
+        env:
+          VERSION: ${{ inputs.version }}
+
+      # Apple signing and notarization only with the secrets set: an empty `APPLE_CERTIFICATE` in the environment
+      # counts as present and fails the bundle (tauri-apps/tauri-action#234). The heredoc form keeps a multi-line
+      # value intact; values are never printed.
+      - name: Use the Apple signing secrets that are set
+        run: |
+          for name in APPLE_CERTIFICATE APPLE_CERTIFICATE_PASSWORD APPLE_SIGNING_IDENTITY APPLE_ID APPLE_PASSWORD APPLE_TEAM_ID; do
+            value="${!name}"
+            if [ -n "$value" ]; then
+              delimiter="EOF_$(openssl rand -hex 16)"
+              {
+                echo "$name<<$delimiter"
+                printf '%s\n' "$value"
+                echo "$delimiter"
+              } >> "$GITHUB_ENV"
+              echo "$name: set"
+            fi
+          done
+        env:
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+
+      # Tauri signs the app and its sidecar but not `limactl`, a bundle resource, so it is signed here with the identity
+      # the app gets, before Tauri copies it. With the certificate it goes into a keychain of its own, deleted at the end
+      # of the step: Tauri imports the same certificate into its own keychain, and `codesign` refuses an identity found
+      # in two. Without the certificate `limactl` is signed ad-hoc, like the app.
+      - name: Sign Lima
+        run: |
+          if [ -z "${APPLE_CERTIFICATE:-}" ]; then
+            scripts/signLima.sh -
+            exit 0
+          fi
+          if [ -z "${APPLE_SIGNING_IDENTITY:-}" ]; then
+            echo "::error::APPLE_CERTIFICATE is set but APPLE_SIGNING_IDENTITY is not"
+            exit 1
+          fi
+
+          keychain="$RUNNER_TEMP/lima-signing.keychain-db"
+          keychain_password="$(openssl rand -hex 32)"
+          certificate="$RUNNER_TEMP/lima-signing.p12"
+          trap 'security delete-keychain "$keychain" 2>/dev/null || true; rm -f "$certificate"' EXIT
+
+          printf %s "$APPLE_CERTIFICATE" | base64 --decode > "$certificate"
+          security create-keychain -p "$keychain_password" "$keychain"
+          security set-keychain-settings -lut 3600 "$keychain"
+          security unlock-keychain -p "$keychain_password" "$keychain"
+          security import "$certificate" -k "$keychain" -P "$APPLE_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$keychain_password" "$keychain" > /dev/null
+          # Added to the search list, which `codesign` looks the identity up in; xargs unquotes the existing entries.
+          security list-keychains -d user | xargs security list-keychains -d user -s "$keychain"
+
+          scripts/signLima.sh "$APPLE_SIGNING_IDENTITY"
+
+      - uses: tauri-apps/tauri-action@84b9d35b5fc46c1e45415bdb6144030364f7ebc5 # v0.6.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          # The commit the app says it was built from (`build.rs`, `updater.rs`).
+          POWERAGENTS_COMMIT: ${{ inputs.ref }}
+        with:
+          projectPath: packages/desktop
+          # The CLI `packages/desktop` pins, already installed by `setup.build.sh` from the lockfile. This is the runner
+          # tauri-action picks for a bun project itself; it is named because the lockfile sits at the root, not here.
+          tauriScript: bun tauri
+          args: --target aarch64-apple-darwin
+          releaseId: ${{ inputs.release-id }}
+          releaseDraft: true
+          # `updater-manifest` writes it: tauri-action reads the file, deletes it and uploads its own, and the manifest
+          # is composed from the release's assets, like a build of several platforms would need (#173).
+          includeUpdaterJson: false
+
+      # A bundle that fails here is on the draft only: the job fails, and `development.yml` publishes nothing.
+      - name: Check the bundle
+        run: |
+          notarized=()
+          if [ -n "${APPLE_ID:-}" ]; then
+            notarized=(--notarized)
+          fi
+          scripts/checkDesktopBundle.sh \
+            packages/desktop/src-tauri/target/aarch64-apple-darwin/release/bundle/macos/poweragents.app \
+            "$VERSION" ${notarized[@]+"${notarized[@]}"}
+        env:
+          VERSION: ${{ inputs.version }}
+
+  # After the bundle, so it is the only writer. A failed build skips it, and "Re-run failed jobs" runs it then.
+  updater-manifest:
+    needs: bundle
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    # Drafts are visible only with write access.
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      RELEASE_ID: ${{ inputs.release-id }}
+      TAG: ${{ inputs.tag }}
+      VERSION: ${{ inputs.version }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.ref }}
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+
+      # By asset ID: a draft can't be downloaded by its tag, which `development` shares with the published release.
+      - name: Compose latest.json from the uploaded bundles and signatures
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/releases/$RELEASE_ID/assets" --paginate > "$RUNNER_TEMP/assets.json"
+          mkdir "$RUNNER_TEMP/signatures"
+          jq -r '.[] | select(.name | endswith(".sig")) | "\(.id) \(.name)"' "$RUNNER_TEMP/assets.json" |
+            while read -r id name; do
+              gh api -H 'Accept: application/octet-stream' "repos/$GITHUB_REPOSITORY/releases/assets/$id" > "$RUNNER_TEMP/signatures/$name"
+            done
+          bun scripts/release.ts updater-manifest \
+            --version "$VERSION" \
+            --download-url "https://github.com/$GITHUB_REPOSITORY/releases/download/$TAG" \
+            --assets "$RUNNER_TEMP/assets.json" \
+            --signatures "$RUNNER_TEMP/signatures" \
+            --out "$RUNNER_TEMP/latest.json"
+
+      # A re-run replaces the one the last attempt left.
+      - name: Upload latest.json
+        run: |
+          asset_id=$(jq -r '.[] | select(.name == "latest.json") | .id' "$RUNNER_TEMP/assets.json")
+          if [ -n "$asset_id" ]; then
+            gh api --method DELETE "repos/$GITHUB_REPOSITORY/releases/assets/$asset_id"
+          fi
+          gh api --method POST "https://uploads.github.com/repos/$GITHUB_REPOSITORY/releases/$RELEASE_ID/assets?name=latest.json" \
+            -H 'Content-Type: application/json' --input "$RUNNER_TEMP/latest.json" --jq .name

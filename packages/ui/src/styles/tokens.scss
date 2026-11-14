@@ -178,6 +178,11 @@ $spacing-icon-gap: 7px; // icon to its text in Button and in Code field's note
 $spacing-badge-y: 3px; // vertical padding of Provider card's "Soon" badge
 $spacing-path-stage-text-top: 3px; // Path stage's text, lined up with the middle of its 26px status circle
 $spacing-first-line-nudge: 1px; // a 16px icon or a numbered step's text, level with the first line beside it
+$spacing-toast-title-top: 5px; // Toast's title, level with the middle of its 30px icon tile
+$spacing-toast-text-gap: 3px; // Toast's title to its description
+
+// The app shell's card sits this far inside the window; what floats over the card (the toasts) is placed from it.
+$spacing-shell-inset: $spacing-10;
 
 // Shape
 $radius-s: 9px;
@@ -192,6 +197,9 @@ $radius-mark: 10px; // Agent mark, mirroring the Pen component
 // Elevation
 $shadow-raised: 0 6px 20px rgb(29 35 32 / 8%); // the composer, lifted off the card
 $shadow-dialog: 0 24px 64px rgb(29 35 32 / 16%); // a dialog over the scrim
+$shadow-toast:
+    0 1px 3px rgb(29 35 32 / 6%),
+    0 10px 28px rgb(29 35 32 / 12%); // a toast, floating over the card
 $color-scrim: rgb(255 255 255 / 55%); // frosted over the window behind a dialog, with $blur-scrim
 $blur-scrim: 12px;
 
