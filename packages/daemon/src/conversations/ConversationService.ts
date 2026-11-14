@@ -22,12 +22,15 @@ import { OpencodeSessionInboxClearCommand } from '@poweragents/opencode/Opencode
 import { OpencodeSessionInterruptCommand } from '@poweragents/opencode/OpencodeSessionInterruptCommand.js';
 import { OpencodeSessionListCommand } from '@poweragents/opencode/OpencodeSessionListCommand.js';
 import { OpencodeSessionPromptCommand } from '@poweragents/opencode/OpencodeSessionPromptCommand.js';
+import { OpencodeSessionUpdateCommand } from '@poweragents/opencode/OpencodeSessionUpdateCommand.js';
 import type { OpencodeSession } from '@poweragents/opencode/OpencodeTypes.js';
 
 import { AiProviderService } from '../ai/AiProviderService.js';
 import { toAiProvider } from '../ai/utils/toAiProvider.js';
 import { CHATGPT_INTEGRATION } from '../chatgpt/ChatgptSignInService.js';
 import { CLAUDE_INTEGRATION } from '../claude/ClaudeSignInService.js';
+import { PluginService } from '../plugins/PluginService.js';
+import { buildSkillDenyRules } from '../plugins/utils/buildSkillDenyRules.js';
 import { ProjectService } from '../projects/ProjectService.js';
 import { assertSandboxReady } from '../sandbox/assertSandboxReady.js';
 import { Sandbox } from '../sandbox/Sandbox.js';
@@ -39,7 +42,8 @@ import { toConversationMessage } from './utils/toConversationMessage.js';
  * the project's folder in the sandbox. They live only in OpenCode's storage; the daemon keeps no copy. Every method
  * needs a ready sandbox (`HttpError` 409 `SandboxNotReady`), throws `HttpError` 404 `ProjectNotFound` for an unknown
  * project and `ConversationNotFound` for a conversation that is not in the given project's folder — never one of
- * another project.
+ * another project. A conversation sees the skills of the plugins installed in the profile and in its own project only:
+ * the daemon owns each session's permission list, set when the conversation starts and again before every message.
  */
 export interface ConversationServiceShape {
     /** The project's conversations, the most recently changed first. */
@@ -47,7 +51,8 @@ export interface ConversationServiceShape {
     /**
      * Starts an empty conversation in the project, with the agent on the active provider's default model (design D35):
      * Claude Sonnet or ChatGPT's Terra. The conversation keeps that model. Throws `HttpError` 409 `AiNotConnected` when
-     * no provider is connected on an allowed plan.
+     * no provider is connected on an allowed plan. Syncs the plugins' copies first, so an own plugin's edited skill is
+     * current in the new conversation.
      */
     create(projectId: string): Promise<Conversation>;
     /** Sends the person's message; the agent's work on it streams as events. */
@@ -80,12 +85,14 @@ export const ConversationService = defineService({
         listActiveSessions: OpencodeSessionActiveListCommand,
         createSession: OpencodeSessionCreateCommand,
         prompt: OpencodeSessionPromptCommand,
+        updateSession: OpencodeSessionUpdateCommand,
         interrupt: OpencodeSessionInterruptCommand,
         clearInbox: OpencodeSessionInboxClearCommand,
         listMessages: OpencodeMessageListCommand,
+        plugins: PluginService,
     },
     setup(deps): ConversationServiceShape {
-        const { logger, projects, sandbox } = deps;
+        const { logger, projects, sandbox, plugins } = deps;
 
         return { list, create, send, stop, listMessages };
 
@@ -111,13 +118,19 @@ export const ConversationService = defineService({
                     message: 'No AI provider is connected on a plan the agent can use',
                 });
             }
-            const session = await deps.createSession({ directory, ...toAgentModel(provider) });
+            await syncPlugins();
+            const session = await deps.createSession({
+                directory,
+                ...toAgentModel(provider),
+                permissions: await buildPermissions(projectId),
+            });
             logger.info('Conversation created', { projectId, conversationId: session.id, provider });
             return toConversation(session, false);
         }
 
         async function send(input: ConversationSendInput) {
             await requireConversation(input);
+            await refreshPermissions(input);
             // OpenCode admits a message sent while the agent works too: it waits in the session's inbox and is given
             // to the agent at its next step, within the same run. A run ending in between starts a new one instead;
             // the message is reported as queued either way. A waiting message keeps its inbox id once delivered.
@@ -160,6 +173,31 @@ export const ConversationService = defineService({
                 throw new HttpError(404, { error: 'ProjectNotFound', message: 'No project with this id' });
             }
             return toAgentDir(project.dir);
+        }
+
+        /**
+         * Sets the conversation's permissions to what the plugins installed now allow, before a message starts or joins a
+         * run: an installation or removal since the last message reaches an open conversation this way.
+         */
+        async function refreshPermissions(ref: ConversationRef) {
+            await deps.updateSession({
+                sessionId: ref.conversationId,
+                permissions: await buildPermissions(ref.projectId),
+            });
+        }
+
+        /** The session's whole permission list: OpenCode replaces it rather than merging, so it is always built in full. */
+        async function buildPermissions(projectId: string) {
+            return buildSkillDenyRules(projectId, await plugins.list());
+        }
+
+        /** A failed sync leaves the previous copies in place, which beats refusing the conversation. */
+        async function syncPlugins() {
+            try {
+                await plugins.sync();
+            } catch (error) {
+                logger.warn('Plugins not synced before the conversation', { error });
+            }
         }
 
         async function requireConversation(ref: ConversationRef) {

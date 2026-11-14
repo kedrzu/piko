@@ -53,6 +53,7 @@ test('creates App setup once, starting its onboarding with hidden input, and nev
         directory: '/Poweragents/projects/App setup',
         providerId: 'claude-agent',
         modelId: 'sonnet',
+        permissions: [],
     };
     expect(fixture.createSession).toHaveBeenCalledWith(created);
     const renamed: OpencodeSessionRenameCommandParams = { sessionId: 'ses_onboarding', title: 'Poznajmy się' };
@@ -85,6 +86,7 @@ test('with ChatGPT the active provider, the onboarding conversation runs on Terr
         directory: '/Poweragents/projects/App setup',
         providerId: 'openai',
         modelId: 'gpt-6.1-terra',
+        permissions: [],
     };
     expect(fixture.createSession).toHaveBeenCalledWith(created);
 });
