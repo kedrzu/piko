@@ -13,3 +13,6 @@ Append-only. One line per turn that settled something, was rejected, or got an a
   the owner can try (D1). Overlap resolved at merge via git-workflow (D2). Owner leans to smaller
   tasks through other `/dev:*` entry points rather than `/dev:deliver` — tension with D1's size, put
   to owner. Owner asked: GitHub Projects vs Issues, Projects as a dashboard.
+- 2026-11-14 — Owner: GitHub Projects as the dashboard (D4). Owner rejected a rule for what a chunk
+  is — agent proposes sensible chunks in conversation; purely technical tasks are fine (D3 replaces
+  D1, D1 to history).
