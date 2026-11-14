@@ -16,11 +16,17 @@ export const ButtonProps = {
   variant: defineProp<ButtonVariant>(),
   /** An icon from `@lucide/vue` before the label. */
   icon: defineProp<LucideIcon>(),
+  /**
+   * The answer the person picked: a check and a brand outline that stay while the button is disabled, and
+   * `aria-pressed` so it is announced as chosen.
+   */
+  chosen: Boolean,
 };
 export const ButtonEmits = useButton.emits;
 </script>
 
 <script lang="ts" setup>
+import { Check } from '@lucide/vue';
 import { useTranslate } from '@nzyme/vue-i18n/useTranslate.js';
 
 import * as l from './Button.loc.js';
@@ -35,13 +41,14 @@ const t = useTranslate();
 
 <template>
   <Button
-    :class="[$style.button, $style[`button_${props.variant ?? 'primary'}`]]"
+    :class="[$style.button, $style[`button_${props.variant ?? 'primary'}`], props.chosen && $style.button_chosen]"
     :aria-busy="busy || undefined"
+    :aria-pressed="props.chosen || undefined"
   >
     <span :class="$style.button_content">
       <component
-        :is="props.icon"
-        v-if="props.icon"
+        :is="props.chosen ? Check : props.icon"
+        v-if="props.chosen || props.icon"
         :class="$style.button_icon"
         aria-hidden="true"
       />
@@ -117,6 +124,10 @@ const t = useTranslate();
   --button-background: #{$color-surface};
   --button-border: #{$color-border-strong};
 
+  &:disabled {
+    --button-background: #{$color-surface-soft};
+  }
+
   &:not(:disabled) {
     @include hover {
       --button-background: #{$color-surface-soft};
@@ -143,6 +154,18 @@ const t = useTranslate();
     @include hover {
       --button-background: #{$color-attention-soft};
     }
+  }
+}
+
+// After the variants: a chosen button keeps its look when disabled, once the conversation has moved on.
+.button_chosen,
+.button_chosen:disabled {
+  --button-background: #{$color-surface};
+  --button-border: #{$color-brand-1-strong};
+  --button-text: #{$color-ink};
+
+  .button_icon {
+    color: $color-brand-1-strong;
   }
 }
 

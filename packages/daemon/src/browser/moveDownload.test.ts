@@ -25,7 +25,7 @@ test.each([
 
     expect(destination).toBe(path.join(folder, expected));
     expect(await readdir(folder)).toEqual([expected]);
-    expect(await readdir(path.dirname(folder))).toEqual(['browser', 'downloads']);
+    expect((await readdir(path.dirname(folder))).toSorted()).toEqual(['browser', 'downloads']);
 });
 
 test('a taken name gets a suffix and neither file is overwritten', async () => {

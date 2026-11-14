@@ -15,6 +15,8 @@ export default [
         '**/target/**',
         '**/*.loc.ts',
         '**/*.loc.js',
+        // Generated Markdown (the `.gen` infix); the generator owns its format.
+        '**/*.gen.md',
         // Agent worktrees are full checkouts of this repo; ESLint does not read .gitignore.
         '.claude/worktrees/**',
         // Agent scratch space, not formatted.
