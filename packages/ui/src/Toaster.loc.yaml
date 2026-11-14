@@ -1,0 +1,7 @@
+notifications:
+  en[auto]: Notifications
+  pl: Powiadomienia
+
+notification:
+  en[auto]: Notification
+  pl: Powiadomienie

@@ -207,3 +207,4 @@ Append-only. One line per turn that settled something, was rejected, or got an a
   missing with a fixed message, conversation stays open to continue after reinstalling (D42 rewritten). Old forms to
   history.
 - 2026-11-14 — Owner closed the plugins design (#25). Open: #35 (schedule and tunnel confirmations), apt vs pinned archive (D26). Unchecked for the first build task: OpenCode skill-as-command (D42), denied tools hidden from claude-agent.
+- 2026-11-14 — Toasts and app update design round from .context/app-updates-brief.md: `molecules/Toast` with tone, lifetime and action variants, `molecules/Toaster`, the update toast (ready, restarting, install failed), a busy Primary button, screens 67–69; log in history/app-updates.md.
