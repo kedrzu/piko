@@ -57,6 +57,38 @@ RUN case "$TARGETARCH" in \
     && chmod 755 /usr/local/bin/opencode \
     && rm /tmp/opencode.tgz
 
+# agent-browser drives the agent's own browser, which runs on the host, through the daemon's tunnel. The wrapper points it
+# at the conversation's page set: the tunnel path carries OpenCode's session id, so each conversation gets its own pages.
+RUN case "$TARGETARCH" in \
+        arm64) target=arm64 sha=34be55c2b92d8d199fb9d1d62a905ee5b6ac5b1f3e8c24e5b20597f370d905e5 ;; \
+        amd64) target=x64 sha=8e69c9fb662514c9cf36e4911e94e913742ba066e55102486350e049dd847612 ;; \
+        *) echo "Unsupported architecture: $TARGETARCH" >&2; exit 1 ;; \
+    esac \
+    && curl -fsSL -o /tmp/agent-browser \
+        "https://github.com/vercel-labs/agent-browser/releases/download/v0.43.0/agent-browser-linux-$target" \
+    && echo "$sha  /tmp/agent-browser" | sha256sum --check --strict - \
+    && install -D -m 755 /tmp/agent-browser /usr/local/lib/agent-browser/agent-browser \
+    && rm /tmp/agent-browser
+
+# The token is `[A-Za-z0-9_-]` only (`readOrCreatePassword`), so it needs no JSON escaping in the headers.
+COPY <<'EOF_WRAPPER' /usr/local/bin/agent-browser
+#!/bin/sh
+for name in OPENCODE_SESSION_ID POWERAGENTS_BROWSER_URL POWERAGENTS_BROWSER_TOKEN; do
+    eval "value=\${$name:-}"
+    if [ -z "$value" ]; then
+        echo "agent-browser: $name is not set; the browser works only from the agent's own shell." >&2
+        exit 1
+    fi
+done
+
+export AGENT_BROWSER_CDP="$POWERAGENTS_BROWSER_URL/session/$OPENCODE_SESSION_ID"
+export AGENT_BROWSER_CDP_HEADERS="{\"Authorization\":\"Bearer $POWERAGENTS_BROWSER_TOKEN\"}"
+export AGENT_BROWSER_SESSION="$OPENCODE_SESSION_ID"
+export AGENT_BROWSER_NO_VERSION_CHECK=1
+exec /usr/local/lib/agent-browser/agent-browser "$@"
+EOF_WRAPPER
+RUN chmod 755 /usr/local/bin/agent-browser
+
 # The image pins both versions; neither may update itself inside a running container.
 ENV DISABLE_AUTOUPDATER=1 \
     OPENCODE_DISABLE_AUTOUPDATE=1
@@ -113,6 +145,24 @@ You may create a project without asking when the person's work calls for one; it
 3. Write `/Poweragents/projects/<name>/.project.json`, exactly this shape:
    `{"id": "<new UUID>", "name": "<name>", "createdAt": "<now, ISO 8601 in UTC>"}`. Get the UUID from
    `cat /proc/sys/kernel/random/uuid` and the time from `date -u +%Y-%m-%dT%H:%M:%SZ`; never reuse another project's id.
+
+## Browsing the web
+
+You have your own browser, separate from the person's. It shares the logins they made in it, so a site they signed in to
+for you is open to you. Drive it with the `agent-browser` command from the shell:
+
+- `agent-browser open <url>` opens a page.
+- `agent-browser snapshot` shows the page as a list of elements, each with a ref such as `@e3`. Take a new snapshot
+  after the page changes: refs go stale.
+- `agent-browser click @e3`, `agent-browser fill @e5 "text"`, `agent-browser press Enter` act on the page.
+- `agent-browser get text @e3` reads text; `agent-browser screenshot /tmp/page.png` is for when the layout matters.
+- `agent-browser --help` lists the rest (tabs, waiting, going back, uploads).
+
+Downloads land in `/Poweragents/downloads`; move a file into the project when it belongs there. Upload only files under
+`/Poweragents/...`. The browser cannot open local files or the person's local network.
+
+When a login, a CAPTCHA or a payment needs the person, stop and say so plainly in the conversation; do not try to get
+around it. Do not close the browser when you finish: the person may want to see the page.
 
 ## App setup
 

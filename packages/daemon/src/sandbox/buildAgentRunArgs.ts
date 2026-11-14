@@ -1,6 +1,6 @@
 import path from 'node:path';
 
-import { PROJECTS_FOLDER } from '../env.js';
+import { BROWSER_TUNNEL_PORT, PROJECTS_FOLDER } from '../env.js';
 
 /** The `nerdctl run` arguments of the agent's container, and the spec they carry. */
 export interface AgentRunArgs {
@@ -23,13 +23,17 @@ export const AGENT_PROJECTS_DIR = path.posix.join(AGENT_DATA_ROOT, PROJECTS_FOLD
 /** The port the agent is published on, on the VM's loopback (Lima forwards it to the host's), next to the daemon's. */
 export const AGENT_HOST_PORT = 47611;
 
+/** The host as the VM sees it (`host.lima.internal`): Lima's user-mode network gateway, forwarding to the host. */
+export const HOST_GATEWAY = '192.168.5.2';
+
 /** The port OpenCode listens on inside the container. */
 const OPENCODE_PORT = 4096;
 
 /**
  * Builds the `nerdctl` arguments that start the agent's container: OpenCode serving on the loopback only, behind the
- * password nerdctl reads from its stdin (`OPENCODE_SERVER_PASSWORD=…`), with the profile's data root and two named volumes keeping Claude's login and OpenCode's
- * conversations across container recreation. The password never appears in the arguments, which other processes can
+ * password nerdctl reads from its stdin (`OPENCODE_SERVER_PASSWORD=…`) and the browser tunnel's address (its token comes
+ * the same way, `POWERAGENTS_BROWSER_TOKEN=…`), with the profile's data root and two named volumes keeping Claude's login and OpenCode's
+ * conversations across container recreation. The secrets never appear in the arguments, which other processes can
  * read.
  * @__NO_SIDE_EFFECTS__
  */
@@ -48,6 +52,8 @@ export function buildAgentRunArgs(image: string): AgentRunArgs {
         'poweragents-opencode:/root/.local/share/opencode',
         '--env',
         'CLAUDE_CONFIG_DIR=/root/.claude',
+        '--env',
+        `POWERAGENTS_BROWSER_URL=ws://${HOST_GATEWAY}:${BROWSER_TUNNEL_PORT}`,
         '--env-file',
         '/dev/stdin',
         '--workdir',

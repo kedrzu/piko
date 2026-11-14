@@ -4,6 +4,10 @@ import { DAEMON_EVENTS_PATH } from '@poweragents/common/api/DaemonEventTypes.js'
 import { DAEMON_API_PATH, DAEMON_PORT } from '@poweragents/common/daemonAddress.js';
 
 import { ApiService } from './api/ApiService.js';
+import { BrowserNetworkGuard } from './browser/BrowserNetworkGuard.js';
+import { BrowserService } from './browser/BrowserService.js';
+import { BrowserTunnelService } from './browser/BrowserTunnelService.js';
+import { ChromiumInstall } from './browser/ChromiumInstall.js';
 import { POWERAGENTS_VERSION } from './env.js';
 import { DaemonLoggerTransport } from './logging/DaemonLoggerTransport.js';
 import { MemoryService } from './memory/MemoryService.js';
@@ -41,6 +45,28 @@ await container
     .resolve(MemoryService)
     .ensureFolder()
     .catch((error: unknown) => logger.error('Memory folder could not be created', { error }));
+
+// The agent's browser (design D27). Downloads land in the data root's Downloads folder, which exists before the agent
+// looks for it. Every browser request goes through the network guard, so it listens before the browser can launch; the
+// tunnel answers the sandbox at once and refuses it until the browser, downloaded in the background on first start, is
+// installed. Chrome itself starts on the first tunnel connection. A failure here is logged and the daemon keeps serving.
+const browser = container.resolve(BrowserService);
+await browser
+    .ensureDownloadsFolder()
+    .catch((error: unknown) => logger.error('Downloads folder could not be created', { error }));
+await container
+    .resolve(BrowserNetworkGuard)
+    .listen()
+    .catch((error: unknown) => logger.error('The browser network guard could not start', { error }));
+try {
+    container.resolve(BrowserTunnelService).listen();
+} catch (error) {
+    logger.error('The browser tunnel could not start', { error });
+}
+container
+    .resolve(ChromiumInstall)
+    .ensure()
+    .catch(() => undefined);
 
 // The sandbox comes up in the background while the daemon already answers. A failure is logged by the sandbox and
 // leaves it `failed`; the daemon keeps serving. The VM is deliberately not stopped on exit: the daemon is long-lived,
