@@ -609,3 +609,25 @@ speakers. "<name> ai" + .ai site: **Koguma** ('bear cub') is koguma.ai, a cute-b
 **Best.** Volpino (all four TLDs, .ai confirmed; closest to Lupeto's shape), Ursino (.ai, .so,
 get…com), Lobillo (all five incl. .com; the wolf again, without "lupo").
 **Proposed next.** Show these three next to Lupeto; deepen whichever animal the user prefers.
+
+## Round 28 — 2026-11-14
+
+**User.** Found **Lupi** — short, sounds great, a variation on Lupo; wants conflicts confirmed and
+more morphological variations of animal words (not exact translations).
+**Lupi, checked.** Domains: lupi.so, getlupi.com, uselupi.com, trylupi.com, lupi.to likely-free;
+lupi.com (a pizzeria), lupi.app, lupi.io, lupi.co, lupi.me, lupi.dev, heylupi.com, meetlupi.com,
+lupiapp.com taken; **lupi.ai registered 2024-05-19 at Name.com, no site**. Conflicts: three small iOS
+apps — "Lupi AI – Relationship Coach", "Lupi: AI Bedtime Stories", "Lupi: Bills & Subscriptions";
+Lupi AI, a Georgian ed-tech startup (2019); Lupi is the Italian plural of lupo, and lupo.ai is an
+AI-agent platform; English "loopy" is a near-homophone. All notable, none a large product in our
+space. Not trademark-screened (TMview blocks this machine).
+**Directions.** Morphological variations of animal words: plural/stem forms and clipped forms (-i,
+-o, -u) from Italian, Latin, Greek, Romanian, Nordic, Japanese (≈55).
+**What came out.** Most keep only .so or get…com; a few keep everything (Orsi, Ursu, Falki, Lyki,
+Lioni, Cervi). "<name> ai": **Orsi** is a Belgian surgical-AI company (blocking). **Volpo** (from volpe
+'fox', exactly Lupo's shape) is clean — volpo.ai is parked, .app/.so/get…com open. **Lioni** ('lions')
+and **Ursu** (Romanian 'the bear') are clean with .ai, .app, .so, get…com free.
+**Where I looked.** DNS; whois.nic.ai; site fetch of lupi.ai/.app/.com/.so/.io and volpo.ai; App Store;
+web search "lupi ai", "Lupi app", "orsi ai", "volpo ai", "lioni ai".
+**Proposed next.** Report Lupi's conflicts honestly (usable, but crowded with small "Lupi" apps and
+next to lupo.ai); offer Volpo, Lioni, Ursu as variations; deepen the one the user likes.

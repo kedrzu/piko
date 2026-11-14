@@ -41841,7 +41841,9 @@
           "method": "dns",
           "checked_at": "2026-11-13"
         }
-      }
+      },
+      "verdict": "dropped",
+      "reason": "common name; Lupo family"
     },
     "Chema": {
       "direction": "names and words in Lupo's and Sancho's sound: soft onset, open vowels, -o",
@@ -56280,6 +56282,1937 @@
           "checked_at": "2026-11-14"
         },
         "getdelfinetto.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Lupi": {
+      "direction": "user's own find: morphological variation of Lupo",
+      "round": 28,
+      "domains": {
+        "lupi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lupi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lupi.ai": {
+          "status": "taken",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14",
+          "note": "registered 2024-05-19 at Name.com; no site"
+        },
+        "lupi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getlupi.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "heylupi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lupi.co": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lupi.io": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lupi.me": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lupi.to": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lupiapp.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "uselupi.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "meetlupi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "trylupi.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lupi.dev": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "verdict": "liked",
+      "feedback": [
+        "user found it: \"bardzo fajnie brzmi, jest krotka\" — a variation on Lupo (2026-11-14)"
+      ],
+      "conflicts": [
+        {
+          "who": "Lupi AI – Relationship Coach (iOS, Lifestyle); Lupi: AI Bedtime Stories (iOS); Lupi: Bills & Subscriptions (iOS)",
+          "space": "consumer AI apps",
+          "severity": "notable",
+          "url": "https://apps.apple.com/search?term=lupi",
+          "checked_at": "2026-11-14"
+        },
+        {
+          "who": "Lupi AI — Georgian ed-tech startup (teachers' grading assistant, founded 2019)",
+          "space": "AI",
+          "severity": "notable",
+          "url": "https://www.cbinsights.com/company/lupi-ai",
+          "checked_at": "2026-11-14"
+        },
+        {
+          "who": "lupi.ai registered 2024 (no site); lupi.com = Lupi's Pizza Pies (Chattanooga)",
+          "space": "domains",
+          "severity": "notable",
+          "url": "https://lupi.com",
+          "checked_at": "2026-11-14"
+        },
+        {
+          "who": "Lupi = Italian plural of lupo ('wolves'); lupo.ai is an AI-agent platform (Knowledge-to-Execution)",
+          "space": "AI agents",
+          "severity": "notable",
+          "url": "https://lupo.ai",
+          "checked_at": "2026-11-14"
+        },
+        {
+          "who": "Lupi FIRE (Gruppo Lupi fire-safety app); Lupibu (baby tracker)",
+          "space": "apps",
+          "severity": "noise",
+          "url": "https://betalist.com/startups/lupibu",
+          "checked_at": "2026-11-14"
+        }
+      ],
+      "phonetics": "LOO-pee; Italian 'wolves'; one spelling (Lupi/Loopy risk: 'loopy' = slightly crazy in English)"
+    },
+    "Lupu": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "lupu.com": {
+          "status": "taken",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lupu.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lupu.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lupu.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getlupu.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "Lupo family"
+    },
+    "Lupy": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "lupy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lupy.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lupy.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lupy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getlupy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "Lupo family"
+    },
+    "Volpi": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "volpi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "volpi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "volpi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "volpi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getvolpi.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "Volpi Foods (salami)"
+    },
+    "Vulpi": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "vulpi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "vulpi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "vulpi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "vulpi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getvulpi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Volpo": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "volpo.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "volpo.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "volpo.ai": {
+          "status": "taken",
+          "method": "site fetch",
+          "checked_at": "2026-11-14",
+          "note": "parked at Hostinger"
+        },
+        "volpo.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getvolpo.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [
+        {
+          "who": "volpo.ai parked; search 'volpo ai': nothing named Volpo; VOLO (AI services), Volare AI nearby",
+          "space": "AI",
+          "severity": "notable",
+          "url": "https://volo.global/services/ai",
+          "checked_at": "2026-11-14"
+        }
+      ],
+      "phonetics": "from volpe 'fox', shaped like Lupo; VOL-po"
+    },
+    "Volpa": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "volpa.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "volpa.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "volpa.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "volpa.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getvolpa.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Orsi": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "orsi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "orsi.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "orsi.ai": {
+          "status": "taken",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "orsi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getorsi.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [
+        {
+          "who": "Orsi Innotech (Orsi Academy, Belgium) — surgical AI; orsi.ai registered",
+          "space": "AI",
+          "severity": "blocking",
+          "url": "https://nvidia-holoscan.github.io/holohub/applications/orsi/orsi_multi_ai_ar",
+          "checked_at": "2026-11-14"
+        }
+      ],
+      "phonetics": "Italian 'bears'; OR-see",
+      "verdict": "dropped",
+      "reason": "blocking: Orsi Innotech (Orsi Academy, Belgium) — surgical AI; orsi.ai registered"
+    },
+    "Ursi": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "ursi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "ursi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "ursi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "ursi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getursi.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Ursu": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "ursu.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "ursu.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "ursu.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "ursu.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getursu.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [
+        {
+          "who": "Ursu — Romanian surname ('bear'); App Store search returns Urdu apps (sound-alike)",
+          "space": "apps",
+          "severity": "noise",
+          "url": "https://apps.apple.com/search?term=ursu",
+          "checked_at": "2026-11-14"
+        }
+      ],
+      "phonetics": "Romanian 'the bear' (urs + -u); OOR-soo"
+    },
+    "Ursa": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "ursa.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "ursa.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "ursa.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "ursa.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getursa.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "common"
+    },
+    "Lobi": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "lobi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lobi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lobi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lobi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getlobi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Loba": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "loba.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "loba.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "loba.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "loba.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getloba.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Linci": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "linci.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "linci.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "linci.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "linci.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getlinci.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Gufi": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "gufi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "gufi.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "gufi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "gufi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getgufi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "heard as 'goofy'"
+    },
+    "Ricci": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "ricci.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "ricci.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "ricci.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "ricci.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getricci.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "surname"
+    },
+    "Falki": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "falki.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "falki.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "falki.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "falki.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getfalki.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [],
+      "phonetics": "from falco 'falcon'; FAHL-kee"
+    },
+    "Corvi": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "corvi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "corvi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "corvi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "corvi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getcorvi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Merli": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "merli.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "merli.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "merli.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "merli.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getmerli.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Lepi": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "lepi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lepi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lepi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lepi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getlepi.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Cervi": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "cervi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "cervi.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "cervi.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "cervi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getcervi.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Kumi": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "kumi.com": {
+          "status": "taken",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "kumi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "kumi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "kumi.so": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "getkumi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Neki": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "neki.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "neki.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "neki.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "neki.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getneki.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Tori": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "tori.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "tori.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "tori.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "tori.so": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "gettori.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "common name"
+    },
+    "Kitsu": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "kitsu.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "kitsu.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "kitsu.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "kitsu.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getkitsu.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "Kitsu anime tracker"
+    },
+    "Lisi": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "lisi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lisi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lisi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lisi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getlisi.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Fuxi": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "fuxi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "fuxi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "fuxi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "fuxi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getfuxi.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Bari": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "bari.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "bari.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "bari.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "bari.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getbari.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "city"
+    },
+    "Vargi": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "vargi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "vargi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "vargi.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "vargi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getvargi.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Ulvi": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "ulvi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "ulvi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "ulvi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "ulvi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getulvi.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Revi": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "revi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "revi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "revi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "revi.so": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "getrevi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Bubi": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "bubi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "bubi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "bubi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "bubi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getbubi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Nocti": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "nocti.com": {
+          "status": "taken",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "nocti.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "nocti.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "nocti.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getnocti.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Feli": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "feli.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "feli.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "feli.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "feli.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getfeli.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Cani": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "cani.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "cani.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "cani.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "cani.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getcani.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Aqui": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "aqui.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "aqui.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "aqui.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "aqui.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getaqui.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Lyki": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "lyki.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lyki.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lyki.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "lyki.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getlyki.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [],
+      "phonetics": "from Greek lykos 'wolf'; LEE-kee — English readers may say LIKE-ee"
+    },
+    "Lyko": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "lyko.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lyko.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lyko.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lyko.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getlyko.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Arki": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "arki.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "arki.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "arki.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "arki.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getarki.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Arko": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "arko.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "arko.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "arko.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "arko.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getarko.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Alopi": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "alopi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "alopi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "alopi.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "alopi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getalopi.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Gatti": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "gatti.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "gatti.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "gatti.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "gatti.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getgatti.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "surname"
+    },
+    "Gati": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "gati.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "gati.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "gati.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "gati.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getgati.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Pardi": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "pardi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "pardi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "pardi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "pardi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getpardi.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Tigri": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "tigri.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "tigri.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "tigri.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "tigri.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "gettigri.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Leoni": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "leoni.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "leoni.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "leoni.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "leoni.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getleoni.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Lioni": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "lioni.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lioni.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lioni.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "lioni.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getlioni.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [
+        {
+          "who": "search 'lioni ai': nothing named Lioni; Elion AI, Liona Enterprises, Lion AI Box nearby; Lioni Specialty Foods app",
+          "space": "AI",
+          "severity": "notable",
+          "url": "https://www.cbinsights.com/company/elion-ai/",
+          "checked_at": "2026-11-14"
+        }
+      ],
+      "phonetics": "from Italian leone/leoni 'lions'; lee-OH-nee"
+    },
+    "Delfi": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "delfi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "delfi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "delfi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "delfi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getdelfi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Orki": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "orki.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "orki.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "orki.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "orki.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getorki.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Foki": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "foki.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "foki.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "foki.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "foki.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getfoki.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Pingi": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "pingi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "pingi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "pingi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "pingi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getpingi.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Koali": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "koali.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "koali.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "koali.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "koali.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getkoali.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Zebi": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "zebi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "zebi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "zebi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "zebi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getzebi.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "Zebi AI (round 2)"
+    },
+    "Rani": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "rani.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "rani.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "rani.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "rani.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getrani.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "common name"
+    },
+    "Mufi": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "mufi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "mufi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "mufi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "mufi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getmufi.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Oti": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "oti.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "oti.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "oti.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "oti.so": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "getoti.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        }
+      }
+    },
+    "Tupi": {
+      "direction": "morphological variations of animal words (not exact translations), Lupi-style",
+      "round": 28,
+      "domains": {
+        "tupi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "tupi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "tupi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "tupi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "gettupi.com": {
           "status": "likely-free",
           "method": "rdap",
           "checked_at": "2026-11-14"
