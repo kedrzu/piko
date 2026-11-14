@@ -83,19 +83,9 @@ The Vue packages are not emitted: `ui` exports its sources and is type-checked b
   untouched.
 - The profile's data root (`POWERAGENTS_DATA_ROOT`, default `~/Poweragents`) is the only host folder the sandbox
   mounts, at `/Poweragents` in the VM and the agent's container. It holds `projects/<project folder>/` (a folder with a
-  `.project.json` marker, `ProjectService`) `memory/`, the person's Memory (design D9), and `downloads/`, where the agent's browser downloads land; the daemon
-  creates the last two at start. The agent learns both from the global `AGENTS.md` its image puts in OpenCode's config folder
+  `.project.json` marker, `ProjectService`) and `memory/`, the person's Memory (design D9), which the daemon creates at
+  start. The agent learns both from the global `AGENTS.md` its image puts in OpenCode's config folder
   (`agent.Containerfile`).
-- The agent's browser is Chrome for Testing, pinned and downloaded by the daemon on first start into
-  `~/.poweragents/chromium` (sha256-checked; the installer carries no browser). It launches on first use over
-  `--remote-debugging-pipe` with minimized windows and its profile in `~/.poweragents/browser-profile`. The sandbox
-  reaches it only through the daemon's tunnel on host port 47612, guarded by a bearer token from
-  `~/.poweragents/browser-token` (the one firewall opening), which enforces the agent's limits (`checkCdpRequest`).
-  Downloads go to a daemon-owned staging folder, then into the data root's `downloads/`. Decision:
-  `docs/decisions/agent-browser-over-one-pipe.md`.
-- Every request the browser makes goes through the daemon's proxy on port 47613, which refuses non-public addresses
-  (design D8) and dials only the addresses it checked, IPv4 first. Decision:
-  `docs/decisions/agent-browser-network-guard.md`.
 - `bun run desktop` starts the shell in development: Tauri runs `nuxt dev` on port 4100 and the daemon from source under
   `bun --watch`, and the shell starts no sidecar.
 - The window may call only Tauri's core (`capabilities/default.json`), and its CSP allows connections only to the shell
