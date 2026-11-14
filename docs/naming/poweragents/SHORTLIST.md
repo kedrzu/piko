@@ -159,6 +159,7 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Delfeno | Esperanto diminutives and young-animal words (-eto, -ido), Lupeto's family | delfeno.app unknown, delfeno.ai unknown, delfeno.so likely-free, getdelfeno.com likely-free | none found |  |
 | Delfi | morphological variations of animal words (not exact translations), Lupi-style | delfi.so likely-free | none found |  |
 | Delfinetto | animal diminutives in other languages, Lupeto's style | delfinetto.com likely-free, delfinetto.app unknown, delfinetto.ai unknown, delfinetto.so likely-free, getdelfinetto.com likely-free | none found |  |
+| Delfo | generated cute animal-stem names (stem + vowel), .ai pre-filtered | delfo.app likely-free, delfo.ai likely-free, delfo.so likely-free, getdelfo.com likely-free | Delfi (AI platform), Delfino AI, Delphi.ai, Delfa — crowded sound (notable) | from delfino 'dolphin'; DEL-fo |
 | Deneb | small companions in the sky: moons and small stars | deneb.so likely-free | none found |  |
 | Despina | faithful helpers and companions from world literature and legend | despina.app likely-free, despina.so likely-free, getdespina.com likely-free | none found | the clever maid who stage-manages Così fan tutte; also a moon of Neptune; des-PEE-na |
 | Dirac | surnames of famous scientists and inventors | dirac.so likely-free | none found |  |
@@ -185,6 +186,7 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Erizo | animal words that work as Italian, Spanish or Latin first names (Lupo's family) | erizo.ai unknown, erizo.so likely-free, geterizo.com likely-free | none found |  |
 | Ermes | Italian forms of mythological names | ermes.so likely-free | none found |  |
 | Ermi | cute short modifications of animal names (Lupi/Urso style) | ermi.app likely-free, ermi.so likely-free, getermi.com likely-free | none found |  |
+| Ermy | generated cute animal-stem names (stem + vowel), .ai pre-filtered | ermy.ai likely-free, ermy.so likely-free, getermy.com likely-free | none found | from ermine; ER-mee |
 | Esquilinho | animal diminutives in other languages, Lupeto's style | esquilinho.app likely-free, esquilinho.ai unknown, esquilinho.so likely-free, getesquilinho.com likely-free | none found |  |
 | Estela | good-sounding Italian, Spanish and Latin first names | estela.so likely-free | none found |  |
 | Ettore | Italian forms of mythological names | ettore.app likely-free, ettore.ai unknown, ettore.so likely-free | none found |  |
@@ -204,6 +206,7 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Fellini | surnames of Italian and Spanish artists and composers | fellini.ai unknown, fellini.so likely-free, getfellini.com likely-free | none found |  |
 | Fenek | cute short modifications of animal names (Lupi/Urso style) | fenek.so likely-free | none found |  |
 | Fenni | cute short modifications of animal names (Lupi/Urso style) | fenni.so likely-free, getfenni.com likely-free | Fenni — Fenwick & West's internal AI knowledge assistant; fenni.ai registered (empty) (notable) | from fennec fox; FEN-nee |
+| Fenny | generated cute animal-stem names (stem + vowel), .ai pre-filtered | fenny.ai likely-free, fenny.so likely-free | FINNY AI (YC, advisors' prospecting) and Fenny Solutions (AI dev services) — sound-alikes (notable) | from fennec; FEN-nee |
 | Fep | short punchy coinages, 3 letters (CVC), one spelling | fep.so likely-free, getfep.com likely-free, fep.to likely-free | none found |  |
 | Ferdinand | names from Shakespeare, Arthurian legend and fairy tales | ferdinand.so likely-free | none found |  |
 | Ferro | short Italian/Spanish/Latin nouns that sound like names, Lupo-shaped (two syllables, ends in -o) | ferro.so likely-free | none found |  |
@@ -309,6 +312,7 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Kenji | broader real first names: international and Polish, easy for English speakers | kenji.so likely-free | none found |  |
 | Kib | short punchy coinages, 3 letters (CVC), one spelling | getkib.com likely-free, kib.so free ($57.50/yr), kib.to likely-free | KIB — Kuwait International Bank apps; KiBee (kibee.ai) support agent (notable); KIB marks in class 9: Kuwait International Bank (EU), American Technology Components (US) (notable) | Kib/Kibb/Cib; reads like 'kibble' |
 | Kind Hand | a helper with real power: helper nouns with a warm adjective | kindhand.app likely-free, kindhand.ai unknown, getkindhand.com likely-free | none found |  |
+| Kitsi | generated cute animal-stem names (stem + vowel), .ai pre-filtered | kitsi.app likely-free, kitsi.ai likely-free, kitsi.so likely-free, getkitsi.com likely-free | Kitsy AI Bedtime Stories (iOS, 84 ratings) — sound-alike (notable) | from kitsune 'fox'; KIT-see |
 | Koali | morphological variations of animal words (not exact translations), Lupi-style | koali.so likely-free | none found |  |
 | Kogitsune | animal diminutives in other languages, Lupeto's style | kogitsune.app unknown, kogitsune.ai unknown, kogitsune.so likely-free, getkogitsune.com likely-free | none found |  |
 | Koldo | Japanese, Hawaiian and Basque names and animal words that sound easy in English (Tancho's neighbours) | koldo.so likely-free, getkoldo.com likely-free | none found |  |
@@ -330,6 +334,7 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Lano | coined first names, 2–3 syllables | lano.app unknown, lano.so likely-free | none found |  |
 | Lanon | coined two-syllable names, soft consonants, no clusters (systematic sweep, .ai free) | lanon.app likely-free, lanon.ai unknown, lanon.so likely-free, getlanon.com likely-free | none found | LAN-on; close to 'Lannon' |
 | Lanzo | names and words in Lupo's and Sancho's sound: soft onset, open vowels, -o | lanzo.so likely-free | none found |  |
+| Lapino | generated cute animal-stem names (stem + vowel), .ai pre-filtered | lapino.app likely-free, lapino.ai likely-free, lapino.so likely-free, getlapino.com likely-free | Lapu AI — local computer-use AI agent for macOS and Windows (June 2026) — loose sound-alike; La Pino'z pizza (notable) | from French lapin 'rabbit'; la-PEE-no |
 | Leandro | good-sounding Italian, Spanish and Latin first names | leandro.ai unknown, leandro.so likely-free, getleandro.com likely-free | none found | lay-AN-dro; Hero and Leander |
 | Leave It To Me | what a helper says: 'on it', 'sorted' | leaveittome.app likely-free, getleaveittome.com likely-free | none found |  |
 | Lele | real Spanish, Italian and Portuguese nicknames (hypocoristics) | lele.so likely-free | none found |  |
@@ -348,6 +353,7 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Leporeto | Esperanto diminutives and young-animal words (-eto, -ido), Lupeto's family | leporeto.com likely-free, leporeto.app likely-free, leporeto.ai unknown, leporeto.so likely-free, getleporeto.com likely-free | none found |  |
 | Lepre | animal words that work as Italian, Spanish or Latin first names (Lupo's family) | lepre.app likely-free, lepre.ai unknown, lepre.so likely-free | none found |  |
 | Leprotto | animal diminutives in other languages, Lupeto's style | leprotto.app unknown, leprotto.ai unknown, leprotto.so likely-free, getleprotto.com likely-free | none found |  |
+| Lepy | generated cute animal-stem names (stem + vowel), .ai pre-filtered | lepy.app likely-free, lepy.ai likely-free, lepy.so likely-free, getlepy.com likely-free | Leapy — Leapsome's AI copilot (English readers will say Lepy as 'leapy') (notable) | from lepre 'hare'; LEH-pee, but English readers say LEE-pee |
 | Leunculus | animal diminutives in other languages, Lupeto's style | leunculus.app unknown, leunculus.ai unknown, leunculus.so likely-free, getleunculus.com likely-free | none found |  |
 | Lince | animal words that work as Italian, Spanish or Latin first names (Lupo's family) | lince.so likely-free | none found |  |
 | Linci | morphological variations of animal words (not exact translations), Lupi-style | linci.so likely-free, getlinci.com likely-free | none found |  |
@@ -371,6 +377,7 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Lom | short punchy coinages, 3 letters (CVC), one spelling | lom.so likely-free, getlom.com likely-free | none found |  |
 | Long Lever | plain compounds: easy yet powerful | longlever.app likely-free, getlonglever.com likely-free | none found |  |
 | Lonti | cute short modifications of animal names (Lupi/Urso style) | lonti.app likely-free, lonti.so likely-free, getlonti.com likely-free | lonti.ai registered (empty) (notable) | from lontra 'otter'; LON-tee |
+| Loobi | generated cute animal-stem names (stem + vowel), .ai pre-filtered | loobi.ai likely-free, loobi.so likely-free, getloobi.com likely-free | none found | from lobo 'wolf'; LOO-bee (English 'looby') |
 | Lorenzo | first names shaped like Sancho and Camillo | lorenzo.so likely-free, getlorenzo.com likely-free | none found |  |
 | Lucano | names and words in Lupo's and Sancho's sound: soft onset, open vowels, -o | lucano.ai unknown, lucano.so likely-free, getlucano.com likely-free | none found |  |
 | Lucco | names and words in Lupo's and Sancho's sound: soft onset, open vowels, -o | lucco.so likely-free, getlucco.com likely-free | none found |  |
@@ -407,6 +414,7 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Masetto | faithful helpers and companions from world literature and legend | masetto.app likely-free, masetto.so likely-free, getmasetto.com likely-free | none found | the peasant in Don Giovanni; ma-ZET-to |
 | Massimo | good-sounding Italian, Spanish and Latin first names | massimo.so likely-free | none found |  |
 | Matteo | first names shaped like Sancho and Camillo | matteo.so likely-free | none found |  |
+| Mausy | generated cute animal-stem names (stem + vowel), .ai pre-filtered | mausy.app likely-free, mausy.ai likely-free, mausy.so likely-free, getmausy.com likely-free | none found | from German Maus 'mouse'; MOW-zee |
 | Meli | cute short modifications of animal names (Lupi/Urso style) | meli.so likely-free | none found |  |
 | Mendel | surnames of famous scientists and inventors | mendel.ai unknown, mendel.so likely-free | none found |  |
 | Meo | real Spanish, Italian and Portuguese nicknames (hypocoristics) | meo.so likely-free | none found |  |

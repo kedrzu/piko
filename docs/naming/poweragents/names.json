@@ -59909,6 +59909,310 @@
           "checked_at": "2026-11-14"
         }
       }
+    },
+    "Lepy": {
+      "direction": "generated cute animal-stem names (stem + vowel), .ai pre-filtered",
+      "round": 30,
+      "domains": {
+        "lepy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lepy.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lepy.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "lepy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getlepy.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [
+        {
+          "who": "Leapy — Leapsome's AI copilot (English readers will say Lepy as 'leapy')",
+          "space": "AI assistant",
+          "severity": "notable",
+          "url": "https://help.leapsome.com/hc/en-us/articles/29537513030941-Leapy-Your-AI-Copilot",
+          "checked_at": "2026-11-14"
+        }
+      ],
+      "phonetics": "from lepre 'hare'; LEH-pee, but English readers say LEE-pee"
+    },
+    "Kitsi": {
+      "direction": "generated cute animal-stem names (stem + vowel), .ai pre-filtered",
+      "round": 30,
+      "domains": {
+        "kitsi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "kitsi.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "kitsi.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "kitsi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getkitsi.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [
+        {
+          "who": "Kitsy AI Bedtime Stories (iOS, 84 ratings) — sound-alike",
+          "space": "consumer AI app",
+          "severity": "notable",
+          "url": "https://apps.apple.com/search?term=kitsi",
+          "checked_at": "2026-11-14"
+        }
+      ],
+      "phonetics": "from kitsune 'fox'; KIT-see"
+    },
+    "Lapino": {
+      "direction": "generated cute animal-stem names (stem + vowel), .ai pre-filtered",
+      "round": 30,
+      "domains": {
+        "lapino.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "lapino.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "lapino.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "lapino.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getlapino.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [
+        {
+          "who": "Lapu AI — local computer-use AI agent for macOS and Windows (June 2026) — loose sound-alike; La Pino'z pizza",
+          "space": "desktop AI agent",
+          "severity": "notable",
+          "url": "https://www.producthunt.com/products/lapuai/launches/lapuai",
+          "checked_at": "2026-11-14"
+        }
+      ],
+      "phonetics": "from French lapin 'rabbit'; la-PEE-no"
+    },
+    "Fenny": {
+      "direction": "generated cute animal-stem names (stem + vowel), .ai pre-filtered",
+      "round": 30,
+      "domains": {
+        "fenny.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "fenny.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "fenny.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "fenny.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getfenny.com": {
+          "status": "taken",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [
+        {
+          "who": "FINNY AI (YC, advisors' prospecting) and Fenny Solutions (AI dev services) — sound-alikes",
+          "space": "AI",
+          "severity": "notable",
+          "url": "https://www.ycombinator.com/companies/finny-ai",
+          "checked_at": "2026-11-14"
+        }
+      ],
+      "phonetics": "from fennec; FEN-nee"
+    },
+    "Delfo": {
+      "direction": "generated cute animal-stem names (stem + vowel), .ai pre-filtered",
+      "round": 30,
+      "domains": {
+        "delfo.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "delfo.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "delfo.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "delfo.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getdelfo.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [
+        {
+          "who": "Delfi (AI platform), Delfino AI, Delphi.ai, Delfa — crowded sound",
+          "space": "AI",
+          "severity": "notable",
+          "url": "https://apps.odoo.com/apps/modules/17.0/delfi_chatbot",
+          "checked_at": "2026-11-14"
+        }
+      ],
+      "phonetics": "from delfino 'dolphin'; DEL-fo"
+    },
+    "Loobi": {
+      "direction": "generated cute animal-stem names (stem + vowel), .ai pre-filtered",
+      "round": 30,
+      "domains": {
+        "loobi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "loobi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "loobi.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "loobi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getloobi.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [],
+      "phonetics": "from lobo 'wolf'; LOO-bee (English 'looby')"
+    },
+    "Ermy": {
+      "direction": "generated cute animal-stem names (stem + vowel), .ai pre-filtered",
+      "round": 30,
+      "domains": {
+        "ermy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "ermy.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "ermy.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "ermy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getermy.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [],
+      "phonetics": "from ermine; ER-mee"
+    },
+    "Mausy": {
+      "direction": "generated cute animal-stem names (stem + vowel), .ai pre-filtered",
+      "round": 30,
+      "domains": {
+        "mausy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "mausy.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "mausy.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "mausy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getmausy.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "conflicts": [],
+      "phonetics": "from German Maus 'mouse'; MOW-zee"
     }
   }
 }

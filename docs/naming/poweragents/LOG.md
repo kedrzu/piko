@@ -653,3 +653,22 @@ App Store; web search "urso ai", "Urso app", "urzo ai", "fenni ai", "mofu ai".
 **Proposed next.** Tell the user about the Urso self-care bear app; offer Urzo. Keep generating cute
 animal-derived shapes, but pre-filter by .ai at the registry, since most cute short forms are AI
 startups already.
+
+## Round 30 — 2026-11-14
+
+**User on round 29.** "Keep generating, maybe we find something." No verdict on Urso or Urzo.
+**Directions.** Generated cute animal-stem names: ≈110 stems (lup, urs, ors, lob, lep, lapin, fenn,
+kits, delf, maus, igel, bjorn, fuchs…) × endings -i/-o/-u/-y/-a/-e → 677 candidates; DNS filter on
+.ai first, then .app, .so, get…com, .com; survivors' .ai confirmed at whois.nic.ai.
+**What came out.** 160 passed the .ai filter. Most are clumsy (Bibero, Fuchsu, Gufoe) or read oddly in
+English. The cute ones keep running into similar-sounding AI products: **Lepy** reads as Leapy
+(Leapsome's AI copilot); **Kitsi** next to Kitsy AI Bedtime Stories; **Fenny** next to Finny AI (YC);
+**Delfo** among Delfi, Delfino AI, Delphi.ai; **Lapino** ('rabbit') loosely near Lapu AI, a desktop
+computer-use agent. Loobi, Ermy, Mausy have .ai/.so/get…com free but were not web-searched yet.
+**Where I looked.** DNS sweep; whois.nic.ai (9); App Store (4); web search "lepy ai", "lapino ai",
+"delfo ai", "fenny ai".
+**What this says.** In the short-and-cute space nearly every pleasant two-syllable shape has an AI
+product within one letter. Urzo and Lapino are the cleanest from these two rounds.
+**Proposed next.** Show the honest picture; ask whether one letter of distance from a small app is
+acceptable (it changes what counts as a conflict), or whether to go for longer, more distinctive
+shapes.
