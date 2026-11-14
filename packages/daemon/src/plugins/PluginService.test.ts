@@ -1,5 +1,5 @@
 import { expect, test } from 'bun:test';
-import { cp, lstat, mkdir, mkdtemp, readdir, readFile, symlink, writeFile } from 'node:fs/promises';
+import { cp, lstat, mkdir, mkdtemp, readdir, readFile, rm, symlink, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 
@@ -7,6 +7,7 @@ import { HttpError } from '@nzyme/fetch-utils/HttpError.js';
 import { EnvVariables } from '@nzyme/ioc/helpers/EnvVariables.js';
 import { createTestContainer } from '@nzyme/ioc-testing/createTestContainer.js';
 import { createEventEmitter } from '@nzyme/utils/createEventEmitter.js';
+import { waitUntil } from '@nzyme/utils/waitUntil.js';
 
 import type { PluginsChangedEvent } from '@poweragents/common/api/DaemonEventTypes.js';
 import type { PluginInstall } from '@poweragents/common/api/PluginTypes.js';
@@ -312,19 +313,7 @@ test("installing applies the bundled plugin's environment from its copy, and rem
 
 test('installing an own plugin applies its environment from its folder', async () => {
     const { plugins, dataRoot, sandbox } = await setup({ ready: true });
-    await writeFile(
-        path.join(dataRoot, 'plugins', 'my-notes', 'plugin.json'),
-        JSON.stringify({
-            name: 'my-notes',
-            level: 'profile',
-            tags: ['test'],
-            marketplace: {
-                pl: { title: 'my-notes (pl)', description: 'Opis my-notes.' },
-                en: { title: 'my-notes', description: 'Describes my-notes.' },
-            },
-            environment: { cli: 'tools/cli' },
-        }),
-    );
+    await addOwnEnvironment(dataRoot);
 
     const result = await plugins.install({ name: 'my-notes' });
 
@@ -333,6 +322,30 @@ test('installing an own plugin applies its environment from its folder', async (
         private: true,
         dependencies: { '@poweragents-plugins/my-notes': 'file:/Poweragents/plugins/my-notes/tools/cli' },
     });
+});
+
+test("sync applies the environment again only when the own plugins' environments changed: a deleted own plugin's packages go", async () => {
+    const { plugins, dataRoot, sandbox } = await setup({ ready: true });
+    await addOwnEnvironment(dataRoot);
+    await plugins.install({ name: 'my-notes' });
+    const appliedCommands = sandbox.commands.length;
+
+    // The sync starts an apply without awaiting it: give a wrongly started one the time to run its commands.
+    await plugins.sync();
+    await Bun.sleep(50);
+    expect(sandbox.commands).toHaveLength(appliedCommands);
+
+    await rm(path.join(dataRoot, 'plugins', 'my-notes'), { recursive: true });
+    await plugins.sync();
+
+    await waitUntil(() => sandbox.packageJsons.length === 2);
+    expect(sandbox.packageJsons).toEqual([
+        {
+            private: true,
+            dependencies: { '@poweragents-plugins/my-notes': 'file:/Poweragents/plugins/my-notes/tools/cli' },
+        },
+        { private: true, dependencies: {} },
+    ]);
 });
 
 test('installing or removing a bundled plugin without an environment applies nothing; an own plugin and the ready apply always do', async () => {
@@ -440,6 +453,23 @@ async function setup(options: SetupOptions = {}) {
         events,
         sandbox,
     };
+}
+
+/** Gives the own plugin `my-notes` an environment: a CLI in `tools/cli`. */
+async function addOwnEnvironment(dataRoot: string) {
+    await writeFile(
+        path.join(dataRoot, 'plugins', 'my-notes', 'plugin.json'),
+        JSON.stringify({
+            name: 'my-notes',
+            level: 'profile',
+            tags: ['test'],
+            marketplace: {
+                pl: { title: 'my-notes (pl)', description: 'Opis my-notes.' },
+                en: { title: 'my-notes', description: 'Describes my-notes.' },
+            },
+            environment: { cli: 'tools/cli' },
+        }),
+    );
 }
 
 async function createProject(projects: ProjectServiceShape, name: string) {

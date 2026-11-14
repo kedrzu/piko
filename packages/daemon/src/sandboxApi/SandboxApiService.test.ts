@@ -63,8 +63,11 @@ test('without the right token every request gets 401, whatever it asks for, and 
     expect(await installsOf(plugins, 'gmail')).toEqual([]);
 });
 
-test('without a session in a project nothing is listed or installed', async () => {
+test('without a session in a project nothing is listed, installed or removed', async () => {
     const { call, plugins } = await setup();
+    // `gmail` is installed in the profile and `email-sorting` nowhere, so a remove or an install that slipped past the
+    // refusal would show in the installs.
+    await plugins.install({ name: 'gmail' });
 
     const cases: [string | undefined, number, string][] = [
         [undefined, 400, 'SessionMissing'],
@@ -74,11 +77,12 @@ test('without a session in a project nothing is listed or installed', async () =
         ['ses_gone', 403, 'ConversationNotInProject'],
     ];
     for (const [sessionId, status, error] of cases) {
-        for (const [method, route] of [
-            ['GET', '/plugins'],
-            ['POST', '/plugins/install'],
+        for (const [method, route, name] of [
+            ['GET', '/plugins', 'gmail'],
+            ['POST', '/plugins/install', 'email-sorting'],
+            ['POST', '/plugins/remove', 'gmail'],
         ] as const) {
-            const response = await call(method, route, { session: sessionId, body: { name: 'gmail' } });
+            const response = await call(method, route, { session: sessionId, body: { name } });
             expect({ sessionId, route, refusal: await readRefusal(response) }).toEqual({
                 sessionId,
                 route,
@@ -86,7 +90,9 @@ test('without a session in a project nothing is listed or installed', async () =
             });
         }
     }
-    expect(await installsOf(plugins, 'gmail')).toEqual([]);
+    const expectedInstalls: PluginInstall[] = [{ profile: true }];
+    expect(await installsOf(plugins, 'gmail')).toEqual(expectedInstalls);
+    expect(await installsOf(plugins, 'email-sorting')).toEqual([]);
 });
 
 test("an installation by the agent goes into the conversation's project and emits pluginInstalled, also when repeated", async () => {

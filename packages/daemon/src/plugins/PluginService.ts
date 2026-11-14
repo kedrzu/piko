@@ -83,8 +83,9 @@ export interface PluginServiceShape {
     applyEnvironment(): Promise<PluginEnvironmentApplyResult>;
     /**
      * Makes the daemon's `plugins/` and `skills/` hold exactly the copies of what is installed, so an own plugin's
-     * changed skill reaches the agent at the next sync, and tells a running agent when its skills changed. Returns
-     * whether anything changed.
+     * changed skill reaches the agent at the next sync, and tells a running agent when its skills changed. Starts applying
+     * the environment again, without waiting for it, when the own plugins' environments differ from the last apply's: an own plugin's folder deleted,
+     * added or changed takes its packages along. Returns whether the folder changed.
      */
     sync(): Promise<boolean>;
     /** Calls `listener` after every installation and removal, until the returned function is called. */
@@ -132,6 +133,11 @@ export const PluginService = defineService({
         const emitter = createEventEmitter<[event: PluginsChangedEvent]>();
         /** Changes run one at a time: two installations cannot each write the manifest without the other's entry. */
         let queue: Promise<unknown> = Promise.resolve();
+        /**
+         * The own plugins' environments as the last apply that ran saw them (`ownEnvironmentsKey`); `null` before one
+         * ran. Installs and removals of bundled plugins apply on their own; only an own plugin changes by its folder.
+         */
+        let appliedOwnEnvironments: string | null = null;
 
         return { list, install, remove, applyEnvironment, sync, listen };
 
@@ -177,6 +183,7 @@ export const PluginService = defineService({
         async function applyEnvironment() {
             const [installed, plugins] = await Promise.all([readInstalled(), catalog.list()]);
             const { loaded } = loadedPlugins(plugins, installed);
+            const ownEnvironments = ownEnvironmentsKey(loaded);
             const environmentPlugins: EnvironmentPlugin[] = [];
             for (const plugin of loaded) {
                 const pluginEnvironment = plugin.manifest?.environment;
@@ -193,11 +200,24 @@ export const PluginService = defineService({
                     });
                 }
             }
-            return environment.apply(environmentPlugins);
+            const result = await environment.apply(environmentPlugins);
+            if (result.applied) {
+                appliedOwnEnvironments = ownEnvironments;
+            }
+            return result;
         }
 
-        function sync() {
-            return exclusive(syncFolder);
+        async function sync() {
+            const changed = await exclusive(syncFolder);
+            const [installed, plugins] = await Promise.all([readInstalled(), catalog.list()]);
+            if (ownEnvironmentsKey(loadedPlugins(plugins, installed).loaded) !== appliedOwnEnvironments) {
+                // Not awaited: a conversation being created must not wait for packages to install. An apply records its
+                // own errors and never rejects; reading the plugins can, and is only logged.
+                applyEnvironment().catch((error: unknown) =>
+                    logger.warn('Environment not applied after a sync', { error }),
+                );
+            }
+            return changed;
         }
 
         function listen(listener: (event: PluginsChangedEvent) => void) {
@@ -467,6 +487,23 @@ function loadedPlugins(plugins: LocalPlugin[], installed: InstalledPlugin[]) {
         loaded.push(plugin);
     }
     return { loaded, missing };
+}
+
+/**
+ * The loaded own plugins' environments as one comparable string: equal exactly when applying them again would change
+ * nothing.
+ * @__NO_SIDE_EFFECTS__
+ */
+function ownEnvironmentsKey(loaded: LocalPlugin[]) {
+    const environments: [name: string, environment: unknown][] = [];
+    for (const plugin of loaded) {
+        const pluginEnvironment = plugin.manifest?.environment;
+        if (plugin.source === 'own' && pluginEnvironment) {
+            environments.push([plugin.name, pluginEnvironment]);
+        }
+    }
+    environments.sort(([a], [b]) => a.localeCompare(b));
+    return JSON.stringify(environments);
 }
 
 /** @__NO_SIDE_EFFECTS__ */

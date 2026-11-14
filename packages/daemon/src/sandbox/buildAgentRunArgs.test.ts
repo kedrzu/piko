@@ -1,6 +1,7 @@
 import { expect, test } from 'bun:test';
 
-import { buildAgentRunArgs } from './buildAgentRunArgs.js';
+import AGENT_CONTAINERFILE from '../../sandbox/agent.Containerfile' with { type: 'text' };
+import { AGENT_SKILLS_DIR, buildAgentRunArgs } from './buildAgentRunArgs.js';
 
 const IMAGE = 'poweragents-agent:abc';
 const { args: ARGS } = buildAgentRunArgs(IMAGE);
@@ -54,6 +55,15 @@ test('labels the container with a spec that changes with the image', () => {
     expect(run.args.slice(0, 3)).toEqual(['run', '--label', `poweragents.spec=${run.spec}`]);
     expect(buildAgentRunArgs(IMAGE).spec).toBe(run.spec);
     expect(other.spec).not.toBe(run.spec);
+});
+
+test("points OpenCode's global skills at the folder the daemon copies the plugins' skills into", () => {
+    const opencodeJson = /^COPY <<EOF \/root\/\.config\/opencode\/opencode\.json\n([\s\S]*?)\nEOF$/m.exec(
+        AGENT_CONTAINERFILE,
+    );
+
+    const config: unknown = JSON.parse(opencodeJson?.[1] ?? 'null');
+    expect(config).toMatchObject({ skills: [AGENT_SKILLS_DIR] });
 });
 
 function isPublishFlag(arg: string) {

@@ -29,6 +29,11 @@ of installed plugins and the copies the agent reads.
 > within 2 s. A dotfile does not wake it. `POST /api/location/reload` also rescans, but cancels pending permissions and
 > forms in every conversation.
 
+> **Checked 2026-11-15 (throwaway container from the agent's image, in the sandbox VM):** with the data root mounted
+> writable and a folder inside it mounted again `:ro` at the same path, `touch` and `mkdir` in that folder fail with
+> "Read-only file system" while the rest of the data root stays writable. Dropping a pin and running `bun install --backend=copyfile` again removed the package from `node_modules`; dropping one from `requirements.in`, then
+> `uv pip compile` and `uv pip sync`, removed it from the venv.
+
 ## Options Considered
 
 **Hiding project plugins' skills from other projects:**
