@@ -206,3 +206,4 @@ Append-only. One line per turn that settled something, was rejected, or got an a
   (D40 rewritten); commands prefixed with the plugin's unique name, the daemon stops a conversation whose plugin is
   missing with a fixed message, conversation stays open to continue after reinstalling (D42 rewritten). Old forms to
   history.
+- 2026-11-14 — Owner closed the plugins design (#25). Open: #35 (schedule and tunnel confirmations), apt vs pinned archive (D26). Unchecked for the first build task: OpenCode skill-as-command (D42), denied tools hidden from claude-agent.
