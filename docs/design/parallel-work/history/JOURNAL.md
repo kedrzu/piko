@@ -16,3 +16,6 @@ Append-only. One line per turn that settled something, was rejected, or got an a
 - 2026-11-14 — Owner: GitHub Projects as the dashboard (D4). Owner rejected a rule for what a chunk
   is — agent proposes sensible chunks in conversation; purely technical tasks are fine (D3 replaces
   D1, D1 to history).
+- 2026-11-14 — Owner: design sessions are tasks launched by the orchestrator on the owner's OK,
+  proposed early enough to keep a backlog (D5); skill lives in this repo (D6). Still open: whether
+  code agents start on the owner's word or by themselves when unblocked.

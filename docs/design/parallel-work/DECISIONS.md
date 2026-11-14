@@ -62,3 +62,31 @@ relations, closing through `Closes #N` — and the Project is a view over them.
 **Rejected.**
 
 - Issues only — no "in progress" state without labels kept by hand, and no board.
+
+## D5
+
+**A design session is a task like any other: the orchestrator proposes it, and once the owner agrees
+it opens a separate Paseo workspace running `/dev:design`, where the owner carries the design
+conversation.** The orchestrator proposes it early enough to keep a backlog of ready work — when the
+ready work is running out, or as soon as something turns out to be too unclear to split.
+(2026-11-14, owner)
+
+**Why.** The orchestrator manages what runs; the conversations themselves happen in their own
+sessions, design ones included. Waiting until the board is empty would leave the parallel agents idle
+while design catches up.
+
+**Rejected.**
+
+- The orchestrator only says "this needs design" and leaves starting it to the owner — inconsistent
+  with how code tasks are launched.
+
+## D6
+
+**The orchestrating skill lives in this repository, under `.claude/skills/`.** (2026-11-14, owner)
+
+**Why.** For now it serves poweragents only, so it may name this repo, its Project and its design
+folders directly.
+
+**Rejected.**
+
+- A skill in the `dev` plugin (`kedrzu/skills`), usable in any project — not needed yet.
