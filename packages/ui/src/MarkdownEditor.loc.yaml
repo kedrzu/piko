@@ -1,0 +1,99 @@
+content:
+  en: File content
+  pl: Treść pliku
+
+source:
+  en: Markdown source
+  pl: Źródło Markdown
+
+formatting:
+  en: Formatting
+  pl: Formatowanie
+
+heading1:
+  en: Heading
+  pl: Nagłówek
+
+heading2:
+  en: Subheading
+  pl: Śródtytuł
+
+bold:
+  en: Bold
+  pl: Pogrubienie
+
+italic:
+  en: Italic
+  pl: Kursywa
+
+bulletList:
+  en: Bulleted list
+  pl: Lista punktowana
+
+orderedList:
+  en: Numbered list
+  pl: Lista numerowana
+
+taskList:
+  en: Checklist
+  pl: Lista zadań
+
+link:
+  en: Link
+  pl: Link
+
+quote:
+  en: Quote
+  pl: Cytat
+
+code:
+  en: Code
+  pl: Kod
+
+table:
+  en: Insert table
+  pl: Wstaw tabelę
+
+syntax:
+  en: Show Markdown syntax
+  pl: Pokaż składnię Markdown
+
+taskDone:
+  en: 'Done: {task}'
+  pl: 'Zrobione: {task}'
+
+taskEmpty:
+  en: empty task
+  pl: puste zadanie
+
+linkTitle:
+  en: Link
+  pl: Link
+
+linkDescription:
+  en: The link opens in the browser or the mail program.
+  pl: Link otwiera się w przeglądarce albo w programie pocztowym.
+
+linkAddress:
+  en: Address
+  pl: Adres
+
+linkAddressPlaceholder:
+  en: https://example.com
+  pl: https://przyklad.pl
+
+linkInvalid:
+  en: Use a web address starting with https:// or an e-mail address starting with mailto:.
+  pl: Wpisz adres strony zaczynający się od https:// albo adres e-mail zaczynający się od mailto:.
+
+linkCancel:
+  en: Cancel
+  pl: Anuluj
+
+linkRemove:
+  en: Remove link
+  pl: Usuń link
+
+linkSave:
+  en: Save
+  pl: Zapisz

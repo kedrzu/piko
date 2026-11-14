@@ -4,7 +4,7 @@
 import { defineProp } from '@nzyme/vue-utils/defineProp.js';
 import type { PropType } from 'vue';
 
-import type { AiProvider } from './ProviderTile.vue';
+import type { AiProvider } from '@poweragents/common/api/AiTypes.js';
 
 export const AccountCardProps = {
   provider: { type: String as PropType<AiProvider>, required: true },

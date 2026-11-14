@@ -1,3 +1,4 @@
+import type { AiProvider } from './AiTypes.js';
 import type { ConversationError, ConversationRunOutcome, ConversationStep } from './ConversationTypes.js';
 
 /**
@@ -50,6 +51,8 @@ export interface ConversationCreatedEvent {
     conversationId: string;
     projectId: string;
     title?: string;
+    /** The provider the conversation's agent runs on; absent for one the app does not run the agent on. */
+    provider?: AiProvider;
 }
 
 /** A conversation got its title. */

@@ -22,9 +22,9 @@ chatgptPlans:
 connectChatgpt:
   en[auto]: Connect ChatGPT
   pl: Połącz z ChatGPT
-soon:
-  en[auto]: Coming soon
-  pl: Wkrótce
-startFailed:
+startFailedClaude:
   en[auto]: Couldn't open Claude's sign-in. Try again.
   pl: Nie udało się otworzyć logowania Claude. Spróbuj ponownie.
+startFailedChatgpt:
+  en[auto]: Couldn't open ChatGPT's sign-in. Try again.
+  pl: Nie udało się otworzyć logowania ChatGPT. Spróbuj ponownie.
