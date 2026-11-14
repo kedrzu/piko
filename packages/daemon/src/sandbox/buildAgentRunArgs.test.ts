@@ -37,6 +37,13 @@ test('runs OpenCode in the mode that keeps the password out of its children, wit
     expect(ARGS.slice(ARGS.indexOf(IMAGE) + 1, ARGS.indexOf(IMAGE) + 4)).toEqual(['opencode', 'serve', '--stdio']);
 });
 
+test('tells the agent where the browser tunnel is, without its token', () => {
+    const envs = ARGS.flatMap((arg, index) => (arg === '--env' ? [ARGS[index + 1]] : []));
+
+    expect(envs).toContain('POWERAGENTS_BROWSER_URL=ws://192.168.5.2:47612');
+    expect(ARGS.some(arg => arg.includes('POWERAGENTS_BROWSER_TOKEN'))).toBe(false);
+});
+
 test('labels the container with a spec that changes with the image', () => {
     const run = buildAgentRunArgs(IMAGE);
     const other = buildAgentRunArgs('poweragents-agent:def');

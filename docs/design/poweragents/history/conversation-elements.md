@@ -102,5 +102,3 @@ Forced by accessibility and by states the drawings leave open, while building th
   appearing row of buttons.
 - [ ] A required checkbox group is no longer announced as required (a `group` takes no `aria-required`, and the
   asterisk's hidden text went with it); it follows from the absence of "(opcjonalnie)".
-- [ ] The select's accessible name misses "(opcjonalnie)": nzyme's `useSelectInput` sets `aria-label` from the label
-  alone; the fix belongs in nzyme.
