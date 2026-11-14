@@ -32,6 +32,7 @@ export const Chosen: Story = {
             options={DAYS}
             modelValue="Środa"
             help="Plan zacznie się tego dnia rano."
+            optional
         />
     ),
 };
