@@ -1010,6 +1010,7 @@
       "devDependencies": {
         "@nzyme/ioc-testing": "workspace:*",
         "@nzyme/tsconfig": "workspace:*",
+        "playwright": "1.64.1",
       },
     },
     "packages/desktop": {
