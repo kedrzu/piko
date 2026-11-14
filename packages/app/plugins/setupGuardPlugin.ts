@@ -8,12 +8,23 @@ import type { SetupProgress } from '@/setup/SetupStore.js';
 /** The routes the app may show at each point of the first run; the first is where it sends the person otherwise. */
 const ALLOWED_ROUTES: Record<SetupProgress, readonly [string, ...string[]]> = {
     sandboxNotReady: ['setupEnvironment'],
-    claudeStatusFailed: ['setupAiFailed'],
-    claudeNotConnected: ['setupAi', 'setupClaude'],
-    claudePlanNotAllowed: ['setupClaudePlan', 'setupAi', 'setupClaude'],
-    // Signing in to Claude again stays open: a conversation whose agent was signed out sends the person there, even
-    // while the daemon still counts Claude as connected.
-    done: ['home', 'memory', 'project', 'conversation', 'setupDone', 'setupAi', 'setupClaude'],
+    aiStatusFailed: ['setupAiFailed'],
+    aiNotConnected: ['setupAi', 'setupClaude', 'setupChatgpt'],
+    aiPlanNotAllowed: ['setupClaudePlan', 'setupAi', 'setupClaude', 'setupChatgpt'],
+    // Signing in again, to either provider, stays open: a conversation whose agent was signed out sends the person there,
+    // even while the daemon still counts the provider as connected. Claude's plan screen too: with ChatGPT active, a
+    // Claude sign-in on a plan that is not allowed ends there.
+    done: [
+        'home',
+        'memory',
+        'project',
+        'conversation',
+        'setupDone',
+        'setupAi',
+        'setupClaude',
+        'setupChatgpt',
+        'setupClaudePlan',
+    ],
 };
 
 /** The app's own screens, past the first run. */
@@ -21,9 +32,10 @@ const APP_ROUTES: readonly string[] = ['home', 'memory', 'project', 'conversatio
 
 /**
  * Keeps the first run in order: a navigation goes to a screen allowed where the first run stands, so the app never
- * shows home or a project while the sandbox is not ready or Claude not connected. Entering the app and every setup
- * screen ask the daemon (which asks Claude, in the sandbox); moving between the app's own screens once the first run is
- * known to be done does not, so neither the cost of asking Claude nor a passing failure of it comes with every click. A
+ * shows home or a project while the sandbox is not ready or the active AI provider not connected. Entering the app and
+ * every setup screen ask the daemon (which asks the provider, in the sandbox); moving between the app's own screens once
+ * the first run is known to be done does not, so neither the cost of asking the provider nor a passing failure of it
+ * comes with every click. A
  * sandbox that stops being ready sends the app back to the environment screen from wherever it is.
  */
 export default defineNuxtPlugin({

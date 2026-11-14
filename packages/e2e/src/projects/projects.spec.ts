@@ -115,14 +115,14 @@ test("moving between projects asks Claude's status only on entry, so its failure
 
     await page.goto('/projects/p-health');
     await expect(heading(page)).toHaveText('Health is ready');
-    expect(daemon.countCalls('claude/status')).toBe(1);
+    expect(daemon.countCalls('ai/status')).toBe(1);
 
-    daemon.claudeStatusError = 'claude auth status printed no JSON';
+    daemon.aiStatusError = 'claude auth status printed no JSON';
     await sidebarProject(page, 'Job search').click();
     await expect(heading(page)).toHaveText('Job search is ready');
     await sidebarProject(page, 'Health').click();
     await expect(heading(page)).toHaveText('Health is ready');
-    expect(daemon.countCalls('claude/status')).toBe(1);
+    expect(daemon.countCalls('ai/status')).toBe(1);
 });
 
 test('projects that could not be loaded show why and are tried again', async ({ page }) => {

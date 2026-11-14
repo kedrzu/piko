@@ -1,0 +1,42 @@
+title:
+  en[auto]: Finish signing in to ChatGPT
+  pl: Dokończ logowanie w ChatGPT
+body:
+  en[auto]: ChatGPT's sign-in page has opened in your browser. Sign in there — I'll continue here on my own.
+  pl: Strona logowania ChatGPT otworzyła się w przeglądarce. Zaloguj się tam — gdy skończysz, tutaj przejdę dalej automatycznie.
+waiting:
+  en[auto]: Waiting for you to sign in…
+  pl: Czekam, aż się zalogujesz…
+failedTitle:
+  en[auto]: ChatGPT didn't confirm the sign-in
+  pl: ChatGPT nie potwierdził logowania
+failedBody:
+  en[auto]: Try again — a new sign-in page will open in your browser.
+  pl: Spróbuj ponownie — w przeglądarce otworzy się nowa strona logowania.
+expiredTitle:
+  en[auto]: The sign-in has expired
+  pl: Logowanie wygasło
+expiredBody:
+  en[auto]: Start over — a new sign-in page will open in your browser.
+  pl: Zacznij od nowa — w przeglądarce otworzy się nowa strona logowania.
+pollFailed:
+  en[auto]: Couldn't check whether you've signed in.
+  pl: Nie udało się sprawdzić, czy logowanie się udało.
+startFailed:
+  en[auto]: Couldn't open ChatGPT's sign-in. Try again.
+  pl: Nie udało się otworzyć logowania ChatGPT. Spróbuj ponownie.
+back:
+  en[auto]: Back
+  pl: Wróć
+openAgain:
+  en[auto]: Open the sign-in page again
+  pl: Otwórz stronę logowania ponownie
+checkAgain:
+  en[auto]: Check again
+  pl: Sprawdź ponownie
+retry:
+  en[auto]: Try again
+  pl: Spróbuj ponownie
+startOver:
+  en[auto]: Start over
+  pl: Zacznij od nowa
