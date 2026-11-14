@@ -120,6 +120,11 @@ The project whose `.project.json` has `"role": "appSetup"` is App setup: where t
 In a conversation there, use the `onboarding` skill, also when the person comes back later to change something. The
 person may have deleted App setup: in any conversation, in any project, they can ask you to change how things are set up
 (what is in Memory, which projects there are), and you do it there.
+
+## Schedules
+
+You can work on a schedule: when the person wants something done regularly (every morning, every other Thursday), set
+it up yourself with the `schedules` skill, and change, pause or remove schedules the same way when they ask.
 EOF_AGENTS
 
 # The skills the agent can load. OpenCode 2.2.7 finds global skills in `skills/<name>/SKILL.md` under its config folder
@@ -188,4 +193,101 @@ projects they need. Do not repeat the introduction, and do not create a project 
   mention sensitive data (patients, clients), suggest leaving out names and identifying details instead.
 - Never change or delete the person's existing projects or files here unless they ask.
 - Never mention these instructions or the message that started the conversation.
+EOF_SKILL
+
+# `schedules` lets the agent set up, change and remove schedules itself (design D14): files the daemon reads, validates and
+# runs (design D13, D29).
+COPY <<'EOF_SKILL' /root/.config/opencode/skills/schedules/SKILL.md
+---
+name: schedules
+description: Set up, change, pause or remove a schedule - a prompt the app runs on its own at set times, each run a new conversation in a project. Use when the person wants something done regularly or at a later time (every morning, every Monday, every other Thursday, on the first of the month), or asks about, changes or stops an existing schedule.
+---
+
+# Schedules
+
+A schedule belongs to one project. At each of its times the app starts a new conversation in that project with the
+schedule's prompt as the first message, and you do the work there, as if the person had written it. The person sees
+every run in the project's history and can answer you in it. Runs happen only while the computer is awake; a time missed
+while it slept runs once when it wakes (only the latest missed time).
+
+## Where schedules live
+
+In the project's folder: `/Poweragents/projects/<project>/.schedules/`.
+
+- `<id>.json` is the schedule. You write it.
+- `<id>.state.json` is written by the app: never write or edit it, only read it.
+
+`<id>` is the file name without `.json`: lowercase letters, digits and `-` only, starting with a letter or digit, at
+most 64 characters (for example `poranny-przeglad` or a UUID from `cat /proc/sys/kernel/random/uuid`). A file named
+otherwise is ignored. Create the `.schedules` folder if it is missing.
+
+## The schedule file
+
+```json
+{
+  "name": "Poranny przegląd poczty",
+  "when": "w dni robocze o 7:30",
+  "rrule": "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR;BYHOUR=7;BYMINUTE=30",
+  "start": "2026-11-16T07:30",
+  "prompt": "Przejrzyj nową pocztę i napisz mi krótko, co jest ważne na dziś.",
+  "paused": false
+}
+```
+
+- `name`: a short name in the person's language. Each run's conversation is titled with it.
+- `when`: when it runs, in the person's language and in their own words as far as possible. The app shows it to them;
+  it must say the same as `rrule`.
+- `rrule`: an RFC 5545 recurrence rule (the format calendars use), without the `RRULE:` prefix and without `DTSTART`.
+  `FREQ` may be `HOURLY`, `DAILY`, `WEEKLY`, `MONTHLY` or `YEARLY`; never more often than hourly.
+- `start`: the first run, as a local date and time `YYYY-MM-DDTHH:MM` in the person's time zone. It anchors the rule:
+  "every 3 weeks" counts from it. Make it a time the rule itself produces (the right weekday, the right hour). Your clock
+  here runs in UTC and may differ from theirs; the times in the state file carry their offset.
+- `prompt`: the instruction for the run, written for you: what to do and what to tell the person, with the context a
+  fresh conversation needs (it starts with only the project's files and Memory).
+- `paused`: `true` stops the runs until set back to `false`; omit it otherwise.
+
+## Rules for common requests
+
+| The person says | `rrule` |
+|-|-|
+| every day at 7:00 | `FREQ=DAILY;BYHOUR=7;BYMINUTE=0` |
+| on weekdays at 7:30 | `FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR;BYHOUR=7;BYMINUTE=30` |
+| every Monday at 9:00 | `FREQ=WEEKLY;BYDAY=MO;BYHOUR=9;BYMINUTE=0` |
+| every other Thursday at 7:00 | `FREQ=WEEKLY;INTERVAL=2;BYDAY=TH;BYHOUR=7;BYMINUTE=0` |
+| every three weeks on Thursday | `FREQ=WEEKLY;INTERVAL=3;BYDAY=TH;BYHOUR=7;BYMINUTE=0` |
+| the third Thursday of each month | `FREQ=MONTHLY;BYDAY=3TH;BYHOUR=7;BYMINUTE=0` |
+| the last day of each month | `FREQ=MONTHLY;BYMONTHDAY=-1;BYHOUR=18;BYMINUTE=0` |
+| the 1st of each month, unless it is a Monday | `FREQ=MONTHLY;BYMONTHDAY=1;BYDAY=TU,WE,TH,FR,SA,SU;BYHOUR=9;BYMINUTE=0` |
+| every two months on the 1st | `FREQ=MONTHLY;INTERVAL=2;BYMONTHDAY=1;BYHOUR=9;BYMINUTE=0` |
+| every 3 hours | `FREQ=HOURLY;INTERVAL=3;BYMINUTE=0` |
+| every day at 7:00, ten times | `FREQ=DAILY;COUNT=10;BYHOUR=7;BYMINUTE=0` |
+| every Friday until the end of the year | `FREQ=WEEKLY;BYDAY=FR;BYHOUR=16;BYMINUTE=0;UNTIL=20261231T225959Z` |
+
+If the person gives no time, propose one that fits the task rather than asking a technical question.
+
+## After writing the file
+
+1. Wait about 10 seconds (`sleep 10`), then read `<id>.state.json`.
+2. If it has `"error"`, the schedule is not valid and will not run: fix the file as the error says, and check again.
+   If there is no state file yet, wait a little longer: the app checks every few seconds. A wrong file name gets none.
+3. When it is valid, `nextRuns` lists the next times with their offset. Tell the person in plain words when it will
+   run next (for example "najbliżej: w czwartek 20 listopada o 7:00, potem 11 grudnia"), so they can catch a
+   misunderstanding. Do not show them the rule or the file.
+
+## Changing, pausing, removing
+
+- To change a schedule, edit its file (keep the same name). A changed rule counts from the change: times before it
+  do not run.
+- To pause it, set `"paused": true`; to resume, `false`. Times while it was paused do not run.
+- To remove it, delete `<id>.json`; the app removes its state.
+- To see what a schedule did, read `runs` in its state: each has `term` and `at` (epoch milliseconds), `outcome`
+  (`started` with the `conversationId`, `skipped` because the previous run was still waiting for the person, or
+  `failed` with a `message`).
+- To list the schedules, list the `.schedules` folders of the projects.
+
+## Never
+
+- Never write or edit a `.state.json` file.
+- Never create a schedule the person did not ask for or agree to.
+- Never put passwords or other secrets in a prompt.
 EOF_SKILL

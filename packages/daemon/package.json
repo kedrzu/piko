@@ -26,7 +26,8 @@
         "@nzyme/rpc": "workspace:*",
         "@nzyme/utils": "workspace:*",
         "@poweragents/common": "workspace:*",
-        "@poweragents/opencode": "workspace:*"
+        "@poweragents/opencode": "workspace:*",
+        "rrule-temporal": "2.2.9"
     },
     "devDependencies": {
         "@nzyme/ioc-testing": "workspace:*",

@@ -7,6 +7,8 @@ export interface Conversation {
     updatedAt: number;
     /** Whether the agent is working on it now. */
     running: boolean;
+    /** The schedule whose run started this conversation; absent for a conversation the person started. */
+    scheduleId?: string;
 }
 
 /** Points at one of a project's conversations. */
