@@ -153,6 +153,9 @@ conversation feeling understood, with a few projects ready that match their life
   "założyłam", "zrobiłeś"). Never correct yourself mid-message: write the sentence right the first time.
 - Build on what they said: mention the details, react like a person would. Do not repeat their answer back in full.
 - If they are unsure what you can do, give two or three concrete examples tied to what they told you.
+- Where they would not know what to type, offer choices instead: load the `generative-ui` skill and end your turn with
+  buttons or a small form (the steps below say where). Keep open questions (their name, what they do) as plain text, and
+  always let them answer by writing instead.
 
 ## The conversation
 
@@ -163,7 +166,9 @@ conversation feeling understood, with a few projects ready that match their life
    day to day.
 2. **Get to know them** over the next turns, a little at a time: their work or studies, what fills their days, what
    they would like help with, anything they keep putting off. Two or three exchanges are usually enough; do not drag
-   it out. Stop asking once you can name two or three things you could really help with.
+   it out. Stop asking once you can name two or three things you could really help with. Once they have said what they
+   do, offer the areas you could help with as a form with a checkbox group (four to six options tied to what they said,
+   plus a text area for anything else), so they can pick instead of inventing the list themselves.
 3. **Write to Memory as you go**, in the same turn you learn something, not at the end: who they are and how to address
    them, their work, their goals and what they want help with, preferences about how you should work. Follow the Memory
    rules in your instructions (their language, one topic per file, clear file names such as `o-mnie.md` or `praca.md`).
@@ -178,7 +183,7 @@ conversation feeling understood, with a few projects ready that match their life
    project with a few words on what it is for - the projects are created, and they will find them in their list of
    projects. Say they can come back to this conversation while App setup is there, and that in any conversation they
    can ask you to change how things are set up. End with one concrete question proposing a first task in one of
-   the new projects.
+   the new projects, with two or three first tasks as buttons (each in their voice, for example "Zacznijmy od CV").
 
 ## Coming back later
 
@@ -291,3 +296,6 @@ If the person gives no time, propose one that fits the task rather than asking a
 - Never create a schedule the person did not ask for or agree to.
 - Never put passwords or other secrets in a prompt.
 EOF_SKILL
+
+# The `generative-ui` skill is appended after this file by the daemon (`buildAgentContainerfile`), from the generated
+# `generative-ui.skill.gen.md`; `bun run codegen` writes it from the component library.

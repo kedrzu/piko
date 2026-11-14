@@ -5,7 +5,7 @@ import { ArrowLeft, ExternalLink, LogIn } from '@lucide/vue';
 import { useTranslate } from '@nzyme/vue-i18n/useTranslate.js';
 import { useService } from '@nzyme/vue-ioc/useService.js';
 import { useRouter } from 'nuxt/app';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 import AccountCard from '@poweragents/ui/AccountCard.vue';
 import Button from '@poweragents/ui/Button.vue';
@@ -25,6 +25,11 @@ const router = useRouter();
 const t = useTranslate();
 
 const failed = ref(false);
+/** The Claude account's email: the sign-in just ended here, or the connected account after an app restart. */
+const email = computed(() => {
+  const account = setup.state.signIn ?? (setup.state.ai?.connected ? setup.state.ai : null);
+  return account?.provider === 'claude' ? (account.email ?? undefined) : undefined;
+});
 
 async function showPlans() {
   await openExternalUrl(CLAUDE_PLANS_URL);
@@ -55,7 +60,7 @@ async function back() {
     <AccountCard
       provider="claude"
       :name="t(l.claude)"
-      :email="setup.state.email"
+      :email="email"
     />
     <CheckList
       :label="t(l.plansLabel)"

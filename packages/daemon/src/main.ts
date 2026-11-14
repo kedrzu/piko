@@ -2,15 +2,17 @@ import { createContainer } from '@nzyme/ioc/Container.js';
 import { Logger } from '@nzyme/logging/Logger.js';
 import { DAEMON_EVENTS_PATH } from '@poweragents/common/api/DaemonEventTypes.js';
 import { DAEMON_API_PATH, DAEMON_PORT } from '@poweragents/common/daemonAddress.js';
-import type { DaemonStatus } from '@poweragents/common/daemonAddress.js';
 
 import { ApiService } from './api/ApiService.js';
+import { POWERAGENTS_VERSION } from './env.js';
 import { DaemonLoggerTransport } from './logging/DaemonLoggerTransport.js';
 import { MemoryService } from './memory/MemoryService.js';
 import { LimaSandbox } from './sandbox/LimaSandbox.js';
 import { Sandbox } from './sandbox/Sandbox.js';
 import { SandboxOpencodeConnection } from './sandbox/SandboxOpencodeConnection.js';
 import { ScheduleRunnerService } from './schedules/ScheduleRunnerService.js';
+import { shutdown } from './shutdown.js';
+import { createStatusResponse } from './statusResponse.js';
 
 // The daemon's entry point: one container for the whole process.
 const container = createContainer();
@@ -54,12 +56,13 @@ container.resolve(ScheduleRunnerService).start();
 
 // It listens on loopback only: the desktop app reaches it on this machine, and remote clients (the phone) will come
 // through the relay, never through an open port. `/status` stays open to any caller: it reveals only that the daemon
-// runs. The API admits only the app (`ApiService`).
+// runs and its version. The API admits only the app (`ApiService`).
+const version = container.resolve(POWERAGENTS_VERSION);
 const server = Bun.serve({
     hostname: '127.0.0.1',
     port: Number(process.env.POWERAGENTS_DAEMON_PORT ?? DAEMON_PORT),
     routes: {
-        '/status': () => Response.json({ status: 'ok' } satisfies DaemonStatus),
+        '/status': () => createStatusResponse(version),
         // An event stream stays open for as long as the app does: Bun's idle timeout (10 s) must not close it.
         [DAEMON_EVENTS_PATH]: (request, self) => {
             self.timeout(request, 0);
@@ -71,3 +74,8 @@ const server = Bun.serve({
 });
 
 logger.info('Daemon listening', { url: server.url.href });
+
+// The desktop app replaces an old daemon after an update by sending SIGTERM. The sandbox is left running (see above).
+for (const signal of ['SIGTERM', 'SIGINT']) {
+    process.once(signal, () => void shutdown({ server, logger, signal, exit: code => process.exit(code) }));
+}

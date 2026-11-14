@@ -1,0 +1,21 @@
+readyTitle:
+  en[auto]: A new version of poweragents is ready
+  pl: Nowa wersja poweragents jest gotowa
+readyDescription:
+  en[auto]: Restart to switch to {version}. Until then you're on {current}.
+  pl: Uruchom ponownie, żeby przejść na {version}. Do tego czasu działasz na {current}.
+restart:
+  en[auto]: Restart
+  pl: Uruchom ponownie
+restarting:
+  en[auto]: Restarting…
+  pl: Uruchamiam ponownie…
+failedTitle:
+  en[auto]: The update couldn't be installed
+  pl: Nie udało się zainstalować aktualizacji
+failedDescription:
+  en[auto]: Version {version} is downloaded. Try again — macOS may ask for an administrator password.
+  pl: Wersja {version} jest pobrana. Spróbuj ponownie — macOS może poprosić o hasło administratora.
+retry:
+  en[auto]: Try again
+  pl: Spróbuj ponownie

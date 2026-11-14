@@ -1,4 +1,4 @@
-<!-- First run, step 2: the daemon could not tell Claude's status; its error with a retry (screen 36's failure, for step 2). -->
+<!-- First run, step 2: the daemon could not tell the AI provider's status; its error with a retry (screen 36's failure, for step 2). -->
 
 <script lang="ts" setup>
 import { RefreshCw } from '@lucide/vue';
@@ -29,7 +29,7 @@ async function retry() {
     :title="t(l.title)"
     :body="t(l.body)"
   >
-    <ErrorDetails :details="setup.state.claudeError ?? ''">
+    <ErrorDetails :details="setup.state.aiError ?? ''">
       <template #actions>
         <Button
           :icon="RefreshCw"

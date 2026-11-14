@@ -6,25 +6,45 @@ placeholderIntroduce:
   en: Write a few words about yourself…
   pl: Napisz kilka słów o sobie…
 
+placeholderUi:
+  en: Or answer in your own words…
+  pl: Albo odpowiedz własnymi słowami…
+
 placeholderRunning:
   en: Add something while the agent works…
   pl: Dopisz coś, gdy agent pracuje…
 
 errorOther:
-  en: "The agent didn't answer: Claude reported an error on its side."
-  pl: 'Agent nie odpowiedział: Claude zgłosił błąd po swojej stronie.'
+  en: "The agent didn't answer: {provider} reported an error on its side."
+  pl: 'Agent nie odpowiedział: {provider} zgłosił błąd po swojej stronie.'
+
+errorOtherGeneric:
+  en[auto]: "The agent didn't answer: the AI provider reported an error on its side."
+  pl: 'Agent nie odpowiedział: dostawca AI zgłosił błąd po swojej stronie.'
 
 errorSignedOut:
-  en: 'No answer: you were signed out of Claude.'
-  pl: 'Bez odpowiedzi: wylogowano Cię z Claude.'
+  en: 'No answer: you were signed out of {provider}.'
+  pl: 'Bez odpowiedzi: wylogowano Cię z {provider}.'
+
+errorSignedOutGeneric:
+  en[auto]: 'No answer: you were signed out of your AI account.'
+  pl: 'Bez odpowiedzi: wylogowano Cię z konta AI.'
 
 errorUsageLimit:
-  en: 'No answer: your Claude usage limit is used up.'
-  pl: 'Bez odpowiedzi: wykorzystano limit Claude.'
+  en: 'No answer: your {provider} usage limit is used up.'
+  pl: 'Bez odpowiedzi: wykorzystano limit {provider}.'
+
+errorUsageLimitGeneric:
+  en[auto]: "No answer: your AI account's usage limit is used up."
+  pl: 'Bez odpowiedzi: wykorzystano limit konta AI.'
 
 signedOutTitle:
-  en: You were signed out of Claude
-  pl: Wylogowano Cię z Claude
+  en: You were signed out of {provider}
+  pl: Wylogowano Cię z {provider}
+
+signedOutTitleGeneric:
+  en[auto]: You were signed out of your AI account
+  pl: Wylogowano Cię z konta AI
 
 signedOutBody:
   en: "The agent won't answer until you sign in again. Your message stays in the conversation."
@@ -35,13 +55,29 @@ signIn:
   pl: Zaloguj się ponownie
 
 usageLimitTitle:
-  en: Claude usage limit reached
-  pl: Wykorzystano limit Claude
+  en: '{provider} usage limit reached'
+  pl: Wykorzystano limit {provider}
+
+usageLimitTitleGeneric:
+  en[auto]: AI account usage limit reached
+  pl: Wykorzystano limit konta AI
 
 usageLimitBody:
   en: The limit resets on {date} at {time}. The agent will answer again then.
   pl: Limit odnowi się {date} o {time}. Wtedy agent znów odpowie.
 
 usageLimitBodyUnknown:
-  en: "The limit will reset after a while; Claude didn't say when."
-  pl: Limit odnowi się za jakiś czas; Claude nie podał kiedy.
+  en: "The limit will reset after a while; {provider} didn't say when."
+  pl: Limit odnowi się za jakiś czas; {provider} nie podał kiedy.
+
+usageLimitBodyUnknownGeneric:
+  en[auto]: "The limit will reset after a while; the AI provider didn't say when."
+  pl: Limit odnowi się za jakiś czas; dostawca AI nie podał kiedy.
+
+claude:
+  en: Claude
+  pl: Claude
+
+chatgpt:
+  en: ChatGPT
+  pl: ChatGPT

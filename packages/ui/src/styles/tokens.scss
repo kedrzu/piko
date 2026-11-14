@@ -30,11 +30,12 @@ $color-surface-soft: #f4f5f2;
 $color-surface-glass: rgb(255 255 255 / 45%);
 $color-border: #e3e6df;
 $color-border-strong: #d9ded6;
+$color-field-border: #7a827c; // 3.9:1 on $color-surface, 3.6:1 on $color-surface-soft: a control's outline (3:1)
 
 // Attention: errors and what needs the person
 $color-attention: #e2552e; // 3.8:1 on $color-surface: fills, strokes and icons only
 $color-attention-soft: #fce9e2;
-$color-attention-ink: #c2492a; // 4.9:1 on $color-surface
+$color-attention-ink: #b5401f; // 5.6:1 on $color-surface, 5.2:1 on $color-surface-soft, 4.8:1 on $color-attention-soft
 $color-attention-border: #f4cdbe;
 $color-attention-muted: #b0745f; // 3.8:1 on $color-surface: not for small text
 
@@ -178,6 +179,11 @@ $spacing-icon-gap: 7px; // icon to its text in Button and in Code field's note
 $spacing-badge-y: 3px; // vertical padding of Provider card's "Soon" badge
 $spacing-path-stage-text-top: 3px; // Path stage's text, lined up with the middle of its 26px status circle
 $spacing-first-line-nudge: 1px; // a 16px icon or a numbered step's text, level with the first line beside it
+$spacing-toast-title-top: 5px; // Toast's title, level with the middle of its 30px icon tile
+$spacing-toast-text-gap: 3px; // Toast's title to its description
+
+// The app shell's card sits this far inside the window; what floats over the card (the toasts) is placed from it.
+$spacing-shell-inset: $spacing-10;
 
 // Shape
 $radius-s: 9px;
@@ -192,6 +198,9 @@ $radius-mark: 10px; // Agent mark, mirroring the Pen component
 // Elevation
 $shadow-raised: 0 6px 20px rgb(29 35 32 / 8%); // the composer, lifted off the card
 $shadow-dialog: 0 24px 64px rgb(29 35 32 / 16%); // a dialog over the scrim
+$shadow-toast:
+    0 1px 3px rgb(29 35 32 / 6%),
+    0 10px 28px rgb(29 35 32 / 12%); // a toast, floating over the card
 $color-scrim: rgb(255 255 255 / 55%); // frosted over the window behind a dialog, with $blur-scrim
 $blur-scrim: 12px;
 

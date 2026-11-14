@@ -10,6 +10,7 @@ import { OpencodeIntegrationConnectExternalCommand } from '@poweragents/opencode
 import { OpencodeIntegrationGetCommand } from '@poweragents/opencode/OpencodeIntegrationGetCommand.js';
 import type { OpencodeIntegration } from '@poweragents/opencode/OpencodeIntegrationGetCommand.js';
 
+import { ActiveProviderStore } from '../ai/ActiveProviderStore.js';
 import { Sandbox } from '../sandbox/Sandbox.js';
 import type { SandboxProcess } from '../sandbox/Sandbox.js';
 import { assertSandboxReady } from '../sandbox/assertSandboxReady.js';
@@ -29,7 +30,10 @@ export interface ClaudeSignInServiceShape {
     getStatus(): Promise<ClaudeStatus>;
     /** Starts a new sign-in, ending one already waiting. */
     startLogin(): Promise<ClaudeLoginStartResult>;
-    /** Gives the waiting sign-in the code pasted from Claude's page. The code is never logged. */
+    /**
+     * Gives the waiting sign-in the code pasted from Claude's page; a sign-in that connects the agent makes Claude the
+     * active provider. The code is never logged.
+     */
     completeLogin(code: string): Promise<ClaudeLoginResult>;
     /**
      * Connects OpenCode's `claude-agent` integration to Claude Code's sign-in, unless it already is; the agent runs on
@@ -70,10 +74,11 @@ export const ClaudeSignInService = defineService({
     deps: {
         sandbox: Sandbox,
         logger: Logger,
+        activeProvider: ActiveProviderStore,
         getIntegration: OpencodeIntegrationGetCommand,
         connectIntegration: OpencodeIntegrationConnectExternalCommand,
     },
-    setup({ sandbox, logger, getIntegration, connectIntegration }): ClaudeSignInServiceShape {
+    setup({ sandbox, logger, activeProvider, getIntegration, connectIntegration }): ClaudeSignInServiceShape {
         let login: Login | undefined;
         /** Sign-in operations run one after another, so two calls never race for the one process. */
         let loginQueue: Promise<unknown> = Promise.resolve();
@@ -187,6 +192,7 @@ export const ClaudeSignInService = defineService({
             }
 
             await connectAgentRunner.execute();
+            await activeProvider.set('claude');
             return { outcome: 'connected', email: status.email, plan: status.plan };
         }
 

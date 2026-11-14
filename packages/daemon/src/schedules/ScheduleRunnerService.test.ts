@@ -26,6 +26,8 @@ import type { OpencodeSessionRenameCommandParams } from '@poweragents/opencode/O
 import type { OpencodeSession } from '@poweragents/opencode/OpencodeTypes.js';
 
 import { ConversationService } from '../conversations/ConversationService.js';
+import { ChatgptSignInService } from '../chatgpt/ChatgptSignInService.js';
+import { ClaudeSignInService } from '../claude/ClaudeSignInService.js';
 import { ProjectService } from '../projects/ProjectService.js';
 import { Sandbox } from '../sandbox/Sandbox.js';
 import type { SandboxEndpoint, SandboxState } from '../sandbox/Sandbox.js';
@@ -310,7 +312,23 @@ const READY: SandboxState = { status: 'ready', endpoint: ENDPOINT };
 async function setup() {
     const { container, logs } = createTestContainer();
     const tmp = await mkdtemp(path.join(os.tmpdir(), 'poweragents-schedule-runner-'));
-    container.set(EnvVariables, { POWERAGENTS_DATA_ROOT: path.join(tmp, 'root') });
+    container.set(EnvVariables, {
+        POWERAGENTS_DATA_ROOT: path.join(tmp, 'root'),
+        POWERAGENTS_LIMA_HOME: path.join(tmp, 'home', 'lima'),
+    });
+    // Conversations start on the connected provider's model: Claude here.
+    container.set(ClaudeSignInService, {
+        getStatus: () => Promise.resolve({ connected: true, email: 'ola@example.com', plan: 'max', planAllowed: true }),
+        startLogin: notUsed,
+        completeLogin: notUsed,
+        connectAgent: notUsed,
+    });
+    container.set(ChatgptSignInService, {
+        getStatus: () => Promise.resolve({ connected: false }),
+        startLogin: notUsed,
+        getLoginState: notUsed,
+        cancelLogin: notUsed,
+    });
     let sandboxState: SandboxState = READY;
     container.set(Sandbox, {
         getState: () => sandboxState,
@@ -409,4 +427,8 @@ async function writeSchedulesFile(projectDir: string, name: string, content: str
 
 function sandboxNotReady() {
     return new HttpError(409, { error: 'SandboxNotReady', message: 'The sandbox is not ready' });
+}
+
+function notUsed(): Promise<never> {
+    return Promise.reject(new Error('not used'));
 }
