@@ -14,5 +14,6 @@ export function mapOpencodeSession(session: components['schemas']['Session.Info'
         createdAt: session.time.created,
         updatedAt: session.time.updated,
         outcome: session.outcome,
+        providerId: session.model?.providerID,
     };
 }

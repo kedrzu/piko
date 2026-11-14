@@ -3,8 +3,7 @@
 <script lang="ts">
 import type { PropType } from 'vue';
 
-/** The AI providers the agent can run on. */
-export type AiProvider = 'claude' | 'chatgpt';
+import type { AiProvider } from '@poweragents/common/api/AiTypes.js';
 
 export const ProviderTileProps = {
   provider: { type: String as PropType<AiProvider>, required: true },

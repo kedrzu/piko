@@ -60,12 +60,12 @@ export interface ConversationViewModel {
     readonly running: boolean;
     /**
      * Why the agent cannot answer now: the last run ended on signing out (until the person signs in again) or on the
-     * usage limit (until it resets; for good when Claude did not say when).
+     * usage limit (until it resets; for good when the provider did not say when).
      */
     readonly blockingError: ConversationError | null;
     /**
-     * The last item is an error whose message can be sent again: an error on Claude's side, or a known failure whose
-     * fix is done (signed in again, the limit reset) or cannot be known (a limit with no reset time).
+     * The last item is an error whose message can be sent again: an error on the provider's side, or a known failure
+     * whose fix is done (signed in again, the limit reset) or cannot be known (a limit with no reset time).
      */
     readonly retryable: boolean;
     /** Sends a message; queued by the daemon while the agent works. */

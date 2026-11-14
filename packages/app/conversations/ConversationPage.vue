@@ -41,6 +41,17 @@ const layout = useTemplateRef('layout');
 const message = ref('');
 
 const title = computed(() => store.find(conversationId.value)?.title ?? t(lc.untitled));
+/** The name of the provider the conversation runs on, for the texts about its errors; `null` when the app knows none. */
+const providerName = computed(() => {
+  const provider = store.find(conversationId.value)?.provider;
+  return provider ? t(l[provider]) : null;
+});
+const signedOutTitle = computed(() =>
+  providerName.value ? t(l.signedOutTitle, { provider: providerName.value }) : t(l.signedOutTitleGeneric),
+);
+const usageLimitTitle = computed(() =>
+  providerName.value ? t(l.usageLimitTitle, { provider: providerName.value }) : t(l.usageLimitTitleGeneric),
+);
 const lastItemKey = computed(() => conversation.items.at(-1)?.key);
 /** App setup before the person has said anything: the agent has just asked about them (screen 65). */
 const introducing = computed(
@@ -93,11 +104,11 @@ async function stop() {
 function describeError(error: ConversationError) {
   switch (error.kind) {
     case 'signedOut':
-      return t(l.errorSignedOut);
+      return providerName.value ? t(l.errorSignedOut, { provider: providerName.value }) : t(l.errorSignedOutGeneric);
     case 'usageLimit':
-      return t(l.errorUsageLimit);
+      return providerName.value ? t(l.errorUsageLimit, { provider: providerName.value }) : t(l.errorUsageLimitGeneric);
     case 'other':
-      return t(l.errorOther);
+      return providerName.value ? t(l.errorOther, { provider: providerName.value }) : t(l.errorOtherGeneric);
     default:
       return assertNever(error);
   }
@@ -105,7 +116,9 @@ function describeError(error: ConversationError) {
 
 function describeReset(resetAt: number | undefined) {
   if (resetAt == null) {
-    return t(l.usageLimitBodyUnknown);
+    return providerName.value
+      ? t(l.usageLimitBodyUnknown, { provider: providerName.value })
+      : t(l.usageLimitBodyUnknownGeneric);
   }
   const when = new Date(resetAt);
   return t(l.usageLimitBody, {
@@ -147,7 +160,7 @@ function describeReset(resetAt: number | undefined) {
     <template #footer>
       <StatusBanner
         v-if="conversation.blockingError?.kind === 'signedOut'"
-        :title="t(l.signedOutTitle)"
+        :title="signedOutTitle"
         :body="t(l.signedOutBody)"
         :action-label="t(l.signIn)"
         :action-icon="LogIn"
@@ -155,7 +168,7 @@ function describeReset(resetAt: number | undefined) {
       />
       <StatusBanner
         v-else-if="conversation.blockingError?.kind === 'usageLimit'"
-        :title="t(l.usageLimitTitle)"
+        :title="usageLimitTitle"
         :body="describeReset(conversation.blockingError.resetAt)"
       />
       <Composer

@@ -10,10 +10,13 @@ import { DAEMON_API_PATH, DEV_SERVER_PORT } from '@poweragents/common/daemonAddr
 
 import { ConversationEventService } from '../conversations/ConversationEventService.js';
 import { DataRootWatchService } from '../dataRoot/DataRootWatchService.js';
+import { AiStatusGetEndpointHandler } from './AiStatusGetEndpoint.handler.js';
 import { AppSetupStartEndpointHandler } from './AppSetupStartEndpoint.handler.js';
+import { ChatgptLoginCancelEndpointHandler } from './ChatgptLoginCancelEndpoint.handler.js';
+import { ChatgptLoginStartEndpointHandler } from './ChatgptLoginStartEndpoint.handler.js';
+import { ChatgptLoginStateGetEndpointHandler } from './ChatgptLoginStateGetEndpoint.handler.js';
 import { ClaudeLoginCompleteEndpointHandler } from './ClaudeLoginCompleteEndpoint.handler.js';
 import { ClaudeLoginStartEndpointHandler } from './ClaudeLoginStartEndpoint.handler.js';
-import { ClaudeStatusGetEndpointHandler } from './ClaudeStatusGetEndpoint.handler.js';
 import { ConversationCreateEndpointHandler } from './ConversationCreateEndpoint.handler.js';
 import { ConversationListEndpointHandler } from './ConversationListEndpoint.handler.js';
 import { ConversationMessageListEndpointHandler } from './ConversationMessageListEndpoint.handler.js';
@@ -50,9 +53,12 @@ const APP_ORIGINS: readonly string[] = [
 const HANDLERS = [
     SandboxStatusGetEndpointHandler,
     SandboxStartEndpointHandler,
-    ClaudeStatusGetEndpointHandler,
+    AiStatusGetEndpointHandler,
     ClaudeLoginStartEndpointHandler,
     ClaudeLoginCompleteEndpointHandler,
+    ChatgptLoginStartEndpointHandler,
+    ChatgptLoginStateGetEndpointHandler,
+    ChatgptLoginCancelEndpointHandler,
     ProjectListEndpointHandler,
     ProjectCreateEndpointHandler,
     AppSetupStartEndpointHandler,

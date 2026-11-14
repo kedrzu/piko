@@ -127,3 +127,25 @@ above: the drawing now matches them.
 - [x] 50 First run · checking the AI connection failed (`A5mQ00`): new, a copy of 36 at step 2 (*KROK 2 Z 2*); stage 1
   done, stage 2 failed ("Nie udało się — spróbuj ponownie"), stage 3 waiting; "Nie udało się sprawdzić połączenia z
   Claude", the body says nothing is lost and the workspace is ready; *Spróbuj ponownie*, details collapsed.
+
+## Round 6 · implementation
+
+Forced by: ChatGPT's sign-in (#24) has no code to paste and reports neither the account's email nor its plan — "Sign in
+with ChatGPT" in OpenCode 2.2.7 returns only `sub` (checked 2026-11-14 with the owner's account). Built in
+`packages/app/setup/` without a drawing beyond `molecules/Provider card`; `poweragents.pen` is not changed in this round.
+
+- [ ] 45 First run · connect your AI (`ZUVSg`): the ChatGPT card is `molecules/Provider card` as for Claude, primary
+  *Połącz z ChatGPT*; `/Soon` (`Rk7mi`) is no longer used.
+- [ ] New, a copy of 38 without the code field: First run · connect ChatGPT · waiting. "Dokończ logowanie w ChatGPT",
+  "Strona logowania ChatGPT otworzyła się w przeglądarce. Zaloguj się tam — gdy skończysz, tutaj przejdę dalej
+  automatycznie.", a waiting line "Czekam, aż się zalogujesz…"; *Wróć*, *Otwórz stronę logowania ponownie*. The app
+  moves on by itself once ChatGPT confirms.
+- [ ] New, the waiting screen with an error notice: rejected ("ChatGPT nie potwierdził logowania", *Spróbuj ponownie*)
+  and expired ("Logowanie wygasło", *Zacznij od nowa*); each opens a new sign-in page.
+- [ ] 40 First run · plan does not allow it (`Z3zuw`): Claude only. ChatGPT reports no plan, so an account whose plan
+  does not allow the agent learns it in the conversation, from the provider's error.
+- [ ] 41 First run · connected (`el9sP`): "Gotowe, {provider} jest połączony"; for ChatGPT the account card has no email.
+- [ ] 50 First run · checking the AI connection failed (`A5mQ00`): "Nie udało się sprawdzić połączenia z AI", without
+  naming a provider.
+- [ ] Conversation banners (signed out, usage limit, an error on the provider's side) name the provider of the
+  conversation, or "dostawca AI" when it is not known.

@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
+import type { AiProvider } from '@poweragents/common/api/AiTypes.js';
 import type { ConversationError, ConversationMessage } from '@poweragents/common/api/ConversationTypes.js';
 
 import { ACCOUNT_EMAIL, GOOD_CODE, StubDaemon } from '../StubDaemon.js';
@@ -87,7 +88,7 @@ test('the reply to a follow-up message streams under it, not into the reply befo
 test('a message sent while the agent works waits for it, and comes back to the composer when the agent is stopped', async ({
     page,
 }) => {
-    const daemon = await conversation(page, [user('m-1', 'Run sleep 60')], true);
+    const daemon = await conversation(page, [user('m-1', 'Run sleep 60')], { running: true });
 
     await expect(page.getByRole('button', { name: 'Stop' })).toBeVisible();
     await expect(composer(page)).toHaveAttribute('placeholder', 'Add something while the agent works…');
@@ -172,6 +173,42 @@ test('the usage limit says when it resets, or that Claude did not say, and offer
     await expect(messages(page).getByRole('button', { name: 'Try again' })).toBeVisible();
 });
 
+test('signed out of ChatGPT: the banner leads to signing in to ChatGPT again, after which the message can be sent again', async ({
+    page,
+}) => {
+    const daemon = await conversation(page, failedRun({ kind: 'signedOut' }), { provider: 'chatgpt' });
+
+    await expect(messages(page).getByText('No answer: you were signed out of ChatGPT.')).toBeVisible();
+    await expect(messages(page).getByRole('button', { name: 'Try again' })).toBeHidden();
+    const banner = page.getByRole('alert');
+    await expect(banner).toContainText('You were signed out of ChatGPT');
+    await banner.getByRole('button', { name: 'Sign in again' }).click();
+
+    await expect(page).toHaveURL(/\/setup\/ai$/);
+    await page.getByRole('button', { name: 'Connect ChatGPT' }).click();
+    await expect(heading(page)).toHaveText('Finish signing in to ChatGPT');
+    daemon.endChatgptLogin('connected');
+    await page.getByRole('button', { name: 'Go to the app' }).click();
+    await page.getByRole('navigation', { name: 'Projects' }).getByRole('link', { name: 'Health' }).click();
+    await sidebarLink(page, 'Morning plan').click();
+
+    // Signed in again: the banner goes, and the message can be sent again.
+    await expect(messages(page).getByText('No answer: you were signed out of ChatGPT.')).toBeVisible();
+    await expect(page.getByRole('alert')).toBeHidden();
+    await messages(page).getByRole('button', { name: 'Try again' }).click();
+    await expect(page.getByRole('button', { name: 'Stop' })).toBeVisible();
+    expect(daemon.sent).toEqual([{ conversationId: 'c-1', text: 'Add an evening routine', queued: false }]);
+});
+
+test('the usage limit of a conversation on ChatGPT names ChatGPT', async ({ page }) => {
+    await conversation(page, failedRun({ kind: 'usageLimit' }), { provider: 'chatgpt' });
+
+    const banner = page.getByRole('alert');
+    await expect(banner).toContainText('ChatGPT usage limit reached');
+    await expect(banner).toContainText("The limit will reset after a while; ChatGPT didn't say when.");
+    await expect(messages(page).getByText('No answer: your ChatGPT usage limit is used up.')).toBeVisible();
+});
+
 test('a run that ends before its message is answered leaves the conversation not running', async ({ page }) => {
     const daemon = await conversation(page, [user('m-1', 'Hello'), agent('a-1', 'Hi')]);
     const release = daemon.hold('conversations/send');
@@ -197,7 +234,7 @@ test('a run that ends before its message is answered leaves the conversation not
 });
 
 test("the messages are read while the agent's text streams without a pause", async ({ page }) => {
-    const daemon = await conversation(page, [user('m-1', 'Write the plan')], true);
+    const daemon = await conversation(page, [user('m-1', 'Write the plan')], { running: true });
     daemon.messagesDelayMs = 150;
     const writing = setInterval(() => {
         daemon.emit({ type: 'textDelta', conversationId: 'c-1', messageId: 'a-1', delta: 'word ' });
@@ -229,7 +266,7 @@ test('the open conversation is read again when the stream had a gap, or the conn
 
 test('a message sent again while the agent works stays shown until the agent takes it', async ({ page }) => {
     const said: ConversationMessage = { type: 'user', id: 'm-1', createdAt: Date.now(), text: 'Yes' };
-    const daemon = await conversation(page, [said], true);
+    const daemon = await conversation(page, [said], { running: true });
 
     await composer(page).fill('Yes');
     await composer(page).press('Enter');
@@ -249,7 +286,7 @@ test('a message sent again while the agent works stays shown until the agent tak
 });
 
 test("a page of messages read while the agent's steps streamed is read again, not shown stale", async ({ page }) => {
-    const daemon = await conversation(page, [user('m-1', 'Write the plan')], true);
+    const daemon = await conversation(page, [user('m-1', 'Write the plan')], { running: true });
     const step = { id: 's-1', kind: 'writeFile', target: 'plan.md', status: 'running' } as const;
     daemon.emit({ type: 'stepStarted', conversationId: 'c-1', step });
     await expect(messages(page).getByText('Writing plan.md (in progress)')).toBeVisible();
@@ -300,7 +337,6 @@ test('the open conversation is read again when the event stream opens after the 
     await expect(messages(page).getByText('Second answer')).toBeVisible({ timeout: 10_000 });
 });
 
-/** The stub daemon with the sandbox ready and Claude connected: the first run is done. */
 test('the view follows the reply to a message sent, but stays where the person scrolled up to read', async ({
     page,
 }) => {
@@ -330,17 +366,32 @@ test('the view follows the reply to a message sent, but stays where the person s
     await expect(messages(page).getByText('Question 0', { exact: true })).toBeInViewport();
 });
 
-async function connected(page: Page) {
+/** How `conversation` sets up the conversation it opens. */
+interface ConversationOptions {
+    /** The agent is working on it. */
+    running?: boolean;
+    /** The provider it runs on, connected and active; Claude by default. */
+    provider?: AiProvider;
+}
+
+/** The stub daemon with the sandbox ready and `provider` connected and active: the first run is done. */
+async function connected(page: Page, provider: AiProvider = 'claude') {
     const daemon = await StubDaemon.install(page);
-    daemon.claude = { connected: true, email: ACCOUNT_EMAIL, plan: 'max', planAllowed: true };
+    if (provider === 'claude') {
+        daemon.claude = { connected: true, email: ACCOUNT_EMAIL, plan: 'max', planAllowed: true };
+    } else {
+        daemon.chatgpt = { connected: true };
+        daemon.activeProvider = 'chatgpt';
+    }
     return daemon;
 }
 
-/** Opens conversation `c-1` of project Health, holding `history`, with the agent working on it or not. */
-async function conversation(page: Page, history: ConversationMessage[], running = false) {
-    const daemon = await connected(page);
+/** Opens conversation `c-1` of project Health, holding `history`. */
+async function conversation(page: Page, history: ConversationMessage[], options: ConversationOptions = {}) {
+    const { running = false, provider = 'claude' } = options;
+    const daemon = await connected(page, provider);
     daemon.projects = [{ id: 'p-health', name: 'Health' }];
-    daemon.conversations['p-health'] = [{ id: 'c-1', title: 'Morning plan', updatedAt: 1, running }];
+    daemon.conversations['p-health'] = [{ id: 'c-1', title: 'Morning plan', updatedAt: 1, running, provider }];
     daemon.messages['c-1'] = history;
 
     await page.goto('/projects/p-health/conversations/c-1');

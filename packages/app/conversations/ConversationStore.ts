@@ -90,7 +90,13 @@ export const ConversationStore = defineService({
             switch (event.type) {
                 case 'conversationCreated':
                     if (event.projectId === projectId.value && !find(event.conversationId)) {
-                        upsert({ id: event.conversationId, title: event.title, updatedAt: Date.now(), running: false });
+                        upsert({
+                            id: event.conversationId,
+                            title: event.title,
+                            updatedAt: Date.now(),
+                            running: false,
+                            provider: event.provider,
+                        });
                     }
                     break;
                 case 'conversationRenamed':
