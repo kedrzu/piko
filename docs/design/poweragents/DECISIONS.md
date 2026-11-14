@@ -704,6 +704,9 @@ is what the switch is for.
 
 > **Checked 2026-11-12:** OpenCode 2.2.7's `claude-agent` integration offers `opus`, `fable`, `sonnet` and `haiku`
 > (`GET /api/model` in the sandbox).
+>
+> **Checked 2026-11-14:** with a ChatGPT subscription signed in, OpenCode 2.2.7's `openai` provider offers Terra as
+> `gpt-6.1-terra` (also `gpt-5.6-terra` and `-fast` variants); a session on it answered.
 
 **Open.** Where the switch lives (per conversation, per project, per profile) and what reasoning effort maps to per
 provider.

@@ -7,6 +7,8 @@ import { EnvVariables } from '@nzyme/ioc/helpers/EnvVariables.js';
 import { createTestContainer } from '@nzyme/ioc-testing/createTestContainer.js';
 import { createEventEmitter } from '@nzyme/utils/createEventEmitter.js';
 
+import type { ChatgptStatus } from '@poweragents/common/api/ChatgptTypes.js';
+import type { ClaudeStatus } from '@poweragents/common/api/ClaudeTypes.js';
 import type {
     Conversation,
     ConversationMessagePage,
@@ -34,19 +36,24 @@ import type {
 } from '@poweragents/opencode/OpencodeSessionPromptCommand.js';
 import type { OpencodeSession } from '@poweragents/opencode/OpencodeTypes.js';
 
+import { ActiveProviderStore } from '../ai/ActiveProviderStore.js';
+import { ChatgptSignInService } from '../chatgpt/ChatgptSignInService.js';
+import { ClaudeSignInService } from '../claude/ClaudeSignInService.js';
 import { ProjectService } from '../projects/ProjectService.js';
 import { Sandbox } from '../sandbox/Sandbox.js';
 import type { SandboxState } from '../sandbox/Sandbox.js';
 import { ConversationService } from './ConversationService.js';
 
 // OpenCode's commands are the boundary: they stand in for its HTTP API, in the shapes the commands return. Projects are
-// real folders in a fresh temporary data root.
+// real folders in a fresh temporary data root. The sign-in services stand in for the sandbox; the active provider's
+// record sits above a scratch Lima home.
 
 test("lists the project's conversations only, the most recently changed first, with whether each runs", async () => {
     const fixture = await setup();
     fixture.sessions.push(
-        session('ses_old', fixture.dirA, { title: 'Stara', updatedAt: 10 }),
-        session('ses_new', fixture.dirA, { updatedAt: 30 }),
+        session('ses_old', fixture.dirA, { title: 'Stara', updatedAt: 10, providerId: 'claude-agent' }),
+        session('ses_new', fixture.dirA, { updatedAt: 30, providerId: 'openai' }),
+        session('ses_mid', fixture.dirA, { updatedAt: 15, providerId: 'anthropic' }),
         // OpenCode's directory filter failing must not leak another project's conversation.
         session('ses_other', fixture.dirB, { title: 'Cudza', updatedAt: 20 }),
     );
@@ -56,14 +63,16 @@ test("lists the project's conversations only, the most recently changed first, w
 
     expect(fixture.listSessions).toHaveBeenCalledWith(fixture.dirA);
     const expected: Conversation[] = [
-        { id: 'ses_new', updatedAt: 30, running: true },
-        { id: 'ses_old', title: 'Stara', updatedAt: 10, running: false },
+        { id: 'ses_new', updatedAt: 30, running: true, provider: 'chatgpt' },
+        { id: 'ses_mid', updatedAt: 15, running: false },
+        { id: 'ses_old', title: 'Stara', updatedAt: 10, running: false, provider: 'claude' },
     ];
     expect(conversations).toEqual(expected);
 });
 
-test("creates a conversation in the project's folder on Claude Sonnet", async () => {
+test("with no provider recorded and Claude connected, creates a conversation in the project's folder on Claude Sonnet", async () => {
     const fixture = await setup();
+    fixture.providers.chatgpt = { connected: true };
 
     const conversation = await fixture.conversations.create(fixture.projectA.id);
 
@@ -73,8 +82,44 @@ test("creates a conversation in the project's folder on Claude Sonnet", async ()
         modelId: 'sonnet',
     };
     expect(fixture.createSession).toHaveBeenCalledWith(params);
-    const expected: Conversation = { id: 'ses_created', updatedAt: 1, running: false };
+    const expected: Conversation = { id: 'ses_created', updatedAt: 1, running: false, provider: 'claude' };
     expect(conversation).toEqual(expected);
+});
+
+test('with ChatGPT recorded and connected, creates a conversation on Terra', async () => {
+    const fixture = await setup();
+    fixture.providers.chatgpt = { connected: true };
+    await fixture.activeProvider.set('chatgpt');
+
+    const conversation = await fixture.conversations.create(fixture.projectA.id);
+
+    const params: OpencodeSessionCreateCommandParams = {
+        directory: fixture.dirA,
+        providerId: 'openai',
+        modelId: 'gpt-6.1-terra',
+    };
+    expect(fixture.createSession).toHaveBeenCalledWith(params);
+    expect(conversation.provider).toBe('chatgpt');
+});
+
+test('with ChatGPT recorded but signed out, creates the conversation on ChatGPT, never on the connected Claude', async () => {
+    const fixture = await setup();
+    await fixture.activeProvider.set('chatgpt');
+
+    await fixture.conversations.create(fixture.projectA.id);
+
+    expect(fixture.createSession).toHaveBeenCalledWith(expect.objectContaining({ providerId: 'openai' }));
+});
+
+test('with no provider recorded and none connected, refuses to create a conversation', async () => {
+    const fixture = await setup();
+    fixture.providers.claude = { connected: false };
+
+    await expect(fixture.conversations.create(fixture.projectA.id)).rejects.toMatchObject({
+        status: 409,
+        payload: { error: 'AiNotConnected' },
+    });
+    expect(fixture.createSession).not.toHaveBeenCalled();
 });
 
 test('reports a message sent while the agent works as queued, and one sent to an idle conversation as not', async () => {
@@ -253,7 +298,10 @@ test('maps a page of messages: steps by tool kind with targets within the projec
 async function setup() {
     const { container } = createTestContainer();
     const tmp = await mkdtemp(path.join(os.tmpdir(), 'poweragents-conversations-'));
-    container.set(EnvVariables, { POWERAGENTS_DATA_ROOT: path.join(tmp, 'root') });
+    container.set(EnvVariables, {
+        POWERAGENTS_DATA_ROOT: path.join(tmp, 'root'),
+        POWERAGENTS_LIMA_HOME: path.join(tmp, 'home', 'lima'),
+    });
     const state: SandboxState = {
         status: 'ready',
         endpoint: { url: 'http://127.0.0.1:1', username: 'opencode', password: 'pw' },
@@ -269,6 +317,23 @@ async function setup() {
         },
     });
 
+    const providers: Providers = {
+        claude: { connected: true, email: 'ola@example.com', plan: 'max', planAllowed: true },
+        chatgpt: { connected: false },
+    };
+    container.set(ClaudeSignInService, {
+        getStatus: () => Promise.resolve(providers.claude),
+        startLogin: notUsed,
+        completeLogin: notUsed,
+        connectAgent: notUsed,
+    });
+    container.set(ChatgptSignInService, {
+        getStatus: () => Promise.resolve(providers.chatgpt),
+        startLogin: notUsed,
+        getLoginState: notUsed,
+        cancelLogin: notUsed,
+    });
+
     const sessions: OpencodeSession[] = [];
     const active = new Set<string>();
     const inbox: OpencodeInboxPrompt[] = [];
@@ -282,7 +347,12 @@ async function setup() {
         // Every session, whatever the directory: as if OpenCode's filter failed.
         listSessions: mock((_directory: string) => Promise.resolve([...sessions])),
         createSession: mock((params: OpencodeSessionCreateCommandParams) =>
-            Promise.resolve(session('ses_created', params.directory, { updatedAt: 1 })),
+            Promise.resolve(
+                session('ses_created', params.directory, {
+                    updatedAt: 1,
+                    providerId: params.providerId,
+                }),
+            ),
         ),
         prompt: mock((params: OpencodeSessionPromptCommandParams): Promise<OpencodePromptReceipt> =>
             Promise.resolve({ messageId: `msg_${params.text}`, admittedAt: 1 }),
@@ -306,11 +376,23 @@ async function setup() {
     assertCreated(await projects.create('Beta'));
     return {
         ...fixture,
+        providers,
+        activeProvider: container.resolve(ActiveProviderStore),
         conversations: container.resolve(ConversationService),
         projectA,
         dirA: '/Poweragents/projects/Alfa',
         dirB: '/Poweragents/projects/Beta',
     };
+}
+
+/** What each provider's sign-in reports; a test changes it before the call. */
+interface Providers {
+    claude: ClaudeStatus;
+    chatgpt: ChatgptStatus;
+}
+
+function notUsed(): Promise<never> {
+    return Promise.reject(new Error('not used'));
 }
 
 function session(id: string, directory: string, fields: Partial<OpencodeSession> = {}): OpencodeSession {

@@ -1,5 +1,6 @@
 import { STEP_KINDS } from '@poweragents/common/api/ConversationTypes.js';
 import type { ConversationStep, ConversationStepKind } from '@poweragents/common/api/ConversationTypes.js';
+import type { AiProvider } from '@poweragents/common/api/AiTypes.js';
 import type { DaemonEvent } from '@poweragents/common/api/DaemonEventTypes.js';
 import { readString } from '@poweragents/common/utils/readString.js';
 
@@ -33,7 +34,13 @@ export function parseDaemonEvent(data: string): DaemonEvent | null {
             const projectId = readString(value, 'projectId');
             return projectId === undefined
                 ? null
-                : { type: 'conversationCreated', conversationId, projectId, title: readString(value, 'title') };
+                : {
+                      type: 'conversationCreated',
+                      conversationId,
+                      projectId,
+                      title: readString(value, 'title'),
+                      provider: readProvider(value),
+                  };
         }
         case 'conversationRenamed': {
             const title = readString(value, 'title');
@@ -127,4 +134,10 @@ function readError(value: unknown) {
                 message: readString(value, 'message') ?? '',
             } as const;
     }
+}
+
+/** The event's `provider`, when it is one the app knows. */
+function readProvider(value: object): AiProvider | undefined {
+    const provider = readString(value, 'provider');
+    return provider === 'claude' || provider === 'chatgpt' ? provider : undefined;
 }

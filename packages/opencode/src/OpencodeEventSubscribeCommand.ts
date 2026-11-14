@@ -45,6 +45,8 @@ export interface OpencodeSessionCreatedEvent {
     /** Set when the session is a sub-session (an agent's helper). */
     parentId?: string;
     title?: string;
+    /** OpenCode's model provider the session runs on (`claude-agent`, `openai`). */
+    providerId?: string;
 }
 
 /** A session got a title: OpenCode names a session from its first prompt, during the first run. */
@@ -249,6 +251,7 @@ function mapEvent(event: VendorEvent, toolNames: Map<string, string>): OpencodeS
                 directory: event.data.location.directory,
                 parentId: event.data.parentID,
                 title: event.data.title,
+                providerId: event.data.model?.providerID,
             };
         case 'session.renamed':
             return { type: 'sessionRenamed', sessionId: event.data.sessionID, title: event.data.title };

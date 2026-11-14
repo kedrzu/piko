@@ -1,7 +1,9 @@
 import { HttpError } from '@nzyme/fetch-utils/HttpError.js';
 import { defineService } from '@nzyme/ioc/Service.js';
 import { Logger } from '@nzyme/logging/Logger.js';
+import { assertNever } from '@nzyme/utils/assertNever.js';
 
+import type { AiProvider } from '@poweragents/common/api/AiTypes.js';
 import type {
     Conversation,
     ConversationMessage,
@@ -22,6 +24,9 @@ import { OpencodeSessionListCommand } from '@poweragents/opencode/OpencodeSessio
 import { OpencodeSessionPromptCommand } from '@poweragents/opencode/OpencodeSessionPromptCommand.js';
 import type { OpencodeSession } from '@poweragents/opencode/OpencodeTypes.js';
 
+import { AiProviderService } from '../ai/AiProviderService.js';
+import { toAiProvider } from '../ai/utils/toAiProvider.js';
+import { CHATGPT_INTEGRATION } from '../chatgpt/ChatgptSignInService.js';
 import { CLAUDE_INTEGRATION } from '../claude/ClaudeSignInService.js';
 import { ProjectService } from '../projects/ProjectService.js';
 import { assertSandboxReady } from '../sandbox/assertSandboxReady.js';
@@ -39,7 +44,11 @@ import { toConversationMessage } from './utils/toConversationMessage.js';
 export interface ConversationServiceShape {
     /** The project's conversations, the most recently changed first. */
     list(projectId: string): Promise<Conversation[]>;
-    /** Starts an empty conversation in the project, with the agent on Claude Sonnet (design D35). */
+    /**
+     * Starts an empty conversation in the project, with the agent on the active provider's default model (design D35):
+     * Claude Sonnet or ChatGPT's Terra. The conversation keeps that model. Throws `HttpError` 409 `AiNotConnected` when
+     * no provider is connected on an allowed plan.
+     */
     create(projectId: string): Promise<Conversation>;
     /** Sends the person's message; the agent's work on it streams as events. */
     send(input: ConversationSendInput): Promise<ConversationSendResult>;
@@ -49,8 +58,12 @@ export interface ConversationServiceShape {
     listMessages(input: ConversationMessageListInput): Promise<ConversationMessagePage>;
 }
 
-/** The model a new conversation runs on (design D35). */
-const AGENT_MODEL = 'sonnet';
+/** OpenCode's model a new conversation runs on, per provider (design D35). */
+interface AgentModel {
+    providerId: string;
+    modelId: string;
+}
+
 /** Messages per page: a screen's worth and more, well under OpenCode's maximum of 200. */
 const MESSAGE_PAGE_SIZE = 50;
 
@@ -61,6 +74,7 @@ export const ConversationService = defineService({
         logger: Logger,
         projects: ProjectService,
         sandbox: Sandbox,
+        aiProvider: AiProviderService,
         listSessions: OpencodeSessionListCommand,
         getSession: OpencodeSessionGetCommand,
         listActiveSessions: OpencodeSessionActiveListCommand,
@@ -90,12 +104,15 @@ export const ConversationService = defineService({
 
         async function create(projectId: string) {
             const directory = await requireProjectDir(projectId);
-            const session = await deps.createSession({
-                directory,
-                providerId: CLAUDE_INTEGRATION,
-                modelId: AGENT_MODEL,
-            });
-            logger.info('Conversation created', { projectId, conversationId: session.id });
+            const provider = await deps.aiProvider.getActive();
+            if (provider === undefined) {
+                throw new HttpError(409, {
+                    error: 'AiNotConnected',
+                    message: 'No AI provider is connected on a plan the agent can use',
+                });
+            }
+            const session = await deps.createSession({ directory, ...toAgentModel(provider) });
+            logger.info('Conversation created', { projectId, conversationId: session.id, provider });
             return toConversation(session, false);
         }
 
@@ -158,6 +175,25 @@ export const ConversationService = defineService({
     },
 });
 
+/** @__NO_SIDE_EFFECTS__ */
+function toAgentModel(provider: AiProvider): AgentModel {
+    switch (provider) {
+        case 'claude':
+            return { providerId: CLAUDE_INTEGRATION, modelId: 'sonnet' };
+        case 'chatgpt':
+            // Terra's id as OpenCode lists it (`GET /api/model`).
+            return { providerId: CHATGPT_INTEGRATION, modelId: 'gpt-6.1-terra' };
+        default:
+            return assertNever(provider);
+    }
+}
+
 function toConversation(session: OpencodeSession, running: boolean): Conversation {
-    return { id: session.id, title: session.title, updatedAt: session.updatedAt, running };
+    return {
+        id: session.id,
+        title: session.title,
+        updatedAt: session.updatedAt,
+        running,
+        provider: toAiProvider(session.providerId),
+    };
 }
