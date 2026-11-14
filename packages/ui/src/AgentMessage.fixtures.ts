@@ -71,3 +71,28 @@ Tekst z <b onclick="window.__injected = true">pogrubieniem w HTML</b> w środku.
 ![obrazek](https://example.com/tracker.png)
 
 [bezpieczny link](https://example.com/bezpieczny)`;
+
+const PLAN_UI = `root = Stack([intro, form])
+intro = Text("Żeby ułożyć plan, potrzebuję kilku informacji.")
+form = Form("plan", [areas], [send])
+areas = CheckboxGroup("areas", "Czym mam się zająć?", ["Sen", "Jedzenie", "Ruch"], true)
+send = Button("Ułóż plan", @ToAssistant("Ułóż mi plan"), "primary")
+`;
+
+const CHOICE_UI = `root = Stack([choices])
+choices = Buttons([sleep, food])
+sleep = Button("Sen", @ToAssistant("Zacznijmy od snu"))
+food = Button("Jedzenie", @ToAssistant("Zacznijmy od jedzenia"))
+`;
+
+/** A reply with a form: text, the openui block, then a closing sentence. */
+export const PLAN_FORM_TEXT = `Żeby ułożyć plan, potrzebuję kilku informacji.\n\n\`\`\`openui\n${PLAN_UI}\`\`\`\n\nDaj znać, a ułożę go od razu.`;
+
+/** The same reply, cut off while the agent writes the block: no closing fence yet. */
+export const PLAN_FORM_HALF_WRITTEN = PLAN_FORM_TEXT.slice(0, PLAN_FORM_TEXT.indexOf('areas = ') + 40);
+
+/** Two replies' worth of UI in one message: buttons, a sentence between, then a form. */
+export const TWO_UIS_TEXT = `Najpierw wybierz, od czego zaczynamy.\n\n\`\`\`openui\n${CHOICE_UI}\`\`\`\n\nA potem uzupełnij formularz.\n\n\`\`\`openui\n${PLAN_UI}\`\`\``;
+
+/** A reply ending with equal choices under its text. */
+export const CHOICES_TEXT = `Od czego zaczynamy?\n\n\`\`\`openui\n${CHOICE_UI}\`\`\``;

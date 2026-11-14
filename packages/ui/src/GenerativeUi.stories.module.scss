@@ -1,0 +1,19 @@
+// As in a conversation: the agent's mark beside the column of its reply, the person's answer under it.
+.conversation {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-24;
+    max-width: 660px;
+}
+
+.reply {
+    display: flex;
+    gap: $spacing-14;
+    align-items: flex-start;
+}
+
+.body {
+    flex: 1;
+    min-width: 0;
+    padding-top: $spacing-02;
+}

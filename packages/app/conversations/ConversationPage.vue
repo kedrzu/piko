@@ -1,4 +1,4 @@
-<!-- A conversation open (screens 56, 57, 59–61, 65, 66): its messages with the agent's reply streaming, error lines, the banner when the agent cannot answer, and the composer with Stop. -->
+<!-- A conversation open (screens 56, 57, 59–61, 65–74): its messages with the agent's reply streaming, error lines, the banner when the agent cannot answer, and the composer with Stop. -->
 
 <script lang="ts" setup>
 import { LogIn } from '@lucide/vue';
@@ -17,6 +17,7 @@ import ConversationLayout from '@poweragents/ui/ConversationLayout.vue';
 import MessageError from '@poweragents/ui/MessageError.vue';
 import StatusBanner from '@poweragents/ui/StatusBanner.vue';
 import UserMessage from '@poweragents/ui/UserMessage.vue';
+import { splitGenerativeUi } from '@poweragents/ui/utils/splitGenerativeUi.js';
 
 import * as l from './ConversationPage.loc.js';
 import * as lc from './Conversations.loc.js';
@@ -53,6 +54,44 @@ const usageLimitTitle = computed(() =>
   providerName.value ? t(l.usageLimitTitle, { provider: providerName.value }) : t(l.usageLimitTitleGeneric),
 );
 const lastItemKey = computed(() => conversation.items.at(-1)?.key);
+/**
+ * The key of the reply whose UI takes answers: the latest reply, once the agent is done and the person has not said
+ * anything since (a message just sent or waiting in the queue counts; a failed run's error does not).
+ */
+const activeUiKey = computed(() => {
+  if (conversation.running) {
+    return undefined;
+  }
+  const lastAgentIndex = conversation.items.findLastIndex(item => item.type === 'agent');
+  const answered = conversation.items.slice(lastAgentIndex + 1).some(item => item.type === 'user');
+  return answered ? undefined : conversation.items[lastAgentIndex]?.key;
+});
+/** Whether the reply that takes answers has a UI to answer: the composer then offers typing as the other way. */
+const uiWaiting = computed(() => {
+  const item = conversation.items.find(candidate => candidate.key === activeUiKey.value);
+  if (item?.type !== 'agent') {
+    return false;
+  }
+  // Joined as `AgentMessage` joins a finished reply's text.
+  const text = item.parts
+    .filter(part => part.type === 'text')
+    .map(part => part.text)
+    .join('\n\n');
+  return splitGenerativeUi(text).some(segment => segment.type === 'ui');
+});
+/** Each reply's answer: the text of the first message the person sent after it, keyed by the reply's key. */
+const answers = computed(() => {
+  const result = new Map<string, string>();
+  let next: string | undefined;
+  for (const item of conversation.items.toReversed()) {
+    if (item.type === 'user') {
+      next = item.text;
+    } else if (item.type === 'agent' && next !== undefined) {
+      result.set(item.key, next);
+    }
+  }
+  return result;
+});
 /** App setup before the person has said anything: the agent has just asked about them (screen 65). */
 const introducing = computed(
   () =>
@@ -62,6 +101,9 @@ const introducing = computed(
 const placeholder = computed(() => {
   if (conversation.running) {
     return t(l.placeholderRunning);
+  }
+  if (uiWaiting.value) {
+    return t(l.placeholderUi);
   }
   return introducing.value ? t(l.placeholderIntroduce) : t(l.placeholder);
 });
@@ -75,14 +117,23 @@ watch(
   },
 );
 
+/** Sends what the person typed; a failure puts it back in the composer. */
 async function send(text: string) {
   message.value = '';
+  if (!(await deliver(text))) {
+    message.value = text;
+  }
+}
+
+/** Whether the message was sent (or queued). A generative UI's answer goes through it too, the composer untouched. */
+async function deliver(text: string) {
   layout.value?.scrollToEnd();
   try {
     await conversation.send(text);
+    return true;
   } catch (error) {
     logger.warn('Message could not be sent', { conversationId: conversationId.value, error });
-    message.value = text;
+    return false;
   }
 }
 
@@ -148,6 +199,9 @@ function describeReset(resetAt: number | undefined) {
         v-else-if="item.type === 'agent'"
         :parts="item.parts"
         :running="item.running"
+        :ui-active="item.key === activeUiKey"
+        :answer="answers.get(item.key)"
+        @reply="deliver"
       />
       <MessageError
         v-else
