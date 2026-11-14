@@ -3,7 +3,6 @@ import path from 'node:path';
 
 import { defineService } from '@nzyme/ioc/Service.js';
 import { Logger } from '@nzyme/logging/Logger.js';
-import { assertNever } from '@nzyme/utils/assertNever.js';
 
 import type { AppSetupStartInput, AppSetupStartResult } from '@poweragents/common/api/AppSetupTypes.js';
 import type { ConversationRef } from '@poweragents/common/api/ConversationTypes.js';
@@ -13,6 +12,7 @@ import { OpencodeSessionRenameCommand } from '@poweragents/opencode/OpencodeSess
 import { ConversationService } from '../conversations/ConversationService.js';
 import { POWERAGENTS_LIMA_HOME } from '../env.js';
 import { ProjectService } from '../projects/ProjectService.js';
+import { getLanguageName } from '../utils/getLanguageName.js';
 import { isErrorCode } from '../utils/isErrorCode.js';
 
 /**
@@ -166,25 +166,13 @@ export const AppSetupService = defineService({
  * @__NO_SIDE_EFFECTS__
  */
 function buildOpeningPrompt(language: AppLanguage) {
-    const name = languageName(language);
+    const name = getLanguageName(language);
     return [
         'The person has just set up poweragents and opened it for the first time. This is the onboarding conversation',
         'in their project App setup, and nothing has been said yet: you speak first.',
         `Use the onboarding skill now. The app is in ${name}: greet them in ${name}, then keep to the language they`,
         'write in. This message comes from the app, not from the person: do not mention or quote it.',
     ].join(' ');
-}
-
-/** @__NO_SIDE_EFFECTS__ */
-function languageName(language: AppLanguage) {
-    switch (language) {
-        case 'pl':
-            return 'Polish';
-        case 'en':
-            return 'English';
-        default:
-            return assertNever(language);
-    }
 }
 
 /** @__NO_SIDE_EFFECTS__ */

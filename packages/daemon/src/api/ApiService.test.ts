@@ -1,6 +1,6 @@
 import { expect, mock, test } from 'bun:test';
 import { mkdtempSync, writeFileSync } from 'node:fs';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { cp, mkdir, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 
@@ -11,6 +11,7 @@ import type { RpcErrorData } from '@nzyme/rpc/types/RpcError.js';
 import { createEventEmitter } from '@nzyme/utils/createEventEmitter.js';
 
 import type { DaemonEvent } from '@poweragents/common/api/DaemonEventTypes.js';
+import type { PluginInfo } from '@poweragents/common/api/PluginTypes.js';
 import type { SandboxStatus } from '@poweragents/common/api/SandboxTypes.js';
 import { OpencodeEventSubscribeCommand } from '@poweragents/opencode/OpencodeEventSubscribeCommand.js';
 import type { OpencodeEvent } from '@poweragents/opencode/OpencodeEventSubscribeCommand.js';
@@ -102,6 +103,52 @@ test('streams an installation the agent asked for from a conversation', async ()
     } finally {
         await sandboxApi.close();
     }
+});
+
+test('lists the bundled and own plugins with their errors, the conflicting own plugin among them', async () => {
+    const { api, dataRoot } = setup();
+    await cp(path.join(import.meta.dirname, '../plugins/fixtures/own'), path.join(dataRoot, 'plugins'), {
+        recursive: true,
+    });
+
+    const response = await api.handle(apiRequest('plugins/list'));
+
+    expect(response.status).toBe(200);
+    const expected: Partial<PluginInfo>[] = [
+        { name: 'email-sorting', source: 'bundled', errors: [] },
+        { name: 'gmail', source: 'bundled', errors: [] },
+        { name: 'gmail', source: 'own', errors: [{ code: 'conflict' }] },
+        { name: 'my-notes', source: 'own', errors: [] },
+        { name: 'old-name', source: 'own', errors: [{ code: 'nameMismatch' }] },
+        { name: 'team-board', source: 'own', errors: [{ code: 'projectLevel' }] },
+    ];
+    expect(await response.json()).toMatchObject(expected);
+});
+
+test.each([['an unknown language', { name: 'gmail', projectId: 'p', language: 'de' }, 400, 'InvalidInput']])(
+    'refuses to install %s with its error code',
+    async (_case, body, status, error) => {
+        const { api, plugins } = setup();
+
+        const response = await api.handle(apiRequest('plugins/install', body));
+
+        expect(response.status).toBe(status);
+        expect(await response.json()).toMatchObject({ error });
+        expect((await plugins.list()).every(plugin => plugin.installs.length === 0)).toBe(true);
+    },
+);
+
+test('removes an installed plugin, and refuses to remove one that is not installed', async () => {
+    const { api, plugins } = setup();
+    await plugins.install({ name: 'gmail' });
+
+    const removed = await api.handle(apiRequest('plugins/remove', { name: 'gmail' }));
+    const again = await api.handle(apiRequest('plugins/remove', { name: 'gmail' }));
+
+    expect(removed.status).toBe(200);
+    expect((await plugins.list()).find(plugin => plugin.name === 'gmail')?.installs).toEqual([]);
+    expect(again.status).toBe(404);
+    expect(await again.json()).toMatchObject({ error: 'PluginNotInstalled' });
 });
 
 test.each([
@@ -270,6 +317,14 @@ async function readFrames(response: Response, count: number) {
         }
     }
     return frames;
+}
+
+function apiRequest(endpoint: string, body?: object) {
+    return new Request(`http://127.0.0.1:47610/api/${endpoint}`, {
+        method: 'POST',
+        headers: { Origin: 'tauri://localhost', 'Content-Type': 'application/json' },
+        body: body === undefined ? undefined : JSON.stringify(body),
+    });
 }
 
 function preflight(origin: string) {

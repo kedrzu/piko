@@ -27,6 +27,9 @@ import { ConversationStopEndpointHandler } from './ConversationStopEndpoint.hand
 import { MemoryFileGetEndpointHandler } from './MemoryFileGetEndpoint.handler.js';
 import { MemoryFileListEndpointHandler } from './MemoryFileListEndpoint.handler.js';
 import { MemoryRevealEndpointHandler } from './MemoryRevealEndpoint.handler.js';
+import { PluginInstallEndpointHandler } from './PluginInstallEndpoint.handler.js';
+import { PluginListEndpointHandler } from './PluginListEndpoint.handler.js';
+import { PluginRemoveEndpointHandler } from './PluginRemoveEndpoint.handler.js';
 import { ProjectCreateEndpointHandler } from './ProjectCreateEndpoint.handler.js';
 import { ProjectListEndpointHandler } from './ProjectListEndpoint.handler.js';
 import { SandboxStartEndpointHandler } from './SandboxStartEndpoint.handler.js';
@@ -72,6 +75,9 @@ const HANDLERS = [
     MemoryFileListEndpointHandler,
     MemoryFileGetEndpointHandler,
     MemoryRevealEndpointHandler,
+    PluginListEndpointHandler,
+    PluginInstallEndpointHandler,
+    PluginRemoveEndpointHandler,
 ];
 
 /**

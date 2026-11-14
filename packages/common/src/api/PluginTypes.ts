@@ -1,4 +1,5 @@
 import type { AppLanguage } from '../appLanguages.js';
+import type { ConversationRef } from './ConversationTypes.js';
 
 /**
  * Where a plugin comes from: `bundled` ships with the app (design D36), `own` is a folder the person or the agent made in
@@ -91,3 +92,48 @@ export interface PluginInfo {
     /** Why its environment is not applied, from the last apply; `null` when it is, or the plugin is not installed. */
     environmentError: PluginEnvironmentError | null;
 }
+
+/** A plugin to install or remove, and where. */
+export interface PluginTargetInput {
+    name: string;
+    /** The project of a `project` plugin; absent for a `profile` one. */
+    projectId?: string;
+}
+
+/** What the app asks to install a plugin with. */
+export interface PluginInstallInput extends PluginTargetInput {
+    /**
+     * For a `project` plugin the project it is installed in, where its onboarding starts too. For a `profile` plugin the
+     * project its onboarding starts in: required when it has an onboarding skill, ignored otherwise.
+     */
+    projectId?: string;
+    /** The app's language: the agent speaks to the person in it in the onboarding conversation. */
+    language: AppLanguage;
+    /** The onboarding conversation's title, in the app's language; OpenCode's own title when absent. */
+    conversationTitle?: string;
+}
+
+/** Why a plugin's onboarding conversation did not start. The plugin stays installed either way. */
+export type PluginOnboardingError =
+    /** The sandbox is not ready: the app shows its progress, and the person can install the plugin again. */
+    | { code: 'sandboxNotReady' }
+    /** No AI provider is connected on a plan the agent can use. */
+    | { code: 'aiNotConnected' }
+    /** Anything else; the daemon logs it. */
+    | { code: 'failed' };
+
+/** How installing a plugin from the app ended: the plugin is installed. */
+export interface PluginInstallOutcome {
+    /**
+     * The onboarding conversation, the agent already running the plugin's onboarding skill in it; `null` when the plugin
+     * has no onboarding skill or its onboarding did not start ({@link onboardingError}).
+     */
+    conversation: ConversationRef | null;
+    /** Why the onboarding did not start; `null` when it did or there is none. */
+    onboardingError: PluginOnboardingError | null;
+    /** Why the plugin's environment is not applied; `null` when it is, or the sandbox is not ready to apply it. */
+    environmentError: PluginEnvironmentError | null;
+}
+
+/** How removing a plugin ended: nothing to report, a failure throws. */
+export type PluginRemoveResult = Record<string, never>;
