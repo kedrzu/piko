@@ -11,4 +11,6 @@ export const DAEMON_API_PATH = '/api/';
 export interface DaemonStatus {
     /** Always `ok` while the daemon serves requests. */
     status: 'ok';
+    /** The app version that started the daemon; absent when it was started without one (development). */
+    version?: string;
 }

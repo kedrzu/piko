@@ -49,7 +49,7 @@ $sidebar-width: 300px;
   display: flex;
   flex-direction: column;
   min-height: 0;
-  margin: $spacing-10 $spacing-10 $spacing-10 0;
+  margin: $spacing-shell-inset $spacing-shell-inset $spacing-shell-inset 0;
   overflow: hidden;
   border-radius: $radius-l;
   background: $color-surface;

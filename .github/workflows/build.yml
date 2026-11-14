@@ -1,8 +1,9 @@
 name: Build
 
-# The merge gate for pull requests. It runs the same build local setup does (`setup.build.sh`), then
-# the checks of the `verify` skill's full protocol. For a stacked PR GitHub builds each node as the
-# cumulative state of the chain up to it, so a green node means that slice compiles on its own.
+# The merge gate for pull requests, and the check every push to `main` passes before the desktop app's Development build
+# (`development.yml`, which starts when this workflow completes on `main`). It runs the same build local setup does
+# (`setup.build.sh`), then the checks of the `verify` skill's full protocol. For a stacked PR GitHub builds each node as
+# the cumulative state of the chain up to it, so a green node means that slice compiles on its own.
 #
 # No secrets: the job runs on a plain runner, which is why `setup.build.sh` holds nothing that needs
 # credentials or local infrastructure. The job name `Build` is the required check on the `main`
@@ -11,7 +12,11 @@ name: Build
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: [main]
 
+# A newer push to `main` cancels the older run too. The cancelled run starts a Development run that does nothing, and the
+# next one builds everything since the published build, so nothing is lost.
 concurrency:
   group: build-${{ github.ref }}
   cancel-in-progress: true
