@@ -677,8 +677,10 @@ health (receipts) and anywhere else.
 **The plugin's author decides its level**, and for now it cannot be changed: a profile plugin can't be
 installed into a project, nor the reverse. (2026-11-11, owner)
 
-**Open.** How a workflow plugin states that it needs a profile-level one (email sorting needs a mail
-plugin, Gmail or Outlook).
+**Needing a profile-level plugin.** A workflow plugin names the plugins it can work with ("Gmail or Outlook") in its
+manifest ([D39](#d39)). How it works with them is decided per plugin, by evals: skills on each side that the agent
+combines, a shared contract, or anything else that measures better. The design fixes no general rule. (2026-11-14,
+owner)
 
 **Consequence.** Profile-level plugins put their tools in every project, which [D11](#d11)'s
 attachment was meant to avoid; keeping that small is the MCP-context optimisation already deferred
@@ -688,6 +690,8 @@ there.
 
 - Every plugin attached to projects only — general access like Gmail would have to be attached to
   every project that ever needs mail (owner).
+- One general rule for how plugins work together (skills only, or a shared contract per capability) — what works
+  is measured case by case; a rule fixed now would block the better option later (owner, 2026-11-14).
 
 ## D35
 
@@ -761,3 +765,67 @@ daemon endpoint serves every plugin with an account, and fits one sign-in per ac
 **Rejected.**
 
 - The refresh token stored in the sandbox for tools to use directly — a leak means lasting access.
+
+## D39
+
+**A plugin is a folder: `plugin.json` (name, marketplace description in each app language, tags, level, the project it
+creates, the plugins it needs, the accounts and services it uses, its MCP servers, its additions to the environment),
+`skills/` (its skills, the onboarding skill among them) and, optionally, the package of its CLI ([D37](#d37)). Bundled
+plugins ship as such folders inside the app ([D36](#d36)).** (2026-11-14, design agent proposal, owner did not object)
+
+**Why.** Every part named in [D17](#d17) has one place, and a plugin the agent writes ([D26](#d26)) is the same folder.
+
+## D40
+
+**Bundled plugins are mounted into the sandbox read-only from the app. Plugins the agent writes live in the profile, in
+`/Poweragents/plugins/<name>/`, which the agent can write to. Installing any plugin is a request to the daemon, which
+reads `plugin.json`, applies its additions to the environment and records the installation; the list of installed
+plugins is the daemon's file, never edited by the agent. Editing a skill of an installed plugin takes effect in the next
+conversation without reinstalling; changing what it adds to the environment needs a reinstall.** (2026-11-14, design
+agent proposal, owner did not object)
+
+**Why.** Plugins the agent writes outlive a rebuilt sandbox only if they sit beside the person's data, like Memory and
+projects. The environment is rebuilt from the list of installed plugins ([D26](#d26)), so that list has to match what was
+really installed, which only holds if one owner writes it. A missing folder of an installed plugin shows the plugin as
+broken on its page and does not stop the environment from rebuilding.
+
+**Shown with the others.** Plugins the agent wrote appear in the same list as bundled ones, marked as the person's own
+("Twój plugin"), not as made by the agent — they asked for it, so it is theirs. (2026-11-14, owner)
+
+**Rejected.**
+
+- Hiding the agent's plugins from the Plugins list — the person would not know where a program in the environment came
+  from, against the product's line that nothing is a black box ([D9](#d9)).
+- Labelling them "made by the agent" — "your plugin" reads better and gives the person the sense they built it (owner).
+
+## D41
+
+**Each plugin is built as its own task, with its own evals; how it works with other plugins and which form its tools
+take are settled there by measurement.** (2026-11-14, owner)
+
+## D42
+
+**A workflow is started by invoking its plugin's skill as a command (e.g. `/email-sorting`), and a schedule's prompt is
+that command, wherever the schedule was created — in the plugin's onboarding or in any later conversation. When the
+command's skill is not available (its plugin was removed), the conversation gets an instruction from the app: the
+command does not exist; stop, tell the person, and at most look for the cause (e.g. the plugin was removed); never try
+to do the task another way, such as reading the plugin's files and redoing what it did. Removing a plugin touches no
+schedule.** (2026-11-14, owner)
+
+**Why.** Schedules do not know which plugin they use: one can be created in any conversation, so tying them to the
+plugin that onboarded them is fragile. A missing command is a clean failure the person can see, while an agent that
+improvises the missing workflow — as coding agents do when a skill is unavailable and they read its files instead —
+does something nobody set up, after the person removed the plugin to stop it.
+
+**Consequence.** Only installed plugins' folders are visible in the sandbox; a removed bundled plugin's files are not
+left there to be read. A plugin installed but not attached to the current project stays findable ([D11](#d11)).
+
+**Unchecked.** Whether OpenCode 2.2.7 invokes a skill as a slash command, or the daemon has to expand the command itself
+when it starts the conversation.
+
+**Rejected.**
+
+- Removing a plugin lists the schedules of its projects to delete too — proposed by the design agent; unnecessary once a
+  missing command fails cleanly.
+- A schedule remembering which plugin created it and disappearing with it — schedules are created in any conversation,
+  and one the person later reworked would vanish unasked (owner, 2026-11-14).

@@ -13,9 +13,13 @@ The users are not technical. They install ready-made capabilities, not tools: "e
 ## What a plugin is
 
 One kind of thing, made of whatever parts it needs: instructions for the agent (skills), access to
-outside services (e.g. Gmail), a setup conversation that runs right after installation, schedules, and
+outside services (e.g. Gmail), a setup conversation that runs right after installation, and
 programs installed into the agent's environment (e.g. Blender for a 3D plugin). Tags in the
-marketplace ("workflows", "creative", "for work") are only for browsing.
+marketplace ("workflows", "creative", "for work") are only for browsing. A plugin brings no schedule of its own: the
+setup conversation asks when it should run and the agent creates the schedule.
+
+In the first version every plugin ships inside the app; the marketplace is a list with search and tags, not an online
+store. Plugins the agent wrote for the person appear in the same list, marked **"Twój plugin"** (your plugin).
 
 A plugin is installed either for the whole profile or into one project. General access — e.g.
 "Gmail" (connect and read mail) — belongs to the profile and works in every project. A workflow —
@@ -35,8 +39,9 @@ works — through a conversation, not configuration screens.
 ## Two ways in
 
 - **From the Marketplace** (Plugins → Marketplace → a plugin → Install).
-- **From a conversation** — the agent suggests it ("I can sort your email every morning — want that?")
-  during onboarding or any chat, as part of a batched approval.
+- **From a conversation** — the agent installs it itself when the work calls for it, during onboarding or any chat,
+  and shows a card in the conversation: which plugin was installed, with a link to its page. No approval step: the
+  only thing that needs the person is signing in to an account.
 
 ## Screens, in order (example: email sorting)
 
@@ -48,9 +53,8 @@ works — through a conversation, not configuration screens.
    will *not* do (e.g. "creates drafts, never sends email on its own").
    *Answers: is this what I want, and what am I letting it do?*
 
-3. **Install = one approval.** The same batched approval as inside a conversation: the plugin, its
-   project, its schedule, listed together, approved with one button. Account access is asked for
-   during setup, not here.
+3. **Install.** One button; pressing it is the decision. If the plugin creates a project, the button's surroundings say
+   so ("creates the project Poczta"). Account access is asked for during setup, not here.
 
 4. **Setup conversation starts on its own** in the plugin's project. The agent asks, e.g.: which email
    provider (Gmail / Outlook), then starts that provider's sign-in (the provider's own page opens; if
@@ -66,7 +70,7 @@ works — through a conversation, not configuration screens.
 ## After installation
 
 - **Plugin page (installed):** projects it is attached to; what it knows about you (links to its
-  files); its schedules; **"Set up again"**, which reruns the setup conversation to change anything;
+  files); the schedules of those projects; **"Set up again"**, which reruns the setup conversation to change anything;
   remove.
 - Changing setup is always that conversation — there is no separate settings form.
 
@@ -76,8 +80,7 @@ works — through a conversation, not configuration screens.
   page and in Waiting for you, and "Set up again" continues.
 - **Account sign-in cancelled or failed** — the conversation says so and offers to retry.
 - **Installation of the plugin's programs in progress** (can take a while for large ones like Blender).
-- **Installation blocked by a conflict** with an already installed plugin (both need incompatible
-  versions of something) — say which plugin it conflicts with, in plain words.
+- **A plugin of the person's own that is broken** (its files were deleted) — shown as broken on its page, with remove.
 - **Plugin installed from inside an existing project** — no new project is created; it attaches there.
 
 ## Failures that must be visible
@@ -85,7 +88,8 @@ works — through a conversation, not configuration screens.
 - The plugin's programs failed to install (no network, download failed) — retry; nothing half-working
   is presented as working.
 - The connected account stops working later — the plugin's runs ask for reconnection.
-- Removing a plugin whose project holds the person's files — say what happens to those files.
+- Removing a plugin whose project holds the person's files — say that the files and the project stay. Its schedules
+  stay too; their next run stops and says the plugin is gone.
 
 ## Technical constraints
 
@@ -99,5 +103,5 @@ works — through a conversation, not configuration screens.
 
 - How the plugin page communicates what the plugin may and may not do, for someone who doesn't know
   what "access" means technically.
-- How the batched approval reads when it lists a plugin, a new project and a schedule together.
+- How the card in a conversation reads when the agent installed one or more plugins on its own.
 - How "Set up again" is discovered.

@@ -188,3 +188,16 @@ Append-only. One line per turn that settled something, was rejected, or got an a
   agent builds schedules); follow-up issue #35 created (Backlog, blocked by #21, #25). D28 rewritten for plugins:
   installs need no confirmation (agent reports them with a link), account connection is confirmed by the sign-in
   itself; schedule and tunnel clauses kept as they were, open in #35. Old D28 to history.
+- 2026-11-14 — Owner: a workflow plugin names the plugins it works with, no shared interface; the agent combines their
+  skills (D34 Open closed). Plugin folder shape (plugin.json, skills/, optional CLI package) recorded as proposal, owner
+  did not object (D39).
+- 2026-11-14 — Owner corrected: no general rule for how plugins work together; per plugin, by evals (skills, contract,
+  whatever measures better). D34 clause rewritten in place the same day (the "no contract" form never held).
+- 2026-11-14 — Owner: agent-written plugins on the same list, labelled "Twój plugin" (D40, location and install flow as
+  proposal, not objected); each plugin is its own build task with its evals (D41).
+- 2026-11-14 — Owner: schedules call a plugin's skill as a command; a missing command fails cleanly with an app-injected
+  instruction to stop, report and at most diagnose, never improvise; removal touches no schedule (D42). Next: README
+  plugins chapter, brief update, rightsize.
+- 2026-11-14 — Story folded: new chapter plugins.md, README Plugins section and link replacing "D11 still open";
+  ui/installing-a-plugin.md updated (no schedule in the package, no approval step, agent's install card, "Twój plugin",
+  conflict state replaced by broken own plugin, removal keeps files and schedules). Next: rightsize.

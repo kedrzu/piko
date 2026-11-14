@@ -63,7 +63,7 @@ way a person would split it — designing a wardrobe, researching a purchase, he
 hunting, social media. A project is simply a folder of files the agent works in and organises as it
 sees fit. Projects are a way to keep work tidy, not walls: each one shows the agent the tools it
 usually needs, so the agent isn't handed a hundred tools everywhere, while everything else stays
-findable ([how tools are shown per project](DECISIONS.md#d11) is still open).
+findable ([how a project shows the agent its tools](plugins.md#tools-cost-context-so-they-are-programs-first)).
 
 What the agent learns about the person — preferences, habits, what matters to them — lives in one
 place per profile, called **Memory**: an ordinary folder of files, readable and editable in the app
@@ -97,6 +97,14 @@ is needed and tells the agent to go on ([how the browser is set up](DECISIONS.md
 The browser lives outside the agent's sandbox, so the connection between them is where the agent's
 limits are enforced: it cannot open files from the computer through the browser, and downloads land
 in the profile's Downloads folder, which the agent can see.
+
+## Plugins
+
+Everything the agent can do beyond the basics comes as a plugin: access to the person's mail, a workflow that sorts it
+every morning, Blender for 3D work. In the first version they all ship inside the app, browsed on a screen that looks
+like a store. The agent installs them itself when the work calls for one, and writes small plugins of its own when
+nothing fits; the only thing that needs the person is signing in to an account
+([how plugins are built and installed](plugins.md)).
 
 ## What the person sees
 
