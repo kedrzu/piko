@@ -28,6 +28,7 @@ import { frontmatter } from 'micromark-extension-frontmatter';
 import { gfm } from 'micromark-extension-gfm';
 
 import { assert } from '@nzyme/utils/assert.js';
+import { isExternalLinkUrl } from '@poweragents/common/utils/isExternalLinkUrl.js';
 
 import { MarkdownRaw, MarkdownRawInline } from './markdownRawNodes.js';
 
@@ -47,9 +48,23 @@ export type MarkdownLineEnding = '\n' | '\r\n';
 /**
  * The editor's extensions, matching what Markdown can express: no underline, code that can sit inside a link or
  * emphasis, table cells holding paragraphs only (a Markdown cell is one line), and atoms keeping what has no node.
+ * A link keeps whatever address it has, but only an external one (`isExternalLinkUrl`) can be added by a command,
+ * an autolink or a paste; clicking a link never opens it.
  */
 export const MarkdownEditorExtensions: Extensions = [
-    StarterKit.configure({ underline: false, code: false, link: { openOnClick: false } }),
+    StarterKit.configure({
+        underline: false,
+        code: false,
+        // The trailing paragraph is appended on any transaction, a click included: an untouched file would change.
+        trailingNode: false,
+        link: {
+            openOnClick: false,
+            defaultProtocol: 'https',
+            isAllowedUri: isExternalLinkUrl,
+            // Link-on-paste checks only this one, never `isAllowedUri`.
+            shouldAutoLink: isExternalLinkUrl,
+        },
+    }),
     // Markdown nests inline code in links and emphasis (`[`file.ts`](file.ts)`); Tiptap's code excludes every mark.
     Code.extend({ excludes: '' }),
     TaskList,
