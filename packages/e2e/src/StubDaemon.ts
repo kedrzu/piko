@@ -80,6 +80,8 @@ export class StubDaemon {
     conversations: Record<string, Conversation[]> = {};
     /** Each conversation's messages by conversation id, oldest first; `conversations/messages` serves them in one page. */
     messages: Record<string, ConversationMessage[]> = {};
+    /** Plugins not installed here: a command naming one (`/<plugin>:<skill>`) is stopped, as by the daemon. */
+    missingPlugins: string[] = [];
     /** The person's Memory files with their text, in any order (the daemon lists them by path). */
     memory: MemoryFileContent[] = [];
     /** What the app asked to show in Finder, in order: a Memory file's path, or `null` for the Memory folder. */
@@ -377,17 +379,28 @@ export class StubDaemon {
     }
 
     /**
-     * Like the daemon: a message to a running conversation is queued for the agent's next step; else it starts a run.
-     * Either way it is answered with the id it is (or will be) listed under: `sent-<n>`, n counting from 1.
+     * Like the daemon: a message to a running conversation is queued for the agent's next step; else it starts a run,
+     * delivering what waited with it. Either way it is answered with the id it is (or will be) listed under: `sent-<n>`,
+     * n counting from 1. A command of a plugin in `missingPlugins` starts nothing: it waits, listed, with the note why.
      */
     private send(conversationId: string, text: string): ConversationSendResult {
         const conversation = this.findConversation(conversationId);
         const queued = conversation?.running ?? false;
         this.sent.push({ conversationId, text, queued });
         const messageId = sentMessageId(this.sent.length - 1);
+        const listed = this.messages[conversationId] ?? [];
+        const plugin = /^\/([^\s:]+):\S+/.exec(text)?.[1];
+        if (plugin !== undefined && this.missingPlugins.includes(plugin)) {
+            this.messages[conversationId] = [
+                ...listed,
+                { type: 'user', id: messageId, createdAt: Date.now(), text, pending: true },
+                { type: 'pluginMissing', id: `note-${messageId}`, createdAt: Date.now(), plugin },
+            ];
+            return { queued, messageId, stoppedBy: { plugin } };
+        }
         if (!queued) {
             this.messages[conversationId] = [
-                ...(this.messages[conversationId] ?? []),
+                ...listed.map(message => (message.type === 'user' ? { ...message, pending: false } : message)),
                 { type: 'user', id: messageId, createdAt: Date.now(), text },
             ];
             this.setRunning(conversationId, true);
