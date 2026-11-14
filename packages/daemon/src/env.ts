@@ -35,3 +35,12 @@ export const PROJECTS_FOLDER = 'projects';
 
 /** The data root's folder holding the Memory: plain files about the person, read and written by the agent (design D9). */
 export const MEMORY_FOLDER = 'memory';
+
+/** The data root's folder the agent's browser saves downloads to, so the agent in the sandbox can read them. */
+export const DOWNLOADS_FOLDER = 'downloads';
+
+/** The loopback port of the tunnel that carries the sandbox's DevTools connection to the agent's browser. */
+export const BROWSER_TUNNEL_PORT = 47612;
+
+/** The loopback port of the proxy the agent's browser sends its traffic through. */
+export const BROWSER_PROXY_PORT = 47613;
