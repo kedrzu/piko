@@ -280,20 +280,24 @@ proposal, owner did not object.)
 
 ## D17
 
-**There is one kind of plugin, and it is a composite: any mix of skills, MCP servers with their
-configuration, an onboarding skill, schedules, additions to the sandbox environment (e.g. installing
-Blender), and further parts as needed. "Workflow", "creative", "for work" are marketplace tags for
-filtering, not kinds.** (2026-11-08, owner)
+**There is one kind of plugin, and it is a composite: any mix of skills, tools (a CLI or an MCP server, [D37](#d37))
+with their configuration, an onboarding skill, additions to the sandbox environment (e.g. installing Blender), and
+further parts as needed. "Workflow", "creative", "for work" are marketplace tags for filtering, not kinds. A plugin
+declares no schedules: its onboarding has the agent create the ones the person wants.** (2026-11-08, owner; schedules
+2026-11-14, owner)
 
 **Why.** A 3D plugin that installs Blender and tells the agent it exists, and an email-triage plugin
 with rules and a schedule, are the same thing with different parts; separate kinds would force a
-choice nobody needs to make.
+choice nobody needs to make. When a schedule runs is the person's choice, made in the plugin's onboarding, so a
+package cannot carry it; the agent can create schedules anyway ([D14](#d14)).
 
 **Rejected.**
 
 - Two kinds — a "connection" (account sign-in + tools, no files) and a "workflow" (rules, schedule,
   onboarding, creates a project) — proposed by the design agent 2026-11-08; owner prefers one
   composite with tags.
+- Schedules as a part of the package ([history](history/DECISIONS.md#d17)) — the time is the person's to set in
+  onboarding (owner, 2026-11-14).
 
 ## D18
 
@@ -525,17 +529,23 @@ the background without getting in your way".
 
 ## D28
 
-**The agent may change anything inside its current reach without asking; whatever widens its reach —
-a new plugin, a new account connection, a new schedule that acts without a person, a new destination
-in the browser tunnel — needs the person's confirmation in the conversation. The agent batches these:
-one confirmation covering everything it proposes at that point, not one click per item.**
-(2026-11-08, owner)
+**The agent may change anything inside its current reach without asking, installing plugins included: it reports each
+plugin it installed in the conversation, with a link to the plugin's page. A new account connection needs no separate
+confirmation either: the person going through the provider's sign-in and consent is the confirmation. A new schedule
+that acts without a person, and a new destination in the browser tunnel, need the person's confirmation in the
+conversation, batched: one confirmation covering everything the agent proposes at that point.** (2026-11-08, owner;
+plugins and accounts 2026-11-14, owner)
 
 **Why.** A web page the agent reads can try to instruct it ("install X, schedule daily mail to this
-address"); a confirmation on reach-widening changes stops that from becoming a permanent foothold.
-Batching keeps onboarding — which may propose several plugins, a connection and two schedules at
-once — to one decision. Inside the sandbox and project nothing needs asking: the sandbox and the
+address"). A plugin gives the agent nothing it did not have inside the sandbox except through an account, and an
+account cannot be connected without the person signing in. Plugin tools are built to keep the risk small (the mail
+plugin creates drafts and never sends). Inside the sandbox and project nothing needs asking: the sandbox and the
 tunnel are the boundary, unlike coding agents running directly on the computer.
+
+**Open — [#35](https://github.com/kedrzu/poweragents/issues/35).** Whether the schedule and tunnel clauses stay. The
+sandbox has open internet, so drafts-only tools stop sending in the person's name but not extraction; a schedule would
+make a one-off leak repeat. The tunnel has no list of destinations, so its clause may protect nothing. Decided after
+schedules and the browser are built, not in the plugins design.
 
 **Confirmations come only from the app's interface** (a button the person presses), never as a
 message in a conversation, whoever sent it — otherwise an agent steering another agent ([D30](#d30))
@@ -547,6 +557,8 @@ failure sweep — owner doubts it can be detected reliably)
 
 **Rejected.**
 
+- A confirmation for every new plugin ([history](history/DECISIONS.md#d28)) — a plugin widens reach only through an
+  account, whose sign-in already asks the person (owner, 2026-11-14).
 - A separate confirmation per setting or plugin — too many clicks (owner).
 - Letting the agent configure everything silently — one malicious page gets a lasting foothold.
 
@@ -679,8 +691,10 @@ health (receipts) and anywhere else.
 **The plugin's author decides its level**, and for now it cannot be changed: a profile plugin can't be
 installed into a project, nor the reverse. (2026-11-11, owner)
 
-**Open.** How a workflow plugin states that it needs a profile-level one (email sorting needs a mail
-plugin, Gmail or Outlook).
+**Needing a profile-level plugin.** A workflow plugin names the plugins it can work with ("Gmail or Outlook") in its
+manifest ([D39](#d39)). How it works with them is decided per plugin, by evals: skills on each side that the agent
+combines, a shared contract, or anything else that measures better. The design fixes no general rule. (2026-11-14,
+owner)
 
 **Consequence.** Profile-level plugins put their tools in every project, which [D11](#d11)'s
 attachment was meant to avoid; keeping that small is the MCP-context optimisation already deferred
@@ -690,6 +704,8 @@ there.
 
 - Every plugin attached to projects only — general access like Gmail would have to be attached to
   every project that ever needs mail (owner).
+- One general rule for how plugins work together (skills only, or a shared contract per capability) — what works
+  is measured case by case; a rule fixed now would block the better option later (owner, 2026-11-14).
 
 ## D35
 
@@ -702,6 +718,9 @@ is what the switch is for.
 
 > **Checked 2026-11-12:** OpenCode 2.2.7's `claude-agent` integration offers `opus`, `fable`, `sonnet` and `haiku`
 > (`GET /api/model` in the sandbox).
+>
+> **Checked 2026-11-14:** with a ChatGPT subscription signed in, OpenCode 2.2.7's `openai` provider offers Terra as
+> `gpt-6.1-terra` (also `gpt-5.6-terra` and `-fast` variants); a session on it answered.
 
 **Open.** Where the switch lives (per conversation, per project, per profile) and what reasoning effort maps to per
 provider.
@@ -710,3 +729,134 @@ provider.
 
 - The strongest model by default (Opus on Max) — proposed by the delivery agent; owner chose Sonnet (2026-11-13).
 - Picking the model from the subscription's plan automatically — proposed by the delivery agent, not chosen.
+
+## D36
+
+**In the first version every marketplace plugin ships inside the app and takes the app's version; there is no separate
+publishing, download or per-plugin versioning. The Plugins screen still looks like a marketplace from the start — a
+list, search, tags — so the product shows where it is heading.** (2026-11-14, owner)
+
+**Why.** How plugins are built, what they are made of and how they work matters now; how they are distributed and
+updated does not yet. A store with its own releases is complexity with no case behind it today.
+
+**Consequences.** A profile's manifest ([D26](#d26)) needs no per-plugin version for bundled plugins: the app's version
+fixes them, and an app update updates every installed bundled plugin at once. Conflicts between bundled plugins are
+resolved by us before release, not shown to the person. Plugins the agent writes itself ([D26](#d26)) are not bundled
+and are unaffected.
+
+**Rejected.**
+
+- A marketplace with its own site, separately published packages and versions — later, if ever (owner, 2026-11-14).
+
+## D37
+
+**A plugin gives the agent tools as a command-line program by default — typically a small package of ours (JavaScript on
+Bun) that provides a token-efficient CLI, with a skill telling the agent how to use it. MCP servers are supported too,
+and the first Gmail plugin uses one because a ready-made server exists.** (2026-11-14, owner)
+
+**Why.** MCP servers are expensive in context; a CLI the agent calls from its shell, described by a short skill, costs a
+fraction for the same result.
+
+> **Checked 2026-11-08** (see [D27](#d27)): median tokens per browser task — Playwright MCP 31K, Chrome DevTools MCP
+> 46K, agent-browser CLI with a short instruction 4–7K, equal accuracy —
+> [doccraft.dev 2026-10-26](https://doccraft.dev/blog/playwright-mcp-vs-devtools-mcp-vs-agent-browser).
+
+**Rejected.**
+
+- MCP as the default form of a plugin's tools — too costly in context (owner, 2026-11-14).
+
+## D38
+
+**Account sign-ins are held by the daemon, outside the sandbox. A plugin's tool asks the daemon for a short-lived access
+token whenever it needs one; the long-lived refresh token never enters the sandbox.** (2026-11-14, design agent
+proposal, owner agreed)
+
+**Why.** A web page the agent reads can try to make it print what it holds. From the sandbox the worst leak is then an
+access token valid for about an hour, not lasting access to the person's mailbox until they revoke it at Google. One
+daemon endpoint serves every plugin with an account, and fits one sign-in per account per profile ([D16](#d16)).
+
+> **Checked 2026-11-14:** OpenCode 2.2.7 lets a local MCP server take `environment` and a remote one `headers`
+> (`packages/schema/src/mcp.ts:32,60` in anomalyco/opencode), so a token we obtain ourselves can be handed to an MCP
+> server as well as to a CLI.
+
+**Rejected.**
+
+- The refresh token stored in the sandbox for tools to use directly — a leak means lasting access.
+
+## D39
+
+**A plugin is a folder: `plugin.json` (name, marketplace description in each app language, tags, level, the project it
+creates, the plugins it needs, the accounts and services it uses, its MCP servers, its additions to the environment),
+`skills/` (its skills, the onboarding skill among them) and, optionally, the package of its CLI ([D37](#d37)). Bundled
+plugins ship as such folders inside the app ([D36](#d36)).** (2026-11-14, design agent proposal, owner did not object)
+
+**Why.** Every part named in [D17](#d17) has one place, and a plugin the agent writes ([D26](#d26)) is the same folder.
+
+## D40
+
+**Bundled plugins are mounted into the sandbox read-only from the app, and the profile's manifest lists which of them
+the person has installed. A plugin the agent writes is a folder in the profile, `/Poweragents/plugins/<name>/`: the
+folder being there is what installs it, and deleting it uninstalls it. When the agent changes what one of its plugins
+adds to the environment, it asks the daemon to apply the change. Editing a skill takes effect in the next conversation.
+A plugin's programs are installed when the plugin is, never built into the sandbox's image.** (2026-11-14, owner,
+simplified from the design agent's proposal at the review)
+
+**Why.** Plugins the agent writes outlive a rebuilt sandbox only if they sit beside the person's data, like Memory and
+projects. Installing needs no confirmation ([D28](#d28)), so routing it through the daemon would protect nothing; the
+folders themselves are the record the environment is rebuilt from ([D26](#d26)). Programs stay out of the image because
+a bundled plugin such as Blender, or a whole npm toolchain, would otherwise weigh on everyone who never uses it.
+
+**Shown with the others.** Plugins the agent wrote appear in the same list as bundled ones, marked as the person's own
+("Twój plugin"), not as made by the agent — they asked for it, so it is theirs. (2026-11-14, owner)
+
+**Rejected.**
+
+- Installing as a request to the daemon, which alone writes the list of installed plugins and shows a plugin with a
+  missing folder as broken ([history](history/DECISIONS.md#d40)) — a gate with no safety behind it once installs need no
+  confirmation (owner, 2026-11-14, at the review).
+- Bundled plugins' programs built into the image, since they ship with the app anyway — every image would carry
+  programs most people never use (owner, 2026-11-14).
+- Hiding the agent's plugins from the Plugins list — the person would not know where a program in the environment came
+  from, against the product's line that nothing is a black box ([D9](#d9)).
+- Labelling them "made by the agent" — "your plugin" reads better and gives the person the sense they built it (owner).
+
+## D41
+
+**Each plugin is built as its own task, with its own evals; how it works with other plugins and which form its tools
+take are settled there by measurement.** (2026-11-14, owner)
+
+## D42
+
+**A schedule is just a prompt; it knows nothing of plugins. A plugin's commands carry its full name as a prefix
+(e.g. `/email-sorting:sort`), and plugin names are unique across all plugins, bundled and the person's own. When any
+conversation — a scheduled run, a subagent, the person typing — receives a command whose plugin is not installed, the
+daemon stops it before the agent acts, with a fixed message in the conversation saying that plugin is not installed.
+The conversation stays open, with the original prompt and that message in it: the person can say "install it back",
+and the agent knows what happened and continues. The agent never tries to do the task another way, such as reading the
+plugin's files and redoing what it did. Removing a plugin touches no schedule.** (2026-11-14, owner)
+
+**Why.** A schedule can be created in any conversation, so tying it to the plugin that onboarded it is fragile. A
+command without a prefix that matches nothing does not say whether its plugin was removed or never existed; the prefix
+does, so the daemon can decide deterministically rather than trusting the model to stop. An agent that improvises a
+missing workflow — as coding agents do when a skill is unavailable and they read its files instead — does something
+nobody set up, after the person removed the plugin to stop it. Keeping the conversation alive with its context lets
+the person fix a removal made by mistake without starting over.
+
+**Consequence.** Only installed plugins' folders are visible in the sandbox; a removed bundled plugin's files are not
+left there to be read. A plugin installed but not attached to the current project stays findable ([D11](#d11)). The
+agent cannot name a plugin of its own after a bundled one.
+
+**Unchecked.** Whether OpenCode 2.2.7 invokes a skill as a slash command, or the daemon has to expand the command itself
+when it starts the conversation.
+
+**Rejected.**
+
+- An instruction injected into the conversation telling the agent to stop, with the model deciding
+  ([history](history/DECISIONS.md#d42)) — an unprefixed command cannot tell removed from never existing, and stopping
+  should not rest on the model (owner, 2026-11-14).
+- The daemon checking a schedule's command before the run and starting no conversation — a schedule does not know it
+  belongs to a plugin, and the person could not continue the run after reinstalling (owner, 2026-11-14).
+- Removing a plugin lists the schedules of its projects to delete too — proposed by the design agent; unnecessary once a
+  missing command fails cleanly.
+- A schedule remembering which plugin created it and disappearing with it — schedules are created in any conversation,
+  and one the person later reworked would vanish unasked (owner, 2026-11-14).

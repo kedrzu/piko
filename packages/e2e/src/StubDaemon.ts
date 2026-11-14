@@ -4,7 +4,9 @@ import { setTimeout as sleep } from 'node:timers/promises';
 
 import type { Page } from '@playwright/test';
 
+import type { AiProvider, AiStatus } from '@poweragents/common/api/AiTypes.js';
 import type { AppSetupStartResult } from '@poweragents/common/api/AppSetupTypes.js';
+import type { ChatgptLoginState, ChatgptStatus } from '@poweragents/common/api/ChatgptTypes.js';
 import type { ClaudeLoginResult, ClaudeStatus } from '@poweragents/common/api/ClaudeTypes.js';
 import type {
     Conversation,
@@ -44,17 +46,25 @@ export interface StubSentMessage {
 }
 
 /**
- * The daemon's API, answered in the test's page instead of by a daemon: a sandbox, a Claude sign-in, projects and their
- * conversations the test sets and reads, and the event stream, whose events the test sends (`emit`). Claude's sign-in
- * pages (opened by the app in a new tab in a plain browser) answer with an empty page.
+ * The daemon's API, answered in the test's page instead of by a daemon: a sandbox, Claude and ChatGPT sign-ins, projects
+ * and their conversations the test sets and reads, and the event stream, whose events the test sends (`emit`). Claude's
+ * and OpenAI's sign-in pages (opened by the app in a new tab in a plain browser) answer with an empty page.
  */
 export class StubDaemon {
     sandbox: SandboxStatus = { status: 'ready' };
     claude: ClaudeStatus = { connected: false };
-    /** Set: `claude/status` fails with a 500 carrying this message, as the daemon's does when the check fails. */
-    claudeStatusError: string | null = null;
+    chatgpt: ChatgptStatus = { connected: false };
+    /**
+     * The provider recorded as active, as a finished sign-in records it. Unset, `ai/status` falls back as the daemon's
+     * does: Claude when it is connected, else ChatGPT when it is.
+     */
+    activeProvider: AiProvider | null = null;
+    /** Set: `ai/status` fails with a 500 carrying this message, as the daemon's does when the check fails. */
+    aiStatusError: string | null = null;
     /** Set: `claude/login/start` fails with a 500. */
     loginStartFails = false;
+    /** Set: `chatgpt/login/start` fails with a 500. */
+    chatgptLoginStartFails = false;
     /** The person's projects, sorted by name as the daemon lists them. */
     projects: Project[] = [];
     /**
@@ -89,6 +99,9 @@ export class StubDaemon {
     private conversationCount = 0;
     private logins = 0;
     private loginUrl: string | null = null;
+    private chatgptLogins = 0;
+    /** What `chatgpt/login/state` answers: `pending` from a start until the test ends it (`endChatgptLogin`). */
+    private chatgptLogin: ChatgptLoginState = { state: 'expired' };
 
     /** Installs the stub on the page; call it before the page opens the app. */
     static async install(page: Page) {
@@ -128,7 +141,9 @@ export class StubDaemon {
                     : { json: answer, headers },
             );
         });
-        await page.context().route(/^https:\/\/claude\.(ai|com)\//, route => route.fulfill({ body: '' }));
+        await page
+            .context()
+            .route(/^https:\/\/(claude\.(ai|com)|auth\.openai\.com)\//, route => route.fulfill({ body: '' }));
         return daemon;
     }
 
@@ -165,6 +180,18 @@ export class StubDaemon {
         this.streams.clear();
     }
 
+    /**
+     * Ends the waiting ChatGPT sign-in as OpenAI's page would: `connected` signs ChatGPT in and makes it the active
+     * provider, as the daemon does; the app learns of it on its next ask of `chatgpt/login/state`.
+     */
+    endChatgptLogin(state: 'connected' | 'failed' | 'expired') {
+        this.chatgptLogin = { state };
+        if (state === 'connected') {
+            this.chatgpt = { connected: true };
+            this.activeProvider = 'chatgpt';
+        }
+    }
+
     /** How many times the app called an endpoint (`claude/login/start`). */
     countCalls(name: string) {
         return this.calls.filter(call => call === name).length;
@@ -181,16 +208,19 @@ export class StubDaemon {
         if (this.sandbox.status !== 'ready') {
             return null;
         }
-        if (name === 'claude/status') {
-            return this.claudeStatusError;
+        if (name === 'ai/status') {
+            return this.aiStatusError;
         }
         if (name === 'claude/login/start' && this.loginStartFails) {
             return 'claude auth login printed no sign-in page within 30000 ms';
         }
+        if (name === 'chatgpt/login/start' && this.chatgptLoginStartFails) {
+            return 'opencode auth login printed no sign-in page within 30000 ms';
+        }
         return null;
     }
 
-    /** Answers an endpoint; `undefined` for a `claude/*` endpoint while the sandbox is not ready (a 409). Projects do not
+    /** Answers an endpoint; `undefined` for an AI or conversation endpoint while the sandbox is not ready (a 409). Projects do not
      * need the sandbox. */
     private answer(name: string, body: string | null): unknown {
         if (name === 'sandbox/status') {
@@ -233,12 +263,19 @@ export class StubDaemon {
                 return this.readMemoryFile(readInput(body, 'path'));
             case 'memory/reveal':
                 return this.reveal(body);
-            case 'claude/status':
-                return this.claude;
+            case 'ai/status':
+                return this.aiStatus();
             case 'claude/login/start':
                 return { url: this.startLogin() };
             case 'claude/login/complete':
                 return this.completeLogin(body);
+            case 'chatgpt/login/start':
+                return { url: this.startChatgptLogin() };
+            case 'chatgpt/login/state':
+                return this.chatgptLogin;
+            case 'chatgpt/login/cancel':
+                this.chatgptLogin = { state: 'expired' };
+                return null;
             default:
                 throw new Error(`Unknown endpoint ${name}`);
         }
@@ -303,11 +340,36 @@ export class StubDaemon {
         return { onboarding: { projectId: project.id, conversationId: conversation.id } };
     }
 
+    /** Like the daemon: the recorded provider's sign-in; without one, Claude's when connected, else ChatGPT's. */
+    private aiStatus(): AiStatus {
+        if (this.activeProvider !== null) {
+            return this.providerStatus(this.activeProvider);
+        }
+        const claude = this.providerStatus('claude');
+        if (claude.connected) {
+            return claude;
+        }
+        const chatgpt = this.providerStatus('chatgpt');
+        return chatgpt.connected ? chatgpt : { connected: false, provider: null };
+    }
+
+    private providerStatus(provider: AiProvider): AiStatus {
+        if (provider === 'claude') {
+            return this.claude.connected ? { ...this.claude, provider } : { connected: false, provider };
+        }
+        return this.chatgpt.connected
+            ? { connected: true, provider, email: null, plan: null, planAllowed: true }
+            : { connected: false, provider };
+    }
+
+    /** Like the daemon: a new conversation runs on the recorded provider, else on the fallback's when it may run. */
     private createConversation(projectId: string): Conversation {
+        const status = this.aiStatus();
         const conversation: Conversation = {
             id: `c-${++this.conversationCount}`,
             updatedAt: Date.now(),
             running: false,
+            provider: this.activeProvider ?? (status.connected && status.planAllowed ? status.provider : undefined),
         };
         this.conversations[projectId] = [conversation, ...(this.conversations[projectId] ?? [])];
         this.messages[conversation.id] = [];
@@ -373,6 +435,14 @@ export class StubDaemon {
         return this.loginUrl;
     }
 
+    /** Like the daemon: a new sign-in ends the waiting one; its page counts the starts. */
+    private startChatgptLogin() {
+        this.chatgptLogins++;
+        const url = `https://auth.openai.com/api/accounts/authorize?attempt=${this.chatgptLogins}`;
+        this.chatgptLogin = { state: 'pending', url };
+        return url;
+    }
+
     /** Like Claude: a wrong code ends the sign-in, and the daemon starts a new one at once. */
     private completeLogin(body: string | null): ClaudeLoginResult {
         if (this.loginUrl === null) {
@@ -385,6 +455,7 @@ export class StubDaemon {
             case GOOD_CODE:
                 this.loginUrl = null;
                 this.claude = { connected: true, email: ACCOUNT_EMAIL, plan: 'max', planAllowed: true };
+                this.activeProvider = 'claude';
                 return { outcome: 'connected', email: ACCOUNT_EMAIL, plan: 'max' };
             case FREE_PLAN_CODE:
                 this.loginUrl = null;

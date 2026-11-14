@@ -1,11 +1,13 @@
-<!-- First run, step 2: choosing the AI account to connect (screen 45); Claude opens its sign-in page, ChatGPT comes later. -->
+<!-- First run, step 2: choosing the AI account to connect (screen 45); either card opens its provider's sign-in page. -->
 
 <script lang="ts" setup>
+import { assertNever } from '@nzyme/utils/assertNever.js';
 import { useTranslate } from '@nzyme/vue-i18n/useTranslate.js';
 import { useService } from '@nzyme/vue-ioc/useService.js';
 import { useRouter } from 'nuxt/app';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
+import type { AiProvider } from '@poweragents/common/api/AiTypes.js';
 import ProviderCard from '@poweragents/ui/ProviderCard.vue';
 
 import { openExternalUrl } from '@/utils/openExternalUrl.js';
@@ -18,17 +20,41 @@ const setup = useService(SetupStore);
 const router = useRouter();
 const t = useTranslate();
 
-const failed = ref(false);
+/** The provider whose sign-in could not be opened, when the last try failed. */
+const failed = ref<AiProvider | null>(null);
+const failedMessage = computed(() => {
+  switch (failed.value) {
+    case 'claude':
+      return t(l.startFailedClaude);
+    case 'chatgpt':
+      return t(l.startFailedChatgpt);
+    case null:
+      return null;
+    default:
+      return assertNever(failed.value);
+  }
+});
 
 async function connectClaude() {
-  failed.value = false;
+  failed.value = null;
   try {
     await openExternalUrl(await setup.startLogin());
   } catch {
-    failed.value = true;
+    failed.value = 'claude';
     return;
   }
   await router.push({ name: 'setupClaude' });
+}
+
+async function connectChatgpt() {
+  failed.value = null;
+  try {
+    await openExternalUrl(await setup.startChatgptLogin());
+  } catch {
+    failed.value = 'chatgpt';
+    return;
+  }
+  await router.push({ name: 'setupChatgpt' });
 }
 </script>
 
@@ -51,15 +77,15 @@ async function connectClaude() {
         :name="t(l.chatgpt)"
         :plans="t(l.chatgptPlans)"
         :connect-label="t(l.connectChatgpt)"
-        :unavailable-badge="t(l.soon)"
+        @connect="connectChatgpt"
       />
     </div>
     <p
-      v-if="failed"
+      v-if="failedMessage"
       :class="$style.connectAiPage_error"
       role="alert"
     >
-      {{ t(l.startFailed) }}
+      {{ failedMessage }}
     </p>
   </SetupShell>
 </template>
