@@ -16,6 +16,7 @@ import { LimaSandbox } from './sandbox/LimaSandbox.js';
 import { Sandbox } from './sandbox/Sandbox.js';
 import { SandboxOpencodeConnection } from './sandbox/SandboxOpencodeConnection.js';
 import { SandboxApiService } from './sandboxApi/SandboxApiService.js';
+import { ScheduleRunnerService } from './schedules/ScheduleRunnerService.js';
 import { shutdown } from './shutdown.js';
 import { createStatusResponse } from './statusResponse.js';
 
@@ -94,6 +95,10 @@ sandbox.stateChanged.on(state => {
     }
 });
 sandbox.start().catch(() => undefined);
+
+// Schedules run from the start: the runner keeps their state files current at once, and a term waits for the sandbox
+// rather than failing while it comes up.
+container.resolve(ScheduleRunnerService).start();
 
 // It listens on loopback only: the desktop app reaches it on this machine, and remote clients (the phone) will come
 // through the relay, never through an open port. `/status` stays open to any caller: it reveals only that the daemon

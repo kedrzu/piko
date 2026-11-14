@@ -1,5 +1,5 @@
 import { expect, mock, test } from 'bun:test';
-import { cp, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 
@@ -52,6 +52,8 @@ import { PluginService } from '../plugins/PluginService.js';
 import { ProjectService } from '../projects/ProjectService.js';
 import { Sandbox } from '../sandbox/Sandbox.js';
 import type { SandboxState } from '../sandbox/Sandbox.js';
+import { ScheduleService } from '../schedules/ScheduleService.js';
+import type { ScheduleState } from '../schedules/ScheduleService.js';
 import { ConversationService } from './ConversationService.js';
 
 // OpenCode's commands are the boundary: they stand in for its HTTP API, in the shapes the commands return. Projects are
@@ -87,6 +89,37 @@ test("lists the project's conversations only, the most recently changed first, w
         { id: 'ses_new', updatedAt: 30, running: true, provider: 'chatgpt' },
         { id: 'ses_mid', updatedAt: 15, running: false },
         { id: 'ses_old', title: 'Stara', updatedAt: 10, running: false, provider: 'claude' },
+    ];
+    expect(conversations).toEqual(expected);
+});
+
+test("marks a conversation with its schedule only when a run in this project's schedules started it", async () => {
+    const fixture = await setup();
+    fixture.sessions.push(
+        session('ses_run', fixture.dirA, { updatedAt: 30 }),
+        session('ses_own', fixture.dirA, { updatedAt: 20 }),
+        session('ses_orphan', fixture.dirA, { updatedAt: 10 }),
+    );
+    const schedule = await fixture.schedules.create({
+        projectId: fixture.projectA.id,
+        name: 'Raport',
+        when: 'raz, w 2099',
+        rrule: 'FREQ=YEARLY;COUNT=1',
+        start: '2099-01-01T07:00',
+        prompt: 'Przygotuj raport',
+    });
+    await fixture.schedules.writeState({ project: fixture.localA, scheduleId: schedule.id, state: runsOf('ses_run') });
+    // Another project's history naming this project's conversation, and a history whose schedule is gone, mark nothing.
+    await writeSchedulesFile(fixture.localB.dir, 'cudzy.json', 'not read');
+    await writeSchedulesFile(fixture.localB.dir, 'cudzy.state.json', JSON.stringify(runsOf('ses_own')));
+    await writeSchedulesFile(fixture.localA.dir, 'usuniety.state.json', JSON.stringify(runsOf('ses_orphan')));
+
+    const conversations = await fixture.conversations.list(fixture.projectA.id);
+
+    const expected: Conversation[] = [
+        { id: 'ses_run', updatedAt: 30, running: false, scheduleId: schedule.id },
+        { id: 'ses_own', updatedAt: 20, running: false },
+        { id: 'ses_orphan', updatedAt: 10, running: false },
     ];
     expect(conversations).toEqual(expected);
 });
@@ -644,6 +677,8 @@ async function setup() {
     const projects = container.resolve(ProjectService);
     const projectA = assertCreated(await projects.create('Alfa'));
     const projectB = assertCreated(await projects.create('Beta'));
+    const localA = await projects.get(projectA.id);
+    const localB = await projects.get(projectB.id);
     return {
         ...fixture,
         logs,
@@ -652,8 +687,11 @@ async function setup() {
         providers,
         activeProvider: container.resolve(ActiveProviderStore),
         conversations: container.resolve(ConversationService),
+        schedules: container.resolve(ScheduleService),
         projectA,
         projectB,
+        localA: localA!,
+        localB: localB!,
         dirA: '/Poweragents/projects/Alfa',
         dirB: '/Poweragents/projects/Beta',
     };
@@ -695,6 +733,20 @@ function session(id: string, directory: string, fields: Partial<OpencodeSession>
 
 function waitingPrompt(id: string, text: string): OpencodeInboxItem {
     return { type: 'prompt', id, createdAt: 1, text };
+}
+
+function runsOf(conversationId: string): ScheduleState {
+    return {
+        nextRuns: [],
+        ruleKey: 'FREQ=YEARLY;COUNT=1|2099-01-01T07:00|false',
+        activeSince: '2026-11-14T10:00:00Z',
+        runs: [{ term: 1, at: 2, outcome: 'started', conversationId }],
+    };
+}
+
+async function writeSchedulesFile(projectDir: string, name: string, content: string) {
+    await mkdir(path.join(projectDir, '.schedules'), { recursive: true });
+    await writeFile(path.join(projectDir, '.schedules', name), content);
 }
 
 function assertCreated(result: ProjectCreateResult): Project {

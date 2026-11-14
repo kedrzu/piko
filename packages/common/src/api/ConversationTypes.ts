@@ -11,6 +11,8 @@ export interface Conversation {
     running: boolean;
     /** The provider its model runs on, kept from its creation; absent for a model of no provider the app knows. */
     provider?: AiProvider;
+    /** The schedule whose run started this conversation; absent for a conversation the person started. */
+    scheduleId?: string;
 }
 
 /** Points at one of a project's conversations. */

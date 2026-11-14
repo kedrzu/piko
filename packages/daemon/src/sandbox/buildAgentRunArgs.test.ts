@@ -35,6 +35,12 @@ test('takes the password from the env file, never from the arguments', () => {
     expect(ARGS.some(arg => arg.includes('OPENCODE_SERVER_PASSWORD'))).toBe(false);
 });
 
+test('runs OpenCode in the mode that keeps the password out of its children, with stdin held open', () => {
+    expect(ARGS).toContain('--interactive');
+    expect(ARGS).toContain('--tty');
+    expect(ARGS.slice(ARGS.indexOf(IMAGE) + 1, ARGS.indexOf(IMAGE) + 4)).toEqual(['opencode', 'serve', '--stdio']);
+});
+
 test('tells the agent where the browser tunnel is, without its token', () => {
     const envs = ARGS.flatMap((arg, index) => (arg === '--env' ? [ARGS[index + 1]] : []));
 
