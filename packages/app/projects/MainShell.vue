@@ -1,11 +1,12 @@
-<!-- The app after the first run: the projects in the sidebar with the open project's conversations, the open conversation's tab, the screen of the route inside, and the new-project dialog. Starts the daemon's event stream. -->
+<!-- The app after the first run: Memory and the projects in the sidebar (App setup pinned first, a project not opened yet marked new) with the open project's conversations, the open screen's tab, the screen of the route inside, and the new-project dialog. Starts the daemon's event stream. -->
 
 <script lang="ts" setup>
 import { NuxtPage } from '#components';
+import { Brain } from '@lucide/vue';
 import { useTranslate } from '@nzyme/vue-i18n/useTranslate.js';
 import { provideContext } from '@nzyme/vue-utils/context.js';
 import { useService } from '@nzyme/vue-ioc/useService.js';
-import { useRoute } from 'nuxt/app';
+import { useRoute, useRouter } from 'nuxt/app';
 import { computed, watch } from 'vue';
 
 import AppShell from '@poweragents/ui/AppShell.vue';
@@ -17,6 +18,8 @@ import * as lc from '@/conversations/Conversations.loc.js';
 import { ConversationStore } from '@/conversations/ConversationStore.js';
 import { DaemonEventStream } from '@/daemon/DaemonEventStream.js';
 
+import * as l from './MainShell.loc.js';
+
 import { MainShellContext } from './MainShellContext.js';
 import NewProjectDialog from './NewProjectDialog.vue';
 import { projectColor } from './projectColor.js';
@@ -27,16 +30,22 @@ const store = useService(ProjectStore);
 const conversationStore = useService(ConversationStore);
 const events = useService(DaemonEventStream);
 const route = useRoute();
+const router = useRouter();
 const shell = provideContext(MainShellContext);
 const t = useTranslate();
+const memoryOpen = computed(() => route.name === 'memory');
 
 const items = computed(() =>
-  (store.state.projects ?? []).map((project): ProjectSidebarItem => ({
-    id: project.id,
-    name: project.name,
-    color: projectColor(project.id),
-    to: { name: 'project', params: { projectId: project.id } },
-  })),
+  (store.state.projects ?? [])
+    // Stable: the rest keep the daemon's order by name.
+    .toSorted((a, b) => Number(b.role === 'appSetup') - Number(a.role === 'appSetup'))
+    .map((project): ProjectSidebarItem => ({
+      id: project.id,
+      name: project.name,
+      color: project.role === 'appSetup' ? 'slate' : projectColor(project.id),
+      to: { name: 'project', params: { projectId: project.id } },
+      mark: project.role === 'appSetup' ? 'pinned' : store.isNew(project) ? 'new' : undefined,
+    })),
 );
 const selected = computed(() => {
   const projectId = route.name === 'project' || route.name === 'conversation' ? route.params['projectId'] : undefined;
@@ -68,9 +77,33 @@ watch(
   projectId => {
     if (projectId) {
       conversationStore.open(projectId);
+      store.markOpened(projectId);
     }
   },
   { immediate: true },
+);
+
+// App setup's onboarding, started after the home screen landed the person somewhere, opens while they are still there; never
+// once they have moved on.
+watch(
+  () => [store.state.onboarding, shell.landing, route.fullPath] as const,
+  ([onboarding, landing, path]) => {
+    if (onboarding && landing === path) {
+      store.takeOnboarding();
+      void router.replace({ name: 'conversation', params: { ...onboarding } });
+    }
+  },
+);
+
+// An onboarding still pending when the person leaves the place they landed on is dropped: a later visit there never jumps
+// into it.
+watch(
+  () => route.fullPath,
+  (path, previous) => {
+    if (store.state.onboarding && previous === shell.landing && path !== shell.landing) {
+      store.takeOnboarding();
+    }
+  },
 );
 
 // The app's one connection to the daemon's events, for as long as the app runs; this shell shows only past the first
@@ -85,6 +118,8 @@ store.getProjects().catch(() => undefined);
   <AppShell>
     <template #sidebar>
       <ProjectSidebar
+        :memory-to="{ name: 'memory' }"
+        :memory-selected="memoryOpen"
         :projects="items"
         :selected-id="selected?.id"
         :conversations="conversations"
@@ -93,7 +128,17 @@ store.getProjects().catch(() => undefined);
       />
     </template>
     <template
-      v-if="selected"
+      v-if="memoryOpen"
+      #header
+    >
+      <ConversationTab
+        :title="t(l.memory)"
+        color="violet"
+        :icon="Brain"
+      />
+    </template>
+    <template
+      v-else-if="selected"
       #header
     >
       <ConversationTab
