@@ -77,3 +77,10 @@ needed. Differences in the code, small enough to leave the drawing as it is:
 - The toast title's line height is `$line-height-snug` (1.4) where the drawing has 1.35.
 - The × gets a `$surface-soft` background on hover, which the drawing does not show.
 - Restarting shows `Button`'s own busy spinner rather than the `loader-circle` of `atoms/Button/Primary/Busy`.
+
+## Round 3 · merge with main
+
+Conflict: both sides moved Molecules (`yh5Lh`) up as it grew — here to y −1611, on main (#38) to −2590, level with
+Atoms. Resolved to −2590: the merged frame is 837 px tall, so it ends at −1753, clear of Organisms at −1698.
+
+- [x] Molecules (`yh5Lh`): y −1611 → −2590.
