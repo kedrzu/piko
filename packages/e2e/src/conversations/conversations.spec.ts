@@ -301,6 +301,35 @@ test('the open conversation is read again when the event stream opens after the 
 });
 
 /** The stub daemon with the sandbox ready and Claude connected: the first run is done. */
+test('the view follows the reply to a message sent, but stays where the person scrolled up to read', async ({
+    page,
+}) => {
+    const history = Array.from({ length: 8 }, (_, index) => [
+        user(`m-${index}`, `Question ${index}`),
+        agent(`a-${index}`, `Answer ${index}. ${'A long line of the answer. '.repeat(30)}`),
+    ]).flat();
+    const daemon = await conversation(page, history);
+
+    await composer(page).fill('One more question');
+    await composer(page).press('Enter');
+    await expect(messages(page).getByText('One more question')).toBeInViewport();
+    for (let line = 0; line < 30; line++) {
+        daemon.emit({
+            type: 'textDelta',
+            conversationId: 'c-1',
+            messageId: 'a-new',
+            delta: `Line ${line} of the reply.\n\n`,
+        });
+    }
+    await expect(messages(page).getByText('Line 29 of the reply.')).toBeInViewport();
+
+    // Scrolled up to read: new text does not pull the view down.
+    await messages(page).evaluate(element => element.scrollTo({ top: 0 }));
+    daemon.emit({ type: 'textDelta', conversationId: 'c-1', messageId: 'a-new', delta: 'The last line.' });
+    await expect(messages(page).getByText('The last line.')).toBeAttached();
+    await expect(messages(page).getByText('Question 0', { exact: true })).toBeInViewport();
+});
+
 async function connected(page: Page) {
     const daemon = await StubDaemon.install(page);
     daemon.claude = { connected: true, email: ACCOUNT_EMAIL, plan: 'max', planAllowed: true };

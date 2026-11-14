@@ -30,6 +30,8 @@ const scroller = useTemplateRef<HTMLElement>('scroller');
 const content = useTemplateRef<HTMLElement>('content');
 /** Scrolled to the end: new content keeps it there. */
 const atEnd = ref(true);
+/** Where the last scroll left the messages, to tell the person scrolling up from anything else. */
+let lastScrollTop = 0;
 let observer: ResizeObserver | undefined;
 
 onMounted(() => {
@@ -38,8 +40,12 @@ onMounted(() => {
       scrollToEnd();
     }
   });
+  // The messages growing, and the column shrinking under a taller footer (a banner, the hint while the agent works).
   if (content.value) {
     observer.observe(content.value);
+  }
+  if (scroller.value) {
+    observer.observe(scroller.value);
   }
   scrollToEnd();
 });
@@ -60,7 +66,15 @@ function onScroll() {
   if (!element) {
     return;
   }
-  atEnd.value = element.scrollHeight - element.scrollTop - element.clientHeight <= END_SLACK_PX;
+  const scrolledUp = element.scrollTop < lastScrollTop;
+  lastScrollTop = element.scrollTop;
+  // A scroll event comes after the layout it was made in: the messages may have grown again since, so only the person
+  // scrolling up stops the following, never a scroll that reaches short of the end.
+  if (element.scrollHeight - element.scrollTop - element.clientHeight <= END_SLACK_PX) {
+    atEnd.value = true;
+  } else if (scrolledUp) {
+    atEnd.value = false;
+  }
   if (element.scrollTop === 0 && element.scrollHeight > element.clientHeight) {
     emit('reachTop');
   }

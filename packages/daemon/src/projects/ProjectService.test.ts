@@ -12,7 +12,7 @@ import { ProjectService } from './ProjectService.js';
 import type { LocalProject } from './ProjectService.js';
 
 // The filesystem is the boundary: each test gets its own data root in a fresh temporary folder (`<tmp>/root`, so a
-// folder escaping it would land in `<tmp>` where the test can see it).
+// folder escaping it would land in `<tmp>` where the test can see it); `root` is its projects' folder.
 
 test('creates a folder named after the project with its marker, and lists it', async () => {
     const { projects, root } = await setup();
@@ -88,7 +88,7 @@ test('refuses an empty, too long or folder-less name and creates nothing', async
     expect(await readdir(tmp)).toEqual([]);
 });
 
-test('keeps every folder directly inside the data root, whatever the name', async () => {
+test("keeps every folder directly inside the projects' folder, whatever the name", async () => {
     const { projects, root, tmp } = await setup();
     const cases: [name: string, folder: string][] = [
         ['../x', 'x'],
@@ -105,6 +105,7 @@ test('keeps every folder directly inside the data root, whatever the name', asyn
         expect({ name, dir: (await projects.get(created.id))?.dir }).toEqual({ name, dir: path.join(root, folder) });
     }
     expect(await readdir(tmp)).toEqual(['root']);
+    expect(await readdir(path.dirname(root))).toEqual(['projects']);
 });
 
 test('never reuses an existing folder, with or without a marker: takes the next free name', async () => {
@@ -198,11 +199,48 @@ test('skips a folder whose marker is a link, and never writes through it to the 
     expect(logs.some(log => log.level === 'warn' && log.data?.folder === 'Raporty copy')).toBe(true);
 });
 
+test("never lists from or writes into a projects' folder the agent replaced with a link", async () => {
+    const { projects, root, tmp, logs } = await setup();
+    const outside = path.join(tmp, 'outside');
+    await mkdir(path.join(outside, 'Raporty'), { recursive: true });
+    const marker = JSON.stringify({ id: 'p1', name: 'Raporty', createdAt: '2026-01-01T00:00:00.000Z' });
+    await writeFile(path.join(outside, 'Raporty', '.project.json'), marker);
+    await mkdir(path.dirname(root));
+    await symlink(outside, root);
+
+    expect(await projects.list()).toEqual([]);
+    await expect(projects.create('Nowy')).rejects.toThrow("Projects' folder is not a folder");
+
+    expect(await readdir(outside)).toEqual(['Raporty']);
+    expect(await readdir(path.join(outside, 'Raporty'))).toEqual(['.project.json']);
+    expect(logs.some(log => log.level === 'warn' && log.message.startsWith("Projects' folder is not a folder"))).toBe(
+        true,
+    );
+});
+
+test('skips a project folder that is a link, and never rewrites the marker it leads to', async () => {
+    const { projects, root, tmp } = await setup();
+    const original = assertCreated(await projects.create('Raporty'));
+    const originalMarker = await readFile(path.join(root, 'Raporty', '.project.json'), 'utf8');
+    // A link carrying the original's id would make the listing give the target a new id.
+    const outside = path.join(tmp, 'outside');
+    await mkdir(outside);
+    await writeFile(path.join(outside, '.project.json'), originalMarker);
+    await symlink(outside, path.join(root, 'Raporty copy'));
+
+    const listed = await projects.list();
+
+    const expected: LocalProject[] = [{ id: original.id, name: 'Raporty', dir: path.join(root, 'Raporty') }];
+    expect(listed).toEqual(expected);
+    expect(await readdir(outside)).toEqual(['.project.json']);
+    expect(await readFile(path.join(outside, '.project.json'), 'utf8')).toBe(originalMarker);
+});
+
 async function setup() {
     const tmp = await mkdtemp(path.join(os.tmpdir(), 'poweragents-projects-'));
-    const root = path.join(tmp, 'root');
+    const root = path.join(tmp, 'root', 'projects');
     const { container, logs } = createTestContainer();
-    container.set(EnvVariables, { POWERAGENTS_DATA_ROOT: root });
+    container.set(EnvVariables, { POWERAGENTS_DATA_ROOT: path.dirname(root) });
     const projects = container.resolve(ProjectService);
     return { projects, root, tmp, logs };
 }

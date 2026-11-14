@@ -1,4 +1,4 @@
-<!-- Home after the first run: the last opened project (or the first) when there are projects, else the invitation to create the first one (screen 51). -->
+<!-- Home after the first run: App setup's onboarding conversation on day one (screen 65; opened by the shell when it starts after the landing), else the last opened project (or the first) when there are projects, else the invitation to create the first one (screen 51). -->
 
 <script lang="ts" setup>
 import { injectContext } from '@nzyme/vue-utils/context.js';
@@ -27,12 +27,18 @@ async function openProject() {
     // The shell shows the failure and retries; the page is replaced by it meanwhile.
     return;
   }
+  const onboarding = store.takeOnboarding();
+  if (onboarding) {
+    await router.replace({ name: 'conversation', params: { ...onboarding } });
+    return;
+  }
   const project = store.getLastOpened(projects) ?? projects[0];
   if (project) {
     await router.replace({ name: 'project', params: { projectId: project.id } });
   } else {
     empty.value = true;
   }
+  shell.landing = router.currentRoute.value.fullPath;
 }
 </script>
 
