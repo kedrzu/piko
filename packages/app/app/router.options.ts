@@ -53,6 +53,11 @@ export default {
             component: () => import('@/setup/ClaudeCodePage.vue'),
         },
         {
+            path: '/setup/ai/chatgpt',
+            name: 'setupChatgpt',
+            component: () => import('@/setup/ChatgptPage.vue'),
+        },
+        {
             path: '/setup/ai/claude/plan',
             name: 'setupClaudePlan',
             component: () => import('@/setup/ClaudePlanPage.vue'),

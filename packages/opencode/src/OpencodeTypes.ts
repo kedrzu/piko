@@ -16,6 +16,8 @@ export interface OpencodeSession {
     updatedAt: number;
     /** How the last run ended; absent until a run has ended. */
     outcome?: OpencodeRunOutcome;
+    /** The provider of the model the session runs on; absent until a model is set. */
+    providerId?: string;
 }
 
 /** An error as OpenCode reports it on a message, a tool call, a step or a run. */

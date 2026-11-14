@@ -8,6 +8,7 @@ import type { DaemonEvent } from '@poweragents/common/api/DaemonEventTypes.js';
 import { OpencodeEventSubscribeCommand } from '@poweragents/opencode/OpencodeEventSubscribeCommand.js';
 import type { OpencodeSessionEvent } from '@poweragents/opencode/OpencodeEventSubscribeCommand.js';
 
+import { toAiProvider } from '../ai/utils/toAiProvider.js';
 import { ProjectService } from '../projects/ProjectService.js';
 import { Sandbox } from '../sandbox/Sandbox.js';
 import { toAgentDir } from './utils/toAgentDir.js';
@@ -129,7 +130,15 @@ export const ConversationEventService = defineService({
                     const projectId = event.parentId == null ? await findProjectId(event.directory) : undefined;
                     return projectId == null
                         ? []
-                        : [{ type: 'conversationCreated', conversationId, projectId, title: event.title }];
+                        : [
+                              {
+                                  type: 'conversationCreated',
+                                  conversationId,
+                                  projectId,
+                                  title: event.title,
+                                  provider: toAiProvider(event.providerId),
+                              },
+                          ];
                 }
                 case 'sessionRenamed':
                     return [{ type: 'conversationRenamed', conversationId, title: event.title }];

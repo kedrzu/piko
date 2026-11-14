@@ -1,3 +1,5 @@
+import type { AiProvider } from './AiTypes.js';
+
 /** A conversation with the agent in a project: the agent's working directory is the project's folder. */
 export interface Conversation {
     id: string;
@@ -7,6 +9,8 @@ export interface Conversation {
     updatedAt: number;
     /** Whether the agent is working on it now. */
     running: boolean;
+    /** The provider its model runs on, kept from its creation; absent for a model of no provider the app knows. */
+    provider?: AiProvider;
 }
 
 /** Points at one of a project's conversations. */

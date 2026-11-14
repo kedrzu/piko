@@ -3,12 +3,14 @@ import { expect, mock, test } from 'bun:test';
 import { createTestContainer } from '@nzyme/ioc-testing/createTestContainer.js';
 import { createEventEmitter } from '@nzyme/utils/createEventEmitter.js';
 
+import type { AiProvider } from '@poweragents/common/api/AiTypes.js';
 import type { ClaudeLoginResult, ClaudeStatus } from '@poweragents/common/api/ClaudeTypes.js';
 import { OpencodeIntegrationConnectExternalCommand } from '@poweragents/opencode/OpencodeIntegrationConnectExternalCommand.js';
 import type { OpencodeIntegrationConnectExternalCommandParams } from '@poweragents/opencode/OpencodeIntegrationConnectExternalCommand.js';
 import { OpencodeIntegrationGetCommand } from '@poweragents/opencode/OpencodeIntegrationGetCommand.js';
 import type { OpencodeIntegration } from '@poweragents/opencode/OpencodeIntegrationGetCommand.js';
 
+import { ActiveProviderStore } from '../ai/ActiveProviderStore.js';
 import { Sandbox } from '../sandbox/Sandbox.js';
 import type { SandboxExecParams, SandboxProcess, SandboxState } from '../sandbox/Sandbox.js';
 import { ClaudeSignInService } from './ClaudeSignInService.js';
@@ -69,6 +71,7 @@ test('a sign-in returns its page, passes the code to Claude, connects the agent 
     const expected: ClaudeLoginResult = { outcome: 'connected', email: 'ola@example.com', plan: 'pro' };
     expect(result).toEqual(expected);
     expect(fixture.connectIntegration).toHaveBeenCalledTimes(1);
+    expect(fixture.activeProviderSet).toHaveBeenCalledWith('claude');
     expect(JSON.stringify(fixture.logs)).not.toContain(CODE);
     expect(JSON.stringify(fixture.logs)).not.toContain(STATE);
 });
@@ -127,6 +130,7 @@ test('a signed-in plan that is not allowed is reported, and the agent is not con
     const expected: ClaudeLoginResult = { outcome: 'planNotAllowed', email: 'ola@example.com', plan: 'free' };
     expect(result).toEqual(expected);
     expect(fixture.connectIntegration).not.toHaveBeenCalled();
+    expect(fixture.activeProviderSet).not.toHaveBeenCalled();
 });
 
 test('only one sign-in lives at a time: a new start ends the waiting one, in the container too', async () => {
@@ -183,6 +187,9 @@ function setup(options: SetupOptions) {
         stop: () => Promise.resolve(),
         exec,
     });
+    // The real store writes into the user's `~/.poweragents`; the record is asserted through this fake.
+    const activeProviderSet = mock((_provider: AiProvider) => Promise.resolve());
+    container.set(ActiveProviderStore, { get: () => Promise.resolve(undefined), set: activeProviderSet });
     container.set(OpencodeIntegrationGetCommand, () => Promise.resolve(integration));
     container.set(OpencodeIntegrationConnectExternalCommand, connectIntegration);
     const fixture = {
@@ -190,6 +197,7 @@ function setup(options: SetupOptions) {
         logins,
         commands,
         connectIntegration,
+        activeProviderSet,
         /** What Claude does with a pasted code. */
         onCode: (_login: FakeLogin) => {},
         claude: container.resolve(ClaudeSignInService),

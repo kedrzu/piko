@@ -87,6 +87,25 @@ setup uses a Telegram bot, which needed technical setup), so it comes quickly �
 alone does not, since the phone would still need the Tailscale VPN client; push notifications need a
 server holding the app's APNs/FCM keys, i.e. a hosted component of ours.
 
+## D17
+
+Retired in part 2026-11-14: schedules dropped from the parts of a plugin; rewritten in place as [D17](../DECISIONS.md#d17).
+
+**There is one kind of plugin, and it is a composite: any mix of skills, MCP servers with their
+configuration, an onboarding skill, schedules, additions to the sandbox environment (e.g. installing
+Blender), and further parts as needed. "Workflow", "creative", "for work" are marketplace tags for
+filtering, not kinds.** (2026-11-08, owner)
+
+**Why.** A 3D plugin that installs Blender and tells the agent it exists, and an email-triage plugin
+with rules and a schedule, are the same thing with different parts; separate kinds would force a
+choice nobody needs to make.
+
+**Rejected.**
+
+- Two kinds — a "connection" (account sign-in + tools, no files) and a "workflow" (rules, schedule,
+  onboarding, creates a project) — proposed by the design agent 2026-11-08; owner prefers one
+  composite with tags.
+
 ## D19
 
 Retired 2026-11-08, replaced by [D20](../DECISIONS.md#d20).
@@ -103,6 +122,35 @@ stay plain and visible, consistent with [D9](#d9) — only their place in the in
 - Installing a plugin creates a regular project holding its files — proposed by the design agent
   2026-11-08; "email sorting" is not something people call a project.
 - A hidden plugin store — contradicts plain, visible memory ([D9](#d9)).
+
+## D28
+
+Retired in part 2026-11-14: new plugins and account connections no longer need a confirmation; rewritten in place as [D28](../DECISIONS.md#d28).
+
+**The agent may change anything inside its current reach without asking; whatever widens its reach —
+a new plugin, a new account connection, a new schedule that acts without a person, a new destination
+in the browser tunnel — needs the person's confirmation in the conversation. The agent batches these:
+one confirmation covering everything it proposes at that point, not one click per item.**
+(2026-11-08, owner)
+
+**Why.** A web page the agent reads can try to instruct it ("install X, schedule daily mail to this
+address"); a confirmation on reach-widening changes stops that from becoming a permanent foothold.
+Batching keeps onboarding — which may propose several plugins, a connection and two schedules at
+once — to one decision. Inside the sandbox and project nothing needs asking: the sandbox and the
+tunnel are the boundary, unlike coding agents running directly on the computer.
+
+**Confirmations come only from the app's interface** (a button the person presses), never as a
+message in a conversation, whoever sent it — otherwise an agent steering another agent ([D30](#d30))
+could approve on the person's behalf. (2026-11-08, owner, from the failure sweep)
+
+**Accepted risk.** A plugin *update* that widens reach (e.g. adds sending to a drafts-only mail
+plugin) is not caught; plugins are expected to be made carefully. (2026-11-08, owner, from the
+failure sweep — owner doubts it can be detected reliably)
+
+**Rejected.**
+
+- A separate confirmation per setting or plugin — too many clicks (owner).
+- Letting the agent configure everything silently — one malicious page gets a lasting foothold.
 
 ## D29
 
@@ -265,3 +313,57 @@ Retired in part 2026-11-11: the rejection of project-owned schedules reversed; r
 
 **Unchecked.** How faithfully Tiptap round-trips arbitrary Markdown the agent writes (tables, nested
 lists, front matter).
+
+## D40
+
+Retired in part 2026-11-14: installing is the plugin folder being there, no daemon-written list or broken state; rewritten in place as [D40](../DECISIONS.md#d40).
+
+**Bundled plugins are mounted into the sandbox read-only from the app. Plugins the agent writes live in the profile, in
+`/Poweragents/plugins/<name>/`, which the agent can write to. Installing any plugin is a request to the daemon, which
+reads `plugin.json`, applies its additions to the environment and records the installation; the list of installed
+plugins is the daemon's file, never edited by the agent. Editing a skill of an installed plugin takes effect in the next
+conversation without reinstalling; changing what it adds to the environment needs a reinstall.** (2026-11-14, design
+agent proposal, owner did not object)
+
+**Why.** Plugins the agent writes outlive a rebuilt sandbox only if they sit beside the person's data, like Memory and
+projects. The environment is rebuilt from the list of installed plugins ([D26](#d26)), so that list has to match what was
+really installed, which only holds if one owner writes it. A missing folder of an installed plugin shows the plugin as
+broken on its page and does not stop the environment from rebuilding.
+
+**Shown with the others.** Plugins the agent wrote appear in the same list as bundled ones, marked as the person's own
+("Twój plugin"), not as made by the agent — they asked for it, so it is theirs. (2026-11-14, owner)
+
+**Rejected.**
+
+- Hiding the agent's plugins from the Plugins list — the person would not know where a program in the environment came
+  from, against the product's line that nothing is a black box ([D9](#d9)).
+- Labelling them "made by the agent" — "your plugin" reads better and gives the person the sense they built it (owner).
+
+## D42
+
+Retired in part 2026-11-14: commands carry the plugin's name and the daemon stops the conversation deterministically; rewritten in place as [D42](../DECISIONS.md#d42).
+
+**A workflow is started by invoking its plugin's skill as a command (e.g. `/email-sorting`), and a schedule's prompt is
+that command, wherever the schedule was created — in the plugin's onboarding or in any later conversation. When the
+command's skill is not available (its plugin was removed), the conversation gets an instruction from the app: the
+command does not exist; stop, tell the person, and at most look for the cause (e.g. the plugin was removed); never try
+to do the task another way, such as reading the plugin's files and redoing what it did. Removing a plugin touches no
+schedule.** (2026-11-14, owner)
+
+**Why.** Schedules do not know which plugin they use: one can be created in any conversation, so tying them to the
+plugin that onboarded them is fragile. A missing command is a clean failure the person can see, while an agent that
+improvises the missing workflow — as coding agents do when a skill is unavailable and they read its files instead —
+does something nobody set up, after the person removed the plugin to stop it.
+
+**Consequence.** Only installed plugins' folders are visible in the sandbox; a removed bundled plugin's files are not
+left there to be read. A plugin installed but not attached to the current project stays findable ([D11](#d11)).
+
+**Unchecked.** Whether OpenCode 2.2.7 invokes a skill as a slash command, or the daemon has to expand the command itself
+when it starts the conversation.
+
+**Rejected.**
+
+- Removing a plugin lists the schedules of its projects to delete too — proposed by the design agent; unnecessary once a
+  missing command fails cleanly.
+- A schedule remembering which plugin created it and disappearing with it — schedules are created in any conversation,
+  and one the person later reworked would vanish unasked (owner, 2026-11-14).

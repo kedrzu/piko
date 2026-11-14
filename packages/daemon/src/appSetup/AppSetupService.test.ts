@@ -9,6 +9,8 @@ import { assert } from '@nzyme/utils/assert.js';
 import { createEventEmitter } from '@nzyme/utils/createEventEmitter.js';
 
 import type { AppSetupStartInput, AppSetupStartResult } from '@poweragents/common/api/AppSetupTypes.js';
+import type { ChatgptStatus } from '@poweragents/common/api/ChatgptTypes.js';
+import type { ClaudeStatus } from '@poweragents/common/api/ClaudeTypes.js';
 import { OpencodeSessionActiveListCommand } from '@poweragents/opencode/OpencodeSessionActiveListCommand.js';
 import { OpencodeSessionCreateCommand } from '@poweragents/opencode/OpencodeSessionCreateCommand.js';
 import type { OpencodeSessionCreateCommandParams } from '@poweragents/opencode/OpencodeSessionCreateCommand.js';
@@ -19,14 +21,17 @@ import { OpencodeSessionSyntheticCommand } from '@poweragents/opencode/OpencodeS
 import type { OpencodeSessionSyntheticCommandParams } from '@poweragents/opencode/OpencodeSessionSyntheticCommand.js';
 import type { OpencodeSession } from '@poweragents/opencode/OpencodeTypes.js';
 
+import { ActiveProviderStore } from '../ai/ActiveProviderStore.js';
+import { ChatgptSignInService } from '../chatgpt/ChatgptSignInService.js';
+import { ClaudeSignInService } from '../claude/ClaudeSignInService.js';
 import { ProjectService } from '../projects/ProjectService.js';
 import type { LocalProject } from '../projects/ProjectService.js';
 import { Sandbox } from '../sandbox/Sandbox.js';
 import type { SandboxState } from '../sandbox/Sandbox.js';
 import { AppSetupService } from './AppSetupService.js';
 
-// OpenCode's commands are the boundary; projects are real folders in a fresh temporary data root, and the daemon's
-// state sits in a fresh folder above a scratch Lima home.
+// OpenCode's commands and the sign-in services are the boundary; projects are real folders in a fresh temporary data
+// root, and the daemon's state and the active provider's record sit in a fresh folder above a scratch Lima home.
 
 const INPUT: AppSetupStartInput = { language: 'pl', conversationTitle: 'Poznajmy się' };
 
@@ -66,6 +71,22 @@ test('creates App setup once, starting its onboarding with hidden input, and nev
     expect(await fixture.projects.list()).toEqual([]);
     expect(fixture.createSession).toHaveBeenCalledTimes(1);
     expect(fixture.synthetic).toHaveBeenCalledTimes(1);
+});
+
+test('with ChatGPT the active provider, the onboarding conversation runs on Terra', async () => {
+    const fixture = await setup();
+    fixture.providers.chatgpt = { connected: true };
+    await fixture.activeProvider.set('chatgpt');
+
+    const result = await fixture.appSetup.start(INPUT);
+
+    expect(result.onboarding?.conversationId).toBe('ses_onboarding');
+    const created: OpencodeSessionCreateCommandParams = {
+        directory: '/Poweragents/projects/App setup',
+        providerId: 'openai',
+        modelId: 'gpt-6.1-terra',
+    };
+    expect(fixture.createSession).toHaveBeenCalledWith(created);
 });
 
 test('two starts at once make one App setup', async () => {
@@ -175,6 +196,22 @@ async function setup() {
             throw new Error('not used');
         },
     });
+    const providers: Providers = {
+        claude: { connected: true, email: 'ola@example.com', plan: 'max', planAllowed: true },
+        chatgpt: { connected: false },
+    };
+    container.set(ClaudeSignInService, {
+        getStatus: () => Promise.resolve(providers.claude),
+        startLogin: notUsed,
+        completeLogin: notUsed,
+        connectAgent: notUsed,
+    });
+    container.set(ChatgptSignInService, {
+        getStatus: () => Promise.resolve(providers.chatgpt),
+        startLogin: notUsed,
+        getLoginState: notUsed,
+        cancelLogin: notUsed,
+    });
     const sessions: OpencodeSession[] = [];
     const createSession = mock((params: OpencodeSessionCreateCommandParams) => {
         const session: OpencodeSession = {
@@ -201,10 +238,22 @@ async function setup() {
         root: path.join(tmp, 'root', 'projects'),
         stateFile: path.join(tmp, 'home', 'state.json'),
         projects: container.resolve(ProjectService),
+        providers,
+        activeProvider: container.resolve(ActiveProviderStore),
         appSetup: container.resolve(AppSetupService),
         sessions,
         createSession,
         rename,
         synthetic,
     };
+}
+
+/** What each provider's sign-in reports; a test changes it before the call. */
+interface Providers {
+    claude: ClaudeStatus;
+    chatgpt: ChatgptStatus;
+}
+
+function notUsed(): Promise<never> {
+    return Promise.reject(new Error('not used'));
 }

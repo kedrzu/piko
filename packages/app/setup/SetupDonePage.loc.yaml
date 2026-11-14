@@ -1,9 +1,12 @@
 title:
-  en[auto]: All set, Claude is connected
-  pl: Gotowe, Claude jest połączony
+  en[auto]: All set, {provider} is connected
+  pl: Gotowe, {provider} jest połączony
 claude:
   en[auto]: Claude
   pl: Claude
+chatgpt:
+  en[auto]: ChatGPT
+  pl: ChatGPT
 next:
   en[auto]: "The agent will start with a conversation: it will ask who you are and how it could help. You'll set up everything else together."
   pl: 'Agent zacznie od rozmowy: zapyta, kim jesteś i w czym mógłby Ci pomóc. Wszystko inne ustawicie razem.'
