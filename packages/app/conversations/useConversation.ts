@@ -435,6 +435,9 @@ function toItems({ messages, pending, running }: ToItemsParams) {
                 runError = undefined;
                 break;
             }
+            case 'pluginMissing':
+                // TODO(#49): the note that a plugin's command was not run, worded in the person's language.
+                break;
             default:
                 assertNever(message);
         }

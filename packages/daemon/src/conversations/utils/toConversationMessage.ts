@@ -11,12 +11,14 @@ import type {
     OpencodeToolCallStatus,
 } from '@poweragents/opencode/OpencodeMessageListCommand.js';
 
+import { readPluginMissingNote } from './readPluginMissingNote.js';
 import { toConversationError } from './toConversationError.js';
 import { toConversationStep } from './toConversationStep.js';
 
 /**
  * An agent's message as the conversation shows it; `undefined` for one that is not part of what was said (the daemon's
- * synthetic input, a model switch, a compaction, …).
+ * synthetic input, a model switch, a compaction, …). The one synthetic input shown is the note that a plugin's command
+ * was not run, so it stays in the thread once the agent has read it.
  * @util
  * @__NO_SIDE_EFFECTS__
  */
@@ -40,8 +42,13 @@ export function toConversationMessage(message: OpencodeMessage): ConversationMes
                 outcome: message.outcome,
                 error: message.error && toConversationError(message.error),
             };
-        // Synthetic input is the daemon's, not what was said.
-        case 'synthetic':
+        case 'synthetic': {
+            // Any other synthetic input is the daemon's, not what was said.
+            const plugin = readPluginMissingNote(message.metadata);
+            return plugin === undefined
+                ? undefined
+                : { type: 'pluginMissing', id: message.id, createdAt: message.createdAt, plugin };
+        }
         case 'other':
             return undefined;
         default:

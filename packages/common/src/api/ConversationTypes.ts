@@ -41,6 +41,11 @@ export interface ConversationSendResult {
      * started a run; when the agent takes it, when it waits.
      */
     messageId: string;
+    /**
+     * The message is a command of a plugin not installed here (`/<plugin>:<skill>`): no run started, and the message
+     * waits with a note for the agent (a `pluginMissing` message) until the person's next one.
+     */
+    stoppedBy?: { plugin: string };
 }
 
 /** A message the person sent that the agent never read, taken back by a stop. */
@@ -76,7 +81,11 @@ export interface ConversationMessagePage {
 }
 
 /** A message of a conversation, discriminated by `type`. */
-export type ConversationMessage = ConversationUserMessage | ConversationAgentMessage | ConversationRunEndMessage;
+export type ConversationMessage =
+    | ConversationUserMessage
+    | ConversationAgentMessage
+    | ConversationRunEndMessage
+    | ConversationPluginMissingMessage;
 
 /** What the person wrote. */
 export interface ConversationUserMessage {
@@ -85,6 +94,8 @@ export interface ConversationUserMessage {
     /** Epoch ms. */
     createdAt: number;
     text: string;
+    /** Still waiting for the agent: sent while it worked, or held back with a plugin's missing command. */
+    pending?: boolean;
 }
 
 /** A piece of the agent's answer; one run brings one per model step, so a reply spans consecutive agent messages. */
@@ -106,6 +117,19 @@ export interface ConversationRunEndMessage {
     createdAt: number;
     outcome: ConversationRunOutcome;
     error?: ConversationError;
+}
+
+/**
+ * A command of a plugin not installed in the conversation's project was not run: the agent is told so and told not to do
+ * the task another way. The app words it in the person's language.
+ */
+export interface ConversationPluginMissingMessage {
+    type: 'pluginMissing';
+    id: string;
+    /** Epoch ms. */
+    createdAt: number;
+    /** The plugin the command named. */
+    plugin: string;
 }
 
 /** How a run ended: as the agent meant to, on an error, or stopped (by the person or otherwise). */

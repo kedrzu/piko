@@ -14,11 +14,13 @@ import type { ClaudeStatus } from '@poweragents/common/api/ClaudeTypes.js';
 import { OpencodeSessionActiveListCommand } from '@poweragents/opencode/OpencodeSessionActiveListCommand.js';
 import { OpencodeSessionCreateCommand } from '@poweragents/opencode/OpencodeSessionCreateCommand.js';
 import type { OpencodeSessionCreateCommandParams } from '@poweragents/opencode/OpencodeSessionCreateCommand.js';
+import { OpencodeSessionGetCommand } from '@poweragents/opencode/OpencodeSessionGetCommand.js';
 import { OpencodeSessionListCommand } from '@poweragents/opencode/OpencodeSessionListCommand.js';
 import { OpencodeSessionRenameCommand } from '@poweragents/opencode/OpencodeSessionRenameCommand.js';
 import type { OpencodeSessionRenameCommandParams } from '@poweragents/opencode/OpencodeSessionRenameCommand.js';
 import { OpencodeSessionSyntheticCommand } from '@poweragents/opencode/OpencodeSessionSyntheticCommand.js';
 import type { OpencodeSessionSyntheticCommandParams } from '@poweragents/opencode/OpencodeSessionSyntheticCommand.js';
+import { OpencodeSessionUpdateCommand } from '@poweragents/opencode/OpencodeSessionUpdateCommand.js';
 import type { OpencodeSession } from '@poweragents/opencode/OpencodeTypes.js';
 
 import { ActiveProviderStore } from '../ai/ActiveProviderStore.js';
@@ -31,7 +33,8 @@ import type { SandboxState } from '../sandbox/Sandbox.js';
 import { AppSetupService } from './AppSetupService.js';
 
 // OpenCode's commands and the sign-in services are the boundary; projects are real folders in a fresh temporary data
-// root, and the daemon's state and the active provider's record sit in a fresh folder above a scratch Lima home.
+// root, and the daemon's state and the active provider's record sit in a fresh folder above a scratch Lima home. No
+// plugins: the bundled ones come from an empty folder.
 
 const INPUT: AppSetupStartInput = { language: 'pl', conversationTitle: 'Poznajmy się' };
 
@@ -180,9 +183,11 @@ test('an onboarding whose conversation is gone starts in a new one, but never be
 async function setup() {
     const { container } = createTestContainer();
     const tmp = await mkdtemp(path.join(os.tmpdir(), 'poweragents-app-setup-'));
+    await mkdir(path.join(tmp, 'bundled'));
     container.set(EnvVariables, {
         POWERAGENTS_DATA_ROOT: path.join(tmp, 'root'),
         POWERAGENTS_LIMA_HOME: path.join(tmp, 'home', 'lima'),
+        POWERAGENTS_PLUGINS_DIR: path.join(tmp, 'bundled'),
     });
     const state: SandboxState = {
         status: 'ready',
@@ -232,6 +237,10 @@ async function setup() {
     container.set(OpencodeSessionListCommand, directory =>
         Promise.resolve(sessions.filter(session => session.directory === directory)),
     );
+    container.set(OpencodeSessionGetCommand, id =>
+        Promise.resolve(sessions.find(session => session.id === id) ?? null),
+    );
+    container.set(OpencodeSessionUpdateCommand, () => Promise.resolve());
     container.set(OpencodeSessionActiveListCommand, () => Promise.resolve(new Set<string>()));
     container.set(OpencodeSessionRenameCommand, rename);
     container.set(OpencodeSessionSyntheticCommand, synthetic);

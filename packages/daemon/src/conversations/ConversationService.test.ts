@@ -26,7 +26,12 @@ import { OpencodeSessionCreateCommand } from '@poweragents/opencode/OpencodeSess
 import type { OpencodeSessionCreateCommandParams } from '@poweragents/opencode/OpencodeSessionCreateCommand.js';
 import { OpencodeSessionGetCommand } from '@poweragents/opencode/OpencodeSessionGetCommand.js';
 import { OpencodeSessionInboxClearCommand } from '@poweragents/opencode/OpencodeSessionInboxClearCommand.js';
-import type { OpencodeInboxPrompt } from '@poweragents/opencode/OpencodeSessionInboxClearCommand.js';
+import type {
+    OpencodeInboxPrompt,
+    OpencodeSessionInboxClearOptions,
+} from '@poweragents/opencode/OpencodeSessionInboxClearCommand.js';
+import { OpencodeSessionInboxListCommand } from '@poweragents/opencode/OpencodeSessionInboxListCommand.js';
+import type { OpencodeInboxItem } from '@poweragents/opencode/OpencodeSessionInboxListCommand.js';
 import { OpencodeSessionInterruptCommand } from '@poweragents/opencode/OpencodeSessionInterruptCommand.js';
 import { OpencodeSessionListCommand } from '@poweragents/opencode/OpencodeSessionListCommand.js';
 import { OpencodeSessionPromptCommand } from '@poweragents/opencode/OpencodeSessionPromptCommand.js';
@@ -34,6 +39,8 @@ import type {
     OpencodePromptReceipt,
     OpencodeSessionPromptCommandParams,
 } from '@poweragents/opencode/OpencodeSessionPromptCommand.js';
+import { OpencodeSessionSyntheticCommand } from '@poweragents/opencode/OpencodeSessionSyntheticCommand.js';
+import type { OpencodeSessionSyntheticCommandParams } from '@poweragents/opencode/OpencodeSessionSyntheticCommand.js';
 import { OpencodeSessionUpdateCommand } from '@poweragents/opencode/OpencodeSessionUpdateCommand.js';
 import type { OpencodeSessionUpdateCommandParams } from '@poweragents/opencode/OpencodeSessionUpdateCommand.js';
 import type { OpencodePermissionRule, OpencodeSession } from '@poweragents/opencode/OpencodeTypes.js';
@@ -50,7 +57,9 @@ import { ConversationService } from './ConversationService.js';
 // OpenCode's commands are the boundary: they stand in for its HTTP API, in the shapes the commands return. Projects are
 // real folders in a fresh temporary data root. The sign-in services stand in for the sandbox; the active provider's
 // record sits above a scratch Lima home. Plugins are real too: the bundled ones of the plugins' fixtures (`gmail` at
-// profile level, `email-sorting` at project level) and their own plugins (`my-notes` valid) copied into the data root.
+// profile level, `email-sorting` at project level) and their own plugins (`my-notes` valid, `gmail` in conflict,
+// `team-board` invalid) copied into the data root. The session's inbox is modelled: a prompt or synthetic input sent with
+// `resume: false` waits there.
 
 const PLUGIN_FIXTURES = path.join(import.meta.dirname, '..', 'plugins', 'fixtures');
 
@@ -230,18 +239,158 @@ test('reports a message sent while the agent works as queued, and one sent to an
     expect(fixture.prompt).toHaveBeenLastCalledWith(expected);
 });
 
+test.each([
+    ['not installed anywhere, its own namesake in conflict', '/gmail:read-mail', 'gmail'],
+    ['installed in another project only', '/email-sorting:sort', 'email-sorting'],
+    ['own and invalid', '/team-board:board', 'team-board'],
+    ['unknown', '/no-such-plugin:run', 'no-such-plugin'],
+])(
+    'a command of a plugin %s starts no run: the message and a note for the agent wait in the conversation',
+    async (_case, text, plugin) => {
+        const fixture = await setup();
+        await fixture.plugins.install({ name: 'email-sorting', projectId: fixture.projectA.id });
+        fixture.sessions.push(session('ses_b', fixture.dirB));
+        const ref = { projectId: fixture.projectB.id, conversationId: 'ses_b' };
+
+        const result = await fixture.conversations.send({ ...ref, text: `${text} z wczoraj` });
+
+        const expected: ConversationSendResult = {
+            queued: false,
+            messageId: `msg_${text} z wczoraj`,
+            stoppedBy: { plugin },
+        };
+        expect(result).toEqual(expected);
+        // Only `resume: false` keeps an idle session idle: a prompt without it would start the run.
+        const prompted: OpencodeSessionPromptCommandParams = {
+            sessionId: 'ses_b',
+            text: `${text} z wczoraj`,
+            resume: false,
+        };
+        expect(fixture.prompt.mock.calls.map(call => call[0])).toEqual([prompted]);
+        const note = fixture.synthetic.mock.calls[0]?.[0];
+        expect(note).toMatchObject({ resume: false, metadata: { poweragents: 'pluginMissing', plugin } });
+        expect(note?.text).toContain(`The command ${text} was not run`);
+
+        const page = await fixture.conversations.listMessages(ref);
+        const listed: ConversationMessagePage = {
+            messages: [
+                { type: 'user', id: `msg_${text} z wczoraj`, createdAt: 1, text: `${text} z wczoraj`, pending: true },
+                { type: 'pluginMissing', id: 'syn_1', createdAt: 2, plugin },
+            ],
+        };
+        expect(page).toEqual(listed);
+    },
+);
+
+test("the person's next message is sent as any other, delivering the held message and the note before it", async () => {
+    const fixture = await setup();
+    fixture.sessions.push(session('ses_1', fixture.dirA));
+    const ref = { projectId: fixture.projectA.id, conversationId: 'ses_1' };
+    await fixture.conversations.send({ ...ref, text: '/gmail:read-mail' });
+    const waiting = [...fixture.inbox];
+
+    const result = await fixture.conversations.send({ ...ref, text: 'To zrób to inaczej' });
+
+    const expected: ConversationSendResult = { queued: false, messageId: 'msg_To zrób to inaczej' };
+    expect(result).toEqual(expected);
+    const prompted: OpencodeSessionPromptCommandParams = { sessionId: 'ses_1', text: 'To zrób to inaczej' };
+    expect(fixture.prompt).toHaveBeenLastCalledWith(prompted);
+    // Still waiting when the run starts, so OpenCode gives the agent both, in order, with the new message.
+    expect(fixture.inbox).toEqual(waiting);
+    expect(waiting.map(item => item.type)).toEqual(['prompt', 'synthetic']);
+});
+
+test.each([
+    ['installed in the profile', 'gmail', undefined, '/gmail:read-mail', ['gmail:read-mail']],
+    ['installed in this project', 'email-sorting', 'A', '/email-sorting:sort', ['email-sorting:sort']],
+    ['own', undefined, undefined, '/my-notes:take-note', ['my-notes:take-note']],
+    ['installed, naming a skill it lacks', 'gmail', undefined, '/gmail:send-mail', undefined],
+] as const)(
+    'a command of a plugin %s goes out as typed, with its skill attached when it has it',
+    async (_case, installed, project, text, skills) => {
+        const fixture = await setup();
+        if (installed) {
+            await fixture.plugins.install({
+                name: installed,
+                projectId: project === 'A' ? fixture.projectA.id : undefined,
+            });
+        }
+        fixture.sessions.push(session('ses_1', fixture.dirA));
+
+        const result = await fixture.conversations.send({
+            projectId: fixture.projectA.id,
+            conversationId: 'ses_1',
+            text: `${text} teraz`,
+        });
+
+        const expected: ConversationSendResult = { queued: false, messageId: `msg_${text} teraz` };
+        expect(result).toEqual(expected);
+        const prompted: OpencodeSessionPromptCommandParams = {
+            sessionId: 'ses_1',
+            text: `${text} teraz`,
+            skills: skills && [...skills],
+        };
+        expect(fixture.prompt).toHaveBeenCalledWith(prompted);
+        expect(fixture.synthetic).not.toHaveBeenCalled();
+    },
+);
+
+test("stopping withdraws a held plugin command with its note, leaving OpenCode's own synthetic input", async () => {
+    const fixture = await setup();
+    fixture.sessions.push(session('ses_1', fixture.dirA));
+    const ref = { projectId: fixture.projectA.id, conversationId: 'ses_1' };
+    const openCodes: OpencodeInboxItem = { type: 'synthetic', id: 'syn_oc', createdAt: 1, text: 'Continue' };
+    fixture.inbox.push(openCodes);
+    await fixture.conversations.send({ ...ref, text: '/gmail:read-mail' });
+
+    const result = await fixture.conversations.stop(ref);
+
+    const expected: ConversationStopResult = {
+        stopped: true,
+        withdrawn: [{ id: 'msg_/gmail:read-mail', text: '/gmail:read-mail' }],
+    };
+    expect(result).toEqual(expected);
+    expect(fixture.inbox).toEqual([openCodes]);
+    const page = await fixture.conversations.listMessages(ref);
+    expect(page.messages).toEqual([]);
+});
+
+test('hidden input refreshes the permissions, then starts a run on synthetic input the conversation never shows', async () => {
+    const fixture = await setup();
+    await fixture.plugins.install({ name: 'email-sorting', projectId: fixture.projectA.id });
+    fixture.sessions.push(session('ses_b', fixture.dirB));
+    const order: string[] = [];
+    fixture.updateSession.mockImplementation(params => {
+        order.push(`update ${params.permissions.length}`);
+        return Promise.resolve();
+    });
+    fixture.synthetic.mockImplementation(params => {
+        order.push(`synthetic ${params.text}`);
+        return Promise.resolve();
+    });
+
+    await fixture.conversations.startHidden(
+        { projectId: fixture.projectB.id, conversationId: 'ses_b' },
+        'Przywitaj się',
+    );
+
+    expect(order).toEqual(['update 2', 'synthetic Przywitaj się']);
+    const params: OpencodeSessionSyntheticCommandParams = { sessionId: 'ses_b', text: 'Przywitaj się' };
+    expect(fixture.synthetic).toHaveBeenCalledWith(params);
+});
+
 test('stops a run after the interrupt, withdrawing the messages still waiting for the agent', async () => {
     const fixture = await setup();
     fixture.sessions.push(session('ses_1', fixture.dirA));
-    fixture.inbox.push({ id: 'msg_4', text: 'Dopisz czwarty punkt' }, { id: 'msg_5', text: 'I piąty' });
+    fixture.inbox.push(waitingPrompt('msg_4', 'Dopisz czwarty punkt'), waitingPrompt('msg_5', 'I piąty'));
     const order: string[] = [];
     fixture.interrupt.mockImplementation(() => {
         order.push('interrupt');
         return Promise.resolve(true);
     });
-    fixture.clearInbox.mockImplementation(() => {
+    fixture.clearInbox.mockImplementation((sessionId, options) => {
         order.push('clearInbox');
-        return Promise.resolve(fixture.inbox.splice(0));
+        return fixture.takeInbox(sessionId, options);
     });
 
     const result = await fixture.conversations.stop({ projectId: fixture.projectA.id, conversationId: 'ses_1' });
@@ -254,12 +403,12 @@ test('stops a run after the interrupt, withdrawing the messages still waiting fo
         ],
     };
     expect(result).toEqual(expected);
-    expect(fixture.clearInbox).toHaveBeenCalledWith('ses_1');
+    expect(fixture.inbox).toEqual([]);
     // Cleared before the interrupt, a message could still be delivered in between and also given back.
     expect(order).toEqual(['interrupt', 'clearInbox']);
 });
 
-test.each(['send', 'stop', 'listMessages'] as const)(
+test.each(['send', 'startHidden', 'stop', 'listMessages'] as const)(
     '%s refuses a conversation of another project as not found, without touching it',
     async operation => {
         const fixture = await setup();
@@ -268,12 +417,14 @@ test.each(['send', 'stop', 'listMessages'] as const)(
 
         const call = {
             send: () => fixture.conversations.send({ ...ref, text: 'Cześć' }),
+            startHidden: () => fixture.conversations.startHidden(ref, 'Cześć'),
             stop: () => fixture.conversations.stop(ref),
             listMessages: () => fixture.conversations.listMessages(ref),
         }[operation];
 
         await expect(call()).rejects.toMatchObject({ status: 404 });
         expect(fixture.prompt).not.toHaveBeenCalled();
+        expect(fixture.synthetic).not.toHaveBeenCalled();
         expect(fixture.interrupt).not.toHaveBeenCalled();
         expect(fixture.clearInbox).not.toHaveBeenCalled();
         expect(fixture.listMessages).not.toHaveBeenCalled();
@@ -290,6 +441,8 @@ test('refuses an unknown project as not found', async () => {
 test('maps a page of messages: steps by tool kind with targets within the project, errors by kind', async () => {
     const fixture = await setup();
     fixture.sessions.push(session('ses_1', fixture.dirA));
+    // The waiting messages close the newest page only, never an older one.
+    fixture.inbox.push(waitingPrompt('msg_9', 'Czekam'));
     fixture.setPage({
         olderCursor: 'cur_older',
         messages: [
@@ -431,7 +584,7 @@ async function setup() {
 
     const sessions: OpencodeSession[] = [];
     const active = new Set<string>();
-    const inbox: OpencodeInboxPrompt[] = [];
+    const inbox: OpencodeInboxItem[] = [];
     let page: OpencodeMessagePage = { messages: [] };
     const fixture = {
         sessions,
@@ -449,13 +602,31 @@ async function setup() {
                 }),
             ),
         ),
-        prompt: mock((params: OpencodeSessionPromptCommandParams): Promise<OpencodePromptReceipt> =>
-            Promise.resolve({ messageId: `msg_${params.text}`, admittedAt: 1 }),
-        ),
+        prompt: mock((params: OpencodeSessionPromptCommandParams): Promise<OpencodePromptReceipt> => {
+            const messageId = `msg_${params.text}`;
+            if (params.resume === false) {
+                inbox.push(waitingPrompt(messageId, params.text));
+            }
+            return Promise.resolve({ messageId, admittedAt: 1 });
+        }),
+        synthetic: mock((params: OpencodeSessionSyntheticCommandParams) => {
+            if (params.resume === false) {
+                inbox.push({
+                    type: 'synthetic',
+                    id: `syn_${inbox.length}`,
+                    createdAt: 2,
+                    text: params.text,
+                    metadata: params.metadata,
+                });
+            }
+            return Promise.resolve();
+        }),
         updateSession: mock((_params: OpencodeSessionUpdateCommandParams) => Promise.resolve()),
         interrupt: mock(() => Promise.resolve(true)),
         inbox,
-        clearInbox: mock((_sessionId: string) => Promise.resolve(inbox.splice(0))),
+        takeInbox,
+        clearInbox: mock(takeInbox),
+        listInbox: mock((_sessionId: string) => Promise.resolve([...inbox])),
         listMessages: mock((_params: OpencodeMessageListCommandParams) => Promise.resolve(page)),
     };
     container.set(OpencodeSessionListCommand, fixture.listSessions);
@@ -465,7 +636,9 @@ async function setup() {
     container.set(OpencodeSessionPromptCommand, fixture.prompt);
     container.set(OpencodeSessionUpdateCommand, fixture.updateSession);
     container.set(OpencodeSessionInterruptCommand, fixture.interrupt);
+    container.set(OpencodeSessionSyntheticCommand, fixture.synthetic);
     container.set(OpencodeSessionInboxClearCommand, fixture.clearInbox);
+    container.set(OpencodeSessionInboxListCommand, fixture.listInbox);
     container.set(OpencodeMessageListCommand, fixture.listMessages);
 
     const projects = container.resolve(ProjectService);
@@ -484,6 +657,26 @@ async function setup() {
         dirA: '/Poweragents/projects/Alfa',
         dirB: '/Poweragents/projects/Beta',
     };
+
+    /** What OpenCode's clear does: takes the prompts back, and the synthetic input whose metadata matches. */
+    function takeInbox(_sessionId: string, options: OpencodeSessionInboxClearOptions = {}) {
+        const prompts: OpencodeInboxPrompt[] = [];
+        const kept: OpencodeInboxItem[] = [];
+        const wanted = options.syntheticMetadata;
+        for (const item of inbox) {
+            const ours =
+                item.type === 'synthetic' &&
+                wanted !== undefined &&
+                Object.entries(wanted).every(([key, value]) => item.metadata?.[key] === value);
+            if (item.type === 'prompt') {
+                prompts.push({ id: item.id, text: item.text });
+            } else if (!ours) {
+                kept.push(item);
+            }
+        }
+        inbox.splice(0, inbox.length, ...kept);
+        return Promise.resolve(prompts);
+    }
 }
 
 /** What each provider's sign-in reports; a test changes it before the call. */
@@ -498,6 +691,10 @@ function notUsed(): Promise<never> {
 
 function session(id: string, directory: string, fields: Partial<OpencodeSession> = {}): OpencodeSession {
     return { id, directory, createdAt: 1, updatedAt: 1, ...fields };
+}
+
+function waitingPrompt(id: string, text: string): OpencodeInboxItem {
+    return { type: 'prompt', id, createdAt: 1, text };
 }
 
 function assertCreated(result: ProjectCreateResult): Project {

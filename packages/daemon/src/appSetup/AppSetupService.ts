@@ -9,7 +9,6 @@ import type { AppSetupStartInput, AppSetupStartResult } from '@poweragents/commo
 import type { ConversationRef } from '@poweragents/common/api/ConversationTypes.js';
 import type { AppLanguage } from '@poweragents/common/appLanguages.js';
 import { OpencodeSessionRenameCommand } from '@poweragents/opencode/OpencodeSessionRenameCommand.js';
-import { OpencodeSessionSyntheticCommand } from '@poweragents/opencode/OpencodeSessionSyntheticCommand.js';
 
 import { ConversationService } from '../conversations/ConversationService.js';
 import { POWERAGENTS_LIMA_HOME } from '../env.js';
@@ -55,10 +54,9 @@ export const AppSetupService = defineService({
         projects: ProjectService,
         conversations: ConversationService,
         rename: OpencodeSessionRenameCommand,
-        synthetic: OpencodeSessionSyntheticCommand,
         limaHome: POWERAGENTS_LIMA_HOME,
     },
-    setup({ logger, projects, conversations, rename, synthetic, limaHome }): AppSetupServiceShape {
+    setup({ logger, projects, conversations, rename, limaHome }): AppSetupServiceShape {
         const stateFile = path.join(path.dirname(limaHome), STATE_FILE);
         /** One start at a time: two asks at once must not make two App setups or two onboardings. */
         let queue: Promise<unknown> = Promise.resolve();
@@ -130,7 +128,7 @@ export const AppSetupService = defineService({
                 await writeState(state);
             }
             await rename({ sessionId: conversationId, title: input.conversationTitle });
-            await synthetic({ sessionId: conversationId, text: buildOpeningPrompt(input.language) });
+            await conversations.startHidden({ projectId, conversationId }, buildOpeningPrompt(input.language));
             await writeState({ ...state, onboardingStartedAt: new Date().toISOString() });
             logger.info('App setup onboarding started', { projectId, conversationId });
             return { projectId, conversationId };
