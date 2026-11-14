@@ -314,6 +314,21 @@
                   "content": "Disabled"
                 }
               }
+            },
+            {
+              "id": "QarYo",
+              "type": "ref",
+              "reusable": true,
+              "ref": "htbsA",
+              "name": "atoms/Button/Primary/Busy",
+              "descendants": {
+                "aKFde": {
+                  "icon": "loader-circle"
+                },
+                "FpWgV": {
+                  "content": "Busy"
+                }
+              }
             }
           ]
         },
@@ -2955,6 +2970,464 @@
                           }
                         }
                       }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "mSf7U",
+              "name": "Toasts",
+              "gap": 32,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "kdvnp",
+                  "name": "Tones and lifetime",
+                  "width": 360,
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "TLpt4",
+                      "name": "molecules/Toast",
+                      "reusable": true,
+                      "width": 360,
+                      "fill": "$surface",
+                      "cornerRadius": "$radius-l",
+                      "stroke": "$border",
+                      "strokeWidth": 1,
+                      "effect": [
+                        {
+                          "type": "shadow",
+                          "shadowType": "outer",
+                          "color": "#1D23200F",
+                          "offset": {
+                            "x": 0,
+                            "y": 1
+                          },
+                          "blur": 3
+                        },
+                        {
+                          "type": "shadow",
+                          "shadowType": "outer",
+                          "color": "#1D23201F",
+                          "offset": {
+                            "x": 0,
+                            "y": 10
+                          },
+                          "blur": 28
+                        }
+                      ],
+                      "gap": 12,
+                      "padding": [
+                        14,
+                        12,
+                        14,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "id": "e2pWD",
+                          "type": "ref",
+                          "ref": "n2BS1f",
+                          "name": "Tone icon",
+                          "fill": "$surface-soft",
+                          "descendants": {
+                            "bPnwO": {
+                              "icon": "info",
+                              "fill": "$ink-muted"
+                            }
+                          }
+                        },
+                        {
+                          "type": "frame",
+                          "id": "t7IPt1",
+                          "name": "Body",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 3,
+                          "padding": [
+                            5,
+                            0,
+                            0,
+                            0
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "j6YmXu",
+                              "name": "Title",
+                              "fill": "$ink",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Tytuł powiadomienia",
+                              "lineHeight": 1.35,
+                              "fontFamily": "$font-body",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "aTIKH",
+                              "name": "Description",
+                              "fill": "$ink-body",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Krótki opis tego, co się stało.",
+                              "lineHeight": 1.5,
+                              "fontFamily": "$font-body",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "EeW9p",
+                              "x": 0,
+                              "y": 0,
+                              "name": "Actions",
+                              "enabled": false,
+                              "gap": 8,
+                              "padding": [
+                                9,
+                                0,
+                                0,
+                                0
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "id": "WrOTS",
+                                  "type": "ref",
+                                  "ref": "htbsA",
+                                  "name": "Action",
+                                  "descendants": {
+                                    "aKFde": {
+                                      "enabled": false
+                                    },
+                                    "FpWgV": {
+                                      "content": "Działanie"
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "b9WvYT",
+                          "name": "Dismiss",
+                          "width": 30,
+                          "height": 30,
+                          "cornerRadius": "$radius-pill",
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "xXFRA",
+                              "x": 2,
+                              "y": 2,
+                              "name": "Countdown track",
+                              "enabled": false,
+                              "innerRadius": 0.86,
+                              "fill": "$border",
+                              "width": 26,
+                              "height": 26
+                            },
+                            {
+                              "type": "ellipse",
+                              "id": "Q0Yu6",
+                              "x": 2,
+                              "y": 2,
+                              "name": "Countdown ring",
+                              "enabled": false,
+                              "innerRadius": 0.86,
+                              "startAngle": 90,
+                              "sweepAngle": -240,
+                              "fill": "$ink-muted",
+                              "width": 26,
+                              "height": 26
+                            },
+                            {
+                              "type": "icon",
+                              "id": "mV2fu",
+                              "x": 8,
+                              "y": 8,
+                              "name": "Icon",
+                              "width": 14,
+                              "height": 14,
+                              "icon": "x",
+                              "library": "lucide",
+                              "fill": "$ink-muted"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "id": "uT2nm",
+                      "type": "ref",
+                      "reusable": true,
+                      "ref": "TLpt4",
+                      "name": "molecules/Toast/Accent",
+                      "descendants": {
+                        "e2pWD": {
+                          "fill": "$brand-1-strong"
+                        },
+                        "e2pWD/bPnwO": {
+                          "icon": "sparkles",
+                          "fill": "$on-ink"
+                        },
+                        "j6YmXu": {
+                          "content": "Coś nowego, warto zareagować"
+                        },
+                        "aTIKH": {
+                          "content": "Ton accent: wiadomość, na którą warto odpowiedzieć."
+                        }
+                      }
+                    },
+                    {
+                      "id": "y1Drq",
+                      "type": "ref",
+                      "reusable": true,
+                      "ref": "TLpt4",
+                      "name": "molecules/Toast/Warning",
+                      "descendants": {
+                        "e2pWD": {
+                          "fill": "$attention-soft"
+                        },
+                        "e2pWD/bPnwO": {
+                          "icon": "triangle-alert",
+                          "fill": "$attention-ink"
+                        },
+                        "j6YmXu": {
+                          "content": "Coś poszło nie tak"
+                        },
+                        "aTIKH": {
+                          "content": "Ton warning: błąd, który można ponowić."
+                        }
+                      }
+                    },
+                    {
+                      "id": "qrTV6",
+                      "type": "ref",
+                      "reusable": true,
+                      "ref": "TLpt4",
+                      "name": "molecules/Toast/Timed",
+                      "descendants": {
+                        "j6YmXu": {
+                          "content": "Zamknie się samo"
+                        },
+                        "aTIKH": {
+                          "content": "Pierścień wokół × odlicza kilka sekund do zamknięcia."
+                        },
+                        "xXFRA": {
+                          "enabled": true
+                        },
+                        "Q0Yu6": {
+                          "enabled": true
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "D8H8xe",
+                  "name": "Actions and long text",
+                  "width": 360,
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "id": "tnRI8",
+                      "type": "ref",
+                      "ref": "qrTV6",
+                      "name": "Toast · neutral, timed, with action",
+                      "descendants": {
+                        "j6YmXu": {
+                          "content": "Plik przeniesiony do kosza"
+                        },
+                        "aTIKH": {
+                          "content": "notatki-z-wizyty.md"
+                        },
+                        "EeW9p": {
+                          "enabled": true
+                        },
+                        "WrOTS": {
+                          "id": "S5C8C",
+                          "type": "ref",
+                          "ref": "c1lNY",
+                          "name": "Action",
+                          "descendants": {
+                            "K2mQY": {
+                              "icon": "undo-2"
+                            },
+                            "QINi0": {
+                              "content": "Cofnij"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "id": "DCsX7",
+                      "type": "ref",
+                      "ref": "y1Drq",
+                      "name": "Toast · long text",
+                      "descendants": {
+                        "j6YmXu": {
+                          "content": "Nie udało się zapisać pliku „Plan treningowy na listopad i grudzień.xlsx”"
+                        },
+                        "aTIKH": {
+                          "content": "Dysk jest pełny albo plik jest otwarty w innym programie. Zamknij go i spróbuj jeszcze raz — twoje zmiany są bezpieczne."
+                        },
+                        "EeW9p": {
+                          "enabled": true
+                        },
+                        "WrOTS/aKFde": {
+                          "enabled": true,
+                          "icon": "rotate-cw"
+                        },
+                        "WrOTS/FpWgV": {
+                          "content": "Spróbuj ponownie"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ceQJy",
+                  "name": "App update",
+                  "width": 360,
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "id": "rqFEE",
+                      "type": "ref",
+                      "reusable": true,
+                      "ref": "uT2nm",
+                      "name": "molecules/Update toast/Ready",
+                      "descendants": {
+                        "e2pWD/bPnwO": {
+                          "icon": "circle-arrow-down"
+                        },
+                        "j6YmXu": {
+                          "content": "Nowa wersja poweragents jest gotowa"
+                        },
+                        "aTIKH": {
+                          "content": "Uruchom ponownie, żeby przejść na 0.1.0‑dev.215. Do tego czasu działasz na 0.1.0‑dev.214."
+                        },
+                        "EeW9p": {
+                          "enabled": true
+                        },
+                        "WrOTS/aKFde": {
+                          "enabled": true,
+                          "icon": "rotate-cw"
+                        },
+                        "WrOTS/FpWgV": {
+                          "content": "Uruchom ponownie"
+                        }
+                      }
+                    },
+                    {
+                      "id": "F3UjV0",
+                      "type": "ref",
+                      "reusable": true,
+                      "ref": "rqFEE",
+                      "name": "molecules/Update toast/Restarting",
+                      "descendants": {
+                        "WrOTS": {
+                          "id": "a8R1SD",
+                          "type": "ref",
+                          "ref": "QarYo",
+                          "name": "Action",
+                          "descendants": {
+                            "FpWgV": {
+                              "content": "Uruchamiam ponownie…"
+                            }
+                          }
+                        },
+                        "mV2fu": {
+                          "fill": "$border-strong"
+                        }
+                      }
+                    },
+                    {
+                      "id": "cA8FC",
+                      "type": "ref",
+                      "reusable": true,
+                      "ref": "y1Drq",
+                      "name": "molecules/Update toast/Install failed",
+                      "descendants": {
+                        "j6YmXu": {
+                          "content": "Nie udało się zainstalować aktualizacji"
+                        },
+                        "aTIKH": {
+                          "content": "Wersja 0.1.0‑dev.215 jest pobrana. Spróbuj ponownie — macOS może poprosić o hasło administratora."
+                        },
+                        "EeW9p": {
+                          "enabled": true
+                        },
+                        "WrOTS/aKFde": {
+                          "enabled": true,
+                          "icon": "rotate-cw"
+                        },
+                        "WrOTS/FpWgV": {
+                          "content": "Spróbuj ponownie"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "mvFPO",
+                  "name": "Toaster",
+                  "width": 360,
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "Cu2AE",
+                      "name": "molecules/Toaster",
+                      "reusable": true,
+                      "width": 360,
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "id": "fTM8u",
+                          "type": "ref",
+                          "ref": "qrTV6",
+                          "name": "Older toast",
+                          "width": "fill_container",
+                          "descendants": {
+                            "e2pWD/bPnwO": {
+                              "icon": "folder-plus"
+                            },
+                            "j6YmXu": {
+                              "content": "Projekt „Faktury” utworzony"
+                            },
+                            "aTIKH": {
+                              "content": "Znajdziesz go w pasku bocznym."
+                            }
+                          }
+                        },
+                        {
+                          "id": "F6CpO",
+                          "type": "ref",
+                          "ref": "rqFEE",
+                          "name": "Newest toast",
+                          "width": "fill_container"
+                        }
+                      ]
                     }
                   ]
                 }
@@ -29851,6 +30324,672 @@
               "content": "Dom i dzieci"
             }
           }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "YHdki",
+      "x": 0,
+      "y": 17469,
+      "name": "67 Update · ready to restart",
+      "theme": {
+        "palette": "meadow"
+      },
+      "clip": true,
+      "width": 1440,
+      "height": 900,
+      "layout": "none",
+      "children": [
+        {
+          "id": "Dq5wc",
+          "type": "ref",
+          "ref": "JaaCj",
+          "name": "App shell",
+          "x": 0,
+          "y": 0,
+          "theme": {
+            "palette": "meadow"
+          },
+          "descendants": {
+            "V87knr": {
+              "id": "TxZnC",
+              "type": "ref",
+              "ref": "PxUyk",
+              "name": "Sidebar",
+              "descendants": {
+                "bSPlA": {
+                  "children": [
+                    {
+                      "id": "kVfTu",
+                      "type": "ref",
+                      "ref": "QxQVq",
+                      "name": "Szukanie pracy",
+                      "descendants": {
+                        "dmWzY": {
+                          "fill": "$project-blue",
+                          "icon": "folder"
+                        },
+                        "AlfMX": {
+                          "content": "Szukanie pracy"
+                        },
+                        "Cisy9": {
+                          "enabled": false
+                        },
+                        "qYhP0": {
+                          "enabled": false
+                        }
+                      }
+                    },
+                    {
+                      "id": "O1HvRA",
+                      "type": "ref",
+                      "ref": "QxQVq",
+                      "name": "Zdrowie",
+                      "fill": "$surface-glass",
+                      "descendants": {
+                        "dmWzY": {
+                          "fill": "$project-pink",
+                          "icon": "folder-open"
+                        },
+                        "AlfMX": {
+                          "content": "Zdrowie",
+                          "fontWeight": "600"
+                        },
+                        "Cisy9": {
+                          "enabled": false
+                        },
+                        "qYhP0": {
+                          "enabled": false
+                        }
+                      }
+                    },
+                    {
+                      "id": "fZZPF",
+                      "type": "ref",
+                      "ref": "QxQVq",
+                      "name": "Posty na Instagram",
+                      "descendants": {
+                        "dmWzY": {
+                          "fill": "$project-amber",
+                          "icon": "folder"
+                        },
+                        "AlfMX": {
+                          "content": "Posty na Instagram"
+                        },
+                        "Cisy9": {
+                          "enabled": false
+                        },
+                        "qYhP0": {
+                          "enabled": false
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "c0GQTX/zHLo4": {
+              "children": [
+                {
+                  "id": "gMDnJ",
+                  "type": "ref",
+                  "ref": "Mc2Yy",
+                  "name": "Tab Zdrowie",
+                  "descendants": {
+                    "hLTUY": {
+                      "icon": "folder"
+                    },
+                    "zs1nz": {
+                      "content": "Zdrowie"
+                    },
+                    "m3uLD": {
+                      "enabled": false
+                    }
+                  }
+                }
+              ]
+            },
+            "PMXH9": {
+              "padding": 48,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "gap": 0,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "CflxR",
+                  "name": "Empty state",
+                  "width": 560,
+                  "layout": "vertical",
+                  "gap": 20,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "YLek9",
+                      "type": "ref",
+                      "ref": "n2BS1f",
+                      "name": "Tile",
+                      "fill": "$project-pink-soft",
+                      "descendants": {
+                        "bPnwO": {
+                          "icon": "folder-open",
+                          "fill": "$project-pink"
+                        }
+                      }
+                    },
+                    {
+                      "type": "frame",
+                      "id": "E1Nsap",
+                      "name": "Text",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "KkSX0",
+                          "name": "Title",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Projekt Zdrowie jest gotowy",
+                          "textAlign": "center",
+                          "fontFamily": "$font-heading",
+                          "fontSize": 28,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "KPVbU",
+                          "name": "Lede",
+                          "fill": "$ink-body",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Napisz agentowi, do czego służy ten projekt. Swoje notatki i pliki będzie trzymał właśnie tutaj.",
+                          "lineHeight": 1.55,
+                          "textAlign": "center",
+                          "fontFamily": "$font-body",
+                          "fontSize": 15,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "VGblu",
+                      "type": "ref",
+                      "ref": "uuLci",
+                      "name": "Composer",
+                      "width": "fill_container",
+                      "descendants": {
+                        "p6GTa": {
+                          "content": "Co robimy w projekcie Zdrowie?"
+                        },
+                        "DvNYs": {
+                          "enabled": false
+                        },
+                        "cYALa": {
+                          "enabled": false
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "vekG7",
+          "type": "ref",
+          "ref": "rqFEE",
+          "name": "Update toast",
+          "x": 1046,
+          "y": 688
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "xeqJ5",
+      "x": 1540,
+      "y": 17469,
+      "name": "68 Update · two toasts at once",
+      "theme": {
+        "palette": "meadow"
+      },
+      "clip": true,
+      "width": 1440,
+      "height": 900,
+      "layout": "none",
+      "children": [
+        {
+          "id": "B7ZvQw",
+          "type": "ref",
+          "ref": "JaaCj",
+          "name": "App shell",
+          "x": 0,
+          "y": 0,
+          "theme": {
+            "palette": "meadow"
+          },
+          "descendants": {
+            "V87knr": {
+              "id": "gIi42",
+              "type": "ref",
+              "ref": "PxUyk",
+              "name": "Sidebar",
+              "descendants": {
+                "bSPlA": {
+                  "children": [
+                    {
+                      "id": "u9YlPX",
+                      "type": "ref",
+                      "ref": "QxQVq",
+                      "name": "Szukanie pracy",
+                      "descendants": {
+                        "dmWzY": {
+                          "fill": "$project-blue",
+                          "icon": "folder"
+                        },
+                        "AlfMX": {
+                          "content": "Szukanie pracy"
+                        },
+                        "Cisy9": {
+                          "enabled": false
+                        },
+                        "qYhP0": {
+                          "enabled": false
+                        }
+                      }
+                    },
+                    {
+                      "id": "mWe9k",
+                      "type": "ref",
+                      "ref": "QxQVq",
+                      "name": "Zdrowie",
+                      "fill": "$surface-glass",
+                      "descendants": {
+                        "dmWzY": {
+                          "fill": "$project-pink",
+                          "icon": "folder-open"
+                        },
+                        "AlfMX": {
+                          "content": "Zdrowie",
+                          "fontWeight": "600"
+                        },
+                        "Cisy9": {
+                          "enabled": false
+                        },
+                        "qYhP0": {
+                          "enabled": false
+                        }
+                      }
+                    },
+                    {
+                      "id": "LNYUM",
+                      "type": "ref",
+                      "ref": "QxQVq",
+                      "name": "Posty na Instagram",
+                      "descendants": {
+                        "dmWzY": {
+                          "fill": "$project-amber",
+                          "icon": "folder"
+                        },
+                        "AlfMX": {
+                          "content": "Posty na Instagram"
+                        },
+                        "Cisy9": {
+                          "enabled": false
+                        },
+                        "qYhP0": {
+                          "enabled": false
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "c0GQTX/zHLo4": {
+              "children": [
+                {
+                  "id": "Dbsdt",
+                  "type": "ref",
+                  "ref": "Mc2Yy",
+                  "name": "Tab Zdrowie",
+                  "descendants": {
+                    "hLTUY": {
+                      "icon": "folder"
+                    },
+                    "zs1nz": {
+                      "content": "Zdrowie"
+                    },
+                    "m3uLD": {
+                      "enabled": false
+                    }
+                  }
+                }
+              ]
+            },
+            "PMXH9": {
+              "padding": 48,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "gap": 0,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "R4Cfn",
+                  "name": "Empty state",
+                  "width": 560,
+                  "layout": "vertical",
+                  "gap": 20,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "JqmZ4",
+                      "type": "ref",
+                      "ref": "n2BS1f",
+                      "name": "Tile",
+                      "fill": "$project-pink-soft",
+                      "descendants": {
+                        "bPnwO": {
+                          "icon": "folder-open",
+                          "fill": "$project-pink"
+                        }
+                      }
+                    },
+                    {
+                      "type": "frame",
+                      "id": "x00wT3",
+                      "name": "Text",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "GfxND",
+                          "name": "Title",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Projekt Zdrowie jest gotowy",
+                          "textAlign": "center",
+                          "fontFamily": "$font-heading",
+                          "fontSize": 28,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "E63mhO",
+                          "name": "Lede",
+                          "fill": "$ink-body",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Napisz agentowi, do czego służy ten projekt. Swoje notatki i pliki będzie trzymał właśnie tutaj.",
+                          "lineHeight": 1.55,
+                          "textAlign": "center",
+                          "fontFamily": "$font-body",
+                          "fontSize": 15,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "kE6Gp",
+                      "type": "ref",
+                      "ref": "uuLci",
+                      "name": "Composer",
+                      "width": "fill_container",
+                      "descendants": {
+                        "p6GTa": {
+                          "content": "Co robimy w projekcie Zdrowie?"
+                        },
+                        "DvNYs": {
+                          "enabled": false
+                        },
+                        "cYALa": {
+                          "enabled": false
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "tfRNb",
+          "type": "ref",
+          "ref": "Cu2AE",
+          "name": "Toaster",
+          "x": 1046,
+          "y": 605
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "UvpN1",
+      "x": 3080,
+      "y": 17469,
+      "name": "69 Update · install failed",
+      "theme": {
+        "palette": "meadow"
+      },
+      "clip": true,
+      "width": 1440,
+      "height": 900,
+      "layout": "none",
+      "children": [
+        {
+          "id": "QyHkk",
+          "type": "ref",
+          "ref": "JaaCj",
+          "name": "App shell",
+          "x": 0,
+          "y": 0,
+          "theme": {
+            "palette": "meadow"
+          },
+          "descendants": {
+            "V87knr": {
+              "id": "O97js",
+              "type": "ref",
+              "ref": "PxUyk",
+              "name": "Sidebar",
+              "descendants": {
+                "bSPlA": {
+                  "children": [
+                    {
+                      "id": "jLSr0",
+                      "type": "ref",
+                      "ref": "QxQVq",
+                      "name": "Szukanie pracy",
+                      "descendants": {
+                        "dmWzY": {
+                          "fill": "$project-blue",
+                          "icon": "folder"
+                        },
+                        "AlfMX": {
+                          "content": "Szukanie pracy"
+                        },
+                        "Cisy9": {
+                          "enabled": false
+                        },
+                        "qYhP0": {
+                          "enabled": false
+                        }
+                      }
+                    },
+                    {
+                      "id": "GcxnI",
+                      "type": "ref",
+                      "ref": "QxQVq",
+                      "name": "Zdrowie",
+                      "fill": "$surface-glass",
+                      "descendants": {
+                        "dmWzY": {
+                          "fill": "$project-pink",
+                          "icon": "folder-open"
+                        },
+                        "AlfMX": {
+                          "content": "Zdrowie",
+                          "fontWeight": "600"
+                        },
+                        "Cisy9": {
+                          "enabled": false
+                        },
+                        "qYhP0": {
+                          "enabled": false
+                        }
+                      }
+                    },
+                    {
+                      "id": "VIEq3",
+                      "type": "ref",
+                      "ref": "QxQVq",
+                      "name": "Posty na Instagram",
+                      "descendants": {
+                        "dmWzY": {
+                          "fill": "$project-amber",
+                          "icon": "folder"
+                        },
+                        "AlfMX": {
+                          "content": "Posty na Instagram"
+                        },
+                        "Cisy9": {
+                          "enabled": false
+                        },
+                        "qYhP0": {
+                          "enabled": false
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "c0GQTX/zHLo4": {
+              "children": [
+                {
+                  "id": "GlDg7",
+                  "type": "ref",
+                  "ref": "Mc2Yy",
+                  "name": "Tab Zdrowie",
+                  "descendants": {
+                    "hLTUY": {
+                      "icon": "folder"
+                    },
+                    "zs1nz": {
+                      "content": "Zdrowie"
+                    },
+                    "m3uLD": {
+                      "enabled": false
+                    }
+                  }
+                }
+              ]
+            },
+            "PMXH9": {
+              "padding": 48,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "gap": 0,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "a9nSj",
+                  "name": "Empty state",
+                  "width": 560,
+                  "layout": "vertical",
+                  "gap": 20,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "RaXCI",
+                      "type": "ref",
+                      "ref": "n2BS1f",
+                      "name": "Tile",
+                      "fill": "$project-pink-soft",
+                      "descendants": {
+                        "bPnwO": {
+                          "icon": "folder-open",
+                          "fill": "$project-pink"
+                        }
+                      }
+                    },
+                    {
+                      "type": "frame",
+                      "id": "f1JKWh",
+                      "name": "Text",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "j0AV2z",
+                          "name": "Title",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Projekt Zdrowie jest gotowy",
+                          "textAlign": "center",
+                          "fontFamily": "$font-heading",
+                          "fontSize": 28,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "ouvYX",
+                          "name": "Lede",
+                          "fill": "$ink-body",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Napisz agentowi, do czego służy ten projekt. Swoje notatki i pliki będzie trzymał właśnie tutaj.",
+                          "lineHeight": 1.55,
+                          "textAlign": "center",
+                          "fontFamily": "$font-body",
+                          "fontSize": 15,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "I8P7Lm",
+                      "type": "ref",
+                      "ref": "uuLci",
+                      "name": "Composer",
+                      "width": "fill_container",
+                      "descendants": {
+                        "p6GTa": {
+                          "content": "Co robimy w projekcie Zdrowie?"
+                        },
+                        "DvNYs": {
+                          "enabled": false
+                        },
+                        "cYALa": {
+                          "enabled": false
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "YlpYa",
+          "type": "ref",
+          "ref": "cA8FC",
+          "name": "Update toast",
+          "x": 1046,
+          "y": 707
         }
       ]
     }
