@@ -111,3 +111,50 @@ on the owner's OK ([D5](#d5)) — one rule for every kind of task.
 
 - The orchestrator starts agents itself when a blocker closes — needs a periodic check (a Paseo
   heartbeat) and a cap on parallel agents, and agents appear when the owner does not expect them.
+
+## D8
+
+**The orchestrator keeps no memory of its own: the state of the work is the GitHub Project, its
+issues and pull requests, and the folders in `docs/design/`. Every planning conversation may start
+from a fresh session, and opens with a review of that state.** Work not yet split into tasks, ideas
+for later and approved design sessions are issues in a **Backlog** column; **Todo** means split and
+ready to start. (2026-11-14, owner)
+
+**Why.** Everything that happens already leaves a trace on GitHub — a design session ends in a PR
+with its folder, a task in a merged PR that closes its issue — so a long-lived orchestrator session
+would only hold a copy that drifts. The cost is that whatever a planning conversation settles must be
+written to GitHub, or it is lost.
+
+**Rejected.**
+
+- One long-lived orchestrator session that remembers the plan — its memory dies with the session
+  and duplicates the board.
+
+## D9
+
+**Launched agents run Claude Opus 5.5 (`claude-opus-5-5`) at medium reasoning effort, in bypass
+permission mode, unless the owner asks for something else for a task.** (2026-11-14, owner)
+
+**Why.** Several agents at once in a stricter mode would each ask the owner for permissions.
+
+> **Checked 2026-11-14:** Paseo `list_models claude` lists `claude-opus-5-5` with thinking option
+> `medium` (its default); `list_providers` lists Claude mode `bypassPermissions`.
+
+**Rejected.**
+
+- Claude's "auto" mode, where a classifier reviews permission prompts — the owner chose bypass.
+
+## D10
+
+**An issue carries what its agent needs and nothing more: what and why, links to the design
+passages it concerns, what not to do because another issue covers it, and which skill builds it.
+The agent's first prompt is that skill with the issue, e.g. `/dev:feature #14`; a design session's
+issue says what is unclear and names `/dev:design`.** (2026-11-14, owner)
+
+**Why.** An agent in a fresh worktree knows only what the issue tells it; the "not this" line is what
+keeps two parallel agents from building the same thing.
+
+**Rejected.**
+
+- A fuller template (acceptance criteria, file lists, estimates) — the `/dev:*` skills plan the work
+  themselves.

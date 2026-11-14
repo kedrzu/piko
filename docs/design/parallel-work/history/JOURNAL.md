@@ -22,3 +22,5 @@ Append-only. One line per turn that settled something, was rejected, or got an a
 - 2026-11-14 — Owner: agents start on the owner's word (D7). Proposed, not yet confirmed: the
   orchestrator keeps no memory of its own — state is GitHub and docs/design — with a Backlog column
   for not-yet-split work and approved design sessions. README written.
+- 2026-11-14 — Owner: orchestrator keeps no memory, Backlog column (D8); launched agents Claude Opus
+  5.5 medium, bypass (D9); minimal issue content (D10). Next: rightsize, then propose closing.
