@@ -672,3 +672,20 @@ product within one letter. Urzo and Lapino are the cleanest from these two round
 **Proposed next.** Show the honest picture; ask whether one letter of distance from a small app is
 acceptable (it changes what counts as a conflict), or whether to go for longer, more distinctive
 shapes.
+
+## Round 31 — 2026-11-14
+
+**User on round 30.** Fenny and Ermy "are nice" (liked). Coined **Rilky** ("just sounds good").
+**Conflict threshold set by the user:** small apps with ~10 reviews are not a concern — recorded in
+BRIEF. Under it, several earlier names improve: Lupi (its conflicts are small apps, a small Georgian
+ed-tech and a parked lupi.ai), Kitsi, Lepy's small namesakes; funded or live AI products still block.
+**Checked.** **Rilky**: rilky.ai (confirmed free at whois.nic.ai), rilky.app, rilky.so, rilky.co,
+rilky.io, rilky.me, getrilky/heyrilky/userilky/tryrilky.com all likely-free; only rilky.com is
+registered (Cloudflare page, no visible product). No app, product or company named Rilky found;
+echoes Rilke. Spelling risk: Rilkey/Rilkie. **Ermy**: ermy.ai, ermy.so, getermy.com free; "ermy ai"
+finds only a tiny Python library (ErmAI). **Fenny**: fenny.ai, fenny.so, getfenny.com free; FINNY AI
+(YC, advisors' prospecting) is a sound-alike in another space — notable.
+**Where I looked.** DNS; whois.nic.ai; site fetch; App Store; web search "rilky", "ermy ai".
+**Proposed next.** Rilky is the most open name of the whole search. Suggest moving Rilky, Ermy,
+Fenny, Lupi (and Tancho, Lancho) to depth checks: registrar prices, a hearing test for spelling
+(Rilky in particular), user-run TMview.

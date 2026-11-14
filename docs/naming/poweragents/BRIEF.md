@@ -73,6 +73,10 @@ mascot.
 
 - Wants a good-sounding *modification* of an animal name (Lupi, Urso), not a grammatical form; short animal names that sound cute rather than odd ("Volpo doesn't sound good") (2026-11-14).
 
+- **Conflict threshold (user, round 30):** small apps with ~10 reviews are not a concern. Blocking is
+  a real, visible product in the same or adjacent space (funded startup, live AI product, sizeable app).
+- Fenny and Ermy "are nice"; the user coined **Rilky** ("just sounds good") (round 30).
+
 ## Rejected directions
 
 - The Esperanto -eto ending (Urseto, Vulpeto, Nubeto…) — "I don't like that ending" (round 23).

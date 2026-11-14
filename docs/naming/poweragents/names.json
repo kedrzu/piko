@@ -60072,7 +60072,11 @@
           "checked_at": "2026-11-14"
         }
       ],
-      "phonetics": "from fennec; FEN-nee"
+      "phonetics": "from fennec; FEN-nee",
+      "verdict": "liked",
+      "feedback": [
+        "\"Fenny, Ermy sa fajne\" (round 30)"
+      ]
     },
     "Delfo": {
       "direction": "generated cute animal-stem names (stem + vowel), .ai pre-filtered",
@@ -60178,8 +60182,20 @@
           "checked_at": "2026-11-14"
         }
       },
-      "conflicts": [],
-      "phonetics": "from ermine; ER-mee"
+      "conflicts": [
+        {
+          "who": "search 'ermy ai': nothing named Ermy; ErmAI (tiny Python lib), Hermes AI agents are sound-alikes",
+          "space": "AI",
+          "severity": "noise",
+          "url": "https://pypi.org/project/ermai/2.2.1/",
+          "checked_at": "2026-11-14"
+        }
+      ],
+      "phonetics": "from ermine; ER-mee",
+      "verdict": "liked",
+      "feedback": [
+        "\"Fenny, Ermy sa fajne\" (round 30)"
+      ]
     },
     "Mausy": {
       "direction": "generated cute animal-stem names (stem + vowel), .ai pre-filtered",
@@ -60213,6 +60229,81 @@
       },
       "conflicts": [],
       "phonetics": "from German Maus 'mouse'; MOW-zee"
+    },
+    "Rilky": {
+      "direction": "user's own coinage",
+      "round": 31,
+      "domains": {
+        "rilky.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-14"
+        },
+        "rilky.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "rilky.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-14"
+        },
+        "rilky.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "getrilky.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "heyrilky.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "userilky.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "tryrilky.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-14"
+        },
+        "rilky.co": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "rilky.io": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        },
+        "rilky.me": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-14"
+        }
+      },
+      "verdict": "liked",
+      "feedback": [
+        "user coined it: \"po prostu dobrze brzmi\" (round 30)"
+      ],
+      "conflicts": [
+        {
+          "who": "search 'rilky': nothing named Rilky; rilky.com registered (behind Cloudflare, no visible product)",
+          "space": "web",
+          "severity": "noise",
+          "url": "https://rilky.com",
+          "checked_at": "2026-11-14"
+        }
+      ],
+      "phonetics": "RIL-kee; echoes Rilke (the poet); spelling risk: Rilky/Rilkey/Rilkie"
     }
   }
 }
