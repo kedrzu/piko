@@ -18,6 +18,8 @@ export interface BuildChromiumArgsOptions {
  * `PaintHolding` off: after a navigation Chrome drops input until the new page is first painted, and a page in a
  * minimized window is never painted, so without it the agent's clicks and keys would never reach a page it opened
  * (checked 2026-11-14 on Chrome for Testing 157: a click on a minimized example.com lands only with it disabled).
+ * Every agent page lives in a hidden window, so the background throttling of timers, occluded windows and renderers is
+ * off too (the flags Playwright launches with): a page works as it would in front, and still renders for a thumbnail.
  * @__NO_SIDE_EFFECTS__
  */
 export function buildChromiumArgs(options: BuildChromiumArgsOptions) {
@@ -33,6 +35,9 @@ export function buildChromiumArgs(options: BuildChromiumArgsOptions) {
         '--force-webrtc-ip-handling-policy=disable_non_proxied_udp',
         '--use-mock-keychain',
         '--disable-features=PaintHolding',
+        '--disable-background-timer-throttling',
+        '--disable-backgrounding-occluded-windows',
+        '--disable-renderer-backgrounding',
         ...(options.extraArgs ?? []),
     ];
 }

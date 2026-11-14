@@ -12,6 +12,7 @@ import type { EventEmitter } from '@nzyme/utils/createEventEmitter.js';
 import { createSingleRunner } from '@nzyme/utils/createSingleRunner.js';
 import { isPlainObject } from '@nzyme/utils/isPlainObject.js';
 import { waitUntil } from '@nzyme/utils/waitUntil.js';
+import { withTimeout } from '@nzyme/utils/withTimeout.js';
 
 import { BROWSER_PROXY_PORT, DOWNLOADS_FOLDER, POWERAGENTS_DATA_ROOT, POWERAGENTS_LIMA_HOME } from '../env.js';
 import { isErrorCode } from '../utils/isErrorCode.js';
@@ -109,6 +110,8 @@ const STALE_EXIT_TIMEOUT_MS = 5000;
 const STDERR_TAIL_LENGTH = 2000;
 /** JPEG quality of a thumbnail: small enough to ship often, sharp enough to recognise the page. */
 const THUMBNAIL_QUALITY = 60;
+/** How long a thumbnail may take before the handoff goes without one. */
+const THUMBNAIL_TIMEOUT_MS = 10_000;
 /** A download guid as the browser makes it; anything else never becomes part of a path. */
 const DOWNLOAD_GUID = /^[\w-]+$/;
 
@@ -172,9 +175,21 @@ export const BrowserService = defineService({
             if (targetId == null || !run?.ready) {
                 return null;
             }
-            const reply = await withDaemonSession(targetId, sessionId =>
-                send('Page.captureScreenshot', { format: 'jpeg', quality: THUMBNAIL_QUALITY }, sessionId),
-            );
+            // A page that renders no frame (the browser has nothing to paint it with) would leave the call waiting for
+            // good; the handoff UI shows no thumbnail instead.
+            const reply = await withTimeout({
+                operation: withDaemonSession(targetId, sessionId =>
+                    send('Page.captureScreenshot', { format: 'jpeg', quality: THUMBNAIL_QUALITY }, sessionId),
+                ),
+                timeoutMs: THUMBNAIL_TIMEOUT_MS,
+                onTimeout: () => {
+                    logger.warn('A thumbnail timed out', { conversationId });
+                    return null;
+                },
+            });
+            if (reply === null) {
+                return null;
+            }
             const data = isPlainObject(reply) ? reply['data'] : undefined;
             if (typeof data !== 'string') {
                 throw new TypeError('Page.captureScreenshot gave no image');
