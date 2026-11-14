@@ -7,7 +7,7 @@ import type { PropType } from 'vue';
 
 export const SelectFieldProps = {
   ...useSelectInput.props,
-  /** The visible label, also the dropdown's accessible name. */
+  /** The visible label (with its "(optional)" mark), the dropdown's accessible name. */
   label: { type: String, required: true },
   /** The options, each its own label and value. */
   options: { type: Array as PropType<readonly string[]>, required: true },
@@ -34,17 +34,21 @@ const t = useTranslate();
 </script>
 
 <template>
-  <!-- `SelectInput` takes no `id` or `aria-describedby`: it is named by `aria-label` from `label`, and its error is
-  announced as it appears. -->
   <FieldFrame
-    v-slot="{ invalid }"
+    v-slot="{ controlId, labelId, describedBy, invalid }"
     :label="props.label"
     :help="props.help"
     :error="field.errors[0]"
     :optional="props.optional"
   >
     <span :class="$style.selectField">
-      <SelectInput :class="[$style.selectField_input, invalid && $style.selectField_invalid]">
+      <SelectInput
+        :id="controlId"
+        :class="[$style.selectField_input, invalid && $style.selectField_invalid]"
+        :aria-labelledby="labelId"
+        :aria-invalid="invalid || undefined"
+        :aria-describedby="describedBy"
+      >
         <option value="">{{ props.placeholder ?? t(l.placeholder) }}</option>
         <option
           v-for="option in props.options"
