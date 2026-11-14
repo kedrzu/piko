@@ -19,3 +19,6 @@ Append-only. One line per turn that settled something, was rejected, or got an a
 - 2026-11-14 — Owner: design sessions are tasks launched by the orchestrator on the owner's OK,
   proposed early enough to keep a backlog (D5); skill lives in this repo (D6). Still open: whether
   code agents start on the owner's word or by themselves when unblocked.
+- 2026-11-14 — Owner: agents start on the owner's word (D7). Proposed, not yet confirmed: the
+  orchestrator keeps no memory of its own — state is GitHub and docs/design — with a Backlog column
+  for not-yet-split work and approved design sessions. README written.

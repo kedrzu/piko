@@ -90,3 +90,24 @@ folders directly.
 **Rejected.**
 
 - A skill in the `dev` plugin (`kedrzu/skills`), usable in any project — not needed yet.
+
+## D7
+
+**Agents start only on the owner's word.** In a planning conversation the owner says what to launch
+("start what's ready"); the orchestrator then creates a Paseo worktree per agreed task, starts an agent
+in it and moves the issue to In progress. Nothing watches GitHub in the background. (2026-11-14,
+owner)
+
+**Why.** The owner comes back to the orchestrator to plan anyway, and design sessions already start
+on the owner's OK ([D5](#d5)) — one rule for every kind of task.
+
+> **Checked 2026-11-14:** Paseo MCP `create_workspace` makes a worktree from a source checkout
+> (`path`, `isolation: worktree`, `branchName`, `baseBranch`, `title`); `create_agent` takes
+> `workspaceId`, `provider` (`claude`, `codex` available on this machine), `initialPrompt`, mode.
+> The poweragents main checkout is `/Users/kedrzu/Dev/poweragents`, Paseo project
+> `prj_9f46b29348b5f0ac`.
+
+**Rejected.**
+
+- The orchestrator starts agents itself when a blocker closes — needs a periodic check (a Paseo
+  heartbeat) and a cap on parallel agents, and agents appear when the owner does not expect them.
