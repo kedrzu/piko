@@ -7,7 +7,6 @@ replaced it. Never edited after it is written, apart from adding the next retire
 
 Retired 2026-11-14, replaced by [D3](../DECISIONS.md#d3).
 
-
 **A unit of work handed to one agent is a piece of the app the owner can see and try — a feature
 slice — not a technical layer.** (2026-11-14, owner) How big such a slice is, and which `/dev:*`
 entry point builds it, is still open.
@@ -20,4 +19,3 @@ watching and a later integration step.
 
 - Small technical tasks, one per layer, each through `/dev:task` — more parallelism, but many issues
   and dependencies to manage, and nothing to try until they add up.
-
