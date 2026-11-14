@@ -32,6 +32,7 @@
         "@nzyme/vue-ioc": "workspace:*",
         "@nzyme/vue-transitions": "workspace:*",
         "@nzyme/vue-utils": "workspace:*",
+        "@openuidev/lang-core": "1.1.1",
         "@poweragents/common": "workspace:*",
         "@tiptap/core": "3.34.0",
         "@tiptap/extension-code": "3.34.0",

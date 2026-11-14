@@ -3,3 +3,9 @@ declare module '*.Containerfile' {
     const content: string;
     export default content;
 }
+
+// A generated Markdown file imported as text the same way (`generative-ui.skill.gen.md`).
+declare module '*.gen.md' {
+    const content: string;
+    export default content;
+}
