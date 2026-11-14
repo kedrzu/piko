@@ -46,8 +46,8 @@ tags — because that is where this is heading ([plugins ship with the app](DECI
 
 The other source is the agent. Asked to cut a video, it may need `ffmpeg`; it never installs anything loose, because
 the environment is rebuilt from the list of installed plugins and a loose install would vanish
-([why the environment is declared](DECISIONS.md#d25)). Instead it writes a small plugin of its own and installs it the
-same way as any other. These plugins live with the person's data, survive a rebuilt environment, and appear in the
+([why the environment is declared](DECISIONS.md#d25)). Instead it writes a small plugin of its own: a folder in the profile, which is installed by being there. These
+plugins live with the person's data, survive a rebuilt environment, and appear in the
 same list as the bundled ones, marked as the person's own — "Twój plugin" — since they asked for it
 ([plugins the agent writes](DECISIONS.md#d40)). When the agent improves the skill of such a plugin, the next
 conversation already uses it.
@@ -74,12 +74,15 @@ should run. The rules it learns go into the project as ordinary files the person
 from the plugin's page changes the setup ([setup is a conversation](DECISIONS.md#d18)).
 
 The plugin declares no schedule. When the person picks a time, the agent creates a schedule in the project, and that
-schedule's whole instruction is the plugin's command — `/email-sorting`. A schedule can be created the same way in any
+schedule's whole instruction is the plugin's command — `/email-sorting:sort`, every command carrying the name of the
+plugin it belongs to. A schedule can be created the same way in any
 later conversation ([schedules are not part of a plugin](DECISIONS.md#d17)).
 
 Removing a plugin never deletes the person's files and touches no schedule. The next run of a schedule that called the
-removed plugin finds the command missing; the app then tells the agent to stop and say so, at most finding out why, and
-never to recreate the workflow by reading old files — after all, the person removed the plugin to make it stop
+removed plugin carries a command whose plugin is gone, and the app stops the conversation before the agent does
+anything, with a message saying that plugin is not installed. The agent never recreates the workflow by reading old
+files — the person removed the plugin to make it stop. But the conversation stays open: if the removal was a mistake,
+the person says "install it back" and the agent, seeing what happened, carries on
 ([what a missing command does](DECISIONS.md#d42)).
 
 ## Still open

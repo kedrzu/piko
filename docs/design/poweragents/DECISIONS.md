@@ -777,23 +777,28 @@ plugins ship as such folders inside the app ([D36](#d36)).** (2026-11-14, design
 
 ## D40
 
-**Bundled plugins are mounted into the sandbox read-only from the app. Plugins the agent writes live in the profile, in
-`/Poweragents/plugins/<name>/`, which the agent can write to. Installing any plugin is a request to the daemon, which
-reads `plugin.json`, applies its additions to the environment and records the installation; the list of installed
-plugins is the daemon's file, never edited by the agent. Editing a skill of an installed plugin takes effect in the next
-conversation without reinstalling; changing what it adds to the environment needs a reinstall.** (2026-11-14, design
-agent proposal, owner did not object)
+**Bundled plugins are mounted into the sandbox read-only from the app, and the profile's manifest lists which of them
+the person has installed. A plugin the agent writes is a folder in the profile, `/Poweragents/plugins/<name>/`: the
+folder being there is what installs it, and deleting it uninstalls it. When the agent changes what one of its plugins
+adds to the environment, it asks the daemon to apply the change. Editing a skill takes effect in the next conversation.
+A plugin's programs are installed when the plugin is, never built into the sandbox's image.** (2026-11-14, owner,
+simplified from the design agent's proposal at the review)
 
 **Why.** Plugins the agent writes outlive a rebuilt sandbox only if they sit beside the person's data, like Memory and
-projects. The environment is rebuilt from the list of installed plugins ([D26](#d26)), so that list has to match what was
-really installed, which only holds if one owner writes it. A missing folder of an installed plugin shows the plugin as
-broken on its page and does not stop the environment from rebuilding.
+projects. Installing needs no confirmation ([D28](#d28)), so routing it through the daemon would protect nothing; the
+folders themselves are the record the environment is rebuilt from ([D26](#d26)). Programs stay out of the image because
+a bundled plugin such as Blender, or a whole npm toolchain, would otherwise weigh on everyone who never uses it.
 
 **Shown with the others.** Plugins the agent wrote appear in the same list as bundled ones, marked as the person's own
 ("Twój plugin"), not as made by the agent — they asked for it, so it is theirs. (2026-11-14, owner)
 
 **Rejected.**
 
+- Installing as a request to the daemon, which alone writes the list of installed plugins and shows a plugin with a
+  missing folder as broken ([history](history/DECISIONS.md#d40)) — a gate with no safety behind it once installs need no
+  confirmation (owner, 2026-11-14, at the review).
+- Bundled plugins' programs built into the image, since they ship with the app anyway — every image would carry
+  programs most people never use (owner, 2026-11-14).
 - Hiding the agent's plugins from the Plugins list — the person would not know where a program in the environment came
   from, against the product's line that nothing is a black box ([D9](#d9)).
 - Labelling them "made by the agent" — "your plugin" reads better and gives the person the sense they built it (owner).
@@ -805,26 +810,35 @@ take are settled there by measurement.** (2026-11-14, owner)
 
 ## D42
 
-**A workflow is started by invoking its plugin's skill as a command (e.g. `/email-sorting`), and a schedule's prompt is
-that command, wherever the schedule was created — in the plugin's onboarding or in any later conversation. When the
-command's skill is not available (its plugin was removed), the conversation gets an instruction from the app: the
-command does not exist; stop, tell the person, and at most look for the cause (e.g. the plugin was removed); never try
-to do the task another way, such as reading the plugin's files and redoing what it did. Removing a plugin touches no
-schedule.** (2026-11-14, owner)
+**A schedule is just a prompt; it knows nothing of plugins. A plugin's commands carry its full name as a prefix
+(e.g. `/email-sorting:sort`), and plugin names are unique across all plugins, bundled and the person's own. When any
+conversation — a scheduled run, a subagent, the person typing — receives a command whose plugin is not installed, the
+daemon stops it before the agent acts, with a fixed message in the conversation saying that plugin is not installed.
+The conversation stays open, with the original prompt and that message in it: the person can say "install it back",
+and the agent knows what happened and continues. The agent never tries to do the task another way, such as reading the
+plugin's files and redoing what it did. Removing a plugin touches no schedule.** (2026-11-14, owner)
 
-**Why.** Schedules do not know which plugin they use: one can be created in any conversation, so tying them to the
-plugin that onboarded them is fragile. A missing command is a clean failure the person can see, while an agent that
-improvises the missing workflow — as coding agents do when a skill is unavailable and they read its files instead —
-does something nobody set up, after the person removed the plugin to stop it.
+**Why.** A schedule can be created in any conversation, so tying it to the plugin that onboarded it is fragile. A
+command without a prefix that matches nothing does not say whether its plugin was removed or never existed; the prefix
+does, so the daemon can decide deterministically rather than trusting the model to stop. An agent that improvises a
+missing workflow — as coding agents do when a skill is unavailable and they read its files instead — does something
+nobody set up, after the person removed the plugin to stop it. Keeping the conversation alive with its context lets
+the person fix a removal made by mistake without starting over.
 
 **Consequence.** Only installed plugins' folders are visible in the sandbox; a removed bundled plugin's files are not
-left there to be read. A plugin installed but not attached to the current project stays findable ([D11](#d11)).
+left there to be read. A plugin installed but not attached to the current project stays findable ([D11](#d11)). The
+agent cannot name a plugin of its own after a bundled one.
 
 **Unchecked.** Whether OpenCode 2.2.7 invokes a skill as a slash command, or the daemon has to expand the command itself
 when it starts the conversation.
 
 **Rejected.**
 
+- An instruction injected into the conversation telling the agent to stop, with the model deciding
+  ([history](history/DECISIONS.md#d42)) — an unprefixed command cannot tell removed from never existing, and stopping
+  should not rest on the model (owner, 2026-11-14).
+- The daemon checking a schedule's command before the run and starting no conversation — a schedule does not know it
+  belongs to a plugin, and the person could not continue the run after reinstalling (owner, 2026-11-14).
 - Removing a plugin lists the schedules of its projects to delete too — proposed by the design agent; unnecessary once a
   missing command fails cleanly.
 - A schedule remembering which plugin created it and disappearing with it — schedules are created in any conversation,

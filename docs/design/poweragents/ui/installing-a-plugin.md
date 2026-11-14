@@ -80,7 +80,6 @@ works — through a conversation, not configuration screens.
   page and in Waiting for you, and "Set up again" continues.
 - **Account sign-in cancelled or failed** — the conversation says so and offers to retry.
 - **Installation of the plugin's programs in progress** (can take a while for large ones like Blender).
-- **A plugin of the person's own that is broken** (its files were deleted) — shown as broken on its page, with remove.
 - **Plugin installed from inside an existing project** — no new project is created; it attaches there.
 
 ## Failures that must be visible
@@ -89,7 +88,8 @@ works — through a conversation, not configuration screens.
   is presented as working.
 - The connected account stops working later — the plugin's runs ask for reconnection.
 - Removing a plugin whose project holds the person's files — say that the files and the project stay. Its schedules
-  stay too; their next run stops and says the plugin is gone.
+  stay too; their next run stops with a message that the plugin is not installed, and the person can ask the agent
+  to install it back and continue.
 
 ## Technical constraints
 

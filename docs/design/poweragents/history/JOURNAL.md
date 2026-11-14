@@ -201,3 +201,8 @@ Append-only. One line per turn that settled something, was rejected, or got an a
 - 2026-11-14 — Story folded: new chapter plugins.md, README Plugins section and link replacing "D11 still open";
   ui/installing-a-plugin.md updated (no schedule in the package, no approval step, agent's install card, "Twój plugin",
   conflict state replaced by broken own plugin, removal keeps files and schedules). Next: rightsize.
+- 2026-11-14 — Rightsize (three passes) put to the owner: keep daemon-held sign-ins (D38), keep programs out of the
+  image (D40), keep profile/project levels (D34); agent plugins are folders, no daemon-written list or broken state
+  (D40 rewritten); commands prefixed with the plugin's unique name, the daemon stops a conversation whose plugin is
+  missing with a fixed message, conversation stays open to continue after reinstalling (D42 rewritten). Old forms to
+  history.
