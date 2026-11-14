@@ -129,6 +129,9 @@ written to GitHub, or it is lost.
 
 - One long-lived orchestrator session that remembers the plan — its memory dies with the session
   and duplicates the board.
+- No Backlog column, an issue only once its task is ready — an approved design session not yet
+  started, or an area of the design not yet split, would live only in a conversation and be lost
+  (rightsize, 2026-11-14, owner kept Backlog).
 
 ## D9
 

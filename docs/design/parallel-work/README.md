@@ -58,3 +58,11 @@ When it lands, its design folder is what the next planning conversation splits i
 This covers the orchestrating skill and the conventions it relies on in this repository, where the
 skill lives ([why here](DECISIONS.md#d6)). It does not change how an agent builds a task — that stays
 with the `/dev:*` skills and the git workflow.
+
+## What gets built first, and what is still open
+
+The first piece of work is the skill itself, in `.claude/skills/`, and the GitHub Project with its
+Backlog, Todo, In progress, In review and Done columns. Some of the Project's built-in automations may
+only be switchable in GitHub's web interface — not checked. Still open: whether the git workflow
+needs a passage on resolving conflicts between tasks that ran in parallel; writing the skill will
+show it.

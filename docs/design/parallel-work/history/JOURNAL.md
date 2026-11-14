@@ -24,3 +24,6 @@ Append-only. One line per turn that settled something, was rejected, or got an a
   for not-yet-split work and approved design sessions. README written.
 - 2026-11-14 — Owner: orchestrator keeps no memory, Backlog column (D8); launched agents Claude Opus
   5.5 medium, bypass (D9); minimal issue content (D10). Next: rightsize, then propose closing.
+- 2026-11-14 — Rightsize run (three passes); all items but the Backlog column were already chosen
+  by the owner with the simpler version in view, or concerned the record's form. Owner kept Backlog
+  (D8 Rejected line). Owner closed the design. README carries what gets built first.
