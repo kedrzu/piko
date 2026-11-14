@@ -8,7 +8,7 @@ import type { ConversationError, ConversationRunOutcome, ConversationStep } from
 export const DAEMON_EVENTS_PATH = '/api/events';
 
 /** An event the daemon streams, discriminated by `type`. */
-export type DaemonEvent = ConversationEvent | DataRootEvent | DaemonStreamRestoredEvent;
+export type DaemonEvent = ConversationEvent | DataRootEvent | PluginsChangedEvent | DaemonStreamRestoredEvent;
 
 /**
  * Something changed in the profile's data root, by the agent, the person or this daemon. Sent once for a burst of
@@ -24,6 +24,11 @@ export interface ProjectsChangedEvent {
 /** A file or folder in the Memory folder changed. */
 export interface MemoryChangedEvent {
     type: 'memoryChanged';
+}
+
+/** A plugin was installed or removed: the plugin list and its installs may differ. */
+export interface PluginsChangedEvent {
+    type: 'pluginsChanged';
 }
 
 /**

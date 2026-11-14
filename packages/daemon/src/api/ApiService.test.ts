@@ -16,6 +16,7 @@ import { OpencodeEventSubscribeCommand } from '@poweragents/opencode/OpencodeEve
 import type { OpencodeEvent } from '@poweragents/opencode/OpencodeEventSubscribeCommand.js';
 import { readSseData } from '@poweragents/opencode/utils/readSseData.js';
 
+import { PluginService } from '../plugins/PluginService.js';
 import { Sandbox } from '../sandbox/Sandbox.js';
 import type { SandboxState } from '../sandbox/Sandbox.js';
 import { ApiService } from './ApiService.js';
@@ -53,6 +54,17 @@ test('streams changes in the data root beside the conversation events', async ()
     await writeFile(path.join(dataRoot, 'memory', 'praca.md'), '# Praca\n');
 
     const expected: DaemonEvent[] = [{ type: 'memoryChanged' }];
+    expect((await frames).map((frame): unknown => JSON.parse(frame))).toEqual(expected);
+});
+
+test('streams a change of the installed plugins', async () => {
+    const { api, plugins } = setup();
+
+    const response = await api.handle(new Request(EVENTS_URL, { headers: { Origin: 'tauri://localhost' } }));
+    const frames = readFrames(response, 1);
+    await plugins.install({ name: 'gmail' });
+
+    const expected: DaemonEvent[] = [{ type: 'pluginsChanged' }];
     expect((await frames).map((frame): unknown => JSON.parse(frame))).toEqual(expected);
 });
 
@@ -170,7 +182,10 @@ function setup(agentEvents: OpencodeEvent[] = [], getVerifiedState?: () => Promi
     const { container, logs } = createTestContainer();
     // The event stream watches the data root: a fresh one, never the person's.
     const dataRoot = mkdtempSync(path.join(os.tmpdir(), 'poweragents-api-'));
-    container.set(EnvVariables, { POWERAGENTS_DATA_ROOT: dataRoot });
+    container.set(EnvVariables, {
+        POWERAGENTS_DATA_ROOT: dataRoot,
+        POWERAGENTS_PLUGINS_DIR: path.join(import.meta.dirname, '../plugins/fixtures/bundled'),
+    });
     const state: SandboxState = {
         status: 'ready',
         endpoint: { url: 'http://127.0.0.1:1', username: 'opencode', password: PASSWORD },
@@ -191,7 +206,7 @@ function setup(agentEvents: OpencodeEvent[] = [], getVerifiedState?: () => Promi
         await Promise.withResolvers<void>().promise;
     });
     container.set(OpencodeEventSubscribeCommand, subscribe);
-    return { api: container.resolve(ApiService), logs, subscribe, dataRoot };
+    return { api: container.resolve(ApiService), plugins: container.resolve(PluginService), logs, subscribe, dataRoot };
 }
 
 /** Reads the `data` of `count` events from a server-sent events response (skipping comments), then disconnects. */

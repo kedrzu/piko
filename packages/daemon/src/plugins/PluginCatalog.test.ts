@@ -123,6 +123,22 @@ test('reports a plugin.json it cannot read as the plugin error, with a warning',
     ]);
 });
 
+test('lists the bundled plugins and no own ones, with a warning, when the own plugins folder cannot be read', async () => {
+    const { catalog, ownDir, logs } = await setup();
+    await chmod(ownDir, 0o000);
+
+    const plugins = await catalog.list();
+    await chmod(ownDir, 0o755);
+
+    expect(plugins.map(summarize)).toEqual([
+        { name: 'email-sorting', source: 'bundled', errors: [] },
+        { name: 'gmail', source: 'bundled', errors: [] },
+    ]);
+    expect(logs.filter(log => log.level === 'warn').map(log => log.message)).toEqual([
+        'Own plugins folder unreadable, no own plugins listed',
+    ]);
+});
+
 test('lists no own plugins when their folder is a link', async () => {
     const { catalog, ownDir, tmp } = await setup();
     const moved = path.join(tmp, 'elsewhere');

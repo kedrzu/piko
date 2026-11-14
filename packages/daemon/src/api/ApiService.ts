@@ -10,6 +10,7 @@ import { DAEMON_API_PATH, DEV_SERVER_PORT } from '@poweragents/common/daemonAddr
 
 import { ConversationEventService } from '../conversations/ConversationEventService.js';
 import { DataRootWatchService } from '../dataRoot/DataRootWatchService.js';
+import { PluginService } from '../plugins/PluginService.js';
 import { AiStatusGetEndpointHandler } from './AiStatusGetEndpoint.handler.js';
 import { AppSetupStartEndpointHandler } from './AppSetupStartEndpoint.handler.js';
 import { ChatgptLoginCancelEndpointHandler } from './ChatgptLoginCancelEndpoint.handler.js';
@@ -92,8 +93,9 @@ export const ApiService = defineService({
         logger: Logger,
         conversationEvents: ConversationEventService,
         dataRootEvents: DataRootWatchService,
+        plugins: PluginService,
     },
-    setup({ container, logger, conversationEvents, dataRootEvents }): ApiServiceShape {
+    setup({ container, logger, conversationEvents, dataRootEvents, plugins }): ApiServiceShape {
         // A failure's name and message go back to the app, which shows them under "Show details"; the app is the only
         // client. `stackTraces` is what makes the router answer with them instead of a constant `UnknownError`;
         // `toResponse()` then drops the stack, which carries the daemon's internal paths. The whole error is logged.
@@ -168,10 +170,12 @@ export const ApiService = defineService({
                     const sendEvent = (event: DaemonEvent) => send(`data: ${JSON.stringify(event)}\n\n`);
                     const stopConversationEvents = conversationEvents.listen(sendEvent);
                     const stopDataRootEvents = dataRootEvents.listen(sendEvent);
+                    const stopPluginEvents = plugins.listen(sendEvent);
                     const heartbeat = setInterval(() => send(': heartbeat\n\n'), HEARTBEAT_MS);
                     close = () => {
                         stopConversationEvents();
                         stopDataRootEvents();
+                        stopPluginEvents();
                         clearInterval(heartbeat);
                     };
                     // A first comment sends the headers now, so the client's `EventSource` opens at once.

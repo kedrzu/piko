@@ -11,6 +11,7 @@ import { ChromiumInstall } from './browser/ChromiumInstall.js';
 import { POWERAGENTS_VERSION } from './env.js';
 import { DaemonLoggerTransport } from './logging/DaemonLoggerTransport.js';
 import { MemoryService } from './memory/MemoryService.js';
+import { PluginService } from './plugins/PluginService.js';
 import { LimaSandbox } from './sandbox/LimaSandbox.js';
 import { Sandbox } from './sandbox/Sandbox.js';
 import { SandboxOpencodeConnection } from './sandbox/SandboxOpencodeConnection.js';
@@ -44,6 +45,13 @@ await container
     .resolve(MemoryService)
     .ensureFolder()
     .catch((error: unknown) => logger.error('Memory folder could not be created', { error }));
+
+// The daemon's folder holds the copies of the installed plugins before the agent starts, and an own plugin's skill
+// changed while the daemon was down reaches it. A failure is logged and the daemon keeps serving, without plugins.
+await container
+    .resolve(PluginService)
+    .sync()
+    .catch((error: unknown) => logger.error('Plugin folder could not be synced', { error }));
 
 // The agent's browser (design D27). Downloads land in the data root's Downloads folder, which exists before the agent
 // looks for it. Every browser request goes through the network guard, so it listens before the browser can launch; the

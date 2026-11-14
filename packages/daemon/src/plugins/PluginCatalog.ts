@@ -56,7 +56,7 @@ export const PluginCatalog = defineService({
             const bundled = await readSource(path.resolve(bundledDir), 'bundled');
             const bundledNames = new Set(bundled.map(plugin => plugin.name));
             // A link in place of the own plugins' folder could point anywhere on this computer: no own plugins then.
-            const own = (await isRealFolder(ownDir)) ? await readSource(ownDir, 'own') : [];
+            const own = (await isRealFolder(ownDir)) ? await readOwn() : [];
             const checkedOwn = own.map((plugin): LocalPlugin =>
                 bundledNames.has(plugin.name)
                     ? { ...plugin, errors: [...plugin.errors, { code: 'conflict' }] }
@@ -70,6 +70,19 @@ export const PluginCatalog = defineService({
         async function get(name: string) {
             const plugins = await list();
             return plugins.find(plugin => plugin.name === name) ?? null;
+        }
+
+        /**
+         * The own plugins; none, with a warning, when their folder cannot be read (no permission, say): the bundled
+         * plugins still list.
+         */
+        async function readOwn() {
+            try {
+                return await readSource(ownDir, 'own');
+            } catch (error) {
+                logger.warn('Own plugins folder unreadable, no own plugins listed', { error });
+                return [];
+            }
         }
 
         /** Reads every plugin folder in a source's folder; none when the folder does not exist. */
