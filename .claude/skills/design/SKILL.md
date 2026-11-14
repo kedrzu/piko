@@ -27,6 +27,9 @@ description: >-
 
 - What the product is and why: `docs/design/poweragents/` (`README.md`, `DECISIONS.md`); design rounds go to
   `docs/design/poweragents/history/JOURNAL.md`.
+- Anything interactive inside a conversation (choices, forms, approvals, a browser handoff) follows
+  `docs/design/poweragents/ui/conversation-elements.md`; a new element is built from its parts and, when it adds a
+  pattern, described there.
 
 If the practice document isn't inlined below, read `nzyme/docs/practice/design.md` before changing the design.
 
