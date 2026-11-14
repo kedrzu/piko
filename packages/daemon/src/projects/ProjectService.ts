@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { lstat, mkdir, readdir, readFile, rename, rm, writeFile } from 'node:fs/promises';
+import { lstat, mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 import { defineService } from '@nzyme/ioc/Service.js';
@@ -13,6 +13,7 @@ import { compareProjectsByName } from '@poweragents/common/utils/compareProjects
 import { POWERAGENTS_DATA_ROOT, PROJECTS_FOLDER } from '../env.js';
 import { isErrorCode } from '../utils/isErrorCode.js';
 import { isRealFolder } from '../utils/isRealFolder.js';
+import { replaceFile } from '../utils/replaceFile.js';
 
 /** A project with the folder that holds it. */
 export interface LocalProject extends Project {
@@ -251,14 +252,7 @@ export const ProjectService = defineService({
          */
         async function replaceMarker(dir: string, marker: ProjectMarker) {
             assert(await isRealFolder(dir), 'Project folder is not a folder');
-            const temp = path.join(dir, `${MARKER_FILE}.${randomUUID()}.tmp`);
-            try {
-                await writeFile(temp, serializeMarker(marker), { flag: 'wx' });
-                await rename(temp, path.join(dir, MARKER_FILE));
-            } catch (error) {
-                await rm(temp, { force: true });
-                throw error;
-            }
+            await replaceFile(path.join(dir, MARKER_FILE), serializeMarker(marker));
         }
 
         async function readMarker(dir: string) {
