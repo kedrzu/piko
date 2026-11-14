@@ -30,11 +30,12 @@ $color-surface-soft: #f4f5f2;
 $color-surface-glass: rgb(255 255 255 / 45%);
 $color-border: #e3e6df;
 $color-border-strong: #d9ded6;
+$color-field-border: #7a827c; // 3.9:1 on $color-surface, 3.6:1 on $color-surface-soft: a control's outline (3:1)
 
 // Attention: errors and what needs the person
 $color-attention: #e2552e; // 3.8:1 on $color-surface: fills, strokes and icons only
 $color-attention-soft: #fce9e2;
-$color-attention-ink: #c2492a; // 4.9:1 on $color-surface
+$color-attention-ink: #b5401f; // 5.6:1 on $color-surface, 5.2:1 on $color-surface-soft, 4.8:1 on $color-attention-soft
 $color-attention-border: #f4cdbe;
 $color-attention-muted: #b0745f; // 3.8:1 on $color-surface: not for small text
 

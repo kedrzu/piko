@@ -19,13 +19,17 @@ import {
     AGENT_SPEC_LABEL,
     buildAgentRunArgs,
 } from './buildAgentRunArgs.js';
+import { buildAgentContainerfile } from './buildAgentContainerfile.js';
 import { buildHostFirewall } from './buildHostFirewall.js';
 import type { FirewallOpening } from './buildHostFirewall.js';
 import { buildLimaConfig } from './buildLimaConfig.js';
 import { readOrCreatePassword } from './readOrCreatePassword.js';
-import AGENT_CONTAINERFILE from '../../sandbox/agent.Containerfile' with { type: 'text' };
+import AGENT_CONTAINERFILE_BASE from '../../sandbox/agent.Containerfile' with { type: 'text' };
+import GENERATIVE_UI_SKILL from '../../sandbox/generative-ui.skill.gen.md' with { type: 'text' };
 import { Sandbox } from './Sandbox.js';
 import type { SandboxEndpoint, SandboxExecParams, SandboxProcess, SandboxState } from './Sandbox.js';
+
+const AGENT_CONTAINERFILE = buildAgentContainerfile(AGENT_CONTAINERFILE_BASE, GENERATIVE_UI_SKILL);
 
 const INSTANCE = 'poweragents-default';
 /** The agent's images, tagged by `getImageTag()`. */

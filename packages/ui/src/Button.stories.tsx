@@ -58,3 +58,24 @@ export const Busy: Story = {
         </Button>
     ),
 };
+
+/** A secondary button disabled, and the answer picked from a row of them: its check and outline stay. */
+export const Chosen: Story = {
+    render: () => (
+        <div style={{ display: 'flex', gap: '8px' }}>
+            <Button
+                variant="secondary"
+                chosen
+                disabled
+            >
+                Dom i dzieci
+            </Button>
+            <Button
+                variant="secondary"
+                disabled
+            >
+                Zdrowie i ruch
+            </Button>
+        </div>
+    ),
+};
