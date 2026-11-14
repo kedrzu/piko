@@ -15,8 +15,8 @@ import { toConversationError } from './toConversationError.js';
 import { toConversationStep } from './toConversationStep.js';
 
 /**
- * An agent's message as the conversation shows it; `undefined` for one that is not part of what was said (a model
- * switch, a compaction, …).
+ * An agent's message as the conversation shows it; `undefined` for one that is not part of what was said (the daemon's
+ * synthetic input, a model switch, a compaction, …).
  * @util
  * @__NO_SIDE_EFFECTS__
  */
@@ -40,6 +40,8 @@ export function toConversationMessage(message: OpencodeMessage): ConversationMes
                 outcome: message.outcome,
                 error: message.error && toConversationError(message.error),
             };
+        // Synthetic input is the daemon's, not what was said.
+        case 'synthetic':
         case 'other':
             return undefined;
         default:

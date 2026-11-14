@@ -12,7 +12,13 @@ type VendorMessage = components['schemas']['Session.Message.Info'];
 // A stand-in OpenCode server on the loopback, answering with one page of spec-typed messages, newest first as asked.
 const vendorMessages: VendorMessage[] = [
     // The daemon's opening instruction to the agent: not the person's words.
-    { id: 'msg_0', type: 'synthetic', time: { created: 0 }, text: 'Use the onboarding skill.' },
+    {
+        id: 'msg_0',
+        type: 'synthetic',
+        time: { created: 0 },
+        text: 'Use the onboarding skill.',
+        metadata: { kind: 'appSetup' },
+    },
     { id: 'msg_1', type: 'user', time: { created: 1 }, text: 'Utwórz plik' },
     {
         id: 'msg_2',
@@ -83,7 +89,7 @@ const server = Bun.serve({
 
 afterAll(() => server.stop(true));
 
-test('maps a page oldest first: prompts, replies with their tool calls in every state, run ends and the rest, synthetic input among it', async () => {
+test('maps a page oldest first: prompts, replies with their tool calls in every state, run ends, synthetic input and the rest', async () => {
     const { container } = createTestContainer();
     container.set(OpencodeConnection, {
         getEndpoint: () => ({ url: server.url.origin, username: 'opencode', password: 'pw' }),
@@ -99,7 +105,13 @@ test('maps a page oldest first: prompts, replies with their tool calls in every 
     // A page shorter than asked for holds the oldest message, whatever cursor OpenCode adds.
     expect(shortPage.olderCursor).toBeUndefined();
     const expected: OpencodeMessage[] = [
-        { type: 'other', id: 'msg_0', createdAt: 0 },
+        {
+            type: 'synthetic',
+            id: 'msg_0',
+            createdAt: 0,
+            text: 'Use the onboarding skill.',
+            metadata: { kind: 'appSetup' },
+        },
         { type: 'prompt', id: 'msg_1', createdAt: 1, text: 'Utwórz plik' },
         { type: 'other', id: 'msg_2', createdAt: 2 },
         {

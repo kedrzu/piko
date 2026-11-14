@@ -14,6 +14,7 @@ import type { PluginInfo, PluginInstall } from '@poweragents/common/api/PluginTy
 
 import { DAEMON_FOLDER, POWERAGENTS_DATA_ROOT } from '../env.js';
 import { ProjectService } from '../projects/ProjectService.js';
+import { Sandbox, SKILLS_SYNC_FILE } from '../sandbox/Sandbox.js';
 import { isErrorCode } from '../utils/isErrorCode.js';
 import { isRealFolder } from '../utils/isRealFolder.js';
 import { PluginCatalog } from './PluginCatalog.js';
@@ -60,7 +61,8 @@ export interface PluginServiceShape {
     remove(params: PluginInstallParams): Promise<void>;
     /**
      * Makes the daemon's `plugins/` and `skills/` hold exactly the copies of what is installed, so an own plugin's
-     * changed skill reaches the agent at the next sync. Returns whether anything changed.
+     * changed skill reaches the agent at the next sync, and tells a running agent when its skills changed. Returns
+     * whether anything changed.
      */
     sync(): Promise<boolean>;
     /** Calls `listener` after every installation and removal, until the returned function is called. */
@@ -92,8 +94,14 @@ const COPY_MAX_ENTRIES = 1000;
 /** The plugins installed in the profile and its projects, and the daemon's copies of them for the sandbox. */
 export const PluginService = defineService({
     name: 'PluginService',
-    deps: { logger: Logger, dataRoot: POWERAGENTS_DATA_ROOT, catalog: PluginCatalog, projects: ProjectService },
-    setup({ logger, dataRoot, catalog, projects }): PluginServiceShape {
+    deps: {
+        logger: Logger,
+        dataRoot: POWERAGENTS_DATA_ROOT,
+        catalog: PluginCatalog,
+        projects: ProjectService,
+        sandbox: Sandbox,
+    },
+    setup({ logger, dataRoot, catalog, projects, sandbox }): PluginServiceShape {
         const daemonDir = path.resolve(dataRoot, DAEMON_FOLDER);
         const manifestFile = path.join(daemonDir, MANIFEST_FILE);
         const copiesDir = path.join(daemonDir, COPIES_FOLDER);
@@ -227,20 +235,33 @@ export const PluginService = defineService({
             }
 
             const copiesChanged = await mirror(copiesDir, copies);
-            const skillsChanged = await mirror(skillsDir, skills);
+            const skillsChanged = await mirror(skillsDir, skills, SKILLS_SYNC_FILE);
             const changed = copiesChanged || skillsChanged;
             logger.debug('Daemon folder synced', { changed, pluginCount: copies.size, skillCount: skills.size });
+            if (skillsChanged) {
+                await notifySkillsChanged();
+            }
             return changed;
         }
 
+        /** Tells the agent its skills changed; a failure is logged, and the agent sees the change when it next starts. */
+        async function notifySkillsChanged() {
+            try {
+                await sandbox.notifySkillsChanged();
+            } catch (error) {
+                logger.warn('Sandbox not told the skills changed', { error });
+            }
+        }
+
         /**
-         * Makes `parent` hold exactly a copy of each `desired` source folder under its name: anything else goes, and a
-         * copy that differs from its source is replaced. A source that cannot be copied (too large, say) is left out.
+         * Makes `parent` hold exactly a copy of each `desired` source folder under its name: anything else but the `kept`
+         * entry goes, and a copy that differs from its source is replaced. A source that cannot be copied (too large,
+         * say) is left out.
          */
-        async function mirror(parent: string, desired: Map<string, string>) {
+        async function mirror(parent: string, desired: Map<string, string>, kept?: string) {
             let changed = false;
             for (const name of await readdir(parent)) {
-                if (!desired.has(name)) {
+                if (!desired.has(name) && name !== kept) {
                     // Not recursive into a link: `rm` removes the link itself.
                     await rm(path.join(parent, name), { recursive: true, force: true });
                     changed = true;

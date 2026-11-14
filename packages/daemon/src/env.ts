@@ -60,6 +60,9 @@ export const BROWSER_TUNNEL_PORT = 47612;
 /** The loopback port of the proxy the agent's browser sends its traffic through. */
 export const BROWSER_PROXY_PORT = 47613;
 
+/** The loopback port of the daemon's API for the sandbox: what the agent's tools call (`POWERAGENTS_DAEMON_URL`). */
+export const SANDBOX_API_PORT = 47614;
+
 /**
  * The version of the app that started this daemon, reported on `/status` so the desktop app can tell a daemon left over
  * from before an update. Unset for a daemon run from a worktree in development, which the app never replaces.

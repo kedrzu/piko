@@ -195,6 +195,7 @@ async function setup() {
         exec: () => {
             throw new Error('not used');
         },
+        notifySkillsChanged: () => Promise.resolve(),
     });
     const providers: Providers = {
         claude: { connected: true, email: 'ola@example.com', plan: 'max', planAllowed: true },

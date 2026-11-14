@@ -16,7 +16,7 @@
     },
     "scripts": {
         "schema": "curl -fsSL https://raw.githubusercontent.com/anomalyco/opencode/v2.2.7/packages/protocol/openapi.json -o src/openapi.json && oxfmt src/openapi.json",
-        "codegen": "openapi-typescript src/openapi.json -o src/schema.gen.ts && oxfmt src/schema.gen.ts"
+        "codegen": "openapi-typescript src/openapi.json --empty-objects-unknown -o src/schema.gen.ts && oxfmt src/schema.gen.ts"
     },
     "dependencies": {
         "@nzyme/ioc": "workspace:*",

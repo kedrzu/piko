@@ -2975,7 +2975,7 @@ export interface components {
                 headers?: {
                     [key: string]: string;
                 };
-                body?: Record<string, never>;
+                body?: Record<string, unknown>;
             };
             system?: string;
             description?: string;
@@ -3180,7 +3180,7 @@ export interface components {
             env?: {
                 [key: string]: string;
             };
-            initialization?: Record<string, never>;
+            initialization?: Record<string, unknown>;
         };
         'Config.Model.Capabilities': {
             tools?: boolean;
@@ -3243,7 +3243,7 @@ export interface components {
             headers?: {
                 [key: string]: string;
             };
-            body?: Record<string, never>;
+            body?: Record<string, unknown>;
             capabilities?: components['schemas']['Config.Model.Capabilities'];
             variants?: {
                 id: string;
@@ -3251,7 +3251,7 @@ export interface components {
                 headers?: {
                     [key: string]: string;
                 };
-                body?: Record<string, never>;
+                body?: Record<string, unknown>;
             }[];
             cost?:
                 | components['schemas']['Config.Model.CostEncoded']
@@ -3268,7 +3268,7 @@ export interface components {
         };
         'Config.Plugin.EntryEncoded': {
             package: string;
-            options?: Record<string, never>;
+            options?: Record<string, unknown>;
         };
         'Config.Provider.Settings': {
             timeout?: number | false;
@@ -3291,7 +3291,7 @@ export interface components {
             headers?: {
                 [key: string]: string;
             };
-            body?: Record<string, never>;
+            body?: Record<string, unknown>;
             models?: {
                 [key: string]: components['schemas']['Config.ModelEncoded'];
             };
@@ -3370,14 +3370,14 @@ export interface components {
             /** @enum {string} */
             type: 'external';
             methodID: components['schemas']['Integration.MethodID'];
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
         };
         'Credential.ID': string;
         'Credential.Key': {
             /** @enum {string} */
             type: 'key';
             key: string;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
         };
         'Credential.OAuth': {
             /** @enum {string} */
@@ -3386,7 +3386,7 @@ export interface components {
             refresh: string;
             access: string;
             expires: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
         };
         'Credential.Value':
             | components['schemas']['Credential.OAuth']
@@ -3541,7 +3541,7 @@ export interface components {
             maximum?: number | ('NaN' | 'Infinity' | '-Infinity');
             default?: number | ('NaN' | 'Infinity' | '-Infinity');
         };
-        'Form.Metadata': Record<string, never>;
+        'Form.Metadata': Record<string, unknown>;
         'Form.MultiselectField': {
             key: string;
             title?: string;
@@ -3800,7 +3800,7 @@ export interface components {
             native?: components['schemas']['Generate.Native'];
         };
         /** @description Provider-specific data the shared fields do not cover */
-        'Generate.Native': Record<string, never>;
+        'Generate.Native': Record<string, unknown>;
         'Generate.PredicateAnswer': {
             /** @enum {string} */
             type: 'predicate';
@@ -3995,7 +3995,7 @@ export interface components {
         'Integration.Info': {
             id: components['schemas']['Integration.ID'];
             name: string;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             methods: components['schemas']['Integration.Method'][];
             connections: components['schemas']['Connection.Info'][];
         };
@@ -4281,7 +4281,7 @@ export interface components {
             headers?: {
                 [key: string]: string;
             };
-            body?: Record<string, never>;
+            body?: Record<string, unknown>;
             capabilities: components['schemas']['Model.Capabilities'];
             variants: components['schemas']['Model.Variant'][];
             time: {
@@ -4321,7 +4321,7 @@ export interface components {
             headers?: {
                 [key: string]: string;
             };
-            body?: Record<string, never>;
+            body?: Record<string, unknown>;
         };
         'Model.VariantSettings': {
             compaction?: components['schemas']['Provider.Compaction'];
@@ -4356,7 +4356,7 @@ export interface components {
             action: string;
             resources: string[];
             save?: string[];
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             source?: components['schemas']['Permission.Source'];
             message?: string;
         };
@@ -4482,7 +4482,7 @@ export interface components {
         'Plugin.GuiBundle': {
             code: string;
             revision: string;
-            options: Record<string, never>;
+            options: Record<string, unknown>;
         };
         'Plugin.ID': string;
         'Plugin.Info': {
@@ -4657,14 +4657,14 @@ export interface components {
             headers?: {
                 [key: string]: string;
             };
-            body?: Record<string, never>;
+            body?: Record<string, unknown>;
         };
         'Provider.Request': {
             settings: components['schemas']['Provider.Settings'];
             headers: {
                 [key: string]: string;
             };
-            body: Record<string, never>;
+            body: Record<string, unknown>;
         };
         'Provider.Settings': {
             timeout?: number | false;
@@ -5070,7 +5070,7 @@ export interface components {
         'Session.Inbox.SyntheticPayload': {
             text: string;
             description?: string;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
         };
         'Session.Inbox.User': {
             id: components['schemas']['Session.Message.ID'];
@@ -5088,7 +5088,7 @@ export interface components {
             files?: components['schemas']['Prompt.FileAttachment'][];
             agents?: components['schemas']['Prompt.AgentAttachment'][];
             skills?: components['schemas']['Prompt.SkillAttachment'][];
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
         };
         'Session.Info': {
             id: components['schemas']['Session.ID'];
@@ -5121,7 +5121,7 @@ export interface components {
         };
         'Session.Message.AgentSelected': {
             id: components['schemas']['Session.Message.ID'];
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             time: {
                 created: number;
             };
@@ -5132,7 +5132,7 @@ export interface components {
         };
         'Session.Message.Assistant': {
             id: components['schemas']['Session.Message.ID'];
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             time: {
                 created: number;
                 streamed?: number;
@@ -5212,7 +5212,7 @@ export interface components {
             /** @enum {string} */
             type: 'compaction';
             id: components['schemas']['Session.Message.ID'];
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             time: {
                 created: number;
             };
@@ -5230,7 +5230,7 @@ export interface components {
             /** @enum {string} */
             type: 'compaction';
             id: components['schemas']['Session.Message.ID'];
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             time: {
                 created: number;
             };
@@ -5246,7 +5246,7 @@ export interface components {
             /** @enum {string} */
             type: 'compaction';
             id: components['schemas']['Session.Message.ID'];
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             time: {
                 created: number;
             };
@@ -5259,7 +5259,7 @@ export interface components {
         'Session.Message.ID': string;
         'Session.Message.Idle': {
             id: components['schemas']['Session.Message.ID'];
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             time: {
                 created: number;
             };
@@ -5283,7 +5283,7 @@ export interface components {
             | components['schemas']['Session.Message.Idle'];
         'Session.Message.LocationSwitched': {
             id: components['schemas']['Session.Message.ID'];
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             time: {
                 created: number;
             };
@@ -5300,7 +5300,7 @@ export interface components {
         };
         'Session.Message.ModelSelected': {
             id: components['schemas']['Session.Message.ID'];
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             time: {
                 created: number;
             };
@@ -5309,10 +5309,10 @@ export interface components {
             model: components['schemas']['Model.Ref'];
             previous?: components['schemas']['Model.Ref'];
         };
-        'Session.Message.Native': Record<string, never>;
+        'Session.Message.Native': Record<string, unknown>;
         'Session.Message.Shell': {
             id: components['schemas']['Session.Message.ID'];
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             time: {
                 created: number;
                 completed?: number;
@@ -5333,7 +5333,7 @@ export interface components {
         };
         'Session.Message.Skill': {
             id: components['schemas']['Session.Message.ID'];
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             time: {
                 created: number;
             };
@@ -5345,7 +5345,7 @@ export interface components {
         };
         'Session.Message.Synthetic': {
             id: components['schemas']['Session.Message.ID'];
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             time: {
                 created: number;
             };
@@ -5356,7 +5356,7 @@ export interface components {
         };
         'Session.Message.System': {
             id: components['schemas']['Session.Message.ID'];
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             time: {
                 created: number;
             };
@@ -5368,23 +5368,23 @@ export interface components {
         'Session.Message.ToolState.Completed': {
             /** @enum {string} */
             status: 'completed';
-            input: Record<string, never>;
+            input: Record<string, unknown>;
             content: [components['schemas']['Tool.Content']];
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
         };
         'Session.Message.ToolState.Error': {
             /** @enum {string} */
             status: 'error';
-            input: Record<string, never>;
+            input: Record<string, unknown>;
             error: components['schemas']['Session.StructuredError'];
             content?: [components['schemas']['Tool.Content']];
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
         };
         'Session.Message.ToolState.Running': {
             /** @enum {string} */
             status: 'running';
-            input: Record<string, never>;
-            metadata: Record<string, never>;
+            input: Record<string, unknown>;
+            metadata: Record<string, unknown>;
         };
         'Session.Message.ToolState.Streaming': {
             /** @enum {string} */
@@ -5393,7 +5393,7 @@ export interface components {
         };
         'Session.Message.User': {
             id: components['schemas']['Session.Message.ID'];
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             time: {
                 created: number;
             };
@@ -5404,7 +5404,7 @@ export interface components {
             /** @enum {string} */
             type: 'user';
         };
-        'Session.Metadata': Record<string, never>;
+        'Session.Metadata': Record<string, unknown>;
         'Session.Revert': {
             messageID: components['schemas']['Session.Message.ID'];
             partID?: string;
@@ -5540,7 +5540,7 @@ export interface components {
         SessionStatusUpdated: {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.status';
             location?: components['schemas']['Location.Ref'];
@@ -5574,7 +5574,7 @@ export interface components {
             pid?: number;
             exit?: number;
             signal?: string;
-            metadata: Record<string, never>;
+            metadata: Record<string, unknown>;
             time: {
                 /** @description Start time in milliseconds since the Unix epoch */
                 started: number;
@@ -5791,14 +5791,14 @@ export interface components {
         'V2Event.rpc': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never> | null;
+            metadata?: Record<string, unknown> | null;
             type: string;
             location: components['schemas']['Location.PublicRef'];
-            data: Record<string, never>;
+            data: Record<string, unknown>;
         };
         'V2Event.server.connected': {
             id: components['schemas']['Event.ID'];
-            metadata?: Record<string, never> | null;
+            metadata?: Record<string, unknown> | null;
             location?: components['schemas']['Location.PublicRef'] | null;
             /** @enum {string} */
             type: 'server.connected';
@@ -5935,7 +5935,7 @@ export interface components {
         'agent.updated': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'agent.updated';
             location?: components['schemas']['Location.Ref'];
@@ -5944,7 +5944,7 @@ export interface components {
         'artifact.updated': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'artifact.updated';
             location?: components['schemas']['Location.Ref'];
@@ -5953,7 +5953,7 @@ export interface components {
         'command.updated': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'command.updated';
             location?: components['schemas']['Location.Ref'];
@@ -5962,7 +5962,7 @@ export interface components {
         'config.updated': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'config.updated';
             location?: components['schemas']['Location.Ref'];
@@ -5971,7 +5971,7 @@ export interface components {
         'credential.switched': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'credential.switched';
             location?: components['schemas']['Location.Ref'];
@@ -5983,7 +5983,7 @@ export interface components {
         'credential.updated': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'credential.updated';
             location?: components['schemas']['Location.Ref'];
@@ -5995,7 +5995,7 @@ export interface components {
         'filesystem.changed': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'filesystem.changed';
             location?: components['schemas']['Location.Ref'];
@@ -6008,7 +6008,7 @@ export interface components {
         'form.cancelled': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'form.cancelled';
             location?: components['schemas']['Location.Ref'];
@@ -6020,7 +6020,7 @@ export interface components {
         'form.created': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'form.created';
             location?: components['schemas']['Location.Ref'];
@@ -6031,7 +6031,7 @@ export interface components {
         'form.replied': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'form.replied';
             location?: components['schemas']['Location.Ref'];
@@ -6044,7 +6044,7 @@ export interface components {
         'installation.update-available': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'installation.update-available';
             location?: components['schemas']['Location.Ref'];
@@ -6055,7 +6055,7 @@ export interface components {
         'installation.updated': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'installation.updated';
             location?: components['schemas']['Location.Ref'];
@@ -6066,7 +6066,7 @@ export interface components {
         'integration.updated': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'integration.updated';
             location?: components['schemas']['Location.Ref'];
@@ -6075,7 +6075,7 @@ export interface components {
         'location.shutdown': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'location.shutdown';
             location?: components['schemas']['Location.Ref'];
@@ -6084,7 +6084,7 @@ export interface components {
         'mcp.resources.changed': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'mcp.resources.changed';
             location?: components['schemas']['Location.Ref'];
@@ -6095,7 +6095,7 @@ export interface components {
         'mcp.status.changed': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'mcp.status.changed';
             location?: components['schemas']['Location.Ref'];
@@ -6106,7 +6106,7 @@ export interface components {
         'model.updated': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'model.updated';
             location?: components['schemas']['Location.Ref'];
@@ -6115,7 +6115,7 @@ export interface components {
         'models-dev.refreshed': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'models-dev.refreshed';
             location?: components['schemas']['Location.Ref'];
@@ -6124,7 +6124,7 @@ export interface components {
         'permission.asked': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'permission.asked';
             location?: components['schemas']['Location.Ref'];
@@ -6134,7 +6134,7 @@ export interface components {
                 action: string;
                 resources: string[];
                 save?: string[];
-                metadata?: Record<string, never>;
+                metadata?: Record<string, unknown>;
                 source?: components['schemas']['Permission.Source'];
                 message?: string;
             };
@@ -6142,7 +6142,7 @@ export interface components {
         'permission.replied': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'permission.replied';
             location?: components['schemas']['Location.Ref'];
@@ -6155,7 +6155,7 @@ export interface components {
         'persistent-pty.added': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'persistent-pty.added';
             location?: components['schemas']['Location.Ref'];
@@ -6167,7 +6167,7 @@ export interface components {
         'persistent-pty.removed': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'persistent-pty.removed';
             location?: components['schemas']['Location.Ref'];
@@ -6179,7 +6179,7 @@ export interface components {
         'persistent-pty.updated': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'persistent-pty.updated';
             location?: components['schemas']['Location.Ref'];
@@ -6191,7 +6191,7 @@ export interface components {
         'plugin.updated': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'plugin.updated';
             location?: components['schemas']['Location.Ref'];
@@ -6200,7 +6200,7 @@ export interface components {
         'project.updated': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'project.updated';
             location?: components['schemas']['Location.Ref'];
@@ -6218,7 +6218,7 @@ export interface components {
         'provider.updated': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'provider.updated';
             location?: components['schemas']['Location.Ref'];
@@ -6227,7 +6227,7 @@ export interface components {
         'pty.created': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'pty.created';
             location?: components['schemas']['Location.Ref'];
@@ -6238,7 +6238,7 @@ export interface components {
         'pty.deleted': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'pty.deleted';
             location?: components['schemas']['Location.Ref'];
@@ -6249,7 +6249,7 @@ export interface components {
         'pty.exited': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'pty.exited';
             location?: components['schemas']['Location.Ref'];
@@ -6261,7 +6261,7 @@ export interface components {
         'pty.updated': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'pty.updated';
             location?: components['schemas']['Location.Ref'];
@@ -6272,7 +6272,7 @@ export interface components {
         'reference.updated': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'reference.updated';
             location?: components['schemas']['Location.Ref'];
@@ -6281,7 +6281,7 @@ export interface components {
         'session.agent.selected': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.agent.selected';
             durable: {
@@ -6299,7 +6299,7 @@ export interface components {
         'session.archived': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.archived';
             durable: {
@@ -6315,7 +6315,7 @@ export interface components {
         'session.compaction.delta': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.compaction.delta';
             location?: components['schemas']['Location.Ref'];
@@ -6327,7 +6327,7 @@ export interface components {
         'session.compaction.ended': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.compaction.ended';
             durable: {
@@ -6350,7 +6350,7 @@ export interface components {
         'session.compaction.failed': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.compaction.failed';
             durable: {
@@ -6372,7 +6372,7 @@ export interface components {
         'session.compaction.started': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.compaction.started';
             durable: {
@@ -6391,7 +6391,7 @@ export interface components {
         'session.created': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.created';
             durable: {
@@ -6418,7 +6418,7 @@ export interface components {
         'session.deleted': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.deleted';
             durable: {
@@ -6434,7 +6434,7 @@ export interface components {
         'session.execution.failed': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.execution.failed';
             durable: {
@@ -6451,7 +6451,7 @@ export interface components {
         'session.execution.interrupted': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.execution.interrupted';
             durable: {
@@ -6469,7 +6469,7 @@ export interface components {
         'session.execution.started': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.execution.started';
             durable: {
@@ -6485,7 +6485,7 @@ export interface components {
         'session.execution.succeeded': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.execution.succeeded';
             durable: {
@@ -6501,7 +6501,7 @@ export interface components {
         'session.forked': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.forked';
             durable: {
@@ -6523,7 +6523,7 @@ export interface components {
         'session.idle': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.idle';
             location?: components['schemas']['Location.Ref'];
@@ -6534,7 +6534,7 @@ export interface components {
         'session.inbox.cancelled': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.inbox.cancelled';
             durable: {
@@ -6551,7 +6551,7 @@ export interface components {
         'session.inbox.delivered': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.inbox.delivered';
             durable: {
@@ -6568,7 +6568,7 @@ export interface components {
         'session.inbox.delivery.changed': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.inbox.delivery.changed';
             durable: {
@@ -6586,7 +6586,7 @@ export interface components {
         'session.inbox.enqueued': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.inbox.enqueued';
             durable: {
@@ -6604,7 +6604,7 @@ export interface components {
         'session.instructions.updated': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.instructions.updated';
             durable: {
@@ -6624,7 +6624,7 @@ export interface components {
         'session.message.content.updated': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.message.content.updated';
             durable: {
@@ -6642,7 +6642,7 @@ export interface components {
         'session.metadata.updated': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.metadata.updated';
             durable: {
@@ -6659,7 +6659,7 @@ export interface components {
         'session.model.selected': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.model.selected';
             durable: {
@@ -6677,7 +6677,7 @@ export interface components {
         'session.moved': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.moved';
             durable: {
@@ -6696,7 +6696,7 @@ export interface components {
         'session.permissions': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.permissions';
             durable: {
@@ -6713,7 +6713,7 @@ export interface components {
         'session.reasoning.delta': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.reasoning.delta';
             location?: components['schemas']['Location.Ref'];
@@ -6727,7 +6727,7 @@ export interface components {
         'session.reasoning.ended': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.reasoning.ended';
             durable: {
@@ -6747,7 +6747,7 @@ export interface components {
         'session.reasoning.started': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.reasoning.started';
             durable: {
@@ -6766,7 +6766,7 @@ export interface components {
         'session.renamed': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.renamed';
             durable: {
@@ -6783,7 +6783,7 @@ export interface components {
         'session.retry.scheduled': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.retry.scheduled';
             durable: {
@@ -6803,7 +6803,7 @@ export interface components {
         'session.revert.cleared': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.revert.cleared';
             durable: {
@@ -6819,7 +6819,7 @@ export interface components {
         'session.revert.committed': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.revert.committed';
             durable: {
@@ -6836,7 +6836,7 @@ export interface components {
         'session.revert.staged': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.revert.staged';
             durable: {
@@ -6853,7 +6853,7 @@ export interface components {
         'session.shell.ended': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.shell.ended';
             durable: {
@@ -6876,7 +6876,7 @@ export interface components {
         'session.shell.started': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.shell.started';
             durable: {
@@ -6893,7 +6893,7 @@ export interface components {
         'session.skill.activated': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.skill.activated';
             durable: {
@@ -6912,7 +6912,7 @@ export interface components {
         'session.step.ended': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.step.ended';
             durable: {
@@ -6937,7 +6937,7 @@ export interface components {
         'session.step.failed': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.step.failed';
             durable: {
@@ -6962,7 +6962,7 @@ export interface components {
         'session.step.started': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.step.started';
             durable: {
@@ -6983,7 +6983,7 @@ export interface components {
         'session.step.streamed': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.step.streamed';
             durable: {
@@ -7000,7 +7000,7 @@ export interface components {
         'session.synthetic': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.synthetic';
             durable: {
@@ -7013,13 +7013,13 @@ export interface components {
                 sessionID: components['schemas']['Session.ID'];
                 text: string;
                 description?: string;
-                metadata?: Record<string, never>;
+                metadata?: Record<string, unknown>;
             };
         };
         'session.text.delta': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.text.delta';
             location?: components['schemas']['Location.Ref'];
@@ -7033,7 +7033,7 @@ export interface components {
         'session.text.ended': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.text.ended';
             durable: {
@@ -7053,7 +7053,7 @@ export interface components {
         'session.text.started': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.text.started';
             durable: {
@@ -7071,7 +7071,7 @@ export interface components {
         'session.tool.called': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.tool.called';
             durable: {
@@ -7084,7 +7084,7 @@ export interface components {
                 sessionID: components['schemas']['Session.ID'];
                 assistantMessageID: components['schemas']['Session.Message.ID'];
                 id: string;
-                input: Record<string, never>;
+                input: Record<string, unknown>;
                 executed: boolean;
                 native?: components['schemas']['Session.Message.Native'];
             };
@@ -7092,7 +7092,7 @@ export interface components {
         'session.tool.failed': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.tool.failed';
             durable: {
@@ -7107,7 +7107,7 @@ export interface components {
                 id: string;
                 error: components['schemas']['Session.StructuredError'];
                 content?: [components['schemas']['Tool.Content']];
-                metadata?: Record<string, never>;
+                metadata?: Record<string, unknown>;
                 executed: boolean;
                 native?: components['schemas']['Session.Message.Native'];
             };
@@ -7115,7 +7115,7 @@ export interface components {
         'session.tool.input.delta': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.tool.input.delta';
             location?: components['schemas']['Location.Ref'];
@@ -7129,7 +7129,7 @@ export interface components {
         'session.tool.input.ended': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.tool.input.ended';
             durable: {
@@ -7148,7 +7148,7 @@ export interface components {
         'session.tool.input.started': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.tool.input.started';
             durable: {
@@ -7167,7 +7167,7 @@ export interface components {
         'session.tool.progress': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.tool.progress';
             location?: components['schemas']['Location.Ref'];
@@ -7175,13 +7175,13 @@ export interface components {
                 sessionID: components['schemas']['Session.ID'];
                 assistantMessageID: components['schemas']['Session.Message.ID'];
                 id: string;
-                metadata: Record<string, never>;
+                metadata: Record<string, unknown>;
             };
         };
         'session.tool.success': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.tool.success';
             durable: {
@@ -7195,7 +7195,7 @@ export interface components {
                 assistantMessageID: components['schemas']['Session.Message.ID'];
                 id: string;
                 content: [components['schemas']['Tool.Content']];
-                metadata?: Record<string, never>;
+                metadata?: Record<string, unknown>;
                 executed: boolean;
                 native?: components['schemas']['Session.Message.Native'];
             };
@@ -7203,7 +7203,7 @@ export interface components {
         'session.unarchived': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.unarchived';
             durable: {
@@ -7219,7 +7219,7 @@ export interface components {
         'session.usage.recorded': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.usage.recorded';
             durable: {
@@ -7239,7 +7239,7 @@ export interface components {
         'session.usage.updated': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.usage.updated';
             location?: components['schemas']['Location.Ref'];
@@ -7252,7 +7252,7 @@ export interface components {
         'session.viewed': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'session.viewed';
             durable: {
@@ -7269,7 +7269,7 @@ export interface components {
         'shell.created': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'shell.created';
             location?: components['schemas']['Location.Ref'];
@@ -7280,7 +7280,7 @@ export interface components {
         'shell.deleted': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'shell.deleted';
             location?: components['schemas']['Location.Ref'];
@@ -7291,7 +7291,7 @@ export interface components {
         'shell.exited': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'shell.exited';
             location?: components['schemas']['Location.Ref'];
@@ -7305,7 +7305,7 @@ export interface components {
         'skill.updated': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'skill.updated';
             location?: components['schemas']['Location.Ref'];
@@ -7314,7 +7314,7 @@ export interface components {
         'tui.command.execute': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'tui.command.execute';
             location?: components['schemas']['Location.Ref'];
@@ -7344,7 +7344,7 @@ export interface components {
         'tui.prompt.append': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'tui.prompt.append';
             location?: components['schemas']['Location.Ref'];
@@ -7355,7 +7355,7 @@ export interface components {
         'tui.session.select': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'tui.session.select';
             location?: components['schemas']['Location.Ref'];
@@ -7366,7 +7366,7 @@ export interface components {
         'tui.toast.show': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'tui.toast.show';
             location?: components['schemas']['Location.Ref'];
@@ -7381,7 +7381,7 @@ export interface components {
         'vcs.branch.updated': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'vcs.branch.updated';
             location?: components['schemas']['Location.Ref'];
@@ -7392,7 +7392,7 @@ export interface components {
         'websearch.updated': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'websearch.updated';
             location?: components['schemas']['Location.Ref'];
@@ -7401,7 +7401,7 @@ export interface components {
         'worktree.resolved': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'worktree.resolved';
             durable: {
@@ -7420,7 +7420,7 @@ export interface components {
         'worktree.updated': {
             id: components['schemas']['Event.ID'];
             created: number;
-            metadata?: Record<string, never>;
+            metadata?: Record<string, unknown>;
             /** @enum {string} */
             type: 'worktree.updated';
             location?: components['schemas']['Location.Ref'];
@@ -8717,7 +8717,7 @@ export interface operations {
                     files?: components['schemas']['PromptInput.FileAttachment'][];
                     agents?: components['schemas']['Prompt.AgentAttachment'][];
                     skills?: components['schemas']['PromptInput.SkillAttachment'][];
-                    metadata?: Record<string, never>;
+                    metadata?: Record<string, unknown>;
                     delivery?: components['schemas']['Session.Inbox.Delivery'] | null;
                     resume?: boolean | null;
                 };
@@ -8917,7 +8917,7 @@ export interface operations {
                     id?: components['schemas']['Session.Message.ID'] | null;
                     text: string;
                     description?: string | null;
-                    metadata?: Record<string, never>;
+                    metadata?: Record<string, unknown>;
                     delivery?: components['schemas']['Session.Inbox.Delivery'] | null;
                     resume?: boolean | null;
                 };
@@ -11089,7 +11089,7 @@ export interface operations {
             content: {
                 'application/json': {
                     model: string;
-                    session?: Record<string, never> | null;
+                    session?: Record<string, unknown> | null;
                     transport: components['schemas']['VoiceTransportInput'];
                 };
             };
@@ -13074,7 +13074,7 @@ export interface operations {
                     action: string;
                     resources: string[];
                     save?: string[];
-                    metadata?: Record<string, never>;
+                    metadata?: Record<string, unknown>;
                     source?: components['schemas']['Permission.Source'];
                     agent?: components['schemas']['Agent.ID'] | null;
                 };
@@ -16149,7 +16149,7 @@ export interface operations {
                     command: string;
                     cwd?: string;
                     timeout?: number;
-                    metadata?: Record<string, never>;
+                    metadata?: Record<string, unknown>;
                 };
             };
         };

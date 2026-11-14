@@ -6,18 +6,22 @@ import path from 'node:path';
 import { HttpError } from '@nzyme/fetch-utils/HttpError.js';
 import { EnvVariables } from '@nzyme/ioc/helpers/EnvVariables.js';
 import { createTestContainer } from '@nzyme/ioc-testing/createTestContainer.js';
+import { createEventEmitter } from '@nzyme/utils/createEventEmitter.js';
 
 import type { PluginsChangedEvent } from '@poweragents/common/api/DaemonEventTypes.js';
 import type { PluginInstall } from '@poweragents/common/api/PluginTypes.js';
 
 import { ProjectService } from '../projects/ProjectService.js';
 import type { ProjectServiceShape } from '../projects/ProjectService.js';
+import { Sandbox, SKILLS_SYNC_FILE } from '../sandbox/Sandbox.js';
+import type { SandboxState } from '../sandbox/Sandbox.js';
 import { PluginService } from './PluginService.js';
 import type { PluginServiceShape } from './PluginService.js';
 
 // The filesystem is the boundary: each test gets its own data root in a fresh temporary folder, with the own plugins
 // of `fixtures/own` and the bundled ones read from `fixtures/bundled`. Valid there: bundled `gmail` (profile level) and
-// `email-sorting` (project level), own `my-notes`; the other own plugins have errors.
+// `email-sorting` (project level), own `my-notes`; the other own plugins have errors. The sandbox is a fake that counts
+// how often it was told the skills changed.
 
 const FIXTURES = path.join(import.meta.dirname, 'fixtures');
 
@@ -223,7 +227,53 @@ test('reads a malformed manifest as no installations, with a warning, and leaves
     ).toBe(true);
 });
 
-async function setup() {
+test('tells the sandbox when the skills changed, not when nothing or only the plugin copies changed', async () => {
+    const { plugins, daemonDir, dataRoot, sandbox } = await setup();
+
+    await plugins.sync();
+    expect(sandbox.notified).toBe(1);
+
+    expect(await plugins.sync()).toBe(false);
+    await writeFile(path.join(daemonDir, 'plugins', 'stray.txt'), 'stray');
+    expect(await plugins.sync()).toBe(true);
+    expect(sandbox.notified).toBe(1);
+
+    await writeFile(path.join(dataRoot, 'plugins', 'my-notes', 'skills', 'take-note', 'SKILL.md'), '# Edited\n');
+    expect(await plugins.sync()).toBe(true);
+    expect(sandbox.notified).toBe(2);
+});
+
+test('keeps the file the sandbox writes in the skill folder: it is not a stray entry', async () => {
+    const { plugins, daemonDir, sandbox } = await setup();
+    await plugins.sync();
+    await writeFile(path.join(daemonDir, 'skills', SKILLS_SYNC_FILE), 'Sat Nov 14 12:00:00 UTC 2026\n');
+
+    expect(await plugins.sync()).toBe(false);
+
+    expect((await readdir(path.join(daemonDir, 'skills'))).toSorted()).toEqual([
+        'my-notes:take-note',
+        SKILLS_SYNC_FILE,
+    ]);
+    expect(sandbox.notified).toBe(1);
+});
+
+test('syncs even when the sandbox cannot be told, with a warning', async () => {
+    const { plugins, daemonDir, logs } = await setup({ notifyFails: true });
+
+    expect(await plugins.sync()).toBe(true);
+
+    expect(await readdir(path.join(daemonDir, 'skills'))).toEqual(['my-notes:take-note']);
+    expect(logs.filter(log => log.level === 'warn').map(log => log.message)).toEqual([
+        'Sandbox not told the skills changed',
+    ]);
+});
+
+interface SetupOptions {
+    /** The fake sandbox rejects when told the skills changed. */
+    notifyFails?: boolean;
+}
+
+async function setup(options: SetupOptions = {}) {
     const tmp = await mkdtemp(path.join(os.tmpdir(), 'poweragents-plugin-service-'));
     const dataRoot = path.join(tmp, 'root');
     await cp(path.join(FIXTURES, 'own'), path.join(dataRoot, 'plugins'), { recursive: true });
@@ -231,6 +281,22 @@ async function setup() {
     container.set(EnvVariables, {
         POWERAGENTS_DATA_ROOT: dataRoot,
         POWERAGENTS_PLUGINS_DIR: path.join(FIXTURES, 'bundled'),
+    });
+    const sandbox = { notified: 0 };
+    const state: SandboxState = { status: 'stopped' };
+    container.set(Sandbox, {
+        getState: () => state,
+        getVerifiedState: () => Promise.resolve(state),
+        stateChanged: createEventEmitter<[state: SandboxState]>().event,
+        start: () => Promise.reject(new Error('not used')),
+        stop: () => Promise.resolve(),
+        exec: () => {
+            throw new Error('not used');
+        },
+        notifySkillsChanged: () => {
+            sandbox.notified++;
+            return options.notifyFails ? Promise.reject(new Error('limactl shell failed')) : Promise.resolve();
+        },
     });
     const plugins = container.resolve(PluginService);
     const events: PluginsChangedEvent[] = [];
@@ -243,6 +309,7 @@ async function setup() {
         tmp,
         logs,
         events,
+        sandbox,
     };
 }
 

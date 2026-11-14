@@ -89,14 +89,21 @@ exec /usr/local/lib/agent-browser/agent-browser "$@"
 EOF_WRAPPER
 RUN chmod 755 /usr/local/bin/agent-browser
 
-# The image pins both versions; neither may update itself inside a running container.
+# The image pins both versions; neither may update itself inside a running container. `PATH` leads with the bin folders
+# of the plugins' environment, on the `poweragents-env` volume the daemon fills (Node packages and a Python venv).
 ENV DISABLE_AUTOUPDATER=1 \
-    OPENCODE_DISABLE_AUTOUPDATE=1
+    OPENCODE_DISABLE_AUTOUPDATE=1 \
+    PATH=/opt/poweragents/env/node/node_modules/.bin:/opt/poweragents/env/python/bin:$PATH
 
 # The agent works with no approvals (design D28): the sandbox is the boundary, so OpenCode allows every action. Global
 # rules are evaluated after each agent's own (the built-in ones ask before reading `.env` files), so this one wins.
+# `skills` adds the plugins' skills: the daemon copies each as `<plugin>:<skill>/` into its read-only folder
+# (`AGENT_SKILLS_DIR`), and the folder's name is the skill's id.
 COPY <<EOF /root/.config/opencode/opencode.json
-{ "permissions": [{ "action": "*", "resource": "*", "effect": "allow" }] }
+{
+    "permissions": [{ "action": "*", "resource": "*", "effect": "allow" }],
+    "skills": ["/Poweragents/.poweragents/skills"]
+}
 EOF
 
 # The agent's global instructions: who it works for, its Memory (design D9) and the projects (D8). OpenCode 2.2.7 reads

@@ -199,6 +199,7 @@ function setup(agentEvents: OpencodeEvent[] = [], getVerifiedState?: () => Promi
         exec: () => {
             throw new Error('not used');
         },
+        notifySkillsChanged: () => Promise.resolve(),
     });
     // The agent's feed sends its events, then stays open.
     const subscribe = mock(async function* (_signal: AbortSignal) {
