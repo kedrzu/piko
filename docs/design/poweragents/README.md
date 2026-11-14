@@ -106,7 +106,8 @@ to its recent conversations. Conversations and files open side by side in tabs; 
 as formatted text, never as Markdown syntax ([the app's structure](DECISIONS.md#d33)). Three walks
 through the app are written up as briefs for the screen design:
 [the first run](ui/first-run.md), [daily work in a project](ui/daily-work-in-a-project.md) and
-[installing a plugin](ui/installing-a-plugin.md).
+[installing a plugin](ui/installing-a-plugin.md). The interactive pieces inside a conversation (choices, forms,
+approvals) share one language: [conversation elements](ui/conversation-elements.md).
 
 ## How far this design goes
 

@@ -76,6 +76,9 @@ for something new."
 
 ## Elements inside a conversation that need their own design
 
+All of them follow one visual language — placement, card, choices, fields, states — set in
+[conversation elements](conversation-elements.md); a new one is assembled from its parts.
+
 - **Batched approval.** When the agent wants to widen what it can reach — install plugins, connect an
   account (e.g. Google), create schedules that run without her — it proposes everything at once and
   she approves with one button (or declines, or adjusts). Approval only ever comes from this button;

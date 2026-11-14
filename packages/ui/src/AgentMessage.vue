@@ -1,6 +1,7 @@
 <!-- The agent's reply beside its mark: while it works, its text and steps in the order they come, with a caret; once done, the steps collapsed to their count above the text. -->
 
 <script lang="ts">
+import { defineProp } from '@nzyme/vue-utils/defineProp.js';
 import type { PropType } from 'vue';
 
 import type { ConversationAgentPart } from '@poweragents/common/api/ConversationTypes.js';
@@ -10,52 +11,93 @@ export const AgentMessageProps = {
   parts: { type: Array as PropType<readonly ConversationAgentPart[]>, required: true },
   /** The agent is still writing this reply. */
   running: Boolean,
+  /** The reply's last UI takes answers (this is the conversation's latest reply); otherwise its controls are disabled. */
+  uiActive: Boolean,
+  /** The person's next message after this reply: the reply's last UI shows the choice that sent it as chosen. */
+  answer: defineProp<string>(),
 } as const;
+
+/** What the reply reports. */
+export interface AgentMessageEvents {
+  /** The person's answer through a generative UI, to send as their next message. Awaited: the control shows busy. */
+  reply: [text: string];
+}
 </script>
 
 <script lang="ts" setup>
 import { useTranslate } from '@nzyme/vue-i18n/useTranslate.js';
+import { useEmitAsync } from '@nzyme/vue-utils/useEmitAsync.js';
 import { computed } from 'vue';
 
 import type { ConversationStepPart } from '@poweragents/common/api/ConversationTypes.js';
 
 import * as l from './AgentMessage.loc.js';
 import AgentMark from './AgentMark.vue';
+import GenerativeUi from './GenerativeUi.vue';
 import RichText from './RichText.vue';
 import Step from './Step.vue';
 import StepList from './StepList.vue';
 import StepsSummary from './StepsSummary.vue';
+import { splitGenerativeUi } from './utils/splitGenerativeUi.js';
 
-/** A run of the reply: text, or the steps taken one after another. */
-type Segment = { type: 'text'; text: string } | { type: 'steps'; steps: ConversationStepPart[] };
+/** A run of the reply: Markdown, a generative UI, or the steps taken one after another. */
+type Block =
+  | { type: 'markdown'; text: string }
+  | { type: 'ui'; source: string; complete: boolean }
+  | { type: 'steps'; steps: ConversationStepPart[] };
 
 const props = defineProps(AgentMessageProps);
+defineEmits<AgentMessageEvents>();
 
+const emitAsync = useEmitAsync<AgentMessageEvents>();
 const t = useTranslate();
-const segments = computed(() => toSegments(props.parts));
+const blocks = computed(() => (props.running ? toRunningBlocks(props.parts) : toFinishedBlocks(props.parts)));
+// Earlier UIs of the reply were answered or passed over: only the last takes answers, or shows what answered it.
+const lastUiIndex = computed(() => blocks.value.findLastIndex(block => block.type === 'ui'));
 const steps = computed(() => props.parts.filter(part => part.type === 'step'));
-const text = computed(() =>
-  props.parts
-    .filter(part => part.type === 'text')
-    .map(part => part.text)
-    .join('\n\n'),
-);
 
-function toSegments(parts: readonly ConversationAgentPart[]) {
-  const result: Segment[] = [];
+async function reply(text: string) {
+  await emitAsync('reply', text);
+}
+
+function toRunningBlocks(parts: readonly ConversationAgentPart[]) {
+  const result: Block[] = [];
+  let text = '';
   for (const part of parts) {
+    if (part.type === 'text') {
+      text += part.text;
+      continue;
+    }
+    result.push(...toTextBlocks(text));
+    text = '';
     const last = result.at(-1);
-    if (part.type === 'step' && last?.type === 'steps') {
+    if (last?.type === 'steps') {
       last.steps.push(part);
-    } else if (part.type === 'step') {
-      result.push({ type: 'steps', steps: [part] });
-    } else if (last?.type === 'text') {
-      last.text += part.text;
     } else {
-      result.push({ type: 'text', text: part.text });
+      result.push({ type: 'steps', steps: [part] });
     }
   }
+  result.push(...toTextBlocks(text));
   return result;
+}
+
+function toFinishedBlocks(parts: readonly ConversationAgentPart[]) {
+  const text = parts
+    .filter(part => part.type === 'text')
+    .map(part => part.text)
+    .join('\n\n');
+  return toTextBlocks(text);
+}
+
+function toTextBlocks(text: string): Block[] {
+  if (text === '') {
+    return [];
+  }
+  return splitGenerativeUi(text).map(segment =>
+    segment.type === 'markdown'
+      ? segment
+      : { type: 'ui', source: segment.source, complete: segment.closed || !props.running },
+  );
 }
 </script>
 
@@ -64,50 +106,51 @@ function toSegments(parts: readonly ConversationAgentPart[]) {
     <AgentMark :class="$style.agentMessage_mark" />
     <div :class="$style.agentMessage_body">
       <span :class="$style.agentMessage_author">{{ t(l.author) }}</span>
-      <template v-if="props.running">
-        <template
-          v-for="(segment, index) in segments"
-          :key="index"
-        >
-          <RichText
-            v-if="segment.type === 'text'"
-            :markdown="segment.text"
-            :caret="index === segments.length - 1"
-          />
-          <StepList v-else>
-            <Step
-              v-for="step in segment.steps"
-              :key="step.id"
-              :kind="step.kind"
-              :target="step.target"
-              :status="step.status"
-            />
-          </StepList>
-        </template>
-        <RichText
-          v-if="segments.length === 0"
-          markdown=""
-          caret
+      <StepsSummary
+        v-if="!props.running && steps.length"
+        :count="steps.length"
+      >
+        <Step
+          v-for="step in steps"
+          :key="step.id"
+          :kind="step.kind"
+          :target="step.target"
+          :status="step.status"
         />
-      </template>
-      <template v-else>
-        <StepsSummary
-          v-if="steps.length"
-          :count="steps.length"
-        >
+      </StepsSummary>
+      <template
+        v-for="(block, index) in blocks"
+        :key="index"
+      >
+        <RichText
+          v-if="block.type === 'markdown'"
+          :markdown="block.text"
+          :caret="props.running && index === blocks.length - 1"
+        />
+        <GenerativeUi
+          v-else-if="block.type === 'ui'"
+          :source="block.source"
+          :complete="block.complete"
+          :active="props.uiActive && index === lastUiIndex"
+          :answer="index === lastUiIndex ? props.answer : undefined"
+          :answered="index !== lastUiIndex || props.answer !== undefined"
+          @reply="reply"
+        />
+        <StepList v-else>
           <Step
-            v-for="step in steps"
+            v-for="step in block.steps"
             :key="step.id"
             :kind="step.kind"
             :target="step.target"
             :status="step.status"
           />
-        </StepsSummary>
-        <RichText
-          v-if="text"
-          :markdown="text"
-        />
+        </StepList>
       </template>
+      <RichText
+        v-if="props.running && blocks.length === 0"
+        markdown=""
+        caret
+      />
     </div>
   </div>
 </template>

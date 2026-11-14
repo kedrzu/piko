@@ -376,9 +376,23 @@ don't know what to type. Owner named OpenUI as a candidate format.
 > [chat UI](https://www.openui.com/docs/build-agents/chat-ui). The model learns it from a system
 > prompt generated from the component library.
 
-**How.** A built-in tool the agent calls to show UI, plus a skill holding the OpenUI spec and the
-components we support, which the agent reads when it needs them — not a permanent system-prompt
-addition. (2026-11-08, owner)
+**How.** The agent writes the UI as an ` ```openui ` block at the end of its reply, and the app renders
+it from the same text deltas as the rest of the reply, so it builds up while the agent writes. A
+built-in skill, `generative-ui`, holds the syntax we support and one line per component; it is
+generated from the app's component library (`@openuidev/lang-core` signatures) and read only when
+needed — not a permanent system-prompt addition. A click or a submitted form is sent as the person's
+next message. (2026-11-14, owner)
+
+> **Checked 2026-11-14:** a tool registered by a local OpenCode 2.2.7 plugin reaches Claude through
+> the `claude-agent` provider, but its input arrives whole (`session.tool.input.started`, then
+> `ended` with empty text, then `called` with the full input — no `session.tool.input.delta`), so a
+> tool could not render while the agent writes. A tool call also costs the model one more step (a
+> request with the whole context) after it, and the program travels JSON-escaped.
+
+**Rejected.**
+
+- A built-in tool the agent calls to show UI (2026-11-08) — no streaming with the Claude provider,
+  an extra model step per UI, escaped input (checked 2026-11-14, above).
 
 ## D24
 

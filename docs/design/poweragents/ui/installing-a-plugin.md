@@ -56,7 +56,8 @@ works — through a conversation, not configuration screens.
    provider (Gmail / Outlook), then starts that provider's sign-in (the provider's own page opens; if
    the Google account is already connected for another plugin, only one extra "Allow" for the new
    service); what kinds of email you get and what should happen to them (parcels, newsletters, bills);
-   when it should run. Answers come as clicks where possible (choices, time picker). The rules it
+   when it should run. Answers come as clicks where possible (choices, time picker; see
+   [conversation elements](conversation-elements.md)). The rules it
    learns are saved as files in the project, which the person can open.
    *Answers: is it set up the way I want?*
 
