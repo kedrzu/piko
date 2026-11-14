@@ -35,3 +35,9 @@ export const PROJECTS_FOLDER = 'projects';
 
 /** The data root's folder holding the Memory: plain files about the person, read and written by the agent (design D9). */
 export const MEMORY_FOLDER = 'memory';
+
+/**
+ * The version of the app that started this daemon, reported on `/status` so the desktop app can tell a daemon left over
+ * from before an update. Unset for a daemon run from a worktree in development, which the app never replaces.
+ */
+export const POWERAGENTS_VERSION = defineEnvVariable('POWERAGENTS_VERSION', { required: false });
