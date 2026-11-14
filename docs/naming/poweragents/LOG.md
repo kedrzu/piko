@@ -584,3 +584,10 @@ under its name. Bencho dropped (a common shortened Hindi/Punjabi profanity); Ban
 **Where I looked.** DNS sweep; whois.nic.ai (4); web search "lancho ai", "bencho ai", "bincho ai".
 **Best.** Lancho, next to Tancho (both all-domains-free and clean).
 **Proposed next.** Show Lancho and Tancho side by side; deeper -ncho variants if the user likes them.
+
+**2026-11-14 — user on round 26.** Add Lancho to the shortlist (liked). Liked set now: clean —
+Tancho, Lancho, ilario; with caveats — Sancho (sanch.io, only .so), Camillo (camillo.ai, only .so),
+Neb (pending US class-9 filing), Lupeto (disliked -eto ending, Lupo's lupo.ai); blocked but kept as
+liked — Oberon (oberon.ai), Alonso (alonso.ai), Zib (EU trademark), Nib (nib.gg). Note: since `.so`
+joined the checked TLDs, the generated SHORTLIST.md lists every non-dropped name with any open TLD
+(650) — the liked set above is the working shortlist.

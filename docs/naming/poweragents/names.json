@@ -54287,7 +54287,11 @@
           "checked_at": "2026-11-13"
         }
       ],
-      "phonetics": "LAHN-cho; Sancho/Tancho rhythm; Spanish 'lancha' = motorboat"
+      "phonetics": "LAHN-cho; Sancho/Tancho rhythm; Spanish 'lancha' = motorboat",
+      "verdict": "liked",
+      "feedback": [
+        "\"dodaj to luncho do shortlisty\" (round 26; voice input, means Lancho)"
+      ]
     },
     "Bencho": {
       "direction": "systematic sweep of Sancho/Lupo-shaped coinages (consonant-vowel-cluster-o), .ai unregistered",
