@@ -272,6 +272,7 @@ async function setup(options: SetupOptions = {}) {
         start: () => Promise.reject(new Error('not used')),
         stop: () => Promise.resolve(),
         exec,
+        notifySkillsChanged: () => Promise.resolve(),
     });
     container.set(ActiveProviderStore, { get: () => Promise.resolve(undefined), set: setActiveProvider });
     container.set(OpencodeIntegrationGetCommand, getIntegration);

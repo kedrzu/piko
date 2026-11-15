@@ -74,6 +74,10 @@ usageLimitBodyUnknownGeneric:
   en[auto]: "The limit will reset after a while; the AI provider didn't say when."
   pl: Limit odnowi się za jakiś czas; dostawca AI nie podał kiedy.
 
+pluginMissing:
+  en: "The plugin {plugin} isn't installed, so this command didn't run. Install it and write to continue."
+  pl: Plugin {plugin} nie jest zainstalowany, więc ta komenda nie została uruchomiona. Zainstaluj go i napisz, żeby kontynuować.
+
 claude:
   en: Claude
   pl: Claude

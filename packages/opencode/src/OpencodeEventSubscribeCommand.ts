@@ -231,7 +231,11 @@ export const OpencodeEventSubscribeCommand = defineCommand({
     },
 });
 
-type VendorEvent = components['schemas']['V2Event'];
+/**
+ * The spec's events without its catch-all `V2Event.rpc` (any `type`, untyped `data`), which would keep every `case` below
+ * from narrowing `data`. An event of a type not modelled falls through to `default` all the same.
+ */
+type VendorEvent = Exclude<components['schemas']['V2Event'], components['schemas']['V2Event.rpc']>;
 
 /**
  * The spec types the stream's frames only as SSE (`text/event-stream`), with each `data` a JSON string whose content

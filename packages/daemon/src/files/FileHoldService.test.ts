@@ -227,6 +227,7 @@ async function setup() {
         exec: () => {
             throw new Error('not used');
         },
+        notifySkillsChanged: () => Promise.resolve(),
     });
 
     const feeds: (OpencodeEvent | Error)[][] = [];

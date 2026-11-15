@@ -367,3 +367,14 @@ when it starts the conversation.
   missing command fails cleanly.
 - A schedule remembering which plugin created it and disappearing with it — schedules are created in any conversation,
   and one the person later reworked would vanish unasked (owner, 2026-11-14).
+
+## D39
+
+Retired in part 2026-11-14: `plugin.json` narrowed to what the platform acts on; rewritten in place as [D39](../DECISIONS.md#d39).
+
+**A plugin is a folder: `plugin.json` (name, marketplace description in each app language, tags, level, the project it
+creates, the plugins it needs, the accounts and services it uses, its MCP servers, its additions to the environment),
+`skills/` (its skills, the onboarding skill among them) and, optionally, the package of its CLI ([D37](#d37)). Bundled
+plugins ship as such folders inside the app ([D36](#d36)).** (2026-11-14, design agent proposal, owner did not object)
+
+**Why.** Every part named in [D17](#d17) has one place, and a plugin the agent writes ([D26](#d26)) is the same folder.

@@ -1,4 +1,4 @@
-<!-- A conversation open (screens 56, 57, 59–61, 65–74): its messages with the agent's reply streaming and chips for the files it wrote, error lines, the banner when the agent cannot answer, and the composer with Stop; a file open beside it (`?file=`, frame 26) with Open as a tab and Close. -->
+<!-- A conversation open (screens 56, 57, 59–61, 65–74): its messages with the agent's reply streaming and chips for the files it wrote, error lines, notes that a plugin's command was not run, the banner when the agent cannot answer, and the composer with Stop; a file open beside it (`?file=`, frame 26) with Open as a tab and Close. -->
 
 <script lang="ts" setup>
 import { LogIn } from '@lucide/vue';
@@ -267,11 +267,16 @@ function describeReset(resetAt: number | undefined) {
         </template>
       </AgentMessage>
       <MessageError
-        v-else
+        v-else-if="item.type === 'error'"
         :class="$style.conversationPage_error"
         :text="describeError(item.error)"
         :retryable="item.key === lastItemKey && conversation.retryable"
         @retry="retry(item.retryText)"
+      />
+      <MessageError
+        v-else
+        :class="$style.conversationPage_error"
+        :text="t(l.pluginMissing, { plugin: item.plugin })"
       />
     </template>
     <template #footer>

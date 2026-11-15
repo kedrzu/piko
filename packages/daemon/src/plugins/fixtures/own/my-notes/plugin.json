@@ -1,0 +1,15 @@
+{
+    "name": "my-notes",
+    "level": "profile",
+    "tags": ["test"],
+    "marketplace": {
+        "pl": {
+            "title": "my-notes (pl)",
+            "description": "Opis my-notes."
+        },
+        "en": {
+            "title": "my-notes",
+            "description": "Describes my-notes."
+        }
+    }
+}

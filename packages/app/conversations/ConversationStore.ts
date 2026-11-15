@@ -123,6 +123,8 @@ export const ConversationStore = defineService({
                 case 'projectFilesChanged':
                 case 'fileAgentChanged':
                 case 'memoryChanged':
+                case 'pluginsChanged':
+                case 'pluginInstalled':
                     // Not about conversations.
                     break;
                 default:

@@ -13,6 +13,7 @@ export type OpencodeMessage =
     | OpencodePromptMessage
     | OpencodeReplyMessage
     | OpencodeRunEndMessage
+    | OpencodeSyntheticMessage
     | OpencodeOtherMessage;
 
 /** What the person asked. */
@@ -44,6 +45,16 @@ export interface OpencodeRunEndMessage {
     createdAt: number;
     outcome: OpencodeRunOutcome;
     error?: OpencodeReportedError;
+}
+
+/** Input the daemon gave the agent instead of the person (App setup's opening instruction, say), with what it attached. */
+export interface OpencodeSyntheticMessage {
+    type: 'synthetic';
+    id: string;
+    /** Server clock, epoch ms. */
+    createdAt: number;
+    text: string;
+    metadata?: Record<string, unknown>;
 }
 
 /** A message that is not part of the conversation's content: a model switch, a compaction, a system note, … */
@@ -159,7 +170,8 @@ function mapMessage(message: Schemas['Session.Message.Info']): OpencodeMessage {
                 outcome: message.outcome,
                 error: message.error && mapOpencodeReportedError(message.error),
             };
-        // `synthetic` among them: input the daemon gave the agent (App setup's opening instruction), not the person's words.
+        case 'synthetic':
+            return { ...base, type: 'synthetic', text: message.text, metadata: message.metadata };
         default:
             return { ...base, type: 'other' };
     }

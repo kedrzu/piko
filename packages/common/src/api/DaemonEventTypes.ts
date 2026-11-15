@@ -8,7 +8,13 @@ import type { ConversationError, ConversationRunOutcome, ConversationStep } from
 export const DAEMON_EVENTS_PATH = '/api/events';
 
 /** An event the daemon streams, discriminated by `type`. */
-export type DaemonEvent = ConversationEvent | DataRootEvent | FileAgentChangedEvent | DaemonStreamRestoredEvent;
+export type DaemonEvent =
+    | ConversationEvent
+    | DataRootEvent
+    | FileAgentChangedEvent
+    | PluginsChangedEvent
+    | PluginInstalledEvent
+    | DaemonStreamRestoredEvent;
 
 /**
  * Something changed in the profile's data root, by the agent, the person or this daemon. Sent once for a burst of
@@ -33,6 +39,24 @@ export interface ProjectFilesChangedEvent {
 /** A file or folder in the Memory folder changed. */
 export interface MemoryChangedEvent {
     type: 'memoryChanged';
+}
+
+/** A plugin was installed or removed: the plugin list and its installs may differ. */
+export interface PluginsChangedEvent {
+    type: 'pluginsChanged';
+}
+
+/**
+ * The agent installed a plugin from a conversation (a new installation also sends `pluginsChanged`). Sent also
+ * when it installs a plugin installed already, or its own plugin, which applies the plugin's environment again.
+ */
+export interface PluginInstalledEvent {
+    type: 'pluginInstalled';
+    /** The plugin's name. */
+    plugin: string;
+    /** The conversation's project: where a `project` plugin was installed. */
+    projectId: string;
+    conversationId: string;
 }
 
 /**

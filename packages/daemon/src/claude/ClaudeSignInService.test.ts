@@ -186,6 +186,7 @@ function setup(options: SetupOptions) {
         start: () => Promise.reject(new Error('not used')),
         stop: () => Promise.resolve(),
         exec,
+        notifySkillsChanged: () => Promise.resolve(),
     });
     // The real store writes into the user's `~/.poweragents`; the record is asserted through this fake.
     const activeProviderSet = mock((_provider: AiProvider) => Promise.resolve());

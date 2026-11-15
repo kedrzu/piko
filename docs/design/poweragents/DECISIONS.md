@@ -304,6 +304,10 @@ package cannot carry it; the agent can create schedules anyway ([D14](#d14)).
 **A plugin's onboarding is an ordinary chat driven by a skill the plugin's manifest marks to run right
 after installation; the user can start it again any time to change the setup.** (2026-11-08, owner)
 
+**Who starts it.** When the agent installs a plugin, it runs the onboarding skill itself, in the same conversation.
+When the person installs one from the app, the daemon starts a new conversation in the project the app names, and the
+agent opens it by running the onboarding skill. (2026-11-14, owner)
+
 ## D20
 
 **A plugin has no folder of its own. Its files live in one or more ordinary projects, and the plugin's
@@ -316,6 +320,11 @@ project and one that works across several.
 **References survive renames.** A plugin points at a project by a stable identifier, not by name or
 path. Deleting a project that has plugins or schedules attached warns and says what stops working.
 (2026-11-08, owner, from the failure sweep)
+
+**Projects are the onboarding skill's business.** A plugin declares no project ([D39](#d39)): whether it sets one up,
+uses an existing one or several is written in its onboarding skill, and the agent does it with its ordinary tools. The
+only project the platform records is where a project-level plugin is installed ([D34](#d34)), by its id in the
+profile's manifest. (2026-11-14, owner)
 
 **Rejected.**
 
@@ -692,7 +701,7 @@ health (receipts) and anywhere else.
 installed into a project, nor the reverse. (2026-11-11, owner)
 
 **Needing a profile-level plugin.** A workflow plugin names the plugins it can work with ("Gmail or Outlook") in its
-manifest ([D39](#d39)). How it works with them is decided per plugin, by evals: skills on each side that the agent
+onboarding skill, not in its manifest ([D39](#d39)). How it works with them is decided per plugin, by evals: skills on each side that the agent
 combines, a shared contract, or anything else that measures better. The design fixes no general rule. (2026-11-14,
 owner)
 
@@ -785,12 +794,26 @@ daemon endpoint serves every plugin with an account, and fits one sign-in per ac
 
 ## D39
 
-**A plugin is a folder: `plugin.json` (name, marketplace description in each app language, tags, level, the project it
-creates, the plugins it needs, the accounts and services it uses, its MCP servers, its additions to the environment),
-`skills/` (its skills, the onboarding skill among them) and, optionally, the package of its CLI ([D37](#d37)). Bundled
-plugins ship as such folders inside the app ([D36](#d36)).** (2026-11-14, design agent proposal, owner did not object)
+**A plugin is a folder: `plugin.json`, `skills/` (its skills, the onboarding skill among them) and, optionally, the
+package of its CLI ([D37](#d37)). Bundled plugins ship as such folders inside the app ([D36](#d36)).** (2026-11-14,
+design agent proposal, owner did not object)
+
+**`plugin.json` holds only what the platform acts on:** the name, the marketplace text in each app language, tags, the
+level (profile or project, [D34](#d34)), optionally the onboarding skill, and the additions to the environment with
+pinned versions (the plugin's CLI package, npm packages, Python packages). How many projects a plugin sets up, where it
+keeps what it learns and which plugins it works with are written in its onboarding skill, and the agent does them with
+its ordinary tools. Accounts ([#50](https://github.com/kedrzu/poweragents/issues/50)) and MCP servers
+([#52](https://github.com/kedrzu/poweragents/issues/52)) are added to it when they are built. (2026-11-14, owner)
 
 **Why.** Every part named in [D17](#d17) has one place, and a plugin the agent writes ([D26](#d26)) is the same folder.
+A field the platform does not act on is a promise nothing keeps; the agent already creates projects and reads skills,
+so a workflow's setup needs no schema of its own.
+
+**Rejected.**
+
+- `plugin.json` also declaring the project a plugin creates, the plugins it needs and the accounts, services and MCP
+  servers it uses ([history](history/DECISIONS.md#d39)) — nothing in the platform acts on the first two, and the rest
+  wait for the work that builds them (owner, 2026-11-14).
 
 ## D40
 
@@ -805,6 +828,9 @@ simplified from the design agent's proposal at the review)
 projects. Installing needs no confirmation ([D28](#d28)), so routing it through the daemon would protect nothing; the
 folders themselves are the record the environment is rebuilt from ([D26](#d26)). Programs stay out of the image because
 a bundled plugin such as Blender, or a whole npm toolchain, would otherwise weigh on everyone who never uses it.
+
+**Always the profile's.** A plugin the agent writes is installed for the whole profile, never into one project. Asking
+the daemon to apply its environment is `poweragents plugin install <name>`, run in the sandbox. (2026-11-14, owner)
 
 **Shown with the others.** Plugins the agent wrote appear in the same list as bundled ones, marked as the person's own
 ("Twój plugin"), not as made by the agent — they asked for it, so it is theirs. (2026-11-14, owner)
@@ -846,8 +872,15 @@ the person fix a removal made by mistake without starting over.
 left there to be read. A plugin installed but not attached to the current project stays findable ([D11](#d11)). The
 agent cannot name a plugin of its own after a bundled one.
 
-**Unchecked.** Whether OpenCode 2.2.7 invokes a skill as a slash command, or the daemon has to expand the command itself
-when it starts the conversation.
+> **Checked 2026-11-14:** OpenCode 2.2.7's server does not expand `/name` in a prompt; only its clients (the TUI) do.
+> A prompt takes `skills: [{id}]` and loads that skill into the turn. So the daemon recognises `/<plugin>:<skill>` and
+> sends the prompt with that skill attached. A stopped command is admitted with `resume: false`, together with the
+> fixed note: both wait in the session's inbox, start no run, and reach the agent with the person's next message.
+>
+> **Checked 2026-11-14:** `claude-agent` gets only OpenCode's tools, after its permission filter; Claude Code's own
+> tools and skills are switched off. A tool denied as a whole never reaches the model, and a single skill denied by id
+> leaves the model's skill list (live, through `claude-agent`). How per-project visibility is built on this:
+> [plugin runtime in the sandbox](../../decisions/plugin-runtime-in-the-sandbox.md).
 
 **Rejected.**
 

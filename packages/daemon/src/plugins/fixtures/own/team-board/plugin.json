@@ -1,0 +1,15 @@
+{
+    "name": "team-board",
+    "level": "project",
+    "tags": ["test"],
+    "marketplace": {
+        "pl": {
+            "title": "team-board (pl)",
+            "description": "Opis team-board."
+        },
+        "en": {
+            "title": "team-board",
+            "description": "Describes team-board."
+        }
+    }
+}

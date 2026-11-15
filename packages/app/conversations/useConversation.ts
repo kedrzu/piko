@@ -37,7 +37,8 @@ export interface UseConversationOptions {
 export type ConversationItem =
     | { type: 'user'; key: string; text: string }
     | { type: 'agent'; key: string; parts: ConversationAgentPart[]; running: boolean }
-    | ConversationErrorItem;
+    | ConversationErrorItem
+    | { type: 'pluginMissing'; key: string; plugin: string };
 
 /** Why a run brought no answer. */
 export interface ConversationErrorItem {
@@ -200,7 +201,10 @@ export function useConversation(options: UseConversationOptions): ConversationVi
             );
             // A read answered while the send was on its way may list the message already.
             pending.value = settlePending(taken, messages.value);
-            if (!result.queued) {
+            if (result.stoppedBy) {
+                // No run started: the message waits with the note why, both listed by the daemon.
+                void load();
+            } else if (!result.queued) {
                 // A run that already ended (signed out, the usage limit) said so before this answer: it stays ended.
                 if ((runEnds.get(id) ?? 0) === endedBefore) {
                     store.setRunning(id, true);
@@ -330,7 +334,9 @@ export function useConversation(options: UseConversationOptions): ConversationVi
             event.type === 'projectsChanged' ||
             event.type === 'projectFilesChanged' ||
             event.type === 'memoryChanged' ||
-            event.type === 'fileAgentChanged'
+            event.type === 'fileAgentChanged' ||
+            event.type === 'pluginsChanged' ||
+            event.type === 'pluginInstalled'
         ) {
             return;
         }
@@ -400,8 +406,44 @@ export interface ToItemsParams {
     running: boolean;
 }
 
-/** The screen's items: replies merged from the agent's consecutive messages, errors where runs failed, and what was just sent. */
+/**
+ * The screen's items: replies merged from the agent's consecutive messages, errors where runs failed, the notes that a
+ * plugin's command was not run, and what was just sent.
+ */
 function toItems({ messages, pending, running }: ToItemsParams) {
+    // The daemon lists what still waits for the agent last: from the first waiting message of the person on.
+    const waitingFrom = messages.findIndex(message => message.type === 'user' && message.pending);
+    const items = toListedItems(waitingFrom < 0 ? messages : messages.slice(0, waitingFrom), running);
+    const waiting = waitingFrom < 0 ? [] : toListedItems(messages.slice(waitingFrom), running);
+    const started = pending.filter(item => !item.queued);
+
+    // A message that started the run comes before the reply, after what waited for the agent and goes with it; what
+    // still waits (sent while the agent works, or held back with a plugin's missing command) comes after the reply.
+    if (started.length > 0) {
+        items.push(...waiting);
+    }
+    for (const message of started) {
+        items.push({ type: 'user', key: message.key, text: message.text });
+    }
+    if (running) {
+        const last = items.at(-1);
+        if (last?.type === 'agent') {
+            last.running = true;
+        } else {
+            items.push({ type: 'agent', key: 'running', parts: [], running: true });
+        }
+    }
+    if (started.length === 0) {
+        items.push(...waiting);
+    }
+    for (const message of pending.filter(item => item.queued)) {
+        items.push({ type: 'user', key: message.key, text: message.text });
+    }
+    return items;
+}
+
+/** The items of messages the daemon lists, in their order. */
+function toListedItems(messages: readonly ConversationMessage[], running: boolean) {
     const items: ConversationItem[] = [];
     let lastUserText: string | undefined;
     let runError: ConversationError | undefined;
@@ -440,28 +482,15 @@ function toItems({ messages, pending, running }: ToItemsParams) {
                 runError = undefined;
                 break;
             }
+            case 'pluginMissing':
+                items.push({ type: 'pluginMissing', key: message.id, plugin: message.plugin });
+                break;
             default:
                 assertNever(message);
         }
     }
     if (runError && !running) {
         items.push({ type: 'error', key: 'run-error', error: runError, at: runErrorAt, retryText: lastUserText });
-    }
-
-    // A message that started the run comes before the reply; one queued for the agent's next step, after it.
-    for (const message of pending.filter(item => !item.queued)) {
-        items.push({ type: 'user', key: message.key, text: message.text });
-    }
-    if (running) {
-        const last = items.at(-1);
-        if (last?.type === 'agent') {
-            last.running = true;
-        } else {
-            items.push({ type: 'agent', key: 'running', parts: [], running: true });
-        }
-    }
-    for (const message of pending.filter(item => item.queued)) {
-        items.push({ type: 'user', key: message.key, text: message.text });
     }
     return items;
 }

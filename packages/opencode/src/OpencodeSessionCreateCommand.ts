@@ -2,7 +2,7 @@ import { defineCommand } from '@nzyme/ioc/Command.js';
 import { Logger } from '@nzyme/logging/Logger.js';
 
 import { OpencodeClient } from './OpencodeClient.js';
-import type { OpencodeSession } from './OpencodeTypes.js';
+import type { OpencodePermissionRule, OpencodeSession } from './OpencodeTypes.js';
 import { createOpencodeStatusError } from './utils/createOpencodeStatusError.js';
 import { mapOpencodeSession } from './utils/mapOpencodeSession.js';
 
@@ -13,6 +13,8 @@ export interface OpencodeSessionCreateCommandParams {
     /** Always given: a session without a model gets OpenCode's default provider, not the one the daemon connected. */
     providerId: string;
     modelId: string;
+    /** The session's own permission rules, evaluated after the global ones. */
+    permissions?: OpencodePermissionRule[];
 }
 
 /** Creates a session bound to a working directory and a model. */
@@ -33,6 +35,7 @@ export const OpencodeSessionCreateCommand = defineCommand({
                 body: {
                     location: { directory: params.directory },
                     model: { providerID: params.providerId, id: params.modelId },
+                    permissions: params.permissions,
                 },
             });
             if (response.status !== 200) {

@@ -48,3 +48,16 @@ export interface OpencodeToolFileOutput {
     mimeType: string;
     name?: string;
 }
+
+/** What a permission rule does to a matching action: lets it run, stops it, or asks the person first. */
+export type OpencodePermissionEffect = 'allow' | 'deny' | 'ask';
+
+/**
+ * One rule of a session's permissions: `action` (a tool, `skill`, …) on `resource` (`*` matches any). A `skill` rule
+ * that denies a skill's id hides that skill from the model.
+ */
+export interface OpencodePermissionRule {
+    action: string;
+    resource: string;
+    effect: OpencodePermissionEffect;
+}
