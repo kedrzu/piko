@@ -119,6 +119,13 @@ controls on our key: a plain headless Chrome, which is plainly a bot, and the pe
 reading counts only once it tells those two apart. Google's public demo page is no shortcut: it is over its free quota
 and answers 0.9 to everyone.
 
+The test page itself is a small made-up shop rather than a bare button, because reCAPTCHA scores what a visitor does
+during a visit: searching, filtering, paging, reading a long product description, opening tabs, dismissing a cookie
+banner, filling in and submitting a form. Each such action gets its own score. The page also records how input
+arrived (mouse movement before a click, real key presses or pasted text), which shows exactly how the agent differs
+from a person ([the test shop](DECISIONS.md#d11)). The same scripted visit is run by the agent, by the plain
+headless Chrome and by the person.
+
 A ban cannot be measured: it comes late, it hits a whole account, and nobody tests it on a real one. So protection
 against bans comes from rules instead, chiefly the pace limits.
 

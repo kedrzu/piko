@@ -291,3 +291,27 @@ client code.
 - Site helpers in this design — deferred by the owner.
 - X writes through the official API as part of ban protection — out of scope; earlier proposal in
   [history/JOURNAL.md](history/JOURNAL.md).
+
+## D11
+
+**The reCAPTCHA probe is a small static multi-page shop on GitHub Pages, no backend: a product list with search,
+filters and pagination; a product page with a long description, tabs, a gallery and expandable sections; an order or
+contact form (text, select, checkbox, date, validation, submit); and a cookie-consent modal. At every meaningful action
+the page requests a token named after that action and appends it to a list in the DOM. It also records how input
+arrived — mouse movements before each click, whether text came as key events, the timing between them — into the
+DOM. Scenarios ("search, open two products, read a description, submit the form") live in the eval in this repo, and
+the agent, the headless control and the person run the same ones.** (2026-11-15, owner asked for content that
+reproduces reading, submits and component interactions; shape and input recording are the design agent's proposal,
+owner agreed)
+
+**Why.** reCAPTCHA v3 scores actions within a visit, not a single page load, so a page with content measures a
+whole visit. Several pages, because moving between pages is the core of what the agent does (search, list, product on
+Allegro). Input recording does not show whether sites react; it shows exactly how the agent's input differs from the
+person's, which informs whether to build the input layer ([D4](#d4)) and then checks it.
+
+**Rejected.**
+
+- A single page with components — measures clicking, not navigation.
+- The current one-page probe (a text field and a button, `kedrzu/stealth-eval-page`) — no visit to score; it is
+  replaced by the shop.
+- Scenarios kept on the page — the eval owns them, so the agent and both controls run identical steps.

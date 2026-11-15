@@ -179,3 +179,5 @@
   the demo is over its free quota and returns a fixed 0.9 (fail-open). Kept our key; added two controls per run
   (headless Chrome as a known bot, the person by hand as a known human) — the reading counts only once it separates
   them (D9).
+- Owner: the probe page needs content to reproduce reading, submits and component interactions. Agreed: a static
+  multi-page test shop with per-action tokens and input recording; scenarios in the eval (D11).
