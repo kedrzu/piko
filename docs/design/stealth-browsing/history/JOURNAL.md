@@ -122,3 +122,37 @@
   AutomationControlled flag, layers in the daemon, daemon-enforced pace, eval panel, own build only on evidence).
   README written from them. Next proposed step: baseline measurement of today's browser on the eval panel. Site
   helpers not yet discussed.
+- Owner: wants a measurement built on reCAPTCHA; `Runtime.enable` must be hidden regardless of measurement, with no
+  traces and robust to future changes (changes D4's "leaks the measurement shows" — not yet folded in).
+- Design agent proposal (not agreed): the daemon guarantees page scripts never observe our code — no client gets the
+  Runtime/Console/Debugger domains enabled, all evaluation and init scripts are moved to an isolated world, no
+  main-world bindings; brand override applied to every worker and service worker. Cost: agent-browser's `console`,
+  `errors`, `expose`, and reading page JS globals. reCAPTCHA: own score-based key on a public test page (proxy
+  blocks loopback), harness drives the real daemon path, runs on a residential machine, not CI.
+
+> **Checked 2026-11-15 (research subagent; agent-browser v0.43.0 source at commit 1cc19526, Apache-2.0):**
+>
+> - Of Runtime events agent-browser consumes only `consoleAPICalled` (`console` command, `actions.rs:1981`) and
+>   `exceptionThrown` (`errors` command, `actions.rs:1999`); no execution-context events. Evaluation uses the default
+>   main-world context; init scripts (domain filter `network.rs:175`, React hook) run in the main world; isolated
+>   worlds only for recording and axe-core.
+> - `Runtime.evaluate` / `callFunctionOn` work without `Runtime.enable`: "If the parameter is omitted the evaluation
+>   will be performed in the context of the inspected page" (js_protocol.json); no enabled check in
+>   `v8-runtime-agent-impl.cc` `evaluate()`.
+> - V8 commits 61a907540d / e08e973474 (May 2025) stopped user getters during previews, but rebrowser bot-detector
+>   (`index.js:21-25`) still detects `Runtime.enable` via `prepareStackTrace` calls and extra `error.name` reads.
+>   Its tests also include `mainWorldExecution`, `sourceUrlLeak`, `workerConsistency`, `cdpBindingGlobals`,
+>   `useragent` (flags Chrome for Testing) — [bot-detector](https://bot-detector.rebrowser.net).
+> - rebrowser-patches get the main-world context without running anything in the page; patchright moves all
+>   evaluation to per-frame isolated worlds (`framesPatch.ts:272`) and drops console support.
+> - `Emulation.setUserAgentOverride` is per target; workers and service workers need their own override
+>   (Playwright `crPage.ts:823-828`); `--user-agent` does not change Sec-CH-UA brands
+>   (`user_agent_utils.cc`).
+> - reCAPTCHA: new keys only in Google Cloud projects; 10,000 assessments/month free; without billing only four
+>   score levels (0.1/0.3/0.7/0.9) and `LOW_CONFIDENCE_SCORE` on low traffic; "Scores in a staging environment and
+>   within 7 days of implementation might differ" —
+>   [Cloud reCAPTCHA FAQ](https://docs.cloud.google.com/recaptcha/docs/faq).
+
+- Owner: "ok" — read as accepting the strict rule (no main-world exception) and the eval shape. Recorded D8 (page
+  scripts never observe our code) and D9 (eval harness); D4 partly replaced, prior form in history/DECISIONS.md.
+  README updated. Open: billing on the reCAPTCHA project.

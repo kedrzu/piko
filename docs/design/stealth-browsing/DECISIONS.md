@@ -91,7 +91,7 @@ flag turns it back off without giving up the pipe. Keeping up with Chrome stable
 ## D4
 
 **Stealth is built in the daemon, in layers every browser client gets: the JS environment (launch flags, the "Google
-Chrome" brand set over CDP at browser level, CDP leaks the measurement shows), input (mouse paths and per-key typing
+Chrome" brand set over CDP on every target, and the guarantee that page scripts never observe our code, [D8](#d8)), input (mouse paths and per-key typing
 generated from the agent's clicks and text), and pace ([D5](#d5)).** (2026-11-15, design agent proposal, owner agreed)
 
 **Why.** Every CDP command already passes the daemon's multiplexer, so a fix there covers agent-browser, site helpers
@@ -106,6 +106,8 @@ in any language, and anything later. Vendors document client-side JS fingerprint
 
 **Rejected.**
 
+- Fixing only the CDP leaks the measurement shows — the owner wants no traces regardless of measurement
+  ([history](history/DECISIONS.md#d4)).
 - Stealth inside each client (Patchright, rebrowser-patches, ghost-cursor per helper) — every client and every
   language would need its own copy; the daemon sees all traffic once.
 - In-page JS patches (puppeteer-extra-plugin-stealth style) — detectable themselves; that plugin is abandoned since
@@ -165,3 +167,65 @@ separate program.
 **Rejected.**
 
 - Building our own Chromium up front — the cost is certain and the gain unmeasured.
+
+## D8
+
+**Page scripts never observe our code. The daemon enforces it for every client: the `Runtime`, `Console` and
+`Debugger` domains are never enabled in the browser (the daemon answers a client's enable itself), every evaluation
+and init script runs in an isolated world, no binding or global is created in the main world, and the brand override
+reaches every worker and service worker.** (2026-11-15, owner required hiding `Runtime.enable` with no traces and
+robust to change; the class-wide rule is the design agent's proposal, owner agreed)
+
+**Why.** Hiding one leak at a time leaves the others: main-world execution, main-world init scripts, bindings and
+worker inconsistency are each tested by public detectors. A rule the daemon enforces cannot be broken by a new
+agent-browser version or a helper, and a new way to detect an enabled domain finds nothing, because the domain is
+never on. It extends the daemon's existing allow-list (`packages/daemon/src/browser/checkCdpRequest.ts`).
+
+> **Checked 2026-11-15:** agent-browser v0.43.0 (commit 1cc19526) consumes only `Runtime.consoleAPICalled`
+> (`console` command, `cli/src/native/actions.rs:1981`) and `Runtime.exceptionThrown` (`errors`, `actions.rs:1999`);
+> no execution-context events; evaluation uses the default main-world context; init scripts (`network.rs:175`, the
+> React hook) run in the main world. `Runtime.evaluate` and `callFunctionOn` work without `Runtime.enable` ("If the
+> parameter is omitted the evaluation will be performed in the context of the inspected page", js_protocol.json).
+
+> **Checked 2026-11-15:** V8 commits 61a907540d and e08e973474 (May 2025) stopped user getters running during
+> previews, yet rebrowser bot-detector still detects `Runtime.enable` through `prepareStackTrace` calls and extra
+> `error.name` reads (`index.js:21-25`), and tests `mainWorldExecution`, `sourceUrlLeak`, `workerConsistency`,
+> `cdpBindingGlobals` — [bot-detector](https://bot-detector.rebrowser.net). Patchright runs all evaluation in
+> per-frame isolated worlds (`driver_patches/framesPatch.ts:272`) and drops console support.
+
+> **Checked 2026-11-15:** `Emulation.setUserAgentOverride` is per target; workers and service workers need their
+> own (Playwright `crPage.ts:823-828`); `--user-agent` leaves Sec-CH-UA brands unchanged
+> (`components/embedder_support/user_agent_utils.cc`).
+
+**Consequences.** The agent loses agent-browser's `console`, `errors` and `expose`, and cannot read the page's JS
+globals (isolated worlds share the DOM, not globals). Site helpers work through the DOM; calling a site's internal API
+with its own client code (X's per-request header) is out.
+
+**Rejected.**
+
+- Hiding only `Runtime.enable` — main-world execution, init scripts, bindings and workers still leak.
+- Emulating context events for clients (rebrowser's approach) — agent-browser consumes none, so dropping the enable
+  suffices.
+- A narrow main-world exception for site helpers — it is a trace; the owner chose none.
+- Patching agent-browser instead of the daemon — covers one client; the rule must hold for all ([D4](#d4)).
+
+## D9
+
+**The eval is a script that drives the browser by the agent's own path (daemon tunnel and agent-browser) on a
+residential machine, never CI, and writes a result file per run for comparison: a reCAPTCHA v3 score from our own key
+on a public test page, the verdicts of the leak test pages, and Allegro searches until a CAPTCHA.** (2026-11-15,
+owner asked for a reCAPTCHA measurement; shape is the design agent's proposal, owner agreed)
+
+**Why.** A datacenter IP would dominate every result; a different driving path would measure a different browser.
+The test page must be public, because the daemon's proxy refuses loopback (`buildChromiumArgs.ts`,
+`--proxy-bypass-list=<-loopback>`).
+
+> **Checked 2026-11-15:** new reCAPTCHA keys are created only in Google Cloud projects; 10,000 assessments a month
+> free; without billing only four score levels (0.1, 0.3, 0.7, 0.9) and `LOW_CONFIDENCE_SCORE` on little traffic;
+> "Scores in a staging environment and within 7 days of implementation might differ" —
+> [FAQ](https://docs.cloud.google.com/recaptcha/docs/faq). Whether to enable billing for finer scores is open.
+
+**Rejected.**
+
+- Running the eval in CI — datacenter IP.
+- Google's public reCAPTCHA demo page as the only score — not under our control; kept as a second reading.

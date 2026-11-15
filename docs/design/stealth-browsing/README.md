@@ -76,8 +76,8 @@ Today this browser gives itself away in three known ways:
 Every command the agent sends to the browser already passes through the daemon, which uses that position to keep the
 agent inside its limits. Stealth goes there too ([layers in the daemon](DECISIONS.md#d4)), in three layers:
 
-- **What a page's scripts can see.** Launch flags, the browser's name, and any trace of remote control the
-  measurement turns up.
+- **What a page's scripts can see.** Launch flags, the browser's name, and no trace of remote control (more on this
+  below).
 - **How input arrives.** A click from the agent becomes a mouse movement along a curve, and text becomes key presses
   at a typing pace.
 - **How fast the agent goes.** The daemon holds every site to a human pace. When a page shows a CAPTCHA it slows down
@@ -88,11 +88,33 @@ agent inside its limits. Stealth goes there too ([layers in the daemon](DECISION
 Because all of this happens in the daemon, anything that drives the browser gets it without extra work: the agent's
 current tool, and later the site helpers, whatever language they are written in.
 
+### Page scripts never see our code
+
+Hiding traces of remote control one at a time would never end: each fix leaves the next one for a detector to find.
+So the daemon enforces one rule for everyone instead: **nothing a page's own scripts can observe ever comes from us**
+([the rule and what it costs](DECISIONS.md#d8)).
+
+Chrome's debugging protocol has switches that send page events back to the controller, and switching them on
+changes small things a page can measure. The daemon never switches them on; when a client asks, the daemon answers
+"done" itself. Any code the agent runs goes into an isolated copy of the page's scripting environment: it sees the
+same page, but the page's scripts cannot see it. And the browser's disguised name reaches the page's background
+workers too, not only the page itself, because detectors compare the two.
+
+A new version of the agent's tool, or a helper written next year, cannot break this, since the daemon enforces it
+rather than the client. A newly discovered way to detect one of those switches finds nothing, since none is ever on.
+
+The price is that the agent can no longer read the page's console, its errors, or the page's own script variables.
+It still sees and works with everything on the page.
+
 ## How we know it works
 
 We measure on a fixed set of real, well-protected sites, one or more behind each major protection vendor. Allegro
 is one of them, and we count CAPTCHAs and how many actions pass before a block. Public fingerprint test pages give a
 quick check for individual leaks ([the eval](DECISIONS.md#d6)).
+
+On top of that sits a score from reCAPTCHA v3, Google's invisible bot check, from a key of our own on a public test
+page. The eval drives the browser exactly the way the agent does. It runs on a real computer with a home connection,
+because a server's IP would swamp every result ([how the eval runs](DECISIONS.md#d9)).
 
 A ban cannot be measured: it comes late, it hits a whole account, and nobody tests it on a real one. So protection
 against bans comes from rules instead: the pace limits, and sending the actions that get accounts banned along the
@@ -108,12 +130,11 @@ whether we will ever need our own Chromium build.
 
 Still open:
 
-- **Site helpers, not yet designed.** These are the scripted commands for popular sites. Open questions: whether they
-  click through the page or call the site's own internal API from inside its tab, how they reach the browser, and who
-  keeps them working when sites change.
+- **Site helpers, not yet designed.** These are the scripted commands for popular sites. They work through the page
+  itself, since calling a site's own client code would break the rule above. Open: how they reach the browser, and
+  who keeps them working when sites change.
 - **X writes through the official API.** Posting and replying through X's paid API is the one route with no ban risk.
   It costs $0.015 per post, but needs the person's own developer account. Parked by the owner as secondary.
-- **Hiding remote control from page scripts.** agent-browser asks the browser for a feature that page scripts can
-  detect, and needs that feature to run scripts. Reports say Chrome 137 made the leak harder to detect; the
-  measurement decides whether we must hide it.
+- **Whether to put a card on the reCAPTCHA project.** Without one the score has four coarse levels; with one it is
+  finer, still free within 10,000 checks a month.
 - **Pace values and back-off rules**, and how the agent is told it is being paced.
