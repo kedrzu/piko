@@ -46,6 +46,7 @@ export function createAgentBrowserDriver(params: CreateAgentBrowserDriverParams)
         scrollBy: px => run('scroll', 'down', String(px)).then(() => undefined),
         scrollTo: selector => run('scrollintoview', selector).then(() => undefined),
         evaluate,
+        cookieNames,
         browserVersion: () => stack.browserVersion(),
         // Ends agent-browser's own background process for the session; the tunnel refuses closing the browser itself.
         close: () => run('close').then(() => undefined),
@@ -69,6 +70,20 @@ export function createAgentBrowserDriver(params: CreateAgentBrowserDriverParams)
                 await run('press', digit);
             }
         }
+    }
+
+    async function cookieNames() {
+        const output = await run('--json', 'cookies', 'get');
+        const reply: unknown = JSON.parse(output);
+        // `{ success, data: { cookies: [{ name, domain, … }] }, error }`
+        const data = isPlainObject(reply) && reply['success'] === true ? reply['data'] : undefined;
+        const cookies = isPlainObject(data) ? data['cookies'] : undefined;
+        if (!Array.isArray(cookies)) {
+            throw new TypeError(`agent-browser cookies failed: ${output.trim()}`);
+        }
+        return cookies.flatMap(cookie =>
+            isPlainObject(cookie) && typeof cookie['name'] === 'string' ? [cookie['name']] : [],
+        );
     }
 
     async function evaluate(expression: string) {

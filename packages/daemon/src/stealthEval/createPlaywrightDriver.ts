@@ -25,6 +25,7 @@ export async function createPlaywrightDriver(): Promise<EvalDriver> {
         scrollBy: px => page.mouse.wheel(0, px),
         scrollTo: selector => page.locator(selector).scrollIntoViewIfNeeded(),
         evaluate: expression => page.evaluate(expression),
+        cookieNames: async () => (await page.context().cookies(page.url())).map(cookie => cookie.name),
         browserVersion: () => Promise.resolve(`HeadlessChrome/${browser.version()}`),
         close: () => browser.close(),
     };

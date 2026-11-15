@@ -31,6 +31,8 @@ export interface EvalDriver {
     scrollTo(selector: string): Promise<void>;
     /** Evaluates a JavaScript expression in the page; resolves with its value, which must be JSON. */
     evaluate(expression: string): Promise<unknown>;
+    /** The names of the cookies the browser would send to the current page. */
+    cookieNames(): Promise<string[]>;
     /** The browser's product and version, e.g. `Chrome/157.0.8103.78`. */
     browserVersion(): Promise<string>;
     /** Ends the driver's session; the browser itself is the caller's. */
@@ -99,10 +101,78 @@ export interface ShopVisit {
     input: ShopInputRecord[];
 }
 
-/** What each probe of a run measured; a probe that failed is missing here and named in `probeErrors`. */
+/** How a leak test page judged the browser: `unknown` when the page never finished or its verdict could not be read. */
+export type LeakVerdict = 'pass' | 'fail' | 'unknown';
+
+/** One fingerprint test page's verdict (design D6). */
+export interface LeakPageResult {
+    page: string;
+    url: string;
+    verdict: LeakVerdict;
+    /** The names of the page's individual checks that failed, as the page names them. */
+    failed: string[];
+    /** Page-specific readings beyond pass and fail, e.g. CreepJS's percentages or BotD's bot kind. */
+    details: Record<string, string>;
+    /** Why the verdict is `unknown`. */
+    error: string | null;
+}
+
+/** The protection vendors the panel covers (design D6). */
+export type PanelVendor = 'Cloudflare' | 'Akamai' | 'HUMAN' | 'Kasada' | 'DataDome';
+
+/** Whether one load of a protected site reached the real site. */
+export type PanelOutcome = 'through' | 'challenged' | 'error';
+
+/** One panel site loaded once. */
+export interface PanelSiteResult {
+    vendor: PanelVendor;
+    url: string;
+    outcome: PanelOutcome;
+    /** The marker that decided the outcome, e.g. `DataDome iframe geo.captcha-delivery.com/captcha` or the title. */
+    evidence: string;
+    title: string;
+    /** The names of the protection vendors' cookies the browser holds for the site, any vendor's. */
+    vendorCookies: string[];
+    elapsedMs: number;
+}
+
+/** How one Allegro search ended: results, a DataDome CAPTCHA, neither in time, or a failed command. */
+export type AllegroSearchOutcome = 'results' | 'captcha' | 'timeout' | 'error';
+
+/** One search on Allegro. */
+export interface AllegroSearch {
+    query: string;
+    at: string;
+    /** From pressing Enter until the results were there; `null` when they never were. */
+    msToResults: number | null;
+    outcome: AllegroSearchOutcome;
+    /** The CAPTCHA's marker or the error. */
+    detail: string | null;
+}
+
+/** Allegro searches at a fixed interval until DataDome shows a CAPTCHA or the cap is reached (design D9). */
+export interface AllegroRun {
+    intervalMs: number;
+    cap: number;
+    consentAccepted: boolean;
+    searches: AllegroSearch[];
+    /** The searches that got results before the first CAPTCHA; `null` when none came within the cap. */
+    searchesBeforeCaptcha: number | null;
+}
+
+/** What each probe of a run measured; a probe that failed or did not run is missing here. */
 export interface RunProbes {
     shop?: ShopVisit;
+    leaks?: LeakPageResult[];
+    panel?: PanelSiteResult[];
+    allegro?: AllegroRun;
 }
+
+/** A probe's name, as `--probes` takes it. */
+export type ProbeName = keyof RunProbes;
+
+/** Every probe, in the order a run runs them. */
+export const PROBE_NAMES: readonly ProbeName[] = ['shop', 'leaks', 'panel', 'allegro'];
 
 /** One run of the eval, saved as one JSON file. */
 export interface RunResult {
@@ -112,5 +182,5 @@ export interface RunResult {
     browserVersion: string;
     probes: RunProbes;
     /** The error message of every probe that failed, by probe name. */
-    probeErrors: Partial<Record<keyof RunProbes, string>>;
+    probeErrors: Partial<Record<ProbeName, string>>;
 }

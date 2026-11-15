@@ -1,21 +1,49 @@
-import type { RunResult, ShopAction, ShopVisit } from './StealthEvalTypes.js';
+import type { RunnerReadings } from './runResultFiles.js';
+import { PROBE_NAMES } from './StealthEvalTypes.js';
+import type { LeakPageResult, PanelSiteResult, ProbeName, ShopAction, ShopVisit } from './StealthEvalTypes.js';
 
 /**
- * The comparison `compare` prints: per run its header, then for the shop a row per action (the n-th occurrence of an
- * action name lines up across runners) with each runner's score and the mean, and a summary of how input arrived.
+ * The comparison `compare` prints: per runner where each probe's reading comes from, then a section per probe any
+ * runner has. The shop: a row per action (the n-th occurrence of an action name lines up across runners) with each
+ * runner's score and the mean, and a summary of how input arrived. The leak pages: each page's verdict per runner and
+ * the checks that failed. The panel: each site's outcome per runner and the evidence. Allegro: the searches before the
+ * first CAPTCHA.
  * @__NO_SIDE_EFFECTS__
  */
-export function formatComparison(runs: RunResult[]): string {
-    if (runs.length === 0) {
+export function formatComparison(readings: RunnerReadings[]): string {
+    if (readings.length === 0) {
         return 'No runs saved yet.';
     }
 
-    const lines = runs.map(run => {
-        const error = run.probeErrors.shop == null ? '' : `, shop failed: ${run.probeErrors.shop}`;
-        return `${run.runner}: ${run.startedAt}, ${run.browserVersion}${error}`;
-    });
-    const header = ['', ...runs.map(run => run.runner)];
-    const visits = runs.map(run => run.probes.shop);
+    const lines = readings.flatMap(reading =>
+        PROBE_NAMES.flatMap(probe => {
+            const source = reading.sources[probe];
+            if (source == null) {
+                return [];
+            }
+            const error = reading.probeErrors[probe];
+            return [
+                `${reading.runner} ${probe}: ${source.startedAt}, ${source.browserVersion}${error == null ? '' : `, failed: ${error}`}`,
+            ];
+        }),
+    );
+    const header = ['', ...readings.map(reading => reading.runner)];
+
+    return [
+        ...lines,
+        ...(has('shop') ? formatShop(readings, header) : []),
+        ...(has('leaks') ? formatLeaks(readings, header) : []),
+        ...(has('panel') ? formatPanel(readings, header) : []),
+        ...(has('allegro') ? formatAllegro(readings, header) : []),
+    ].join('\n');
+
+    function has(probe: ProbeName) {
+        return readings.some(reading => reading.sources[probe] != null);
+    }
+}
+
+function formatShop(readings: RunnerReadings[], header: string[]) {
+    const visits = readings.map(reading => reading.probes.shop);
 
     const keyedActions = visits.map(visit => keyActions(visit?.actions ?? []));
     const actionKeys = [...new Set(keyedActions.flatMap(actions => [...actions.keys()]))];
@@ -29,14 +57,113 @@ export function formatComparison(runs: RunResult[]): string {
     ]);
 
     return [
-        ...lines,
         '',
         'Shop: reCAPTCHA score per action',
         formatTable([header, ...actionRows, meanRow]),
         '',
         'Shop: how input arrived',
         formatTable([header, ...inputRows]),
-    ].join('\n');
+    ];
+}
+
+function formatLeaks(readings: RunnerReadings[], header: string[]) {
+    const byPage = readings.map(reading => new Map((reading.probes.leaks ?? []).map(result => [result.page, result])));
+    const pages = [...new Set(byPage.flatMap(results => [...results.keys()]))];
+    const verdictRows = pages.map(page => [page, ...byPage.map(results => results.get(page)?.verdict ?? '-')]);
+
+    const checkLines = pages.flatMap(page => [
+        page,
+        ...readings.flatMap((reading, index) => {
+            const result = byPage[index]?.get(page);
+            return result ? [`  ${reading.runner}: ${formatLeakChecks(result)}`] : [];
+        }),
+    ]);
+
+    return [
+        '',
+        'Leak pages: verdict',
+        formatTable([header, ...verdictRows]),
+        '',
+        'Leak pages: failed checks',
+        ...checkLines,
+    ];
+}
+
+function formatLeakChecks(result: LeakPageResult) {
+    if (result.error != null) {
+        return `unknown: ${result.error}`;
+    }
+    const failed = result.failed.length > 0 ? result.failed.join(', ') : 'none';
+    const details = Object.entries(result.details).map(([key, value]) => `${key}: ${value}`);
+    return details.length > 0 ? `${failed} [${details.join('; ')}]` : failed;
+}
+
+function formatPanel(readings: RunnerReadings[], header: string[]) {
+    const bySite = readings.map(
+        reading => new Map((reading.probes.panel ?? []).map(result => [panelKey(result), result])),
+    );
+    const sites = [...new Set(bySite.flatMap(results => [...results.keys()]))];
+    const outcomeRows = sites.map(site => [site, ...bySite.map(results => results.get(site)?.outcome ?? '-')]);
+
+    const evidenceLines = sites.flatMap(site => [
+        site,
+        ...readings.flatMap((reading, index) => {
+            const result = bySite[index]?.get(site);
+            if (!result) {
+                return [];
+            }
+            const cookies = result.vendorCookies.length > 0 ? result.vendorCookies.join(', ') : 'none';
+            const seconds = (result.elapsedMs / 1000).toFixed(1);
+            return [`  ${reading.runner}: ${result.evidence}; vendor cookies: ${cookies}; ${seconds} s`];
+        }),
+    ]);
+
+    return ['', 'Panel: outcome', formatTable([header, ...outcomeRows]), '', 'Panel: evidence', ...evidenceLines];
+}
+
+/** A site's row label: its vendor and its host and path. */
+function panelKey(result: PanelSiteResult) {
+    const url = new URL(result.url);
+    return `${result.vendor} ${url.host}${url.pathname === '/' ? '' : url.pathname}`;
+}
+
+function formatAllegro(readings: RunnerReadings[], header: string[]) {
+    const runs = readings.map(reading => reading.probes.allegro);
+    const rows = [
+        ['interval', ...runs.map(run => (run ? `${run.intervalMs} ms` : '-'))],
+        ['searches made', ...runs.map(run => (run ? `${run.searches.length} of ${run.cap}` : '-'))],
+        [
+            'with results',
+            ...runs.map(run =>
+                run ? String(run.searches.filter(search => search.outcome === 'results').length) : '-',
+            ),
+        ],
+        [
+            'before the first CAPTCHA',
+            ...runs.map(run => {
+                if (!run) {
+                    return '-';
+                }
+                return run.searchesBeforeCaptcha == null ? 'no CAPTCHA' : String(run.searchesBeforeCaptcha);
+            }),
+        ],
+        [
+            'mean ms to results',
+            ...runs.map(run => formatMean(run?.searches.flatMap(search => search.msToResults ?? []))),
+        ],
+    ];
+    return ['', 'Allegro: searches until a CAPTCHA', formatTable([header, ...rows])];
+}
+
+function formatMean(values: number[] | undefined) {
+    if (values == null || values.length === 0) {
+        return '-';
+    }
+    let sum = 0;
+    for (const value of values) {
+        sum += value;
+    }
+    return String(Math.round(sum / values.length));
 }
 
 /** Counts over a visit's input records. */
