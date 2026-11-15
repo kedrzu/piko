@@ -156,3 +156,6 @@
 - Owner: "ok" — read as accepting the strict rule (no main-world exception) and the eval shape. Recorded D8 (page
   scripts never observe our code) and D9 (eval harness); D4 partly replaced, prior form in history/DECISIONS.md.
   README updated. Open: billing on the reCAPTCHA project.
+- Owner: site helpers deferred (own design later); X posting route out of scope entirely — the design is the general
+  stealth mechanism. Recorded D10; README rescoped. Owner asked to create the Google Cloud project for reCAPTCHA;
+  gcloud needs re-login and a choice of account (two credentialed: work and personal).

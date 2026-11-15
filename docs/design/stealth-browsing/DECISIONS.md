@@ -229,3 +229,21 @@ The test page must be public, because the daemon's proxy refuses loopback (`buil
 
 - Running the eval in CI — datacenter IP.
 - Google's public reCAPTCHA demo page as the only score — not under our control; kept as a second reading.
+
+## D10
+
+**This design covers only the general stealth mechanism and its eval. Ready-made commands for popular sites (site
+helpers) are deferred to a design of their own, and how the agent posts on X (official API or browser) is not this
+design's question.** (2026-11-15, owner)
+
+**Why.** The owner wants the general mechanism first; whether X writes go through the API is a product question about
+X, not about stealth.
+
+**Consequences.** A later site-helper design inherits [D8](#d8): helpers work through the page, not the site's own
+client code.
+
+**Rejected.**
+
+- Site helpers in this design — deferred by the owner.
+- X writes through the official API as part of ban protection — out of scope; earlier proposal in
+  [history/JOURNAL.md](history/JOURNAL.md).

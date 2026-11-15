@@ -1,15 +1,14 @@
-# Stealth browsing and site helpers
+# Stealth browsing
 
-poweragents gives a person an AI agent with its own browser. This design is about two things that browser needs to
-be useful on the real web. First, sites must not be able to tell that an agent is driving it. Second, later on, the
-agent gets ready-made commands for popular sites ("read my X timeline", "reply to this post"), so it does not have to
-work every page out from scratch.
+poweragents gives a person an AI agent with its own browser. This design is about making that browser usable on the
+real web: sites must not be able to tell that an agent, not the person, is driving it. It is a general mechanism, for
+every site the agent visits.
 
 ## Why
 
 Many sites block AI agents. Allegro lets an agent run a handful of searches, then shows a CAPTCHA, and the task stops
-there. X goes further: its rules name scripting the website as grounds for permanently suspending the account. Its
-own agent access goes through a paid API. The person cannot pick only friendly sites, because the agent works
+there. X goes further: its rules name scripting the website as grounds for permanently suspending the account. The
+person cannot pick only friendly sites, because the agent works
 wherever their errands take it.
 
 So there are two costs, and the owner ranks them. The worse one is **the person losing their account**: a ban
@@ -21,8 +20,7 @@ a CAPTCHA wastes the person's time and their trust in the product.
 The person asks the agent to compare prices for a coffee grinder across Allegro and a few shops. The agent works
 through the searches at roughly the pace a person would and is not stopped. If a site does show a CAPTCHA anyway, the
 agent slows down rather than pressing on. Only if that fails does it ask the person to step in, which happens rarely.
-Nothing the agent does on the person's X account looks like a script, and the risky actions there take the safest
-route available.
+Nothing the agent does on the person's X account looks like a script.
 
 The team has a number for all this: how often the agent gets through a fixed set of well-protected sites. Every
 change to the browser either moves that number or is dropped.
@@ -86,7 +84,7 @@ agent inside its limits. Stealth goes there too ([layers in the daemon](DECISION
   however perfect the fingerprint is.
 
 Because all of this happens in the daemon, anything that drives the browser gets it without extra work: the agent's
-current tool, and later the site helpers, whatever language they are written in.
+current tool, and anything that drives the browser later, whatever language it is written in.
 
 ### Page scripts never see our code
 
@@ -100,7 +98,7 @@ changes small things a page can measure. The daemon never switches them on; when
 same page, but the page's scripts cannot see it. And the browser's disguised name reaches the page's background
 workers too, not only the page itself, because detectors compare the two.
 
-A new version of the agent's tool, or a helper written next year, cannot break this, since the daemon enforces it
+A new version of the agent's tool, or a program written next year, cannot break this, since the daemon enforces it
 rather than the client. A newly discovered way to detect one of those switches finds nothing, since none is ever on.
 
 The price is that the agent can no longer read the page's console, its errors, or the page's own script variables.
@@ -117,12 +115,12 @@ page. The eval drives the browser exactly the way the agent does. It runs on a r
 because a server's IP would swamp every result ([how the eval runs](DECISIONS.md#d9)).
 
 A ban cannot be measured: it comes late, it hits a whole account, and nobody tests it on a real one. So protection
-against bans comes from rules instead: the pace limits, and sending the actions that get accounts banned along the
-safest route available.
+against bans comes from rules instead, chiefly the pace limits.
 
 ## Scope, and what comes first
 
-In scope: the browser's stealth layers, the eval, and site helpers for popular sites.
+In scope: the browser's stealth layers and the eval. Out of scope: ready-made commands for popular sites, which get a
+design of their own later, and how the agent posts on X ([what this design leaves out](DECISIONS.md#d10)).
 
 **First step:** measure the browser as it is today against the eval sites. That shows which leaks actually reach the
 sites, and how many Allegro searches pass before a CAPTCHA. The result sets the order of the layers and settles
@@ -130,11 +128,6 @@ whether we will ever need our own Chromium build.
 
 Still open:
 
-- **Site helpers, not yet designed.** These are the scripted commands for popular sites. They work through the page
-  itself, since calling a site's own client code would break the rule above. Open: how they reach the browser, and
-  who keeps them working when sites change.
-- **X writes through the official API.** Posting and replying through X's paid API is the one route with no ban risk.
-  It costs $0.015 per post, but needs the person's own developer account. Parked by the owner as secondary.
 - **Whether to put a card on the reCAPTCHA project.** Without one the score has four coarse levels; with one it is
   finer, still free within 10,000 checks a month.
 - **Pace values and back-off rules**, and how the agent is told it is being paced.
