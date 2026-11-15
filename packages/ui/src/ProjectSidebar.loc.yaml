@@ -21,3 +21,15 @@ navigation:
 memory:
   en: Memory
   pl: Pamięć
+
+conversations:
+  en: Conversations
+  pl: Rozmowy
+
+files:
+  en: Files
+  pl: Pliki
+
+noFiles:
+  en: No files yet
+  pl: Nie ma jeszcze plików

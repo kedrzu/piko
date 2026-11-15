@@ -96,12 +96,18 @@ ENV DISABLE_AUTOUPDATER=1 \
     PATH=/opt/poweragents/env/node/node_modules/.bin:/opt/poweragents/env/python/bin:$PATH
 
 # The agent works with no approvals (design D28): the sandbox is the boundary, so OpenCode allows every action. Global
-# rules are evaluated after each agent's own (the built-in ones ask before reading `.env` files), so this one wins.
+# rules are evaluated after each agent's own (the built-in ones ask before reading `.env` files), and a later rule over
+# an earlier one, so these win. The one exception: OpenCode asks before every file edit, and the daemon answers, never
+# the person: at once, or held while she types in that file
+# (`docs/decisions/agent-holds-file-edits-through-opencode-permissions.md`).
 # `skills` adds the plugins' skills: the daemon copies each as `<plugin>:<skill>/` into its read-only folder
 # (`AGENT_SKILLS_DIR`), and the folder's name is the skill's id.
 COPY <<EOF /root/.config/opencode/opencode.json
 {
-    "permissions": [{ "action": "*", "resource": "*", "effect": "allow" }],
+    "permissions": [
+        { "action": "*", "resource": "*", "effect": "allow" },
+        { "action": "edit", "resource": "*", "effect": "ask" }
+    ],
     "skills": ["/Poweragents/.poweragents/skills"]
 }
 EOF

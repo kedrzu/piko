@@ -19,6 +19,7 @@ export interface MarkdownEditorStoryArgs {
     markdown: string;
     syntax?: boolean;
     label?: string;
+    readonly?: boolean;
     'onUpdate:markdown'?: (markdown: string) => void;
     'onUpdate:syntax'?: (syntax: boolean) => void;
     onOpen?: (file: MarkdownEditorStoryFile) => void;
@@ -44,6 +45,9 @@ export const AgentFile: Story = { args: { markdown: AGENT_MARKDOWN } };
 
 /** The plain Markdown source instead of the formatted text. */
 export const SyntaxView: Story = { args: { markdown: MEMORY_NOTE_MARKDOWN, syntax: true } };
+
+/** A file shown without letting it change: gone from disk, or the agent writing it. */
+export const ReadOnly: Story = { args: { markdown: POST_IDEAS_MARKDOWN, label: 'Pomysły na posty', readonly: true } };
 
 /** A file with nothing in it yet. */
 export const Empty: Story = { args: { markdown: EMPTY_MARKDOWN } };

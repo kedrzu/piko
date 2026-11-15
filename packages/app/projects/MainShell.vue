@@ -1,8 +1,8 @@
-<!-- The app after the first run: Memory and the projects in the sidebar (App setup pinned first, a project not opened yet marked new) with the open project's conversations, the open screen's tab, the screen of the route inside, and the new-project dialog. Starts the daemon's event stream. -->
+<!-- The app after the first run: Memory and the projects in the sidebar (App setup pinned first, a project not opened yet marked new) with the active tab's project, its conversations and its files, the open tabs, the screen of the route inside, and the new-project dialog. Starts the daemon's event stream. -->
 
 <script lang="ts" setup>
 import { NuxtPage } from '#components';
-import { Brain } from '@lucide/vue';
+import { assertNever } from '@nzyme/utils/assertNever.js';
 import { useTranslate } from '@nzyme/vue-i18n/useTranslate.js';
 import { provideContext } from '@nzyme/vue-utils/context.js';
 import { useService } from '@nzyme/vue-ioc/useService.js';
@@ -10,13 +10,26 @@ import { useRoute, useRouter } from 'nuxt/app';
 import { computed, watch } from 'vue';
 
 import AppShell from '@poweragents/ui/AppShell.vue';
-import ConversationTab from '@poweragents/ui/ConversationTab.vue';
+import type { ProjectColor } from '@poweragents/ui/ProjectColor.js';
 import ProjectSidebar from '@poweragents/ui/ProjectSidebar.vue';
-import type { ProjectSidebarConversation, ProjectSidebarItem } from '@poweragents/ui/ProjectSidebar.vue';
+import type {
+  ProjectSidebarConversation,
+  ProjectSidebarFile,
+  ProjectSidebarItem,
+} from '@poweragents/ui/ProjectSidebar.vue';
+import TabBar from '@poweragents/ui/TabBar.vue';
+import type { TabBarItem } from '@poweragents/ui/TabBar.vue';
 
 import * as lc from '@/conversations/Conversations.loc.js';
 import { ConversationStore } from '@/conversations/ConversationStore.js';
 import { DaemonEventStream } from '@/daemon/DaemonEventStream.js';
+import { FileAgentStore } from '@/files/FileAgentStore.js';
+import { fileKind } from '@/files/fileKind.js';
+import { fileTitle } from '@/files/fileTitle.js';
+import { ProjectFileStore } from '@/files/ProjectFileStore.js';
+import type { ProjectFileRow } from '@/files/ProjectFileStore.js';
+import { TabStore } from '@/tabs/TabStore.js';
+import type { Tab } from '@/tabs/TabStore.js';
 
 import * as l from './MainShell.loc.js';
 
@@ -28,6 +41,10 @@ import ProjectsLoadFailed from './ProjectsLoadFailed.vue';
 
 const store = useService(ProjectStore);
 const conversationStore = useService(ConversationStore);
+const fileStore = useService(ProjectFileStore);
+// Before the event stream starts: the daemon sends what the agent is writing as soon as the app connects.
+const fileAgents = useService(FileAgentStore);
+const tabs = useService(TabStore);
 const events = useService(DaemonEventStream);
 const route = useRoute();
 const router = useRouter();
@@ -42,13 +59,17 @@ const items = computed(() =>
     .map((project): ProjectSidebarItem => ({
       id: project.id,
       name: project.name,
-      color: project.role === 'appSetup' ? 'slate' : projectColor(project.id),
+      color: colorOf(project.id),
       to: { name: 'project', params: { projectId: project.id } },
       mark: project.role === 'appSetup' ? 'pinned' : store.isNew(project) ? 'new' : undefined,
     })),
 );
+/** The active tab: the route's screen. */
+const activeTab = computed(() => tabs.targetOf(route));
+const activeKey = computed(() => (activeTab.value ? tabs.keyOf(activeTab.value) : undefined));
 const selected = computed(() => {
-  const projectId = route.name === 'project' || route.name === 'conversation' ? route.params['projectId'] : undefined;
+  const tab = activeTab.value;
+  const projectId = tab && tab.kind !== 'memory' ? tab.projectId : undefined;
   return items.value.find(item => item.id === projectId);
 });
 const selectedConversationId = computed(() =>
@@ -64,19 +85,36 @@ const conversations = computed(() =>
       }))
     : [],
 );
-const tab = computed(() => {
-  const open = conversations.value.find(conversation => conversation.id === selectedConversationId.value);
-  if (selectedConversationId.value === undefined) {
-    return { title: t(lc.newConversation), running: false };
-  }
-  return { title: open?.title ?? t(lc.untitled), running: open?.running ?? false };
+const selectedFilePath = computed(() => {
+  const path = route.query['path'];
+  return route.name === 'file' && typeof path === 'string' ? path : undefined;
 });
+const files = computed(() => {
+  const projectId = selected.value?.id;
+  if (projectId === undefined || fileStore.state.projectId !== projectId) {
+    return null;
+  }
+  return fileStore.state.rows?.map(row => fileItem(projectId, row)) ?? null;
+});
+const tabItems = computed(() => tabs.state.tabs.map(tabItem));
+
+// The route's screen opens its tab.
+watch(
+  activeTab,
+  tab => {
+    if (tab) {
+      tabs.open(tab);
+    }
+  },
+  { immediate: true },
+);
 
 watch(
   () => selected.value?.id,
   projectId => {
     if (projectId) {
       conversationStore.open(projectId);
+      fileStore.open(projectId);
       store.markOpened(projectId);
     }
   },
@@ -112,6 +150,63 @@ events.start();
 
 // A failure is kept by the store and shown in place of the route's screen.
 store.getProjects().catch(() => undefined);
+
+function fileItem(projectId: string, { entry, depth, expanded }: ProjectFileRow): ProjectSidebarFile {
+  return entry.kind === 'folder'
+    ? { path: entry.path, label: entry.name, kind: 'folder', depth, expanded }
+    : {
+        path: entry.path,
+        label: fileTitle(entry.path),
+        kind: fileKind(entry.path),
+        depth,
+        to: { name: 'file', params: { projectId }, query: { path: entry.path } },
+        writing: fileAgents.get(projectId, entry.path)?.state === 'writing',
+        waiting: fileAgents.get(projectId, entry.path)?.state === 'waiting',
+      };
+}
+
+function tabItem(tab: Tab): TabBarItem {
+  const base = { id: tabs.keyOf(tab), to: tabs.routeOf(tab) };
+  switch (tab.kind) {
+    case 'memory':
+      return { ...base, title: t(l.memory), icon: 'memory', color: 'violet' };
+    case 'newConversation':
+      return { ...base, title: t(lc.newConversation), icon: 'conversation', color: colorOf(tab.projectId) };
+    case 'conversation': {
+      const live =
+        conversationStore.state.projectId === tab.projectId ? conversationStore.find(tab.conversationId) : undefined;
+      return {
+        ...base,
+        title: (live ? live.title : tab.title) ?? t(lc.untitled),
+        icon: 'conversation',
+        color: colorOf(tab.projectId),
+        running: live?.running ?? false,
+      };
+    }
+    case 'file':
+      return { ...base, title: fileTitle(tab.path), icon: fileKind(tab.path) };
+    default:
+      return assertNever(tab);
+  }
+}
+
+/** Closes a tab; closing the active one shows the tab beside it, or home when it was the last. */
+function closeTab(key: string) {
+  const closed = tabs.state.tabs.find(tab => tabs.keyOf(tab) === key);
+  if (closed?.kind === 'file') {
+    // A closed file holds the agent no longer: the person is done typing there.
+    void fileAgents.release(closed.projectId, closed.path);
+  }
+  const next = tabs.close(key);
+  if (key === activeKey.value) {
+    void router.push(next ? tabs.routeOf(next) : { name: 'home' });
+  }
+}
+
+function colorOf(projectId: string): ProjectColor {
+  const project = store.state.projects?.find(candidate => candidate.id === projectId);
+  return project?.role === 'appSetup' ? 'slate' : projectColor(projectId);
+}
 </script>
 
 <template>
@@ -124,27 +219,20 @@ store.getProjects().catch(() => undefined);
         :selected-id="selected?.id"
         :conversations="conversations"
         :selected-conversation-id="selectedConversationId"
+        :files="files"
+        :selected-file-path="selectedFilePath"
+        @toggle-folder="fileStore.toggle"
         @create="shell.newProjectOpen = true"
       />
     </template>
     <template
-      v-if="memoryOpen"
+      v-if="tabItems.length"
       #header
     >
-      <ConversationTab
-        :title="t(l.memory)"
-        color="violet"
-        :icon="Brain"
-      />
-    </template>
-    <template
-      v-else-if="selected"
-      #header
-    >
-      <ConversationTab
-        :title="tab.title"
-        :color="selected.color"
-        :running="tab.running"
+      <TabBar
+        :tabs="tabItems"
+        :active-id="activeKey"
+        @close="closeTab"
       />
     </template>
     <ProjectsLoadFailed v-if="store.state.projects === null && store.state.loadError !== null" />

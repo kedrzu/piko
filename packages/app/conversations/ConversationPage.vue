@@ -1,4 +1,4 @@
-<!-- A conversation open (screens 56, 57, 59–61, 65–74): its messages with the agent's reply streaming, error lines, notes that a plugin's command was not run, the banner when the agent cannot answer, and the composer with Stop. -->
+<!-- A conversation open (screens 56, 57, 59–61, 65–74): its messages with the agent's reply streaming and chips for the files it wrote, error lines, notes that a plugin's command was not run, the banner when the agent cannot answer, and the composer with Stop; a file open beside it (`?file=`, frame 26) with Open as a tab and Close. -->
 
 <script lang="ts" setup>
 import { LogIn } from '@lucide/vue';
@@ -9,19 +9,28 @@ import { useLogger } from '@nzyme/vue-ioc/useLogger.js';
 import { useService } from '@nzyme/vue-ioc/useService.js';
 import { useRoute, useRouter } from 'nuxt/app';
 import { computed, ref, useTemplateRef, watch } from 'vue';
+import type { RouteLocationRaw } from 'vue-router';
 
 import type { ConversationError } from '@poweragents/common/api/ConversationTypes.js';
 import AgentMessage from '@poweragents/ui/AgentMessage.vue';
 import Composer from '@poweragents/ui/Composer.vue';
 import ConversationLayout from '@poweragents/ui/ConversationLayout.vue';
+import FileChip from '@poweragents/ui/FileChip.vue';
 import MessageError from '@poweragents/ui/MessageError.vue';
+import SideView from '@poweragents/ui/SideView.vue';
 import StatusBanner from '@poweragents/ui/StatusBanner.vue';
 import UserMessage from '@poweragents/ui/UserMessage.vue';
 import { splitGenerativeUi } from '@poweragents/ui/utils/splitGenerativeUi.js';
 
 import * as l from './ConversationPage.loc.js';
 import * as lc from './Conversations.loc.js';
+import { FileAgentStore } from '@/files/FileAgentStore.js';
+import { fileKind } from '@/files/fileKind.js';
+import { fileTitle } from '@/files/fileTitle.js';
+import ProjectFileView from '@/files/ProjectFileView.vue';
 import { ProjectStore } from '@/projects/ProjectStore.js';
+import { TabStore } from '@/tabs/TabStore.js';
+import type { Tab } from '@/tabs/TabStore.js';
 
 import { ConversationStore } from './ConversationStore.js';
 import { useConversation } from './useConversation.js';
@@ -30,6 +39,8 @@ const route = useRoute();
 const router = useRouter();
 const store = useService(ConversationStore);
 const projects = useService(ProjectStore);
+const tabs = useService(TabStore);
+const fileAgents = useService(FileAgentStore);
 const t = useTranslate();
 const language = useLanguage();
 const logger = useLogger();
@@ -38,10 +49,17 @@ const projectId = computed(() => String(route.params['projectId']));
 const conversationId = computed(() => String(route.params['conversationId']));
 const conversation = useConversation({ projectId, conversationId });
 const layout = useTemplateRef('layout');
+const sideFileView = useTemplateRef('sideFileView');
 /** What the person is writing. */
 const message = ref('');
 
 const title = computed(() => store.find(conversationId.value)?.title ?? t(lc.untitled));
+const project = computed(() => projects.state.projects?.find(candidate => candidate.id === projectId.value));
+/** The file open beside the conversation: its path in the project. */
+const sideFile = computed(() => {
+  const value = route.query['file'];
+  return typeof value === 'string' && value !== '' ? value : undefined;
+});
 /** The name of the provider the conversation runs on, for the texts about its errors; `null` when the app knows none. */
 const providerName = computed(() => {
   const provider = store.find(conversationId.value)?.provider;
@@ -94,9 +112,7 @@ const answers = computed(() => {
 });
 /** App setup before the person has said anything: the agent has just asked about them (screen 65). */
 const introducing = computed(
-  () =>
-    projects.state.projects?.find(project => project.id === projectId.value)?.role === 'appSetup' &&
-    !conversation.items.some(item => item.type === 'user'),
+  () => project.value?.role === 'appSetup' && !conversation.items.some(item => item.type === 'user'),
 );
 const placeholder = computed(() => {
   if (conversation.running) {
@@ -116,6 +132,43 @@ watch(
     }
   },
 );
+
+/** Where a file's chip leads: the file's tab when it has one (one editor per file), else the side view. */
+function fileRoute(path: string): RouteLocationRaw {
+  const tab: Tab = { kind: 'file', projectId: projectId.value, path };
+  const key = tabs.keyOf(tab);
+  if (tabs.state.tabs.some(other => tabs.keyOf(other) === key)) {
+    return tabs.routeOf(tab);
+  }
+  return {
+    name: 'conversation',
+    params: { projectId: projectId.value, conversationId: conversationId.value },
+    query: { file: path },
+  };
+}
+
+/** The agent writes the file now: a step of its reply runs, or the daemon says so. */
+function isWriting(path: string, running: boolean) {
+  return running || fileAgents.get(projectId.value, path)?.state === 'writing';
+}
+
+/** Moves the side view's file into its tab; what the person typed is saved first, so the tab opens with it. */
+async function openSideFileAsTab(path: string) {
+  await sideFileView.value?.flush();
+  await router.push(tabs.routeOf({ kind: 'file', projectId: projectId.value, path }));
+}
+
+async function closeSideFile() {
+  const path = sideFile.value;
+  if (path !== undefined) {
+    // A closed file holds the agent no longer: the person is done typing there.
+    void fileAgents.release(projectId.value, path);
+  }
+  await router.push({
+    name: 'conversation',
+    params: { projectId: projectId.value, conversationId: conversationId.value },
+  });
+}
 
 /** Sends what the person typed; a failure puts it back in the composer. */
 async function send(text: string) {
@@ -202,7 +255,17 @@ function describeReset(resetAt: number | undefined) {
         :ui-active="item.key === activeUiKey"
         :answer="answers.get(item.key)"
         @reply="deliver"
-      />
+      >
+        <template #file="file">
+          <FileChip
+            :title="fileTitle(file.path)"
+            :kind="fileKind(file.path)"
+            :place="project?.name"
+            :writing="isWriting(file.path, file.running)"
+            :to="fileRoute(file.path)"
+          />
+        </template>
+      </AgentMessage>
       <MessageError
         v-else-if="item.type === 'error'"
         :class="$style.conversationPage_error"
@@ -237,6 +300,24 @@ function describeReset(resetAt: number | undefined) {
         @send="send"
         @stop="stop"
       />
+    </template>
+    <template
+      v-if="sideFile !== undefined"
+      #aside
+    >
+      <SideView
+        :title="fileTitle(sideFile)"
+        :kind="fileKind(sideFile)"
+        :place="project?.name"
+        @open-as-tab="openSideFileAsTab(sideFile)"
+        @close="closeSideFile"
+      >
+        <ProjectFileView
+          ref="sideFileView"
+          :project-id="projectId"
+          :path="sideFile"
+        />
+      </SideView>
     </template>
   </ConversationLayout>
 </template>

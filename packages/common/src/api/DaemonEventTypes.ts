@@ -11,6 +11,7 @@ export const DAEMON_EVENTS_PATH = '/api/events';
 export type DaemonEvent =
     | ConversationEvent
     | DataRootEvent
+    | FileAgentChangedEvent
     | PluginsChangedEvent
     | PluginInstalledEvent
     | DaemonStreamRestoredEvent;
@@ -19,11 +20,20 @@ export type DaemonEvent =
  * Something changed in the profile's data root, by the agent, the person or this daemon. Sent once for a burst of
  * changes; the app reloads what it shows.
  */
-export type DataRootEvent = ProjectsChangedEvent | MemoryChangedEvent;
+export type DataRootEvent = ProjectsChangedEvent | ProjectFilesChangedEvent | MemoryChangedEvent;
 
 /** A project folder appeared, went, was renamed, or its marker changed: the project list may differ. */
 export interface ProjectsChangedEvent {
     type: 'projectsChanged';
+}
+
+/**
+ * A file or folder inside a project's folder changed (not its marker: that is {@link ProjectsChangedEvent}). Sent once
+ * per project for a burst of changes; after the daemon's watcher was down, once for every project.
+ */
+export interface ProjectFilesChangedEvent {
+    type: 'projectFilesChanged';
+    projectId: string;
 }
 
 /** A file or folder in the Memory folder changed. */
@@ -47,6 +57,26 @@ export interface PluginInstalledEvent {
     /** The conversation's project: where a `project` plugin was installed. */
     projectId: string;
     conversationId: string;
+}
+
+/**
+ * What the agent is doing to a project file: `waiting` while it holds its change because the person is typing in the
+ * file (she can still edit it), else `writing` while a tool call that writes it runs.
+ */
+export type FileAgentState = 'writing' | 'waiting';
+
+/**
+ * The agent's state on a project file changed. Sent for every file in a non-`null` state as soon as a client connects,
+ * and `null` once its tool call ends, its run ends or the daemon's feed of the agent's events is restored.
+ */
+export interface FileAgentChangedEvent {
+    type: 'fileAgentChanged';
+    projectId: string;
+    /** Relative to the project's folder, with `/`. */
+    path: string;
+    /** The conversation whose agent does it, or did it last when `state` is `null`. */
+    conversationId: string;
+    state: FileAgentState | null;
 }
 
 /**

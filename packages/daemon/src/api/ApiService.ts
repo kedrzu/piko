@@ -10,6 +10,7 @@ import { DAEMON_API_PATH, DEV_SERVER_PORT } from '@poweragents/common/daemonAddr
 
 import { ConversationEventService } from '../conversations/ConversationEventService.js';
 import { DataRootWatchService } from '../dataRoot/DataRootWatchService.js';
+import { FileAgentStateService } from '../files/FileAgentStateService.js';
 import { PluginService } from '../plugins/PluginService.js';
 import { SandboxApiService } from '../sandboxApi/SandboxApiService.js';
 import { AiStatusGetEndpointHandler } from './AiStatusGetEndpoint.handler.js';
@@ -31,6 +32,13 @@ import { PluginInstallEndpointHandler } from './PluginInstallEndpoint.handler.js
 import { PluginListEndpointHandler } from './PluginListEndpoint.handler.js';
 import { PluginRemoveEndpointHandler } from './PluginRemoveEndpoint.handler.js';
 import { ProjectCreateEndpointHandler } from './ProjectCreateEndpoint.handler.js';
+import { ProjectFileContentEndpointHandler } from './ProjectFileContentEndpoint.handler.js';
+import { ProjectFileListEndpointHandler } from './ProjectFileListEndpoint.handler.js';
+import { ProjectFileLocateEndpointHandler } from './ProjectFileLocateEndpoint.handler.js';
+import { ProjectFileOpenEndpointHandler } from './ProjectFileOpenEndpoint.handler.js';
+import { ProjectFileReadEndpointHandler } from './ProjectFileReadEndpoint.handler.js';
+import { ProjectFileReleaseEndpointHandler } from './ProjectFileReleaseEndpoint.handler.js';
+import { ProjectFileWriteEndpointHandler } from './ProjectFileWriteEndpoint.handler.js';
 import { ProjectListEndpointHandler } from './ProjectListEndpoint.handler.js';
 import { SandboxStartEndpointHandler } from './SandboxStartEndpoint.handler.js';
 import { SandboxStatusGetEndpointHandler } from './SandboxStatusGetEndpoint.handler.js';
@@ -80,6 +88,13 @@ const HANDLERS = [
     MemoryFileListEndpointHandler,
     MemoryFileGetEndpointHandler,
     MemoryRevealEndpointHandler,
+    ProjectFileListEndpointHandler,
+    ProjectFileReadEndpointHandler,
+    ProjectFileContentEndpointHandler,
+    ProjectFileLocateEndpointHandler,
+    ProjectFileOpenEndpointHandler,
+    ProjectFileWriteEndpointHandler,
+    ProjectFileReleaseEndpointHandler,
     PluginListEndpointHandler,
     PluginInstallEndpointHandler,
     PluginRemoveEndpointHandler,
@@ -110,10 +125,19 @@ export const ApiService = defineService({
         logger: Logger,
         conversationEvents: ConversationEventService,
         dataRootEvents: DataRootWatchService,
+        fileAgentEvents: FileAgentStateService,
         plugins: PluginService,
         sandboxApi: SandboxApiService,
     },
-    setup({ container, logger, conversationEvents, dataRootEvents, plugins, sandboxApi }): ApiServiceShape {
+    setup({
+        container,
+        logger,
+        conversationEvents,
+        dataRootEvents,
+        fileAgentEvents,
+        plugins,
+        sandboxApi,
+    }): ApiServiceShape {
         // A failure's name and message go back to the app, which shows them under "Show details"; the app is the only
         // client. `stackTraces` is what makes the router answer with them instead of a constant `UnknownError`;
         // `toResponse()` then drops the stack, which carries the daemon's internal paths. The whole error is logged.
@@ -188,12 +212,15 @@ export const ApiService = defineService({
                     const sendEvent = (event: DaemonEvent) => send(`data: ${JSON.stringify(event)}\n\n`);
                     const stopConversationEvents = conversationEvents.listen(sendEvent);
                     const stopDataRootEvents = dataRootEvents.listen(sendEvent);
+                    // Sends the files the agent writes now first, so a client that connects shows them at once.
+                    const stopFileAgentEvents = fileAgentEvents.listen(sendEvent);
                     const stopPluginEvents = plugins.listen(sendEvent);
                     sandboxApi.pluginInstalled.on(sendEvent);
                     const heartbeat = setInterval(() => send(': heartbeat\n\n'), HEARTBEAT_MS);
                     close = () => {
                         stopConversationEvents();
                         stopDataRootEvents();
+                        stopFileAgentEvents();
                         stopPluginEvents();
                         sandboxApi.pluginInstalled.off(sendEvent);
                         clearInterval(heartbeat);

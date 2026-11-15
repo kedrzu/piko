@@ -1,4 +1,5 @@
 import { expect, mock, test } from 'bun:test';
+import { createHash } from 'node:crypto';
 import { mkdtempSync, writeFileSync } from 'node:fs';
 import { cp, mkdir, writeFile } from 'node:fs/promises';
 import os from 'node:os';
@@ -8,10 +9,12 @@ import { HttpError } from '@nzyme/fetch-utils/HttpError.js';
 import { EnvVariables } from '@nzyme/ioc/helpers/EnvVariables.js';
 import { createTestContainer } from '@nzyme/ioc-testing/createTestContainer.js';
 import type { RpcErrorData } from '@nzyme/rpc/types/RpcError.js';
+import { assert } from '@nzyme/utils/assert.js';
 import { createEventEmitter } from '@nzyme/utils/createEventEmitter.js';
 
 import type { DaemonEvent } from '@poweragents/common/api/DaemonEventTypes.js';
 import type { PluginInfo } from '@poweragents/common/api/PluginTypes.js';
+import type { ProjectFileContentResult } from '@poweragents/common/api/ProjectFileTypes.js';
 import type { SandboxStatus } from '@poweragents/common/api/SandboxTypes.js';
 import { OpencodeEventSubscribeCommand } from '@poweragents/opencode/OpencodeEventSubscribeCommand.js';
 import type { OpencodeEvent } from '@poweragents/opencode/OpencodeEventSubscribeCommand.js';
@@ -185,6 +188,32 @@ test('logs an unexpected failure whole', async () => {
     await api.handle(new Request(STATUS_URL, { method: 'POST', headers: { Origin: 'tauri://localhost' } }));
 
     expect(logs.find(log => log.message === 'API request failed')?.data).toEqual({ error: failure });
+});
+
+test("serves a project's files: lists, reads and writes them, refusing an unknown project and a malformed body", async () => {
+    const { api, container, dataRoot } = setup();
+    const created = await container.resolve(ProjectService).create('Projekt');
+    assert('created' in created);
+    const projectId = created.created.id;
+    await writeFile(path.join(dataRoot, 'projects', 'Projekt', 'plan.md'), '# Plan\n');
+    const version = createHash('sha256').update('# Plan\n').digest('hex');
+
+    const list = await api.handle(apiRequest('files/list', { projectId }));
+    const write = await api.handle(
+        apiRequest('files/write', { projectId, path: 'plan.md', content: '# Nowy\n', version }),
+    );
+    const read = await api.handle(apiRequest('files/read', { projectId, path: 'plan.md' }));
+    const unknown = await api.handle(apiRequest('files/content', { projectId: 'unknown', path: 'plan.md' }));
+    const malformed = await api.handle(apiRequest('files/locate', { projectId }));
+
+    expect(await list.json()).toMatchObject({ entries: [{ name: 'plan.md', kind: 'file' }] });
+    expect(await write.json()).toMatchObject({
+        written: { version: createHash('sha256').update('# Nowy\n').digest('hex') },
+    });
+    expect(await read.json()).toMatchObject({ text: { content: '# Nowy\n' } });
+    const notFound: ProjectFileContentResult = { notFound: true };
+    expect(await unknown.json()).toEqual(notFound);
+    expect(malformed.status).toBe(400);
 });
 
 test('answers the CORS preflight only for the app origins', async () => {

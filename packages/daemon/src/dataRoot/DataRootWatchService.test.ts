@@ -5,9 +5,12 @@ import path from 'node:path';
 
 import { EnvVariables } from '@nzyme/ioc/helpers/EnvVariables.js';
 import { createTestContainer } from '@nzyme/ioc-testing/createTestContainer.js';
+import type { Container } from '@nzyme/ioc/Container.js';
+import { assert } from '@nzyme/utils/assert.js';
 
 import type { DataRootEvent } from '@poweragents/common/api/DaemonEventTypes.js';
 
+import { ProjectService } from '../projects/ProjectService.js';
 import { DataRootWatchService } from './DataRootWatchService.js';
 import type { DataRootWatchServiceShape } from './DataRootWatchService.js';
 
@@ -40,7 +43,7 @@ test('sends one event per kind for a burst of changes in projects and the Memory
     ] satisfies DataRootEvent[]);
 });
 
-test("ignores files inside a project and outside both folders, and notices a project folder's rename", async () => {
+test("ignores files in a folder that is no project and outside both folders, and notices a project folder's rename", async () => {
     const { watcher, root } = await setup();
     await mkdir(path.join(root, 'projects', 'Alfa', 'notatki'), { recursive: true });
     await settle();
@@ -57,6 +60,34 @@ test("ignores files inside a project and outside both folders, and notices a pro
     expect(events).toEqual([{ type: 'projectsChanged' }] satisfies DataRootEvent[]);
 });
 
+test("sends one projectFilesChanged per project for a burst of changes to the project's files", async () => {
+    const { watcher, root, container } = await setup();
+    const alfa = await createProject(container, 'Alfa');
+    const beta = await createProject(container, 'Beta');
+    await mkdir(path.join(root, 'projects', 'Alfa', 'notatki'));
+    await mkdir(path.join(root, 'projects', 'Bez projektu'));
+    await settle();
+    const events = listen(watcher);
+
+    // An atomic write, as the daemon's own: a hidden temporary file renamed over the file.
+    await writeFile(path.join(root, 'projects', 'Alfa', 'notatki', '.plan.md.1234.tmp'), 'plan');
+    await rename(
+        path.join(root, 'projects', 'Alfa', 'notatki', '.plan.md.1234.tmp'),
+        path.join(root, 'projects', 'Alfa', 'notatki', 'plan.md'),
+    );
+    await writeFile(path.join(root, 'projects', 'Alfa', 'raport.md'), 'raport');
+    await rm(path.join(root, 'projects', 'Alfa', 'raport.md'));
+    await writeFile(path.join(root, 'projects', 'Beta', 'dane.csv'), 'a,b');
+    await writeFile(path.join(root, 'projects', 'Bez projektu', 'plik.md'), 'not a project');
+    await settle();
+
+    const expected: DataRootEvent[] = [
+        { type: 'projectFilesChanged', projectId: alfa },
+        { type: 'projectFilesChanged', projectId: beta },
+    ];
+    expect(events.toSorted(byProjectId)).toEqual(expected.toSorted(byProjectId));
+});
+
 test('starts the watcher again after it failed', async () => {
     const tmp = await mkdtemp(path.join(os.tmpdir(), 'poweragents-data-root-'));
     const root = path.join(tmp, 'root');
@@ -69,16 +100,21 @@ test('starts the watcher again after it failed', async () => {
         'Data root watcher failed, restarting',
     ]);
 
-    // The restart creates the data root and watches it.
+    // The restart creates the data root and watches it. A project made during the outage is told about too.
     await rm(root);
+    const alfa = await createProject(container, 'Alfa');
     await Bun.sleep(1500);
     const afterRestart = events.toSorted((a, b) => a.type.localeCompare(b.type));
     await mkdir(path.join(root, 'memory'), { recursive: true });
     await writeFile(path.join(root, 'memory', 'praca.md'), '# Praca\n');
     await settle();
 
-    // The restart itself reports both kinds, for changes made during the outage; later changes follow.
-    expect(afterRestart).toEqual([{ type: 'memoryChanged' }, { type: 'projectsChanged' }] satisfies DataRootEvent[]);
+    // The restart itself reports every kind, for changes made during the outage; later changes follow.
+    expect(afterRestart).toEqual([
+        { type: 'memoryChanged' },
+        { type: 'projectFilesChanged', projectId: alfa },
+        { type: 'projectsChanged' },
+    ] satisfies DataRootEvent[]);
     expect(events.slice(afterRestart.length)).toEqual([{ type: 'memoryChanged' }] satisfies DataRootEvent[]);
 });
 
@@ -92,7 +128,13 @@ async function setup() {
     // before the new watcher's stream got going.
     unsubscribes.push(watcher.listen(() => undefined));
     await settle();
-    return { watcher, root };
+    return { watcher, root, container };
+}
+
+async function createProject(container: Container, name: string) {
+    const created = await container.resolve(ProjectService).create(name);
+    assert('created' in created);
+    return created.created.id;
 }
 
 function listen(watcher: DataRootWatchServiceShape) {
@@ -104,4 +146,8 @@ function listen(watcher: DataRootWatchServiceShape) {
 /** Waits past the watcher's debounce, and the filesystem's own delay in reporting a change. */
 function settle() {
     return Bun.sleep(700);
+}
+
+function byProjectId(a: DataRootEvent, b: DataRootEvent) {
+    return ('projectId' in a ? a.projectId : '').localeCompare('projectId' in b ? b.projectId : '');
 }

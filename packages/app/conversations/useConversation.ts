@@ -332,7 +332,9 @@ export function useConversation(options: UseConversationOptions): ConversationVi
     function onEvent(event: DaemonEvent) {
         if (
             event.type === 'projectsChanged' ||
+            event.type === 'projectFilesChanged' ||
             event.type === 'memoryChanged' ||
+            event.type === 'fileAgentChanged' ||
             event.type === 'pluginsChanged' ||
             event.type === 'pluginInstalled'
         ) {

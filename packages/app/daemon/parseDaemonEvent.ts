@@ -24,6 +24,10 @@ export function parseDaemonEvent(data: string): DaemonEvent | null {
     if (type === 'streamRestored' || type === 'projectsChanged' || type === 'memoryChanged') {
         return { type };
     }
+    if (type === 'projectFilesChanged') {
+        const projectId = readString(value, 'projectId');
+        return projectId === undefined ? null : { type, projectId };
+    }
     const conversationId = readString(value, 'conversationId');
     if (conversationId === undefined) {
         return null;
@@ -74,6 +78,16 @@ export function parseDaemonEvent(data: string): DaemonEvent | null {
         }
         case 'runFinished':
             return readRunFinished(value, conversationId);
+        case 'fileAgentChanged': {
+            const projectId = readString(value, 'projectId');
+            const path = readString(value, 'path');
+            // A state added later reads as none: the app never locks a file it does not understand.
+            const state =
+                'state' in value && (value.state === 'writing' || value.state === 'waiting') ? value.state : null;
+            return projectId === undefined || path === undefined
+                ? null
+                : { type: 'fileAgentChanged', projectId, path, conversationId, state };
+        }
         default:
             return null;
     }

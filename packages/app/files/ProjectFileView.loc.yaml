@@ -1,0 +1,99 @@
+loading:
+  en[auto]: Opening the file
+  pl: Otwieranie pliku
+
+loadFailedTitle:
+  en[auto]: Couldn't open this file
+  pl: Nie udało się otworzyć tego pliku
+
+loadFailedBody:
+  en[auto]: It's not your fault, and the file is safe in the project's folder. Try again.
+  pl: To nie Twój błąd, a plik jest bezpieczny w folderze projektu. Spróbuj ponownie.
+
+goneTitle:
+  en[auto]: This file is gone
+  pl: Tego pliku już nie ma
+
+goneBody:
+  en[auto]: It was deleted or moved outside the app. You see it as it was; it can't be changed here.
+  pl: Został usunięty albo przeniesiony poza aplikacją. Widzisz go takim, jaki był; nie da się go tu zmienić.
+
+notSavedTitle:
+  en[auto]: Not saved
+  pl: Nie zapisano
+
+notSavedFailedBody:
+  en[auto]: Your text is safe here. Saving will be tried again as you type, or now with Try again.
+  pl: Twój tekst jest tutaj bezpieczny. Zapis ponowi się, gdy będziesz pisać, albo od razu po kliknięciu Spróbuj ponownie.
+
+notSavedTooLargeBody:
+  en[auto]: The text is over 1 MB, more than the app saves. Your text is safe here; shorten it and it will be saved.
+  pl: Tekst ma ponad 1 MB, więcej niż aplikacja zapisuje. Twój tekst jest tutaj bezpieczny; skróć go, a się zapisze.
+
+notSavedChangedBody:
+  en[auto]: The file changed outside the app while you were writing. Your text is safe here and was not written over the change.
+  pl: Plik zmienił się poza aplikacją w trakcie pisania. Twój tekst jest tutaj bezpieczny i nie nadpisał tej zmiany.
+
+conflictTitle:
+  en[auto]: The agent changed this file meanwhile
+  pl: Agent zmienił ten plik w międzyczasie
+
+conflictBody:
+  en[auto]: You and the agent changed the same part, so nothing is saved yet. Choose which version to keep.
+  pl: Ty i agent zmieniliście ten sam fragment, więc na razie nic nie zapisano. Wybierz, którą wersję zachować.
+
+keepMine:
+  en[auto]: Keep mine
+  pl: Zostaw moje
+
+takeDisk:
+  en[auto]: Take the agent's
+  pl: Weź wersję agenta
+
+retry:
+  en[auto]: Try again
+  pl: Spróbuj ponownie
+
+metaChanged:
+  en[auto]: '{kind} · last changed {when}'
+  pl: '{kind} · ostatnia zmiana: {when}'
+
+kindCsv:
+  en[auto]: Spreadsheet
+  pl: Arkusz
+
+kindText:
+  en[auto]: Text
+  pl: Tekst
+
+kindImage:
+  en[auto]: Image
+  pl: Obraz
+
+kindPdf:
+  en[auto]: PDF
+  pl: PDF
+
+agentWritingTitle:
+  en[auto]: The agent is writing in this file
+  pl: Agent pisze w tym pliku
+
+agentWritingBody:
+  en[auto]: You can edit again when it's done, or stop it now.
+  pl: Znów będziesz móc edytować, gdy skończy. Możesz też zatrzymać go teraz.
+
+stopAgent:
+  en[auto]: Stop the agent
+  pl: Zatrzymaj agenta
+
+agentWaitingTitle:
+  en[auto]: The agent is waiting to change this file
+  pl: Agent czeka, żeby zmienić ten plik
+
+agentWaitingBody:
+  en[auto]: You started typing here, so it holds its change until you've stopped for a minute. Having the file open doesn't stop it; only editing does.
+  pl: Piszesz w tym pliku, więc agent wstrzymuje swoją zmianę, aż przestaniesz na minutę. Samo otwarcie pliku go nie zatrzymuje, tylko edycja.
+
+letAgentWrite:
+  en[auto]: Let it write now
+  pl: Pozwól mu pisać teraz

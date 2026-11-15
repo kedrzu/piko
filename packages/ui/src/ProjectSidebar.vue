@@ -1,10 +1,11 @@
-<!-- The app's sidebar: a New project button in the window bar, Memory, then the projects (each with its mark: App setup's pin, a new project's sparkles), the open one with New conversation and its conversations under it, or a line saying there are none. -->
+<!-- The app's sidebar: a New project button in the window bar, Memory, then the projects (each with its mark: App setup's pin, a new project's sparkles), the open one with its Conversations (New conversation first) and its Files (a tree whose folders expand in place) under it, or a line saying there are none. -->
 
 <script lang="ts">
 import { defineProp } from '@nzyme/vue-utils/defineProp.js';
 import type { PropType } from 'vue';
 import type { RouteLocationRaw } from 'vue-router';
 
+import type { FileRowKind } from './FileRow.vue';
 import type { ProjectColor } from './ProjectColor.js';
 import type { ProjectRowMark } from './ProjectRow.vue';
 
@@ -29,6 +30,24 @@ export interface ProjectSidebarConversation {
   running: boolean;
 }
 
+/** A line of the open project's file tree as the sidebar lists it, under its expanded folders. */
+export interface ProjectSidebarFile {
+  /** Unique in the project; `toggleFolder` reports a folder's. */
+  path: string;
+  label: string;
+  kind: FileRowKind;
+  /** How many folders it sits in: 0 in the project's folder. */
+  depth: number;
+  /** A file's screen; a folder has none. */
+  to?: RouteLocationRaw;
+  /** A folder whose entries follow it. */
+  expanded?: boolean;
+  /** A file the agent is writing in now. */
+  writing?: boolean;
+  /** A file the agent waits to change while the person types in it. */
+  waiting?: boolean;
+}
+
 export const ProjectSidebarProps = {
   /** The Memory screen. */
   memoryTo: { type: [String, Object] as PropType<RouteLocationRaw>, required: true },
@@ -42,11 +61,17 @@ export const ProjectSidebarProps = {
   conversations: { type: Array as PropType<readonly ProjectSidebarConversation[]>, default: () => [] },
   /** The id of the conversation open now; none while the open project's screen (a new conversation) shows. */
   selectedConversationId: defineProp<string>(),
+  /** The open project's file tree; `null` while it loads. */
+  files: { type: Array as PropType<readonly ProjectSidebarFile[] | null>, default: null },
+  /** The path of the file open now. */
+  selectedFilePath: defineProp<string>(),
 } as const;
 
 export const ProjectSidebarEmits = {
   /** The person asked for a new project. */
   create: () => true,
+  /** The person asked to expand or collapse the folder at this path. */
+  toggleFolder: (_path: string) => true,
 };
 </script>
 
@@ -58,14 +83,20 @@ import { RouterLink } from 'vue-router';
 
 import Button from './Button.vue';
 import ConversationRow from './ConversationRow.vue';
+import FileRow from './FileRow.vue';
 import ProjectRow from './ProjectRow.vue';
 import * as l from './ProjectSidebar.loc.js';
+import SidebarLabel from './SidebarLabel.vue';
 
 const props = defineProps(ProjectSidebarProps);
 const emit = defineEmits(ProjectSidebarEmits);
 
 const t = useTranslate();
 const headingId = useId();
+const conversationsId = useId();
+const filesId = useId();
+/** Something under the open project shows, not the project's own screen (a new conversation). */
+const childSelected = computed(() => Boolean(props.selectedConversationId ?? props.selectedFilePath));
 const running = computed(() => props.conversations.some(conversation => conversation.running));
 </script>
 
@@ -117,34 +148,69 @@ const running = computed(() => props.conversations.some(conversation => conversa
             :name="project.name"
             :color="project.color"
             :to="project.to"
-            :selected="project.id === props.selectedId ? (props.selectedConversationId ? 'true' : 'page') : undefined"
+            :selected="project.id === props.selectedId ? (childSelected ? 'true' : 'page') : undefined"
             :running="project.id === props.selectedId && running"
             :mark="project.mark"
           />
-          <ul
+          <div
             v-if="project.id === props.selectedId"
-            :class="$style.projectSidebar_conversations"
+            :class="$style.projectSidebar_children"
           >
-            <li>
-              <ConversationRow
-                kind="new"
-                :label="t(l.newConversation)"
-                :to="project.to"
-                :selected="!props.selectedConversationId"
-              />
-            </li>
-            <li
-              v-for="conversation in props.conversations"
-              :key="conversation.id"
+            <SidebarLabel :id="conversationsId">{{ t(l.conversations) }}</SidebarLabel>
+            <ul
+              :class="$style.projectSidebar_rows"
+              :aria-labelledby="conversationsId"
             >
-              <ConversationRow
-                :label="conversation.title"
-                :to="conversation.to"
-                :selected="conversation.id === props.selectedConversationId"
-                :running="conversation.running"
-              />
-            </li>
-          </ul>
+              <li>
+                <ConversationRow
+                  kind="new"
+                  :label="t(l.newConversation)"
+                  :to="project.to"
+                  :selected="!childSelected"
+                />
+              </li>
+              <li
+                v-for="conversation in props.conversations"
+                :key="conversation.id"
+              >
+                <ConversationRow
+                  :label="conversation.title"
+                  :to="conversation.to"
+                  :selected="conversation.id === props.selectedConversationId"
+                  :running="conversation.running"
+                />
+              </li>
+            </ul>
+            <SidebarLabel :id="filesId">{{ t(l.files) }}</SidebarLabel>
+            <ul
+              v-if="props.files?.length"
+              :class="$style.projectSidebar_rows"
+              :aria-labelledby="filesId"
+            >
+              <li
+                v-for="file in props.files"
+                :key="file.path"
+              >
+                <FileRow
+                  :label="file.label"
+                  :kind="file.kind"
+                  :to="file.to"
+                  :depth="file.depth"
+                  :expanded="file.expanded"
+                  :selected="file.path === props.selectedFilePath"
+                  :writing="file.writing"
+                  :waiting="file.waiting"
+                  @toggle="emit('toggleFolder', file.path)"
+                />
+              </li>
+            </ul>
+            <p
+              v-else-if="props.files"
+              :class="$style.projectSidebar_noFiles"
+            >
+              {{ t(l.noFiles) }}
+            </p>
+          </div>
         </li>
       </ul>
       <p
@@ -234,13 +300,29 @@ $window-bar-height: 48px; // where the window's own buttons sit, beside the New 
   list-style: none;
 }
 
-.projectSidebar_conversations {
+.projectSidebar_children {
   display: flex;
   flex-direction: column;
   gap: $spacing-02;
-  margin: $spacing-04 0 $spacing-08;
-  padding: 0 0 0 $spacing-16;
+  margin: $spacing-02 0 $spacing-08;
+  padding: 0 0 0 $spacing-12;
+}
+
+.projectSidebar_rows {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-02;
+  margin: 0;
+  padding: 0;
   list-style: none;
+}
+
+.projectSidebar_noFiles {
+  margin: 0;
+  padding: $spacing-04 $spacing-10;
+  color: $color-ink-muted;
+  font-size: $font-size-small;
+  line-height: $line-height-snug;
 }
 
 .projectSidebar_empty {

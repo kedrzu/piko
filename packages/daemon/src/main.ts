@@ -4,6 +4,7 @@ import { DAEMON_EVENTS_PATH } from '@poweragents/common/api/DaemonEventTypes.js'
 import { DAEMON_API_PATH, DAEMON_PORT } from '@poweragents/common/daemonAddress.js';
 
 import { ApiService } from './api/ApiService.js';
+import { ConversationEventService } from './conversations/ConversationEventService.js';
 import { BrowserNetworkGuard } from './browser/BrowserNetworkGuard.js';
 import { BrowserService } from './browser/BrowserService.js';
 import { BrowserTunnelService } from './browser/BrowserTunnelService.js';
@@ -96,6 +97,9 @@ sandbox.stateChanged.on(state => {
 });
 sandbox.start().catch(() => undefined);
 
+// The agent's event feed starts with the daemon, not with the app: the agent asks before every file edit and the
+// daemon answers (`FileHoldService`), so with the app closed the agent would stall otherwise. It waits for the sandbox.
+container.resolve(ConversationEventService).start();
 // Schedules run from the start: the runner keeps their state files current at once, and a term waits for the sandbox
 // rather than failing while it comes up.
 container.resolve(ScheduleRunnerService).start();

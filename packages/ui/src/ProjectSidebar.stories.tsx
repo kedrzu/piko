@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite';
 
-import type { ProjectSidebarConversation, ProjectSidebarItem } from './ProjectSidebar.vue';
+import type { ProjectSidebarConversation, ProjectSidebarFile, ProjectSidebarItem } from './ProjectSidebar.vue';
 import ProjectSidebar from './ProjectSidebar.vue';
 import styles from './ProjectSidebar.stories.module.scss';
 
@@ -19,6 +19,39 @@ const CONVERSATIONS: ProjectSidebarConversation[] = [
     { id: 'c2', title: 'Krem z filtrem — co wybrać', to: '/projects/p2/conversations/c2', running: false },
     { id: 'c3', title: 'Pytania do dermatologa', to: '/projects/p2/conversations/c3', running: false },
     { id: 'c4', title: 'Ile wody dziennie', to: '/projects/p2/conversations/c4', running: false },
+];
+
+const FILES: ProjectSidebarFile[] = [
+    { path: 'badania', label: 'badania', kind: 'folder', depth: 0, expanded: true },
+    {
+        path: 'badania/wyniki-2026.csv',
+        label: 'wyniki-2026.csv',
+        kind: 'spreadsheet',
+        depth: 1,
+        to: '/projects/p2/files?path=badania/wyniki-2026.csv',
+    },
+    { path: 'dokumenty', label: 'dokumenty', kind: 'folder', depth: 0 },
+    {
+        path: 'Plan treningów.md',
+        label: 'Plan treningów',
+        kind: 'note',
+        depth: 0,
+        to: '/projects/p2/files?path=Plan%20trening%C3%B3w.md',
+    },
+    {
+        path: 'zdjecie-skory.jpg',
+        label: 'zdjecie-skory.jpg',
+        kind: 'image',
+        depth: 0,
+        to: '/projects/p2/files?path=zdjecie-skory.jpg',
+    },
+    {
+        path: 'skierowanie.pdf',
+        label: 'skierowanie.pdf',
+        kind: 'file',
+        depth: 0,
+        to: '/projects/p2/files?path=skierowanie.pdf',
+    },
 ];
 
 /** Screen 51's sidebar: no projects yet. */
@@ -129,6 +162,51 @@ export const NewProjects: Story = {
                 selectedId="p0"
                 conversations={ONBOARDING}
                 selectedConversationId="c0"
+            />
+        </div>
+    ),
+};
+
+/** The open project's files under its conversations, a folder expanded. */
+export const ProjectFiles: Story = {
+    render: () => (
+        <div class={styles['backdrop']}>
+            <ProjectSidebar
+                memoryTo="/memory"
+                projects={PROJECTS}
+                selectedId="p2"
+                conversations={CONVERSATIONS}
+                files={FILES}
+            />
+        </div>
+    ),
+};
+
+/** A file open: its row is the selected one, New conversation is not. */
+export const FileOpen: Story = {
+    render: () => (
+        <div class={styles['backdrop']}>
+            <ProjectSidebar
+                memoryTo="/memory"
+                projects={PROJECTS}
+                selectedId="p2"
+                conversations={CONVERSATIONS}
+                files={FILES}
+                selectedFilePath="Plan treningów.md"
+            />
+        </div>
+    ),
+};
+
+/** A project with no files yet. */
+export const NoFiles: Story = {
+    render: () => (
+        <div class={styles['backdrop']}>
+            <ProjectSidebar
+                memoryTo="/memory"
+                projects={PROJECTS}
+                selectedId="p2"
+                files={[]}
             />
         </div>
     ),

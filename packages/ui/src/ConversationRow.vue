@@ -53,32 +53,11 @@ const t = useTranslate();
 
 <style lang="scss" module>
 .conversationRow {
-  display: flex;
-  gap: $spacing-10;
-  align-items: center;
-  min-height: 26px;
-  padding: $spacing-04 $spacing-10;
-  border-radius: $radius-s;
-  color: $color-ink-body;
-  font-size: $font-size-small;
-  line-height: $line-height-snug;
-  text-decoration: none;
-  transition: background-color $duration-fast;
-
-  @include focus-ring;
-  @include hover {
-    background: $color-surface-glass;
-  }
+  @include sidebar-row;
 }
 
 .conversationRow_selected {
-  background: $color-surface;
-  color: $color-ink;
-  font-weight: $font-weight-semibold;
-
-  @include hover {
-    background: $color-surface;
-  }
+  @include sidebar-row-selected;
 }
 
 .conversationRow_icon {

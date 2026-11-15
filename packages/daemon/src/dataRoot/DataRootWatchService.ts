@@ -9,12 +9,14 @@ import { createEventEmitter } from '@nzyme/utils/createEventEmitter.js';
 import type { DataRootEvent } from '@poweragents/common/api/DaemonEventTypes.js';
 
 import { MEMORY_FOLDER, POWERAGENTS_DATA_ROOT, PROJECTS_FOLDER } from '../env.js';
+import { ProjectService } from '../projects/ProjectService.js';
 
 /**
  * Changes in the profile's data root, for the daemon's event stream: one watcher on the whole data root, started by the
  * first listener and closed when the last one leaves. A watcher that fails is closed and started again after
  * `RESTART_DELAY_MS`, while anyone listens. Changes are gathered for `DEBOUNCE_MS` from the first one, then each kind is
- * sent once, so an agent writing many files sends a few events, not one per file.
+ * sent once (files inside a project once per project), so an agent writing many files sends a few events, not one per
+ * file.
  */
 export interface DataRootWatchServiceShape {
     /** Calls `listener` with every change from now on, until the returned function is called. */
@@ -27,14 +29,24 @@ const DEBOUNCE_MS = 300;
 const RESTART_DELAY_MS = 1000;
 const PROJECT_MARKER = '.project.json';
 
+/** What one change in the data root means, before it is sent. */
+type DataRootChange =
+    | { type: 'projectsChanged' | 'memoryChanged' }
+    /** A file inside the project kept in `folder` (a folder name directly in the projects' folder). */
+    | { type: 'projectFilesChanged'; folder: string };
+
 /** The profile's data root, watched. */
 export const DataRootWatchService = defineService({
     name: 'DataRootWatchService',
-    deps: { logger: Logger, dataRoot: POWERAGENTS_DATA_ROOT },
-    setup({ logger, dataRoot }): DataRootWatchServiceShape {
+    deps: { logger: Logger, dataRoot: POWERAGENTS_DATA_ROOT, projects: ProjectService },
+    setup({ logger, dataRoot, projects }): DataRootWatchServiceShape {
         const root = path.resolve(dataRoot);
         const emitter = createEventEmitter<[event: DataRootEvent]>();
-        const pending = new Set<DataRootEvent['type']>();
+        const pending = new Set<'projectsChanged' | 'memoryChanged'>();
+        /** The folders of projects whose files changed; mapped to the projects' ids when sent. */
+        const pendingFolders = new Set<string>();
+        /** Whether any project's files may have changed: a change without a file name. */
+        let pendingAllProjects = false;
         let listenerCount = 0;
         let watcher: FSWatcher | undefined;
         let timer: ReturnType<typeof setTimeout> | undefined;
@@ -110,19 +122,30 @@ export const DataRootWatchService = defineService({
             clearTimeout(timer);
             timer = undefined;
             pending.clear();
+            pendingFolders.clear();
+            pendingAllProjects = false;
             failing = false;
             logger.debug('Data root no longer watched');
         }
 
         function onChange(file: string | null) {
-            // Without a file name the change could be anywhere.
-            const changes = file === null ? (['projectsChanged', 'memoryChanged'] as const) : classify(file);
-            for (const change of changes) {
-                pending.add(change);
+            if (file === null) {
+                // Without a file name the change could be anywhere: in the list, the Memory, any project's files.
+                pending.add('projectsChanged');
+                pending.add('memoryChanged');
+                pendingAllProjects = true;
+            } else {
+                const change = classify(file);
+                if (change === null) {
+                    return;
+                }
+                if (change.type === 'projectFilesChanged') {
+                    pendingFolders.add(change.folder);
+                } else {
+                    pending.add(change.type);
+                }
             }
-            if (pending.size > 0) {
-                timer ??= setTimeout(flush, DEBOUNCE_MS);
-            }
+            timer ??= setTimeout(flush, DEBOUNCE_MS);
         }
 
         function flush() {
@@ -132,25 +155,50 @@ export const DataRootWatchService = defineService({
             for (const type of types) {
                 emitter.emit({ type });
             }
+            const folders = [...pendingFolders];
+            const allProjects = pendingAllProjects;
+            pendingFolders.clear();
+            pendingAllProjects = false;
+            if (allProjects || folders.length > 0) {
+                void flushProjectFiles(folders, allProjects);
+            }
+        }
+
+        /**
+         * Sends `projectFilesChanged` for each project kept in one of `folders`, or for every project when `all`. The
+         * folder is mapped to the project now, not when the change came: a folder without a marker is no project.
+         */
+        async function flushProjectFiles(folders: string[], all: boolean) {
+            const list = await projects.list().catch((error: unknown) => {
+                logger.warn('Projects could not be listed, project file changes not sent', { error });
+                return [];
+            });
+            for (const project of list) {
+                if (all || folders.includes(path.basename(project.dir))) {
+                    emitter.emit({ type: 'projectFilesChanged', projectId: project.id });
+                }
+            }
         }
     },
 });
 
 /**
- * What a change at `file` (relative to the data root) means to the app: a project folder itself or its marker changes
- * the project list, anything in the Memory folder the Memory. Files inside a project are not the list's business.
+ * What a change at `file` (relative to the data root) means to the app, or `null` when nothing: a project folder itself
+ * or its marker changes the project list, any other file inside a project folder that project's files, anything in the
+ * Memory folder the Memory.
  * @__NO_SIDE_EFFECTS__
  */
-function classify(file: string): DataRootEvent['type'][] {
+function classify(file: string): DataRootChange | null {
     const [top, folder, name, ...rest] = file.split(/[\\/]/);
     switch (top) {
         case PROJECTS_FOLDER:
-            return folder === undefined || name === undefined || (name === PROJECT_MARKER && rest.length === 0)
-                ? ['projectsChanged']
-                : [];
+            if (folder === undefined || name === undefined || (name === PROJECT_MARKER && rest.length === 0)) {
+                return { type: 'projectsChanged' };
+            }
+            return { type: 'projectFilesChanged', folder };
         case MEMORY_FOLDER:
-            return ['memoryChanged'];
+            return { type: 'memoryChanged' };
         default:
-            return [];
+            return null;
     }
 }

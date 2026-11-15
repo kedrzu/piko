@@ -1,4 +1,4 @@
-<!-- A project open (screens 54, 58): where a new conversation starts — its first message creates the conversation, sends itself and opens it; an unknown project goes home. -->
+<!-- A project open (screens 54, 58): where a new conversation starts — its first message creates the conversation, sends itself and opens it in the New conversation tab's place; an unknown project goes home. -->
 
 <script lang="ts" setup>
 import { useLogger } from '@nzyme/vue-ioc/useLogger.js';
@@ -12,6 +12,7 @@ import ProjectEmptyState from '@poweragents/ui/ProjectEmptyState.vue';
 
 import { ConversationStore } from '@/conversations/ConversationStore.js';
 import { DaemonClient } from '@/daemon/DaemonClient.js';
+import { TabStore } from '@/tabs/TabStore.js';
 
 import { projectColor } from './projectColor.js';
 import { ProjectStore } from './ProjectStore.js';
@@ -19,6 +20,7 @@ import { ProjectStore } from './ProjectStore.js';
 const store = useService(ProjectStore);
 const conversations = useService(ConversationStore);
 const daemon = useService(DaemonClient);
+const tabs = useService(TabStore);
 const route = useRoute();
 const router = useRouter();
 const logger = useLogger();
@@ -57,6 +59,7 @@ async function start(text: string) {
     unsent = null;
     conversations.setRunning(conversation.id, !queued);
     message.value = '';
+    tabs.start(projectId, conversation.id);
     await router.push({ name: 'conversation', params: { projectId, conversationId: conversation.id } });
   } catch (error) {
     // The text stays in the composer, to send again.

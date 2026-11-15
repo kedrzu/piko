@@ -11,8 +11,8 @@ test('Memory lists the files newest first and shows the open one formatted', asy
     const daemon = await connected(page);
     daemon.projects = [{ id: 'p-health', name: 'Health' }];
     daemon.memory = [
-        file('o-mnie.md', '# About me\n\nAn architect who likes short answers.', Date.now() - 30 * HOUR),
-        file('praca.md', '# Work\n\n## What I look for\n\n- **Role:** senior architect', Date.now() - 2 * HOUR),
+        file('o-mnie.md', '# About me\n\nAn architect who likes short answers.', yesterdayNoon()),
+        file('praca.md', '# Work\n\n## What I look for\n\n- **Role:** senior architect', earlierToday()),
     ];
 
     await page.goto('/');
@@ -124,6 +124,21 @@ async function connected(page: Page) {
     const daemon = await StubDaemon.install(page);
     daemon.claude = { connected: true, email: ACCOUNT_EMAIL, plan: 'max', planAllowed: true };
     return daemon;
+}
+
+/** Two hours ago, but never before today's midnight: shown as "today at", whenever the test runs. */
+function earlierToday() {
+    const midnight = new Date();
+    midnight.setHours(0, 0, 0, 0);
+    return Math.max(Date.now() - 2 * HOUR, midnight.getTime());
+}
+
+/** Yesterday at noon: shown as "yesterday", whenever the test runs. */
+function yesterdayNoon() {
+    const noon = new Date();
+    noon.setDate(noon.getDate() - 1);
+    noon.setHours(12, 0, 0, 0);
+    return noon.getTime();
 }
 
 function file(path: string, content: string, updatedAt: number): MemoryFileContent {

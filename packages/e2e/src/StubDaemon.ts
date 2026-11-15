@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { createServer } from 'node:http';
 import type { ServerResponse } from 'node:http';
 import { setTimeout as sleep } from 'node:timers/promises';
@@ -22,10 +23,20 @@ import type {
     MemoryFileGetResult,
     MemoryRevealResult,
 } from '@poweragents/common/api/MemoryTypes.js';
+import type {
+    ProjectFileContentResult,
+    ProjectFileEntry,
+    ProjectFileListResult,
+    ProjectFileLocateResult,
+    ProjectFileOpenResult,
+    ProjectFileReadResult,
+    ProjectFileWriteResult,
+} from '@poweragents/common/api/ProjectFileTypes.js';
 import { PROJECT_NAME_MAX_LENGTH } from '@poweragents/common/api/ProjectTypes.js';
 import type { Project, ProjectCreateResult } from '@poweragents/common/api/ProjectTypes.js';
 import type { SandboxStatus } from '@poweragents/common/api/SandboxTypes.js';
 import { DAEMON_API_PATH, DAEMON_PORT } from '@poweragents/common/daemonAddress.js';
+import { isOpenableFile } from '@poweragents/common/utils/isOpenableFile.js';
 
 /** The code `StubDaemon` takes as a Claude account with an allowed plan; any other code is rejected. */
 export const GOOD_CODE = 'good-code#state';
@@ -37,6 +48,24 @@ export const ACCOUNT_EMAIL = 'ania@example.com';
 export const APP_SETUP_ID = 'p-app-setup';
 /** The agent's greeting in App setup's onboarding conversation, as `StubDaemon` starts it. */
 export const ONBOARDING_GREETING = "Hi! I'm your agent. What should I call you, and what do you do day to day?";
+
+/** A project file the app wrote or opened, as the stub took it. */
+export interface StubFileCall {
+    projectId: string;
+    path: string;
+}
+
+/** A project file's text the app wrote, as the stub took it. */
+export interface StubFileWrite extends StubFileCall {
+    content: string;
+}
+
+/** The text extensions the daemon reads as text. */
+const TEXT_EXTENSIONS = ['.md', '.markdown', '.txt', '.csv'];
+/** The largest text the daemon reads or writes. */
+const TEXT_MAX_BYTES = 1024 * 1024;
+/** When the stub's files last changed: a fixed time, so a screen saying when reads the same in every run. */
+const FILE_UPDATED_AT = Date.UTC(2026, 10, 1, 9, 0);
 
 /** A message the app sent, as the stub took it. */
 export interface StubSentMessage {
@@ -80,6 +109,25 @@ export class StubDaemon {
     conversations: Record<string, Conversation[]> = {};
     /** Each conversation's messages by conversation id, oldest first; `conversations/messages` serves them in one page. */
     messages: Record<string, ConversationMessage[]> = {};
+    /**
+     * Each project's files by project id, as paths relative to its folder (`notes/plan.md`); its folders are the ones
+     * these paths lead through. Change them and `emit` `projectFilesChanged`, as the daemon does when they change.
+     */
+    projectFiles: Record<string, string[]> = {};
+    /**
+     * The content of project files by project id, then by path: text, or bytes. A file listed in `projectFiles` without
+     * content here is empty. A text file (by its extension) whose content is bytes is read as a binary file, as the
+     * daemon reads one that is not UTF-8.
+     */
+    fileContents: Record<string, Record<string, string | Uint8Array>> = {};
+    /** Set: `files/write` fails with a 500, as when the disk is full. */
+    fileWriteFails = false;
+    /** The texts the app wrote, in order. */
+    readonly fileWrites: StubFileWrite[] = [];
+    /** The files the app asked to open in their default app, in order. */
+    readonly filesOpened: StubFileCall[] = [];
+    /** The files the app let the agent write now (`files/release`), in order. */
+    readonly filesReleased: StubFileCall[] = [];
     /** Plugins not installed here: a command naming one (`/<plugin>:<skill>`) is stopped, as by the daemon. */
     missingPlugins: string[] = [];
     /** The person's Memory files with their text, in any order (the daemon lists them by path). */
@@ -88,6 +136,8 @@ export class StubDaemon {
     readonly revealed: (string | null)[] = [];
     /** The messages the app sent, in order. */
     readonly sent: StubSentMessage[] = [];
+    /** The conversations the app stopped, by id, in order. */
+    readonly stopped: string[] = [];
     /** The endpoints called, in order, by name (`claude/login/start`). */
     readonly calls: string[] = [];
     /** Set: the event stream is refused with a 503, as by a daemon still starting; the app gives up and retries later. */
@@ -207,6 +257,9 @@ export class StubDaemon {
         if (name === 'projects/list' && this.projectListFails) {
             return 'EACCES: permission denied';
         }
+        if (name === 'files/write' && this.fileWriteFails) {
+            return 'ENOSPC: no space left on device';
+        }
         if (this.sandbox.status !== 'ready') {
             return null;
         }
@@ -257,6 +310,21 @@ export class StubDaemon {
                 return this.stop(readInput(body, 'conversationId'));
             case 'conversations/messages':
                 return { messages: this.messages[readInput(body, 'conversationId')] ?? [] };
+            case 'files/list':
+                return this.listProjectFiles(readInput(body, 'projectId'), readInput(body, 'path'));
+            case 'files/read':
+                return this.readProjectFile(readInput(body, 'projectId'), readInput(body, 'path'));
+            case 'files/content':
+                return this.projectFileContent(readInput(body, 'projectId'), readInput(body, 'path'));
+            case 'files/locate':
+                return this.locateProjectFile(readInput(body, 'projectId'), readInput(body, 'path'));
+            case 'files/write':
+                return this.writeProjectFile(body);
+            case 'files/open':
+                return this.openProjectFile(readInput(body, 'projectId'), readInput(body, 'path'));
+            case 'files/release':
+                this.filesReleased.push({ projectId: readInput(body, 'projectId'), path: readInput(body, 'path') });
+                return { released: true };
             case 'memory/files':
                 return this.memory
                     .map(({ content: _content, ...file }) => file)
@@ -309,6 +377,95 @@ export class StubDaemon {
             throw new Error('The event stream server has no port');
         }
         return `http://127.0.0.1:${address.port}${DAEMON_EVENTS_PATH}`;
+    }
+
+    /** Like the daemon: one folder's entries, folders first, then files, each by name; a folder no path leads through is not found. */
+    private listProjectFiles(projectId: string, folder: string): ProjectFileListResult {
+        const prefix = folder === '' ? '' : `${folder}/`;
+        const inside = (this.projectFiles[projectId] ?? []).filter(path => path.startsWith(prefix));
+        if (folder !== '' && inside.length === 0) {
+            return { notFound: true };
+        }
+        const entries = new Map<string, ProjectFileEntry>();
+        for (const path of inside) {
+            const [name = '', ...rest] = path.slice(prefix.length).split('/');
+            const kind = rest.length > 0 ? 'folder' : 'file';
+            entries.set(name, { name, path: `${prefix}${name}`, kind, updatedAt: 1, size: kind === 'folder' ? 0 : 1 });
+        }
+        return {
+            entries: [...entries.values()].toSorted(
+                (a, b) => Number(b.kind === 'folder') - Number(a.kind === 'folder') || a.name.localeCompare(b.name),
+            ),
+        };
+    }
+
+    /** Like the daemon: a text file's text with its version, any other file's size. */
+    private readProjectFile(projectId: string, path: string): ProjectFileReadResult {
+        const content = this.projectFileBytes(projectId, path);
+        if (content === null) {
+            return { notFound: true };
+        }
+        if (!isTextName(path) || typeof content !== 'string') {
+            return { binary: { size: byteLength(content), updatedAt: FILE_UPDATED_AT } };
+        }
+        if (byteLength(content) > TEXT_MAX_BYTES) {
+            return { tooLarge: true };
+        }
+        return { text: { content, version: fileVersion(content), updatedAt: FILE_UPDATED_AT } };
+    }
+
+    private projectFileContent(projectId: string, path: string): ProjectFileContentResult {
+        const content = this.projectFileBytes(projectId, path);
+        if (content === null) {
+            return { notFound: true };
+        }
+        const bytes = typeof content === 'string' ? Buffer.from(content, 'utf8') : Buffer.from(content);
+        return { base64: bytes.toString('base64'), size: bytes.length };
+    }
+
+    private locateProjectFile(projectId: string, path: string): ProjectFileLocateResult {
+        return this.projectFileBytes(projectId, path) === null
+            ? { notFound: true }
+            : { path: `/Users/ania/Poweragents/Projects/${projectId}/${path}` };
+    }
+
+    /** Like the daemon: an existing text file only, unless it changed since the given version; never creates one. */
+    private writeProjectFile(body: string | null): ProjectFileWriteResult {
+        const projectId = readInput(body, 'projectId');
+        const path = readInput(body, 'path');
+        const content = readInput(body, 'content');
+        const current = this.readProjectFile(projectId, path);
+        if (!('text' in current)) {
+            return { notFound: true };
+        }
+        if (byteLength(content) > TEXT_MAX_BYTES) {
+            return { tooLarge: true };
+        }
+        if (current.text.version !== readInput(body, 'version')) {
+            return { stale: current.text };
+        }
+        this.fileWrites.push({ projectId, path, content });
+        this.fileContents[projectId] = { ...this.fileContents[projectId], [path]: content };
+        return { written: { version: fileVersion(content), updatedAt: FILE_UPDATED_AT } };
+    }
+
+    private openProjectFile(projectId: string, path: string): ProjectFileOpenResult {
+        if (this.projectFileBytes(projectId, path) === null) {
+            return { notFound: true };
+        }
+        if (!isOpenableFile(path)) {
+            return { notOpenable: true };
+        }
+        this.filesOpened.push({ projectId, path });
+        return { opened: true };
+    }
+
+    /** A listed file's content, empty when none is set; `null` for a file not listed. */
+    private projectFileBytes(projectId: string, path: string) {
+        if (!(this.projectFiles[projectId] ?? []).includes(path)) {
+            return null;
+        }
+        return this.fileContents[projectId]?.[path] ?? '';
     }
 
     private readMemoryFile(path: string): MemoryFileGetResult {
@@ -410,6 +567,7 @@ export class StubDaemon {
 
     /** Like the daemon: stops the run and withdraws the messages still queued. */
     private stop(conversationId: string): ConversationStopResult {
+        this.stopped.push(conversationId);
         const conversation = this.findConversation(conversationId);
         const stopped = conversation?.running ?? false;
         const withdrawn: ConversationWithdrawnMessage[] = [];
@@ -505,6 +663,21 @@ function readInput(body: string | null, field: string) {
         return typeof value === 'string' ? value : '';
     }
     return '';
+}
+
+/** Whether the daemon reads a file as text, by its extension. */
+function isTextName(path: string) {
+    const name = path.toLowerCase();
+    return TEXT_EXTENSIONS.some(extension => name.endsWith(extension));
+}
+
+function byteLength(content: string | Uint8Array) {
+    return typeof content === 'string' ? Buffer.byteLength(content, 'utf8') : content.length;
+}
+
+/** Like the daemon's: the SHA-256 of the text's bytes, in hex. */
+function fileVersion(content: string) {
+    return createHash('sha256').update(content, 'utf8').digest('hex');
 }
 
 /** The id of the message the app sent `index`-th (from 0) in `StubDaemon.sent`. */

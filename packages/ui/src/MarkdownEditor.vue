@@ -1,4 +1,4 @@
-<!-- A Markdown file edited as formatted text under a format bar, with a switch to its plain Markdown source; reports new Markdown only after the person edits it. -->
+<!-- A Markdown file edited as formatted text under a format bar, with a switch to its plain Markdown source; reports new Markdown only after the person edits it, and can be shown read-only. -->
 
 <script lang="ts">
 import { defineProp } from '@nzyme/vue-utils/defineProp.js';
@@ -6,6 +6,8 @@ import { defineProp } from '@nzyme/vue-utils/defineProp.js';
 export const MarkdownEditorProps = {
   /** The editor's accessible name; "File content" when not given. */
   label: defineProp<string>(),
+  /** Shows the file without letting it change: no typing in either view, the format bar off (the view switch stays). */
+  readonly: Boolean,
 } as const;
 </script>
 
@@ -77,11 +79,13 @@ let editorSource = current.value;
 const editor = useEditor({
   extensions: createExtensions(),
   content: loaded.doc,
+  editable: !props.readonly,
   editorProps: {
     attributes: () => ({
       role: 'textbox',
       'aria-multiline': 'true',
       'aria-label': props.label ?? t(l.content),
+      'aria-readonly': props.readonly ? 'true' : 'false',
       class: style['markdownEditor_document'] ?? '',
     }),
     transformPastedHTML: stripRawSource,
@@ -184,6 +188,14 @@ watch(markdown, value => {
     syncEditor(editor.value);
   }
 });
+
+watch(
+  () => props.readonly,
+  readonly => {
+    // Not reported as an update: switching it is not an edit.
+    editor.value?.setEditable(!readonly, false);
+  },
+);
 
 watch(syntax, on => {
   if (!on) {
@@ -293,7 +305,7 @@ function stripRawSource(html: string) {
         :aria-label="t(action.label)"
         :title="t(action.label)"
         :aria-pressed="action.active ? !syntax && !!editor && action.active(editor) : undefined"
-        :disabled="syntax || !editor"
+        :disabled="syntax || !editor || props.readonly"
         @click="editor && action.run(editor)"
       >
         <component
@@ -307,7 +319,7 @@ function stripRawSource(html: string) {
         :aria-label="t(l.link)"
         :title="t(l.link)"
         aria-haspopup="dialog"
-        :disabled="syntax || !editor"
+        :disabled="syntax || !editor || props.readonly"
         @click="openLink"
       >
         <Link
@@ -339,6 +351,7 @@ function stripRawSource(html: string) {
       :class="$style.markdownEditor_source"
       :value="current"
       :aria-label="t(l.source)"
+      :readonly="props.readonly"
       spellcheck="false"
       @input="onSourceInput"
     />

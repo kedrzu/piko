@@ -9,7 +9,9 @@ import {
     WINTER_ROUTINE_RUNNING,
     WINTER_ROUTINE_STEPS,
 } from './AgentMessage.fixtures.js';
+import type { AgentMessageFile } from './AgentMessage.vue';
 import AgentMessage from './AgentMessage.vue';
+import FileChip from './FileChip.vue';
 
 const meta: Meta<typeof AgentMessage> = { title: 'AgentMessage', component: AgentMessage, tags: ['autodocs'] };
 export default meta;
@@ -51,6 +53,44 @@ export const RunningStep: Story = {
 /** Screen 57: the steps collapsed above the formatted reply. */
 export const Finished: Story = { render: () => <AgentMessage parts={WINTER_ROUTINE_FINISHED} /> };
 
+/** Screen 57 with its file: a chip under the text for the file the reply wrote. */
+export const FinishedWithFile: Story = {
+    render: () => <AgentMessage parts={WINTER_ROUTINE_FINISHED}>{{ file: fileChip }}</AgentMessage>,
+};
+
+/** Screen 56 with its file: the chip says "writing…" while the step writing it runs. */
+export const RunningWithFile: Story = {
+    render: () => (
+        <AgentMessage
+            parts={WINTER_ROUTINE_RUNNING}
+            running
+        >
+            {{ file: fileChip }}
+        </AgentMessage>
+    ),
+};
+
+/**
+ * Several files: one chip each, in the order of their first step; a file written twice gets one chip, and a failed
+ * step's file none.
+ */
+export const SeveralFiles: Story = {
+    render: () => (
+        <AgentMessage
+            parts={[
+                { type: 'step', id: 's1', kind: 'writeFile', target: 'notes/Plan.md', status: 'done' },
+                { type: 'step', id: 's2', kind: 'readFile', target: 'notes/Ideas.md', status: 'done' },
+                { type: 'step', id: 's3', kind: 'editFile', target: 'budget.csv', status: 'done' },
+                { type: 'step', id: 's4', kind: 'editFile', target: 'notes/Plan.md', status: 'done' },
+                { type: 'step', id: 's5', kind: 'writeFile', target: 'broken.md', status: 'failed' },
+                { type: 'text', text: 'Gotowe: plan i budżet są zaktualizowane.' },
+            ]}
+        >
+            {{ file: fileChip }}
+        </AgentMessage>
+    ),
+};
+
 /** A short answer, with no steps. */
 export const NoSteps: Story = {
     render: () => <AgentMessage parts={[{ type: 'text', text: 'Jasne, zrobione. Coś jeszcze?' }]} />,
@@ -86,3 +126,16 @@ export const TwoUis: Story = {
 export const AnsweredChoice: Story = {
     args: { parts: [{ type: 'text', text: CHOICES_TEXT }], answer: 'Zacznijmy od snu' },
 };
+
+/** What the app renders in the `file` slot, with the path for a name. */
+function fileChip(file: AgentMessageFile) {
+    return (
+        <FileChip
+            title={file.path}
+            kind={file.path.endsWith('.csv') ? 'spreadsheet' : 'note'}
+            place="Zdrowie"
+            writing={file.running}
+            to={`/projects/p1/conversations/c1?file=${encodeURIComponent(file.path)}`}
+        />
+    );
+}

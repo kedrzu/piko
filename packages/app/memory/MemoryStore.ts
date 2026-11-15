@@ -66,6 +66,8 @@ export const MemoryStore = defineService({
                     }
                     break;
                 case 'projectsChanged':
+                case 'projectFilesChanged':
+                case 'fileAgentChanged':
                 case 'pluginsChanged':
                 case 'pluginInstalled':
                 case 'conversationCreated':
