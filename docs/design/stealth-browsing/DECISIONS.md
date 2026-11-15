@@ -234,8 +234,11 @@ with its own client code (X's per-request header) is out.
 
 **The eval is a script that drives the browser by the agent's own path (daemon tunnel and agent-browser) on a
 residential machine, never CI, and writes a result file per run for comparison: a reCAPTCHA v3 score from our own key
-on a public test page, the verdicts of the leak test pages, and Allegro searches until a CAPTCHA.** (2026-11-15,
-owner asked for a reCAPTCHA measurement; shape is the design agent's proposal, owner agreed)
+on a public test page, the verdicts of the leak test pages, and Allegro searches until a CAPTCHA. Every run also scores
+two controls on our key — a plain headless Chrome (a known bot) and the person browsing by hand (a known human) — and
+the reCAPTCHA reading counts only once our key separates them.** (2026-11-15, owner asked for a reCAPTCHA measurement;
+shape is the design agent's proposal, owner agreed; controls added after the owner asked whether Google's demo page is
+more reliable)
 
 **Why.** A datacenter IP would dominate every result; a different driving path would measure a different browser.
 The test page must be public, because the daemon's proxy refuses loopback (`buildChromiumArgs.ts`,
@@ -262,7 +265,14 @@ The test page must be public, because the daemon's proxy refuses loopback (`buil
 **Rejected.**
 
 - Running the eval in CI — datacenter IP.
-- Google's public reCAPTCHA demo page as the only score — not under our control; kept as a second reading.
+- Google's public reCAPTCHA demo page — it is over its free quota and returns a fixed 0.9 whatever the browser, and
+  says itself that its score means nothing.
+
+  > **Checked 2026-11-15:** recaptcha-demo.appspot.com/recaptcha-v3-request-scores.php: the badge reads "Ta strona
+  > przekracza limit bezpłatnych testów reCAPTCHA dla firm" (over the free limit); the page notes "the score returned
+  > here is not a reflection on your Google account or type of traffic … Do not raise issues regarding the score you
+  > see here"; its backend returned `"score": 0.9`. Over quota without billing, verification "fails open" with a
+  > static 0.9 ([migration overview](https://docs.cloud.google.com/recaptcha/docs/migration-overview)).
 
 ## D10
 

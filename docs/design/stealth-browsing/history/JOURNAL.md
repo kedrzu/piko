@@ -175,3 +175,7 @@
   front of him: D8 class-wide rule, own reCAPTCHA project. Owner's picks: input and brand layers only after
   measurement (D4 partly replaced, prior form in history); pace adaptive from the first version (D5); six-vendor panel
   kept (D6). Design proposed for closing.
+- Owner asked whether Google's public reCAPTCHA demo is more reliable than our key (calibration takes days). Checked:
+  the demo is over its free quota and returns a fixed 0.9 (fail-open). Kept our key; added two controls per run
+  (headless Chrome as a known bot, the person by hand as a known human) — the reading counts only once it separates
+  them (D9).

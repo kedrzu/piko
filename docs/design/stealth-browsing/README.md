@@ -114,6 +114,11 @@ On top of that sits a score from reCAPTCHA v3, Google's invisible bot check, fro
 page. The eval drives the browser exactly the way the agent does. It runs on a real computer with a home connection,
 because a server's IP would swamp every result ([how the eval runs](DECISIONS.md#d9)).
 
+A fresh key on a quiet page needs days and traffic before Google's scores settle. So every run also scores two
+controls on our key: a plain headless Chrome, which is plainly a bot, and the person browsing by hand. The reCAPTCHA
+reading counts only once it tells those two apart. Google's public demo page is no shortcut: it is over its free quota
+and answers 0.9 to everyone.
+
 A ban cannot be measured: it comes late, it hits a whole account, and nobody tests it on a real one. So protection
 against bans comes from rules instead, chiefly the pace limits.
 
