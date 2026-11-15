@@ -129,18 +129,16 @@ headless Chrome and by the person.
 A ban cannot be measured: it comes late, it hits a whole account, and nobody tests it on a real one. So protection
 against bans comes from rules instead, chiefly the pace limits.
 
-## Scope, and what comes first
+## Scope
 
 The design was closed on 2026-11-15 and is ready to be built.
 
 In scope: the browser's stealth layers and the eval. Out of scope: ready-made commands for popular sites, which get a
 design of their own later, and how the agent posts on X ([what this design leaves out](DECISIONS.md#d10)).
 
-**First step:** measure the browser as it is today against the eval sites. That shows which leaks actually reach the
-sites, and how many Allegro searches pass before a CAPTCHA. Then come the parts built regardless of the numbers: the
-launch flag, the rule that page scripts never see our code, and the pace limit that slows down after a CAPTCHA. The
-numbers then decide whether human-like input and the browser's name come next, in which order, and whether we will
-ever need our own Chromium build.
+The eval's first measurement of the browser as it is today is what the pace values come from, and its numbers decide
+whether human-like input and the browser's name are built, in which order, and whether we will ever need our own
+Chromium build.
 
 Still open:
 
