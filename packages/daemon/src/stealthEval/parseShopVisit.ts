@@ -1,5 +1,4 @@
-import { isPlainObject } from '@nzyme/utils/isPlainObject.js';
-
+import { asArray, asNullableNumber, asNumber, asObject, asString, invalidShape } from './jsonShape.js';
 import type { ShopAction, ShopInputRecord, ShopVisit } from './StealthEvalTypes.js';
 
 /**
@@ -8,9 +7,19 @@ import type { ShopAction, ShopInputRecord, ShopVisit } from './StealthEvalTypes.
  * @__NO_SIDE_EFFECTS__
  */
 export function parseShopVisit(value: unknown): ShopVisit {
+    try {
+        return parseVisit(value);
+    } catch (error) {
+        throw new Error(`Invalid shop results: ${error instanceof Error ? error.message : String(error)}`, {
+            cause: error,
+        });
+    }
+}
+
+function parseVisit(value: unknown): ShopVisit {
     const visit = asObject(value, 'results');
     if (visit['version'] !== 1) {
-        throw invalid('version', 'is not 1');
+        throw invalidShape('version', 'is not 1');
     }
     return {
         version: 1,
@@ -26,7 +35,7 @@ function parseAction(value: unknown, at: string): ShopAction {
     const action = asObject(value, at);
     const valid = action['valid'];
     if (valid !== null && typeof valid !== 'boolean') {
-        throw invalid(`${at}.valid`, 'is neither a boolean nor null');
+        throw invalidShape(`${at}.valid`, 'is neither a boolean nor null');
     }
     return {
         action: asString(action['action'], `${at}.action`),
@@ -48,7 +57,7 @@ function parseInputRecord(value: unknown, at: string): ShopInputRecord {
         case 'click': {
             const offset = asObject(record['offsetFromCenter'], `${at}.offsetFromCenter`);
             if (typeof record['isTrusted'] !== 'boolean') {
-                throw invalid(`${at}.isTrusted`, 'is not a boolean');
+                throw invalidShape(`${at}.isTrusted`, 'is not a boolean');
             }
             return {
                 kind,
@@ -88,42 +97,6 @@ function parseInputRecord(value: unknown, at: string): ShopInputRecord {
                 maxScrollPct: asNumber(record['maxScrollPct'], `${at}.maxScrollPct`),
             };
         default:
-            throw invalid(`${at}.kind`, 'is not click, text or scroll');
+            throw invalidShape(`${at}.kind`, 'is not click, text or scroll');
     }
-}
-
-function asObject(value: unknown, at: string) {
-    if (!isPlainObject(value)) {
-        throw invalid(at, 'is not an object');
-    }
-    return value;
-}
-
-function asArray(value: unknown, at: string): unknown[] {
-    if (!Array.isArray(value)) {
-        throw invalid(at, 'is not an array');
-    }
-    return value;
-}
-
-function asString(value: unknown, at: string) {
-    if (typeof value !== 'string') {
-        throw invalid(at, 'is not a string');
-    }
-    return value;
-}
-
-function asNumber(value: unknown, at: string) {
-    if (typeof value !== 'number' || !Number.isFinite(value)) {
-        throw invalid(at, 'is not a number');
-    }
-    return value;
-}
-
-function asNullableNumber(value: unknown, at: string) {
-    return value === null ? null : asNumber(value, at);
-}
-
-function invalid(at: string, problem: string) {
-    return new Error(`Invalid shop results: ${at} ${problem}`);
 }
