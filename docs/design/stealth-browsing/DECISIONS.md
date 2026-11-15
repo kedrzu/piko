@@ -262,6 +262,11 @@ The test page must be public, because the daemon's proxy refuses loopback (`buil
 > scored 0.9 with no reasons — one run, no billing (four levels), so not conclusive; reCAPTCHA alone may not separate
 > automated from human here, which is why it is one reading among the panel ([D6](#d6)).
 
+> **Checked 2026-11-15:** billing is attached to `poweragents-stealth-eval` (gcloud `billingEnabled: True`), so scores
+> are no longer limited to four levels. The one-page probe above is replaced by the test shop, which assesses each
+> token in the page ([D11](#d11)); the eval reads the scores from it. First runs: the agent's browser averaged 0.68
+> and the plain headless Chromium 0.08 over the same visit.
+
 **Rejected.**
 
 - Running the eval in CI — datacenter IP.

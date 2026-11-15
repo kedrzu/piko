@@ -142,7 +142,5 @@ Chromium build.
 
 Still open:
 
-- **Whether to put a card on the reCAPTCHA project.** Without one the score has four coarse levels; with one it is
-  finer, still free within 10,000 checks a month.
 - **Pace values and back-off rules** come from the first measurement. Still open: how the daemon recognises that a
   page is a CAPTCHA or block, and how the agent is told it is being paced.
