@@ -3529,6 +3529,11 @@
           "status": "taken",
           "method": "dns",
           "checked_at": "2026-11-13"
+        },
+        "marty.so": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
         }
       }
     },
@@ -5678,6 +5683,11 @@
           "status": "likely-free",
           "method": "rdap",
           "checked_at": "2026-11-13"
+        },
+        "fenno.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
         }
       },
       "verdict": "dropped",
@@ -14813,6 +14823,11 @@
           "status": "taken",
           "method": "dns",
           "checked_at": "2026-11-13"
+        },
+        "minnow.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
         }
       }
     },
@@ -60617,7 +60632,11 @@
           "checked_at": "2026-11-15"
         }
       ],
-      "phonetics": "CHUR-kee; between chirpy and perky"
+      "phonetics": "CHUR-kee; between chirpy and perky",
+      "verdict": "rejected",
+      "feedback": [
+        "\"nie, slabe\" (round 33)"
+      ]
     },
     "Nesky": {
       "direction": "sweep of -Cky names (nk, sk, rk…) in Rilky/Nilky's sound, .ai pre-filtered",
@@ -60658,7 +60677,11 @@
           "checked_at": "2026-11-15"
         }
       ],
-      "phonetics": "NES-kee"
+      "phonetics": "NES-kee",
+      "verdict": "rejected",
+      "feedback": [
+        "\"nie, slabe\" (round 33)"
+      ]
     },
     "Ninky": {
       "direction": "sweep of -Cky names (nk, sk, rk…) in Rilky/Nilky's sound, .ai pre-filtered",
@@ -60691,7 +60714,11 @@
         }
       },
       "conflicts": [],
-      "phonetics": "NIN-kee; rhymes with pinky and kinky"
+      "phonetics": "NIN-kee; rhymes with pinky and kinky",
+      "verdict": "rejected",
+      "feedback": [
+        "\"nie, slabe\" (round 33)"
+      ]
     },
     "Penky": {
       "direction": "sweep of -Cky names (nk, sk, rk…) in Rilky/Nilky's sound, .ai pre-filtered",
@@ -60832,6 +60859,2414 @@
       },
       "conflicts": [],
       "phonetics": "PUR-kee; close to perky"
+    },
+    "Otty": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "otty.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "otty.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "otty.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "otty.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getotty.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Beary": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "beary.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "beary.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "beary.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "beary.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getbeary.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Wrenny": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "wrenny.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "wrenny.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "wrenny.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "wrenny.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getwrenny.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Finchy": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "finchy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "finchy.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "finchy.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "finchy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getfinchy.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Lynxy": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "lynxy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "lynxy.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "lynxy.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "lynxy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getlynxy.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Weasy": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "weasy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "weasy.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "weasy.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "weasy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getweasy.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Moley": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "moley.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "moley.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "moley.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "moley.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getmoley.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Voley": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "voley.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "voley.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "voley.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "voley.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getvoley.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Beavy": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "beavy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "beavy.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "beavy.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "beavy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getbeavy.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Badgy": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "badgy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "badgy.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "badgy.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "badgy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getbadgy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Stoaty": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "stoaty.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "stoaty.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "stoaty.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "stoaty.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getstoaty.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Hedgy": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "hedgy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "hedgy.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "hedgy.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "hedgy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "gethedgy.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Lemmy": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "lemmy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "lemmy.app": {
+          "status": "taken",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "lemmy.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "lemmy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getlemmy.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "Lemmy (Motörhead); Lemmy federated app"
+    },
+    "Hawky": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "hawky.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "hawky.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "hawky.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "hawky.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "gethawky.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Ravy": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "ravy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "ravy.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "ravy.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "ravy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getravy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Corvy": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "corvy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "corvy.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "corvy.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "corvy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getcorvy.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Sabley": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "sabley.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "sabley.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "sabley.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "sabley.so": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "getsabley.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Pandy": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "pandy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "pandy.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "pandy.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "pandy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getpandy.com": {
+          "status": "taken",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Koaly": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "koaly.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "koaly.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "koaly.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "koaly.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getkoaly.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Quokky": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "quokky.com": {
+          "status": "taken",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "quokky.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "quokky.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "quokky.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getquokky.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Wombi": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "wombi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "wombi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "wombi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "wombi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getwombi.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Possy": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "possy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "possy.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "possy.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "possy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getpossy.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "'posse'/vulgar"
+    },
+    "Robby": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "robby.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "robby.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "robby.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "robby.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getrobby.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "common"
+    },
+    "Vulpy": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "vulpy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "vulpy.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "vulpy.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "vulpy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getvulpy.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Volpy": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "volpy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "volpy.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "volpy.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "volpy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getvolpy.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Tassy": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "tassy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "tassy.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "tassy.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "tassy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "gettassy.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Riccy": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "riccy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "riccy.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "riccy.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "riccy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getriccy.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Cervy": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "cervy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "cervy.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "cervy.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "cervy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getcervy.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Lincy": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "lincy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "lincy.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "lincy.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-15"
+        },
+        "lincy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getlincy.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      },
+      "conflicts": [
+        {
+          "who": "Lindy.ai — major no-code 'AI employees' agent platform, one letter away; Lincy – Speak & Learn with AI (iOS, 2 ratings)",
+          "space": "AI agents",
+          "severity": "notable",
+          "url": "https://www.lindy.ai/blog/train-your-ai",
+          "checked_at": "2026-11-15"
+        }
+      ],
+      "phonetics": "from lince 'lynx'; LIN-see"
+    },
+    "Lobby": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "lobby.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "lobby.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "lobby.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "lobby.so": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "getlobby.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Gatty": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "gatty.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "gatty.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "gatty.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "gatty.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getgatty.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Kumy": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "kumy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "kumy.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "kumy.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "kumy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getkumy.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Tanuky": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "tanuky.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "tanuky.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "tanuky.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "tanuky.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "gettanuky.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Nekky": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "nekky.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "nekky.app": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "nekky.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-15"
+        },
+        "nekky.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getnekky.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      },
+      "conflicts": [],
+      "phonetics": "from neko 'cat'; NEK-kee"
+    },
+    "Torry": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "torry.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "torry.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "torry.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "torry.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "gettorry.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Visony": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "visony.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "visony.app": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "visony.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "visony.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getvisony.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Zibby": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "zibby.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "zibby.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "zibby.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "zibby.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getzibby.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Lontry": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "lontry.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "lontry.app": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "lontry.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "lontry.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getlontry.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Fokky": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "fokky.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "fokky.app": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "fokky.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "fokky.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getfokky.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Delfy": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "delfy.com": {
+          "status": "taken",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "delfy.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "delfy.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "delfy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getdelfy.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Balby": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "balby.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "balby.app": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "balby.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "balby.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getbalby.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Pingy": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "pingy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "pingy.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "pingy.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "pingy.so": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "getpingy.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Mouffy": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "mouffy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "mouffy.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "mouffy.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "mouffy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getmouffy.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Marmy": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "marmy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "marmy.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "marmy.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "marmy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getmarmy.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Marmo": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "marmo.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "marmo.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "marmo.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "marmo.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getmarmo.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Chinchy": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "chinchy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "chinchy.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "chinchy.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "chinchy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getchinchy.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Chinny": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "chinny.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "chinny.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "chinny.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "chinny.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getchinny.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Gerby": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "gerby.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "gerby.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "gerby.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-15"
+        },
+        "gerby.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getgerby.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      },
+      "conflicts": [],
+      "phonetics": "from gerbil; GER-bee"
+    },
+    "Hammy": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "hammy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "hammy.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "hammy.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "hammy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "gethammy.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Ferry": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "ferry.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "ferry.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "ferry.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "ferry.so": {
+          "status": "taken",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getferry.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Ferri": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "ferri.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "ferri.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "ferri.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "ferri.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getferri.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Ferrety": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "ferrety.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "ferrety.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "ferrety.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "ferrety.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getferrety.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Minny": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "minny.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "minny.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "minny.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "minny.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getminny.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Mousy": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "mousy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "mousy.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "mousy.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "mousy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getmousy.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "'mousy' = timid"
+    },
+    "Ratty": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "ratty.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "ratty.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "ratty.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "ratty.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getratty.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "'ratty'"
+    },
+    "Squirry": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "squirry.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "squirry.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "squirry.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "squirry.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getsquirry.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Chippy": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "chippy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "chippy.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "chippy.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "chippy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getchippy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "slang"
+    },
+    "Tuffy": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "tuffy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "tuffy.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "tuffy.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "tuffy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "gettuffy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Puffy": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "puffy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "puffy.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "puffy.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "puffy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getpuffy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "Puffy brand"
+    },
+    "Puffi": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "puffi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "puffi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "puffi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "puffi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getpuffi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Puffo": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "puffo.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "puffo.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "puffo.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "puffo.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getpuffo.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Seally": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "seally.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "seally.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "seally.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "seally.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getseally.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Selky": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "selky.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "selky.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "selky.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-15"
+        },
+        "selky.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getselky.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      },
+      "conflicts": [
+        {
+          "who": "search 'selky ai': nothing named Selky; Selora AI (Home Assistant), Selma AI (sales) nearby; small 'Selkie' audio apps",
+          "space": "AI",
+          "severity": "noise",
+          "url": "https://selorahomes.com/docs/selora-ai/",
+          "checked_at": "2026-11-15"
+        }
+      ],
+      "phonetics": "from selkie, the seal that turns into a person in Celtic myth; SEL-kee; Nilky/Rilky rhythm"
+    },
+    "Sealy": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "sealy.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "sealy.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "sealy.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "sealy.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getsealy.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Otterly": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "otterly.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "otterly.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "otterly.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "otterly.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getotterly.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Wolfi": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "wolfi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "wolfi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "wolfi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "wolfi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getwolfi.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      },
+      "verdict": "dropped",
+      "reason": "Wolfi Linux"
+    },
+    "Lupie": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "lupie.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "lupie.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "lupie.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-15"
+        },
+        "lupie.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getlupie.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      },
+      "conflicts": [
+        {
+          "who": "search 'lupie ai': nothing named Lupie; the Lupi family (small Lupi apps, Lupi AI ed-tech) and lupo.ai nearby",
+          "space": "AI",
+          "severity": "notable",
+          "url": "https://www.cbinsights.com/company/lupi-ai",
+          "checked_at": "2026-11-15"
+        }
+      ],
+      "phonetics": "LOO-pee; Lupi with every domain open"
+    },
+    "Fennek": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "fennek.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "fennek.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "fennek.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "fennek.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getfennek.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Lynxi": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "lynxi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "lynxi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "lynxi.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "lynxi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getlynxi.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Linxi": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "linxi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "linxi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "linxi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "linxi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getlinxi.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Sably": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "sably.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "sably.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "sably.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-15"
+        },
+        "sably.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getsably.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        }
+      },
+      "conflicts": [],
+      "phonetics": "from sable; SAY-blee"
+    },
+    "Mink": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "mink.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "mink.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "mink.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "mink.so": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "getmink.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Minki": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "minki.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "minki.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "minki.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "minki.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getminki.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Visi": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "visi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "visi.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "visi.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "visi.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getvisi.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Martey": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "martey.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "martey.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "martey.ai": {
+          "status": "unknown",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "martey.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getmartey.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
+    },
+    "Marti": {
+      "direction": "animal names clipped + -y/-i, Ermy/Fenny/Lupi family",
+      "round": 34,
+      "domains": {
+        "marti.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "marti.app": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "marti.ai": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "marti.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getmarti.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      }
     }
   }
 }

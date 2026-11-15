@@ -719,3 +719,18 @@ Zesky, Nekst); Penky is a crypto token and near Penki kids' apps.
 "nesky ai".
 **Proposed next.** Show Chirky, Nesky, Ninky. The liked set is now large (Rilky, Nilky, Ermy, Fenny,
 Lupi, Tancho, Lancho…); suggest depth checks on it.
+
+## Round 34 — 2026-11-15
+
+**User on round 33.** Chirky, Nesky, Ninky "weak" — rejected; keep searching.
+**Directions.** Back to what the liked -y names share — Ermy, Fenny, Lupi are animal names clipped and
+given a soft ending. ≈90 clipped animal names + -y/-i (English, Italian, Spanish, Japanese, Latin
+roots; small mammals, birds, sea animals).
+**What came out.** Many keep .ai/.app/.so/get…com. "<name> ai" + App Store: **Lupie** — Lupi with
+every domain open (lupie.app, .ai confirmed, .so, get…com), nothing named Lupie; **Selky** (from
+selkie, the Celtic seal-folk who turn into people; Nilky/Rilky rhythm) — selky.ai confirmed free, .so,
+get…com, nothing under its name; **Lincy** ('lynx') is one letter from Lindy.ai, a major AI-agent
+platform. Gerby (gerbil), Nekky (neko), Sably (sable) open, unsearched.
+**Where I looked.** DNS; whois.nic.ai (6); App Store (4); web search "selky ai", "lincy ai", "lupie ai".
+**Proposed next.** Show Lupie and Selky; the clipped-animal + -y pattern is the one producing the
+user's likes, so keep mining it.
