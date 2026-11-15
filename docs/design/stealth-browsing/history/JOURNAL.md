@@ -181,3 +181,5 @@
   them (D9).
 - Owner: the probe page needs content to reproduce reading, submits and component interactions. Agreed: a static
   multi-page test shop with per-action tokens and input recording; scenarios in the eval (D11).
+- Owner closed the design (2026-11-15). Next: `/dev:deliver`, first milestone the baseline measurement with the test
+  shop and both controls.

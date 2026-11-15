@@ -131,6 +131,8 @@ against bans comes from rules instead, chiefly the pace limits.
 
 ## Scope, and what comes first
 
+The design was closed on 2026-11-15 and is ready to be built.
+
 In scope: the browser's stealth layers and the eval. Out of scope: ready-made commands for popular sites, which get a
 design of their own later, and how the agent posts on X ([what this design leaves out](DECISIONS.md#d10)).
 
