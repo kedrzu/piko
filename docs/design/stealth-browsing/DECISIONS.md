@@ -229,7 +229,14 @@ The test page must be public, because the daemon's proxy refuses loopback (`buil
 > **Checked 2026-11-15:** Google Cloud project `poweragents-stealth-eval` on the owner's personal account, separate
 > from `poweragents-desktop` (the app's Google sign-in); `recaptchaenterprise.googleapis.com` enabled without billing;
 > score-based web key `6LeHciEuAAAAAJSL9I_rLsgkmxdwe5IL27QfR_dv` (site keys are public), allowed domain
-> `kedrzu.github.io` (proposed host, not confirmed). No billing account exists on that Google account yet.
+> `kedrzu.github.io`. No billing account exists on that Google account yet.
+
+> **Checked 2026-11-15:** the probe page is live at
+> [kedrzu.github.io/stealth-eval-page](https://kedrzu.github.io/stealth-eval-page/) (public repo
+> `kedrzu/stealth-eval-page`); it writes the token into `#token`, readable from an isolated world. End to end: a
+> token from a Playwright-driven headed Chrome (Playwright MCP, residential IP), assessed with `createAssessment`,
+> scored 0.9 with no reasons — one run, no billing (four levels), so not conclusive; reCAPTCHA alone may not separate
+> automated from human here, which is why it is one reading among the panel ([D6](#d6)).
 
 **Rejected.**
 

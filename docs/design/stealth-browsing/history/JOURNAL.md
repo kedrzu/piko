@@ -163,3 +163,5 @@
   and a score key for `kedrzu.github.io`; billing pending (no billing account exists, needs the console). Proposed:
   the test page as a static GitHub Pages site in a separate public repo; the eval harness calls `createAssessment`
   itself, so no backend. Not confirmed.
+- Owner: create the repo. Created public `kedrzu/stealth-eval-page` with GitHub Pages; end-to-end check: a
+  Playwright-driven Chrome scored 0.9 (single run, no billing). Billing still for the owner to attach.
