@@ -704,3 +704,18 @@ their own name (only loose sound-alikes: Nily AI, Belva AI, KelAI). **Solky** si
 "kelky ai", "solky ai".
 **Proposed next.** Show Nilky, Belky, Kelky next to Rilky. If the user still wants breadth, the -lky
 family is deep; otherwise move the shortlist to depth checks.
+
+## Round 33 — 2026-11-15
+
+**User on round 32.** Add Nilky (liked); keep searching. Belky and Kelky not picked.
+**Directions.** Sweep of -Cky names with other clusters (nk, sk, rk, mk, nt, nd, rt, rd, nz, ns, ls,
+rs, ld, lz) and optional ch/sh onsets — 1,525 candidates; .ai first (DNS), then .app, .so, get…com;
+.ai of picks confirmed at whois.nic.ai.
+**What came out.** 517 passed the .ai filter. By ear the -sky/-rky/-nky shapes sit closest to
+Rilky/Nilky: **Chirky** (between chirpy and perky), **Nesky**, **Ninky**, Nisky, Nimky, Pirky.
+"<name> ai": Chirky and Nesky have nothing under their name (loose sound-alikes only: Chirpy, Chirper;
+Zesky, Nekst); Penky is a crypto token and near Penki kids' apps.
+**Where I looked.** DNS sweep; whois.nic.ai (7); App Store (4); web search "chirky ai", "penky ai",
+"nesky ai".
+**Proposed next.** Show Chirky, Nesky, Ninky. The liked set is now large (Rilky, Nilky, Ermy, Fenny,
+Lupi, Tancho, Lancho…); suggest depth checks on it.

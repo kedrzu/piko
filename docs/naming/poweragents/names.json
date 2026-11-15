@@ -60344,7 +60344,11 @@
           "checked_at": "2026-11-14"
         }
       ],
-      "phonetics": "NIL-kee; rhymes with Rilky and milky"
+      "phonetics": "NIL-kee; rhymes with Rilky and milky",
+      "verdict": "liked",
+      "feedback": [
+        "\"dopisz nilky\" (round 32)"
+      ]
     },
     "Belky": {
       "direction": "sweep of Rilky/Ermy/Fenny-shaped names (CVC-cluster + y/i), .ai pre-filtered",
@@ -60385,7 +60389,10 @@
           "checked_at": "2026-11-14"
         }
       ],
-      "phonetics": "BEL-kee; echoes Belka, the Soviet space dog; English ear may hear 'belly'"
+      "phonetics": "BEL-kee; echoes Belka, the Soviet space dog; English ear may hear 'belly'",
+      "feedback": [
+        "shown with Nilky in round 32; user picked only Nilky"
+      ]
     },
     "Kelky": {
       "direction": "sweep of Rilky/Ermy/Fenny-shaped names (CVC-cluster + y/i), .ai pre-filtered",
@@ -60426,7 +60433,10 @@
           "checked_at": "2026-11-14"
         }
       ],
-      "phonetics": "KEL-kee"
+      "phonetics": "KEL-kee",
+      "feedback": [
+        "shown with Nilky in round 32; user picked only Nilky"
+      ]
     },
     "Solky": {
       "direction": "sweep of Rilky/Ermy/Fenny-shaped names (CVC-cluster + y/i), .ai pre-filtered",
@@ -60567,6 +60577,261 @@
       },
       "conflicts": [],
       "phonetics": "SIL-mee"
+    },
+    "Chirky": {
+      "direction": "sweep of -Cky names (nk, sk, rk…) in Rilky/Nilky's sound, .ai pre-filtered",
+      "round": 33,
+      "domains": {
+        "chirky.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "chirky.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "chirky.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-15"
+        },
+        "chirky.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getchirky.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      },
+      "conflicts": [
+        {
+          "who": "search 'chirky ai': nothing named Chirky; Chirpy Personal AI, Chirper AI, Chirps AI, Chunky are loose sound-alikes",
+          "space": "AI",
+          "severity": "notable",
+          "url": "https://www.producthunt.com/products/chirper-ai",
+          "checked_at": "2026-11-15"
+        }
+      ],
+      "phonetics": "CHUR-kee; between chirpy and perky"
+    },
+    "Nesky": {
+      "direction": "sweep of -Cky names (nk, sk, rk…) in Rilky/Nilky's sound, .ai pre-filtered",
+      "round": 33,
+      "domains": {
+        "nesky.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "nesky.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "nesky.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-15"
+        },
+        "nesky.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getnesky.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      },
+      "conflicts": [
+        {
+          "who": "search 'nesky ai': nothing named Nesky; Zesky AI (AWS agent), Nekst AI nearby",
+          "space": "AI",
+          "severity": "noise",
+          "url": "https://help.nekst.com/en-us/article/nekst-ai-your-chat-assistant-overview-9f94c8/",
+          "checked_at": "2026-11-15"
+        }
+      ],
+      "phonetics": "NES-kee"
+    },
+    "Ninky": {
+      "direction": "sweep of -Cky names (nk, sk, rk…) in Rilky/Nilky's sound, .ai pre-filtered",
+      "round": 33,
+      "domains": {
+        "ninky.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "ninky.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "ninky.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-15"
+        },
+        "ninky.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getninky.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      },
+      "conflicts": [],
+      "phonetics": "NIN-kee; rhymes with pinky and kinky"
+    },
+    "Penky": {
+      "direction": "sweep of -Cky names (nk, sk, rk…) in Rilky/Nilky's sound, .ai pre-filtered",
+      "round": 33,
+      "domains": {
+        "penky.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "penky.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "penky.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-15"
+        },
+        "penky.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getpenky.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      },
+      "conflicts": [
+        {
+          "who": "Penky crypto token; Penki Draw (kids' drawing app, 1.8k ratings); Pengy (local AI agent, PyPI)",
+          "space": "crypto / apps",
+          "severity": "notable",
+          "url": "https://www.bitdegree.org/cryptocurrency-prices/penky-penky-price",
+          "checked_at": "2026-11-15"
+        }
+      ],
+      "phonetics": "PEN-kee"
+    },
+    "Nisky": {
+      "direction": "sweep of -Cky names (nk, sk, rk…) in Rilky/Nilky's sound, .ai pre-filtered",
+      "round": 33,
+      "domains": {
+        "nisky.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "nisky.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "nisky.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-15"
+        },
+        "nisky.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getnisky.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      },
+      "conflicts": [],
+      "phonetics": "NIS-kee"
+    },
+    "Nimky": {
+      "direction": "sweep of -Cky names (nk, sk, rk…) in Rilky/Nilky's sound, .ai pre-filtered",
+      "round": 33,
+      "domains": {
+        "nimky.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "nimky.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "nimky.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-15"
+        },
+        "nimky.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getnimky.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      },
+      "conflicts": [],
+      "phonetics": "NIM-kee"
+    },
+    "Pirky": {
+      "direction": "sweep of -Cky names (nk, sk, rk…) in Rilky/Nilky's sound, .ai pre-filtered",
+      "round": 33,
+      "domains": {
+        "pirky.com": {
+          "status": "taken",
+          "method": "dns",
+          "checked_at": "2026-11-15"
+        },
+        "pirky.app": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        },
+        "pirky.ai": {
+          "status": "likely-free",
+          "method": "whois.nic.ai",
+          "checked_at": "2026-11-15"
+        },
+        "pirky.so": {
+          "status": "likely-free",
+          "method": "whois",
+          "checked_at": "2026-11-15"
+        },
+        "getpirky.com": {
+          "status": "likely-free",
+          "method": "rdap",
+          "checked_at": "2026-11-15"
+        }
+      },
+      "conflicts": [],
+      "phonetics": "PUR-kee; close to perky"
     }
   }
 }

@@ -1,6 +1,6 @@
 # Shortlist
 
-Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here when it has no blocking conflict, has not been rejected, and at least one of .com, .app, .ai, .so is open. "likely-free" means the registry has no record; "free" means a registrar offered it.
+Generated from `names.json` on 2026-11-15 -- do not edit by hand. A name is here when it has no blocking conflict, has not been rejected, and at least one of .com, .app, .ai, .so is open. "likely-free" means the registry has no record; "free" means a registrar offered it.
 
 | Name | Direction | Domains | Conflicts | Notes |
 |-|-|-|-|-|
@@ -12,6 +12,7 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Lupeto | animal words from many languages in Lupo's shape (Esperanto, Basque, Finnish, Greek, Latin, Portuguese) | lupeto.app likely-free, lupeto.ai likely-free, lupeto.so likely-free, getlupeto.com likely-free | search 'lupeto ai': nothing named Lupeto; Lupi AI, LupaxAI, Lupus are nearby (notable); derived from Lupo, which lupo.ai (AI agents platform) already uses (notable) | **liked** / Esperanto 'little wolf' (lupo + -eto); loo-PEH-to; one t, unlike Italian Lupetto / "zapisz oba i szukaj dalej" — Lupo and Lupeto both kept (round 22) / user dislikes the -eto ending in general (round 23) — Lupeto kept as saved earlier, but its ending is now a known negative / "na chwile obecna chyba najbardziej podoba mi sie jednak lupeto" (2026-11-14) |
 | Lupi | user's own find: morphological variation of Lupo | lupi.so likely-free, getlupi.com likely-free, lupi.to likely-free, uselupi.com likely-free, trylupi.com likely-free | Lupi AI – Relationship Coach (iOS, Lifestyle); Lupi: AI Bedtime Stories (iOS); Lupi: Bills & Subscriptions (iOS) (notable); Lupi AI — Georgian ed-tech startup (teachers' grading assistant, founded 2019) (notable); lupi.ai registered 2024 (no site); lupi.com = Lupi's Pizza Pies (Chattanooga) (notable); Lupi = Italian plural of lupo ('wolves'); lupo.ai is an AI-agent platform (Knowledge-to-Execution) (notable) | **liked** / LOO-pee; Italian 'wolves'; one spelling (Lupi/Loopy risk: 'loopy' = slightly crazy in English) / user found it: "bardzo fajnie brzmi, jest krotka" — a variation on Lupo (2026-11-14) / user did not mean the plural — just a good-sounding modification of an animal name (2026-11-14) |
 | Neb | short punchy coinages, 3 letters (CVC), one spelling | getneb.com free ($8.99 first year, $11 renewal), neb.so free ($57.50/yr), heyneb.com likely-free | Trademark NEB — USPTO application 50085789, filed 2026-09-02 by New Epic Base Co., classes 9, 16, 25, 38, 41 (pending) (notable); Trademark NEB — New England Biolabs, USPTO 85706291 and WIPO 1261950, classes 1, 42 (registered) (notable); Trademark ONE NEB — Ingeniatrics, EUIPO 017045642 and USPTO, classes 9, 35 (notable); NEB Compute (Nebula Data, Australia) — GPU compute and token services; neb GitHub repo 'explore AI agents' (8 stars) (notable) | **liked** / one spelling mostly (Neb/Nebb); an old word for beak or nose; close to Nib in sound / "neb, zib fajne" (round 8) |
+| Nilky | sweep of Rilky/Ermy/Fenny-shaped names (CVC-cluster + y/i), .ai pre-filtered | nilky.app likely-free, nilky.ai likely-free, nilky.so likely-free, getnilky.com likely-free | none found | **liked** / NIL-kee; rhymes with Rilky and milky / "dopisz nilky" (round 32) |
 | Rilky | user's own coinage | rilky.app likely-free, rilky.ai likely-free, rilky.so likely-free, getrilky.com likely-free, heyrilky.com likely-free, userilky.com likely-free, tryrilky.com likely-free, rilky.co likely-free, rilky.io likely-free, rilky.me likely-free | none found | **liked** / RIL-kee; echoes Rilke (the poet); spelling risk: Rilky/Rilkey/Rilkie / user coined it: "po prostu dobrze brzmi" (round 30) |
 | Sancho | names of famous helpers and sidekicks in literature | sancho.so likely-free | sanch.io — startup reported by the user (my web search found nothing about it); SanchoSQL listed on BetaList (notable) | **liked** / Sancho Panza, Don Quixote's down-to-earth, loyal helper; SAN-cho; one spelling / "sancho brzmi super, ale jest juz startup sanch.io - mimo to zapisz" (round 14) |
 | Tancho | first names shaped like Sancho and Camillo | tancho.app free ($14.50/yr), tancho.ai free ($85.60/yr), tancho.so likely-free, gettancho.com free ($8.99 first year, $11.62 renewal) | Tanka — 'agent platform for founders' iOS app (sound-alike, 1.3k Product Hunt votes) (notable); search 'tancho ai': nothing named Tancho; TANKA (AI that remembers commitments) is the sound-alike (notable) | **liked** / Japanese tanchō, the red-crowned crane (luck, long life); TAHN-cho; Sancho's sound / "tancho tez niezle" (round 15) |
@@ -61,7 +62,7 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Bassani | surnames of Italian and Spanish artists and composers | bassani.app likely-free, bassani.ai unknown, bassani.so likely-free, getbassani.com likely-free | none found |  |
 | Beb | short punchy coinages, 3 letters (CVC), one spelling | beb.so likely-free, getbeb.com likely-free | none found |  |
 | Bedivere | names from Shakespeare, Arthurian legend and fairy tales | bedivere.ai unknown, bedivere.so likely-free, getbedivere.com likely-free | none found |  |
-| Belky | sweep of Rilky/Ermy/Fenny-shaped names (CVC-cluster + y/i), .ai pre-filtered | belky.app likely-free, belky.ai likely-free, belky.so likely-free, getbelky.com likely-free | none found | BEL-kee; echoes Belka, the Soviet space dog; English ear may hear 'belly' |
+| Belky | sweep of Rilky/Ermy/Fenny-shaped names (CVC-cluster + y/i), .ai pre-filtered | belky.app likely-free, belky.ai likely-free, belky.so likely-free, getbelky.com likely-free | none found | BEL-kee; echoes Belka, the Soviet space dog; English ear may hear 'belly' / shown with Nilky in round 32; user picked only Nilky |
 | Bellino | first names shaped like Sancho and Camillo | bellino.app likely-free, bellino.so likely-free, getbellino.com likely-free | none found | Italian 'pretty little one'; bel-LEE-no |
 | Benlo | coined first names, 2–3 syllables | benlo.app unknown, benlo.so likely-free | none found |  |
 | Benon | coined two-syllable names, soft consonants, no clusters (systematic sweep, .ai free) | benon.app likely-free, benon.ai unknown, benon.so likely-free, getbenon.com likely-free | none found | BEN-on; a rare Ugandan first name |
@@ -128,6 +129,7 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Chicho | real Spanish, Italian and Portuguese nicknames (hypocoristics) | chicho.app likely-free, chicho.so likely-free, getchicho.com likely-free | none found |  |
 | Chimo | real Spanish, Italian and Portuguese nicknames (hypocoristics) | chimo.app likely-free, chimo.so likely-free | search 'chimo ai': chim.ai — 'autonomous AI agents' (sound-alike); Chimmi, Chaterimo (notable) | CHEE-mo; Valencian nickname for Joaquín |
 | Chiqui | real Spanish, Italian and Portuguese nicknames (hypocoristics) | chiqui.so likely-free, getchiqui.com likely-free | none found |  |
+| Chirky | sweep of -Cky names (nk, sk, rk…) in Rilky/Nilky's sound, .ai pre-filtered | chirky.app likely-free, chirky.ai likely-free, chirky.so likely-free, getchirky.com likely-free | search 'chirky ai': nothing named Chirky; Chirpy Personal AI, Chirper AI, Chirps AI, Chunky are loose sound-alikes (notable) | CHUR-kee; between chirpy and perky |
 | Chispa | short Italian/Spanish/Latin nouns that sound like names, Lupo-shaped (two syllables, ends in -o) | chispa.so likely-free | none found |  |
 | Chito | real Spanish, Italian and Portuguese nicknames (hypocoristics) | chito.so likely-free, getchito.com likely-free | none found |  |
 | Chuy | real Spanish, Italian and Portuguese nicknames (hypocoristics) | chuy.so likely-free, getchuy.com likely-free | none found |  |
@@ -310,7 +312,7 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Kateto | Esperanto diminutives and young-animal words (-eto, -ido), Lupeto's family | kateto.app likely-free, kateto.ai unknown, kateto.so likely-free, getkateto.com likely-free | none found |  |
 | Katu | animal words from many languages in Lupo's shape (Esperanto, Basque, Finnish, Greek, Latin, Portuguese) | katu.so likely-free | none found |  |
 | Kaveri | words for help, friend or strength from other languages, easy in English | kaveri.so likely-free, getkaveri.com likely-free | none found |  |
-| Kelky | sweep of Rilky/Ermy/Fenny-shaped names (CVC-cluster + y/i), .ai pre-filtered | kelky.app likely-free, kelky.ai likely-free, kelky.so likely-free, getkelky.com likely-free | none found | KEL-kee |
+| Kelky | sweep of Rilky/Ermy/Fenny-shaped names (CVC-cluster + y/i), .ai pre-filtered | kelky.app likely-free, kelky.ai likely-free, kelky.so likely-free, getkelky.com likely-free | none found | KEL-kee / shown with Nilky in round 32; user picked only Nilky |
 | Kem | short punchy coinages, 3 letters (CVC), one spelling | kem.so likely-free, kem.to likely-free | none found |  |
 | Kenji | broader real first names: international and Polish, easy for English speakers | kenji.so likely-free | none found |  |
 | Kermy | sweep of Rilky/Ermy/Fenny-shaped names (CVC-cluster + y/i), .ai pre-filtered | kermy.app likely-free, kermy.ai likely-free, kermy.so likely-free, getkermy.com likely-free | none found | KER-mee; Kermit |
@@ -465,14 +467,17 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Nene | real Spanish, Italian and Portuguese nicknames (hypocoristics) | nene.so likely-free, getnene.com likely-free | none found |  |
 | Nereid | small companions in the sky: moons and small stars | nereid.so likely-free, getnereid.com likely-free | none found |  |
 | Nereo | Italian forms of mythological names | nereo.so likely-free, getnereo.com likely-free | none found |  |
+| Nesky | sweep of -Cky names (nk, sk, rk…) in Rilky/Nilky's sound, .ai pre-filtered | nesky.app likely-free, nesky.ai likely-free, nesky.so likely-free, getnesky.com likely-free | none found | NES-kee |
 | Neto | real Spanish, Italian and Portuguese nicknames (hypocoristics) | neto.so likely-free | none found |  |
 | Nettuno | Italian forms of mythological names | nettuno.so likely-free, getnettuno.com likely-free | none found |  |
 | Nguvu | words for help, friend or strength from other languages, easy in English | nguvu.ai unknown, nguvu.so likely-free, getnguvu.com likely-free | none found |  |
 | Nibling | like Nib: tiny marks, dots and bits (mascot-shaped words) | nibling.ai likely-free, getnibling.com likely-free | Nibl AI — iOS calorie-tracking app (sound-alike) (notable) | gender-neutral word for a niece or nephew; contains 'nib'; heard as 'nibbling' |
-| Nilky | sweep of Rilky/Ermy/Fenny-shaped names (CVC-cluster + y/i), .ai pre-filtered | nilky.app likely-free, nilky.ai likely-free, nilky.so likely-free, getnilky.com likely-free | none found | NIL-kee; rhymes with Rilky and milky |
+| Nimky | sweep of -Cky names (nk, sk, rk…) in Rilky/Nilky's sound, .ai pre-filtered | nimky.app likely-free, nimky.ai likely-free, nimky.so likely-free, getnimky.com likely-free | none found | NIM-kee |
 | Nimue | names from Shakespeare, Arthurian legend and fairy tales | nimue.so likely-free | none found |  |
+| Ninky | sweep of -Cky names (nk, sk, rk…) in Rilky/Nilky's sound, .ai pre-filtered | ninky.app likely-free, ninky.ai likely-free, ninky.so likely-free, getninky.com likely-free | none found | NIN-kee; rhymes with pinky and kinky |
 | Ninni | real Spanish, Italian and Portuguese nicknames (hypocoristics) | ninni.so likely-free | none found |  |
 | Nino | real Spanish, Italian and Portuguese nicknames (hypocoristics) | nino.so likely-free | none found |  |
+| Nisky | sweep of -Cky names (nk, sk, rk…) in Rilky/Nilky's sound, .ai pre-filtered | nisky.app likely-free, nisky.ai likely-free, nisky.so likely-free, getnisky.com likely-free | none found | NIS-kee |
 | Nita | real Spanish, Italian and Portuguese nicknames (hypocoristics) | nita.so likely-free | none found |  |
 | Nocti | morphological variations of animal words (not exact translations), Lupi-style | nocti.so likely-free | none found |  |
 | Nocto | cute short modifications of animal names (Lupi/Urso style) | nocto.so likely-free, getnocto.com likely-free | none found |  |
@@ -528,6 +533,7 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Pedrillo | faithful helpers and companions from world literature and legend | pedrillo.app likely-free, pedrillo.ai unknown, pedrillo.so likely-free, getpedrillo.com likely-free | none found |  |
 | Peio | Japanese, Hawaiian and Basque names and animal words that sound easy in English (Tancho's neighbours) | peio.ai unknown, peio.so likely-free, getpeio.com likely-free | none found |  |
 | Pellinore | names from Shakespeare, Arthurian legend and fairy tales | pellinore.app likely-free, pellinore.ai unknown, pellinore.so likely-free, getpellinore.com likely-free | none found |  |
+| Penky | sweep of -Cky names (nk, sk, rk…) in Rilky/Nilky's sound, .ai pre-filtered | penky.app likely-free, penky.ai likely-free, penky.so likely-free, getpenky.com likely-free | Penky crypto token; Penki Draw (kids' drawing app, 1.8k ratings); Pengy (local AI agent, PyPI) (notable) | PEN-kee |
 | Pennino | like Nib: tiny marks, dots and bits (mascot-shaped words) | pennino.app likely-free, pennino.ai unknown, getpennino.com likely-free | none found | Italian for 'nib'; Pennino/Penino |
 | Pepa | real Spanish, Italian and Portuguese nicknames (hypocoristics) | pepa.so likely-free | none found |  |
 | Pepito | real Spanish, Italian and Portuguese nicknames (hypocoristics) | pepito.so likely-free, getpepito.com likely-free | none found |  |
@@ -547,6 +553,7 @@ Generated from `names.json` on 2026-11-14 -- do not edit by hand. A name is here
 | Pingveno | Esperanto diminutives and young-animal words (-eto, -ido), Lupeto's family | pingveno.app unknown, pingveno.ai unknown, pingveno.so likely-free, getpingveno.com likely-free | none found |  |
 | Pipino | real Spanish, Italian and Portuguese nicknames (hypocoristics) | pipino.app likely-free, pipino.ai unknown, pipino.so likely-free, getpipino.com likely-free | none found |  |
 | Pipo | names and words in Lupo's and Sancho's sound: soft onset, open vowels, -o | pipo.so likely-free | none found |  |
+| Pirky | sweep of -Cky names (nk, sk, rk…) in Rilky/Nilky's sound, .ai pre-filtered | pirky.app likely-free, pirky.ai likely-free, pirky.so likely-free, getpirky.com likely-free | none found | PUR-kee; close to perky |
 | Pisano | surnames of Italian and Spanish artists and composers | pisano.app unknown, pisano.so likely-free | none found |  |
 | Plain Magic | plain compounds: easy yet powerful | plainmagic.app likely-free, plainmagic.ai unknown, getplainmagic.com likely-free | none found |  |
 | Planchet | names of famous helpers and sidekicks in literature | planchet.ai unknown, planchet.so likely-free | none found |  |
