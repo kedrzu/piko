@@ -37,6 +37,11 @@ import { ProjectFileWriteEndpointHandler } from './ProjectFileWriteEndpoint.hand
 import { ProjectListEndpointHandler } from './ProjectListEndpoint.handler.js';
 import { SandboxStartEndpointHandler } from './SandboxStartEndpoint.handler.js';
 import { SandboxStatusGetEndpointHandler } from './SandboxStatusGetEndpoint.handler.js';
+import { ScheduleCreateEndpointHandler } from './ScheduleCreateEndpoint.handler.js';
+import { ScheduleDeleteEndpointHandler } from './ScheduleDeleteEndpoint.handler.js';
+import { ScheduleListEndpointHandler } from './ScheduleListEndpoint.handler.js';
+import { ScheduleRunListEndpointHandler } from './ScheduleRunListEndpoint.handler.js';
+import { ScheduleUpdateEndpointHandler } from './ScheduleUpdateEndpoint.handler.js';
 
 /**
  * Serves the daemon's API (`@nzyme/rpc` endpoints under `DAEMON_API_PATH`, and the event stream at
@@ -85,6 +90,11 @@ const HANDLERS = [
     ProjectFileOpenEndpointHandler,
     ProjectFileWriteEndpointHandler,
     ProjectFileReleaseEndpointHandler,
+    ScheduleListEndpointHandler,
+    ScheduleCreateEndpointHandler,
+    ScheduleUpdateEndpointHandler,
+    ScheduleDeleteEndpointHandler,
+    ScheduleRunListEndpointHandler,
 ];
 
 /**

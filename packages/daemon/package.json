@@ -28,11 +28,13 @@
         "@nzyme/utils": "workspace:*",
         "@openuidev/lang-core": "1.1.1",
         "@poweragents/common": "workspace:*",
-        "@poweragents/opencode": "workspace:*"
+        "@poweragents/opencode": "workspace:*",
+        "rrule-temporal": "2.2.9"
     },
     "devDependencies": {
         "@nzyme/ioc-testing": "workspace:*",
-        "@nzyme/tsconfig": "workspace:*"
+        "@nzyme/tsconfig": "workspace:*",
+        "playwright": "1.64.1"
     },
     "nx": {
         "targets": {

@@ -31,6 +31,7 @@ import { CLAUDE_INTEGRATION } from '../claude/ClaudeSignInService.js';
 import { ProjectService } from '../projects/ProjectService.js';
 import { assertSandboxReady } from '../sandbox/assertSandboxReady.js';
 import { Sandbox } from '../sandbox/Sandbox.js';
+import { ScheduleService } from '../schedules/ScheduleService.js';
 import { toAgentDir } from './utils/toAgentDir.js';
 import { toConversationMessage } from './utils/toConversationMessage.js';
 
@@ -42,7 +43,7 @@ import { toConversationMessage } from './utils/toConversationMessage.js';
  * another project.
  */
 export interface ConversationServiceShape {
-    /** The project's conversations, the most recently changed first. */
+    /** The project's conversations, the most recently changed first, each a schedule's run with its `scheduleId`. */
     list(projectId: string): Promise<Conversation[]>;
     /**
      * Starts an empty conversation in the project, with the agent on the active provider's default model (design D35):
@@ -73,6 +74,7 @@ export const ConversationService = defineService({
     deps: {
         logger: Logger,
         projects: ProjectService,
+        schedules: ScheduleService,
         sandbox: Sandbox,
         aiProvider: AiProviderService,
         listSessions: OpencodeSessionListCommand,
@@ -85,20 +87,25 @@ export const ConversationService = defineService({
         listMessages: OpencodeMessageListCommand,
     },
     setup(deps): ConversationServiceShape {
-        const { logger, projects, sandbox } = deps;
+        const { logger, projects, schedules, sandbox } = deps;
 
         return { list, create, send, stop, listMessages };
 
         async function list(projectId: string) {
-            const directory = await requireProjectDir(projectId);
-            const [sessions, active] = await Promise.all([deps.listSessions(directory), deps.listActiveSessions()]);
+            const project = await requireProject(projectId);
+            const directory = toAgentDir(project.dir);
+            const [sessions, active, scheduleIds] = await Promise.all([
+                deps.listSessions(directory),
+                deps.listActiveSessions(),
+                schedules.scheduleIdsByConversation(project),
+            ]);
             return (
                 sessions
                     // OpenCode filters by the directory already; checked again, as a conversation must never show in
                     // another project.
                     .filter(session => session.directory === directory)
                     .toSorted((a, b) => b.updatedAt - a.updatedAt)
-                    .map(session => toConversation(session, active.has(session.id)))
+                    .map(session => toConversation(session, active.has(session.id), scheduleIds.get(session.id)))
             );
         }
 
@@ -154,12 +161,16 @@ export const ConversationService = defineService({
 
         /** The project's folder as the agent sees it. */
         async function requireProjectDir(projectId: string) {
+            return toAgentDir((await requireProject(projectId)).dir);
+        }
+
+        async function requireProject(projectId: string) {
             assertSandboxReady(sandbox);
             const project = await projects.get(projectId);
             if (!project) {
                 throw new HttpError(404, { error: 'ProjectNotFound', message: 'No project with this id' });
             }
-            return toAgentDir(project.dir);
+            return project;
         }
 
         async function requireConversation(ref: ConversationRef) {
@@ -188,12 +199,13 @@ function toAgentModel(provider: AiProvider): AgentModel {
     }
 }
 
-function toConversation(session: OpencodeSession, running: boolean): Conversation {
+function toConversation(session: OpencodeSession, running: boolean, scheduleId?: string): Conversation {
     return {
         id: session.id,
         title: session.title,
         updatedAt: session.updatedAt,
         running,
         provider: toAiProvider(session.providerId),
+        ...(scheduleId !== undefined && { scheduleId }),
     };
 }
