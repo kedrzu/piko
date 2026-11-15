@@ -223,7 +223,13 @@ The test page must be public, because the daemon's proxy refuses loopback (`buil
 > **Checked 2026-11-15:** new reCAPTCHA keys are created only in Google Cloud projects; 10,000 assessments a month
 > free; without billing only four score levels (0.1, 0.3, 0.7, 0.9) and `LOW_CONFIDENCE_SCORE` on little traffic;
 > "Scores in a staging environment and within 7 days of implementation might differ" —
-> [FAQ](https://docs.cloud.google.com/recaptcha/docs/faq). Whether to enable billing for finer scores is open.
+> [FAQ](https://docs.cloud.google.com/recaptcha/docs/faq). Billing: owner chose to enable it for finer
+> scores (still free within the quota).
+
+> **Checked 2026-11-15:** Google Cloud project `poweragents-stealth-eval` on the owner's personal account, separate
+> from `poweragents-desktop` (the app's Google sign-in); `recaptchaenterprise.googleapis.com` enabled without billing;
+> score-based web key `6LeHciEuAAAAAJSL9I_rLsgkmxdwe5IL27QfR_dv` (site keys are public), allowed domain
+> `kedrzu.github.io` (proposed host, not confirmed). No billing account exists on that Google account yet.
 
 **Rejected.**
 

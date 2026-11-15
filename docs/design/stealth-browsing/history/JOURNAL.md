@@ -159,3 +159,7 @@
 - Owner: site helpers deferred (own design later); X posting route out of scope entirely — the design is the general
   stealth mechanism. Recorded D10; README rescoped. Owner asked to create the Google Cloud project for reCAPTCHA;
   gcloud needs re-login and a choice of account (two credentialed: work and personal).
+- Owner: reCAPTCHA project on the personal Google account, with billing. Created project `poweragents-stealth-eval`
+  and a score key for `kedrzu.github.io`; billing pending (no billing account exists, needs the console). Proposed:
+  the test page as a static GitHub Pages site in a separate public repo; the eval harness calls `createAssessment`
+  itself, so no backend. Not confirmed.
