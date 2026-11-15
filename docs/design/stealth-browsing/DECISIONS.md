@@ -100,9 +100,12 @@ flag turns it back off without giving up the pipe. Keeping up with Chrome stable
 
 ## D4
 
-**Stealth is built in the daemon, in layers every browser client gets: the JS environment (launch flags, the "Google
-Chrome" brand set over CDP on every target, and the guarantee that page scripts never observe our code, [D8](#d8)), input (mouse paths and per-key typing
-generated from the agent's clicks and text), and pace ([D5](#d5)).** (2026-11-15, design agent proposal, owner agreed)
+**Stealth is built in the daemon, in layers every browser client gets. Built first, regardless of measurement: the
+launch flag ([D3](#d3)), the guarantee that page scripts never observe our code ([D8](#d8)) and pace ([D5](#d5)).
+Built only once the eval shows sites react to them, in the order it shows: input (mouse paths and per-key typing
+generated from the agent's clicks and text) and the "Google Chrome" brand set over CDP on every target, workers
+included.** (2026-11-15, design agent proposal; the split by measurement is the owner's choice after the rightsize
+review)
 
 **Why.** Every CDP command already passes the daemon's multiplexer, so a fix there covers agent-browser, site helpers
 in any language, and anything later. Vendors document client-side JS fingerprinting first and behaviour second (HUMAN:
@@ -116,6 +119,8 @@ in any language, and anything later. Vendors document client-side JS fingerprint
 
 **Rejected.**
 
+- Building input and brand layers up front — no evidence yet that either affects blocks; the owner chose measurement
+  first ([history](history/DECISIONS.md#d4)).
 - Fixing only the CDP leaks the measurement shows — the owner wants no traces regardless of measurement
   ([history](history/DECISIONS.md#d4)).
 - Stealth inside each client (Patchright, rebrowser-patches, ghost-cursor per helper) — every client and every
@@ -126,7 +131,9 @@ in any language, and anything later. Vendors document client-side JS fingerprint
 ## D5
 
 **The daemon enforces a human pace on every site, and slows down when a page shows a CAPTCHA or block; the agent is
-told when it is being paced.** (2026-11-15, design agent proposal, owner agreed the direction; values open)
+told when it is being paced.** The pace values and back-off rules are set from the
+baseline measurement on Allegro, not guessed up front. How the daemon recognises a block is open. (2026-11-15,
+design agent proposal, owner agreed; adaptive from the first version is the owner's choice)
 
 **Why.** Blocks after N actions (30 Allegro searches in two minutes) come from volume per session and IP, which no
 fingerprint fix changes. Enforced in the daemon, the agent cannot skip it; telling the agent keeps it from treating
@@ -136,6 +143,8 @@ the wait as a broken browser. A generic pace fits "any site" ([D1](#d1)).
 
 - Per-site limits only — needs a known list of sites.
 - Pace as an instruction to the agent — a hurried agent ignores it.
+- A fixed per-site interval first, with CAPTCHA back-off added later — the owner wants the adaptive behaviour from
+  the first version (rightsize review, 2026-11-15).
 
 ## D6
 
@@ -157,6 +166,8 @@ the real site; bans are delayed and account-level, and nobody tests them on real
 **Rejected.**
 
 - Test pages alone — they check single leaks, not whether a real vendor lets the agent through.
+- Allegro and a few test pages only, adding a vendor when the agent is blocked by it — the owner wants coverage of
+  every major vendor from the start, for "any site" (rightsize review, 2026-11-15).
 
 ## D7
 

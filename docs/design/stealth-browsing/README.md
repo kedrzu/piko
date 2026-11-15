@@ -74,10 +74,10 @@ Today this browser gives itself away in three known ways:
 Every command the agent sends to the browser already passes through the daemon, which uses that position to keep the
 agent inside its limits. Stealth goes there too ([layers in the daemon](DECISIONS.md#d4)), in three layers:
 
-- **What a page's scripts can see.** Launch flags, the browser's name, and no trace of remote control (more on this
-  below).
+- **What a page's scripts can see.** A launch flag, and no trace of remote control (more on this below).
 - **How input arrives.** A click from the agent becomes a mouse movement along a curve, and text becomes key presses
-  at a typing pace.
+  at a typing pace. This one waits for evidence: it is built only once the measurement shows sites reacting to how
+  input arrives, and the same goes for making the browser call itself "Google Chrome" rather than "Chromium".
 - **How fast the agent goes.** The daemon holds every site to a human pace. When a page shows a CAPTCHA it slows down
   further, and it tells the agent it is waiting, so the agent does not decide the browser is broken
   ([why pace is enforced, not suggested](DECISIONS.md#d5)). A burst of thirty searches in two minutes gets blocked
@@ -123,11 +123,14 @@ In scope: the browser's stealth layers and the eval. Out of scope: ready-made co
 design of their own later, and how the agent posts on X ([what this design leaves out](DECISIONS.md#d10)).
 
 **First step:** measure the browser as it is today against the eval sites. That shows which leaks actually reach the
-sites, and how many Allegro searches pass before a CAPTCHA. The result sets the order of the layers and settles
-whether we will ever need our own Chromium build.
+sites, and how many Allegro searches pass before a CAPTCHA. Then come the parts built regardless of the numbers: the
+launch flag, the rule that page scripts never see our code, and the pace limit that slows down after a CAPTCHA. The
+numbers then decide whether human-like input and the browser's name come next, in which order, and whether we will
+ever need our own Chromium build.
 
 Still open:
 
 - **Whether to put a card on the reCAPTCHA project.** Without one the score has four coarse levels; with one it is
   finer, still free within 10,000 checks a month.
-- **Pace values and back-off rules**, and how the agent is told it is being paced.
+- **Pace values and back-off rules** come from the first measurement. Still open: how the daemon recognises that a
+  page is a CAPTCHA or block, and how the agent is told it is being paced.

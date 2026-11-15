@@ -169,3 +169,9 @@
   Playwright MCP's Chrome: still 0.9, no reasons. Owner asked how Claude in Chrome drives the browser; researching.
 - Claude in Chrome: extension in the person's real Chrome, CDP through `chrome.debugger`, native messaging to Claude
   Code. Recorded as a Rejected line of D3 (same protocol; the real profile is what poweragents D27 rejected).
+- Owner: pace values and back-off rules come from the baseline measurement (D5 sharpened). Running rightsize before
+  proposing to close.
+- Rightsize (three passes) flagged six mechanisms. Dropped as already chosen by the owner with the simpler version in
+  front of him: D8 class-wide rule, own reCAPTCHA project. Owner's picks: input and brand layers only after
+  measurement (D4 partly replaced, prior form in history); pace adaptive from the first version (D5); six-vendor panel
+  kept (D6). Design proposed for closing.
