@@ -1,9 +1,8 @@
 import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
-import { isPlainObject } from '@nzyme/utils/isPlainObject.js';
-
 import { parseAllegroRun } from './allegro.js';
+import { asObject, asOneOf, asString } from './jsonShape.js';
 import { parseLeakPageResults } from './leakPages.js';
 import { parsePanelResults } from './panel.js';
 import { parseShopVisit } from './parseShopVisit.js';
@@ -82,27 +81,13 @@ export async function loadLatestReadings(folder: string): Promise<RunnerReadings
     return latest;
 }
 
-/** Checks a saved run's shape; `file` names it in the error. */
+/** Checks a saved run's shape; `file` names it in the error, and its cause names the field. */
 function parseRunResult(value: unknown, file: string): RunResult {
-    if (!isPlainObject(value)) {
-        throw new Error(`${file} is not a run result`);
-    }
-    const { runner, startedAt, finishedAt, browserVersion, probes, probeErrors } = value;
-    if (
-        typeof runner !== 'string' ||
-        !isRunner(runner) ||
-        typeof startedAt !== 'string' ||
-        typeof finishedAt !== 'string' ||
-        typeof browserVersion !== 'string' ||
-        !isPlainObject(probes) ||
-        !isPlainObject(probeErrors)
-    ) {
-        throw new Error(`${file} is not a run result`);
-    }
-
-    const parsedProbes: RunProbes = {};
-    const parsedErrors: RunResult['probeErrors'] = {};
     try {
+        const run = asObject(value, 'run');
+        const probes = asObject(run['probes'], 'probes');
+        const probeErrors = asObject(run['probeErrors'], 'probeErrors');
+        const parsedProbes: RunProbes = {};
         if (probes['shop'] != null) {
             parsedProbes.shop = parseShopVisit(probes['shop']);
         }
@@ -115,23 +100,27 @@ function parseRunResult(value: unknown, file: string): RunResult {
         if (probes['allegro'] != null) {
             parsedProbes.allegro = parseAllegroRun(probes['allegro']);
         }
+        const parsedErrors: RunResult['probeErrors'] = {};
+        for (const probe of PROBE_NAMES) {
+            const error = probeErrors[probe];
+            if (typeof error === 'string') {
+                parsedErrors[probe] = error;
+            }
+        }
+        return {
+            runner: asOneOf(run['runner'], RUNNERS, 'runner'),
+            startedAt: asString(run['startedAt'], 'startedAt'),
+            finishedAt: asString(run['finishedAt'], 'finishedAt'),
+            browserVersion: asString(run['browserVersion'], 'browserVersion'),
+            probes: parsedProbes,
+            probeErrors: parsedErrors,
+        };
     } catch (error) {
         throw new Error(`${file} is not a run result`, { cause: error });
     }
-    for (const probe of PROBE_NAMES) {
-        const error = probeErrors[probe];
-        if (typeof error === 'string') {
-            parsedErrors[probe] = error;
-        }
-    }
-    return { runner, startedAt, finishedAt, browserVersion, probes: parsedProbes, probeErrors: parsedErrors };
 }
 
 /** Copies one probe's reading; generic, so the reading's type follows the probe's name. */
 function copyProbe<P extends ProbeName>(target: RunProbes, source: RunProbes, probe: P) {
     target[probe] = source[probe];
-}
-
-function isRunner(value: string): value is RunnerName {
-    return RUNNERS.some(runner => runner === value);
 }
