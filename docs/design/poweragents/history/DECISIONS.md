@@ -339,6 +339,37 @@ broken on its page and does not stop the environment from rebuilding.
   from, against the product's line that nothing is a black box ([D9](#d9)).
 - Labelling them "made by the agent" — "your plugin" reads better and gives the person the sense they built it (owner).
 
+Retired in part 2026-11-15: the agent no longer writes plugins of its own; what it builds lives in the project's setup, [D43](../DECISIONS.md#d43). Rewritten in place as [D40](../DECISIONS.md#d40).
+
+**Bundled plugins are mounted into the sandbox read-only from the app, and the profile's manifest lists which of them
+the person has installed. A plugin the agent writes is a folder in the profile, `/Poweragents/plugins/<name>/`: the
+folder being there is what installs it, and deleting it uninstalls it. When the agent changes what one of its plugins
+adds to the environment, it asks the daemon to apply the change. Editing a skill takes effect in the next conversation.
+A plugin's programs are installed when the plugin is, never built into the sandbox's image.** (2026-11-14, owner,
+simplified from the design agent's proposal at the review)
+
+**Why.** Plugins the agent writes outlive a rebuilt sandbox only if they sit beside the person's data, like Memory and
+projects. Installing needs no confirmation ([D28](#d28)), so routing it through the daemon would protect nothing; the
+folders themselves are the record the environment is rebuilt from ([D26](#d26)). Programs stay out of the image because
+a bundled plugin such as Blender, or a whole npm toolchain, would otherwise weigh on everyone who never uses it.
+
+**Always the profile's.** A plugin the agent writes is installed for the whole profile, never into one project. Asking
+the daemon to apply its environment is `poweragents plugin install <name>`, run in the sandbox. (2026-11-14, owner)
+
+**Shown with the others.** Plugins the agent wrote appear in the same list as bundled ones, marked as the person's own
+("Twój plugin"), not as made by the agent — they asked for it, so it is theirs. (2026-11-14, owner)
+
+**Rejected.**
+
+- Installing as a request to the daemon, which alone writes the list of installed plugins and shows a plugin with a
+  missing folder as broken ([history](history/DECISIONS.md#d40)) — a gate with no safety behind it once installs need no
+  confirmation (owner, 2026-11-14, at the review).
+- Bundled plugins' programs built into the image, since they ship with the app anyway — every image would carry
+  programs most people never use (owner, 2026-11-14).
+- Hiding the agent's plugins from the Plugins list — the person would not know where a program in the environment came
+  from, against the product's line that nothing is a black box ([D9](#d9)).
+- Labelling them "made by the agent" — "your plugin" reads better and gives the person the sense they built it (owner).
+
 ## D42
 
 Retired in part 2026-11-14: commands carry the plugin's name and the daemon stops the conversation deterministically; rewritten in place as [D42](../DECISIONS.md#d42).
@@ -378,3 +409,40 @@ creates, the plugins it needs, the accounts and services it uses, its MCP server
 plugins ship as such folders inside the app ([D36](#d36)).** (2026-11-14, design agent proposal, owner did not object)
 
 **Why.** Every part named in [D17](#d17) has one place, and a plugin the agent writes ([D26](#d26)) is the same folder.
+
+## D26
+
+Retired in part 2026-11-15: the agent's own installs go into a project's setup ([D43](../DECISIONS.md#d43)), and the manifest also takes the projects' declarations ([D44](../DECISIONS.md#d44)). Rewritten in place as [D26](../DECISIONS.md#d26).
+
+**The profile's manifest — what the environment is rebuilt from — is the list of installed plugins
+with their versions and configuration, plus the version of the base environment. The packages in the
+sandbox are derived from what those plugins declare; nothing is copied out of plugins into a
+hand-maintained package list.** (2026-11-08, owner)
+
+**Why.** Installing a plugin is the primary way anything enters the environment, and the user chose
+the plugin, not its packages. A package list in the sandbox describes what the sandbox is, not where
+it came from, so it can't be rebuilt or updated from it. Since the marketplace is ours, plugin versions
+and the dependencies they declare can be updated safely: updating means a new plugin version.
+
+**Rejected.**
+
+- The sandbox's own uv / Bun project files (with lockfiles) as the manifest — proposed by the design
+  agent 2026-11-08; they record the result, not the source, and make updates awkward.
+- Linux system packages from a repository frozen at a fixed date — proposed by the design agent; as
+  a standalone rule it blocks updates (owner).
+
+**Agent's own installs.** The agent can create local plugins: it writes a plugin manifest declaring
+what it needs, and installing that plugin installs it — the same path as any plugin. (2026-11-08,
+owner)
+
+**Rejected.**
+
+- A single fixed local plugin per profile ("My additions") holding everything the agent installs —
+  proposed by the design agent; owner prefers letting the agent author plugins generally.
+- A separate "installed by hand" section of the manifest — two kinds of entries for every mechanism
+  to handle.
+
+**Deferred until real plugins are built (owner).** How a plugin installs a Linux system tool: as a
+distribution package via apt (version is whatever the base environment's distribution carries), as a
+pinned release archive with a checksum (the plugin controls the version), or both as two kinds.
+Neither is ruled out.

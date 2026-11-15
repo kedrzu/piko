@@ -417,12 +417,12 @@ and their package managers; a built-in skill tells the agent what is available a
 
 ## D25
 
-**Everything beyond the basics is declared in the profile's environment manifest — by a plugin or by
-the agent — and the environment is built only from it. Each kind of thing (Python packages, JS
-packages, Linux system packages) has exactly one way of being installed. Applying the manifest is
-idempotent: the same result on the running sandbox and on one built from scratch, e.g. after it was
-destroyed, after a runtime version change or after a serious failure.** (2026-11-08, owner, on the
-design agent's proposal that the agent installs only by changing the manifest)
+**Everything beyond the basics is declared — by a plugin or in a project's setup ([D43](#d43)) — and the environment
+is built only from those declarations. Each kind of thing (Python packages, JS packages, Linux system packages) has
+exactly one way of being installed. Applying them is idempotent: the same result on the running sandbox and on one
+built from scratch, e.g. after it was destroyed, after a runtime version change or after a serious failure.**
+(2026-11-08, owner, on the design agent's proposal that the agent installs only by changing the manifest; where the
+agent declares sharpened 2026-11-15, owner)
 
 **Why.** The problem this product starts from is that an agent setup on one machine cannot be
 reproduced on another, because nothing records what was installed. Imperative install scripts give
@@ -437,38 +437,33 @@ different results depending on order; a declaration per kind does not.
 
 ## D26
 
-**The profile's manifest — what the environment is rebuilt from — is the list of installed plugins
-with their versions and configuration, plus the version of the base environment. The packages in the
-sandbox are derived from what those plugins declare; nothing is copied out of plugins into a
-hand-maintained package list.** (2026-11-08, owner)
+**What the environment is rebuilt from is the list of installed plugins with their versions and configuration, the
+declarations in each project's setup ([D43](#d43)), and the version of the base environment. The packages in the
+sandbox are derived from those; nothing is copied out of a plugin into a hand-maintained package list.** (2026-11-08,
+owner; projects' declarations 2026-11-15, owner)
 
-**Why.** Installing a plugin is the primary way anything enters the environment, and the user chose
-the plugin, not its packages. A package list in the sandbox describes what the sandbox is, not where
-it came from, so it can't be rebuilt or updated from it. Since the marketplace is ours, plugin versions
-and the dependencies they declare can be updated safely: updating means a new plugin version.
-
-**Rejected.**
-
-- The sandbox's own uv / Bun project files (with lockfiles) as the manifest — proposed by the design
-  agent 2026-11-08; they record the result, not the source, and make updates awkward.
-- Linux system packages from a repository frozen at a fixed date — proposed by the design agent; as
-  a standalone rule it blocks updates (owner).
-
-**Agent's own installs.** The agent can create local plugins: it writes a plugin manifest declaring
-what it needs, and installing that plugin installs it — the same path as any plugin. (2026-11-08,
-owner)
+**Why.** Installing a plugin is the primary way anything enters the environment, and the user chose the plugin, not its
+packages. A package list in the sandbox describes what the sandbox is, not where it came from, so it can't be rebuilt or
+updated from it. Since the marketplace is ours, plugin versions and the dependencies they declare can be updated
+safely: updating means a new plugin version.
 
 **Rejected.**
 
-- A single fixed local plugin per profile ("My additions") holding everything the agent installs —
-  proposed by the design agent; owner prefers letting the agent author plugins generally.
-- A separate "installed by hand" section of the manifest — two kinds of entries for every mechanism
-  to handle.
+- The sandbox's own uv / Bun project files (with lockfiles) as the profile's manifest — proposed by the design agent
+  2026-11-08; they record the result, not the source, and make updates awkward. (A project's own setup may still use
+  such files for its libraries: there the agent writes them, so they are the source — [D44](#d44).)
+- Linux system packages from a repository frozen at a fixed date — proposed by the design agent; as a standalone rule
+  it blocks updates (owner).
+- A single fixed local plugin per profile ("My additions") holding everything the agent installs — proposed by the
+  design agent; owner prefers the agent's work to live where it is used.
+- A separate "installed by hand" section of the manifest — two kinds of entries for every mechanism to handle.
+- The agent writing plugins of its own to install what it needs ([history](history/DECISIONS.md#d26)) — replaced by the
+  project's setup (owner, 2026-11-15, [D43](#d43)).
 
-**Deferred until real plugins are built (owner).** How a plugin installs a Linux system tool: as a
-distribution package via apt (version is whatever the base environment's distribution carries), as a
-pinned release archive with a checksum (the plugin controls the version), or both as two kinds.
-Neither is ruled out.
+**Deferred until real plugins are built (owner).** How a plugin installs a Linux system tool: as a distribution package
+via apt (version is whatever the base environment's distribution carries), as a pinned release archive with a checksum
+(the plugin controls the version), or both as two kinds. Neither is ruled out. A project's setup declares system
+programs the same way, whichever is chosen.
 
 ## D27
 
@@ -750,8 +745,7 @@ updated does not yet. A store with its own releases is complexity with no case b
 
 **Consequences.** A profile's manifest ([D26](#d26)) needs no per-plugin version for bundled plugins: the app's version
 fixes them, and an app update updates every installed bundled plugin at once. Conflicts between bundled plugins are
-resolved by us before release, not shown to the person. Plugins the agent writes itself ([D26](#d26)) are not bundled
-and are unaffected.
+resolved by us before release, not shown to the person.
 
 **Rejected.**
 
@@ -805,7 +799,7 @@ keeps what it learns and which plugins it works with are written in its onboardi
 its ordinary tools. Accounts ([#50](https://github.com/kedrzu/poweragents/issues/50)) and MCP servers
 ([#52](https://github.com/kedrzu/poweragents/issues/52)) are added to it when they are built. (2026-11-14, owner)
 
-**Why.** Every part named in [D17](#d17) has one place, and a plugin the agent writes ([D26](#d26)) is the same folder.
+**Why.** Every part named in [D17](#d17) has one place, and a project's own setup has the same parts ([D43](#d43)).
 A field the platform does not act on is a promise nothing keeps; the agent already creates projects and reads skills,
 so a workflow's setup needs no schema of its own.
 
@@ -818,33 +812,22 @@ so a workflow's setup needs no schema of its own.
 ## D40
 
 **Bundled plugins are mounted into the sandbox read-only from the app, and the profile's manifest lists which of them
-the person has installed. A plugin the agent writes is a folder in the profile, `/Poweragents/plugins/<name>/`: the
-folder being there is what installs it, and deleting it uninstalls it. When the agent changes what one of its plugins
-adds to the environment, it asks the daemon to apply the change. Editing a skill takes effect in the next conversation.
-A plugin's programs are installed when the plugin is, never built into the sandbox's image.** (2026-11-14, owner,
-simplified from the design agent's proposal at the review)
+the person has installed. A plugin's programs are installed when the plugin is, never built into the sandbox's
+image.** (2026-11-14, owner; the agent's own plugins removed 2026-11-15, owner)
 
-**Why.** Plugins the agent writes outlive a rebuilt sandbox only if they sit beside the person's data, like Memory and
-projects. Installing needs no confirmation ([D28](#d28)), so routing it through the daemon would protect nothing; the
-folders themselves are the record the environment is rebuilt from ([D26](#d26)). Programs stay out of the image because
-a bundled plugin such as Blender, or a whole npm toolchain, would otherwise weigh on everyone who never uses it.
-
-**Always the profile's.** A plugin the agent writes is installed for the whole profile, never into one project. Asking
-the daemon to apply its environment is `poweragents plugin install <name>`, run in the sandbox. (2026-11-14, owner)
-
-**Shown with the others.** Plugins the agent wrote appear in the same list as bundled ones, marked as the person's own
-("Twój plugin"), not as made by the agent — they asked for it, so it is theirs. (2026-11-14, owner)
+**Why.** Programs stay out of the image because a bundled plugin such as Blender, or a whole npm toolchain, would
+otherwise weigh on everyone who never uses it.
 
 **Rejected.**
 
+- Plugins the agent writes, as folders in `/Poweragents/plugins/<name>/`, always for the whole profile, shown in the
+  Plugins list as "Twój plugin" ([history](history/DECISIONS.md#d40)) — the person asked for something done, not for a
+  plugin; what the agent builds now lives in the project's setup ([D43](#d43)) (owner, 2026-11-15).
 - Installing as a request to the daemon, which alone writes the list of installed plugins and shows a plugin with a
   missing folder as broken ([history](history/DECISIONS.md#d40)) — a gate with no safety behind it once installs need no
   confirmation (owner, 2026-11-14, at the review).
 - Bundled plugins' programs built into the image, since they ship with the app anyway — every image would carry
   programs most people never use (owner, 2026-11-14).
-- Hiding the agent's plugins from the Plugins list — the person would not know where a program in the environment came
-  from, against the product's line that nothing is a black box ([D9](#d9)).
-- Labelling them "made by the agent" — "your plugin" reads better and gives the person the sense they built it (owner).
 
 ## D41
 
@@ -893,3 +876,90 @@ agent cannot name a plugin of its own after a bundled one.
   missing command fails cleanly.
 - A schedule remembering which plugin created it and disappearing with it — schedules are created in any conversation,
   and one the person later reworked would vanish unasked (owner, 2026-11-14).
+
+## D43
+
+**What the agent builds with the person lives in the project where it is used, in a hidden `.poweragents/` folder of
+that project: its skills, its scripts, the libraries those scripts use and the system programs the project needs.
+This is the project's setup. The agent never writes plugins of its own. Plugins are what one installs, from the
+marketplace; a project's setup is what one makes, by talking to the agent in that project.** (2026-11-15, owner)
+
+**Why.** People do not set out to build a plugin; they want something done in a project ("my accounting", "3D
+printing"). Keeping what the agent built in that project makes it easy to move, change and explain: Blender is in the
+environment because the 3D printing project needs it. Projects are not an isolation boundary ([D11](#d11)), so a setup
+that is useful elsewhere is simply copied.
+
+**Only text in the project.** The folder holds what the agent wrote — skills, scripts, declarations — never installed
+packages. They are installed in the sandbox and rebuilt from the declarations ([D25](#d25)). (2026-11-15, owner)
+
+**No profile tier for own things.** The person's own plugins, kept in the profile and installed into several projects,
+are a later design: the agent would turn a project's setup into one once the person wants it in several places
+([plugins.md](plugins.md#still-open)). (2026-11-15, owner)
+
+**Consequence.** Project-level plugins ([D34](#d34)) matter more: they bring programs the project then takes on.
+
+**Rejected.**
+
+- Installed packages (`node_modules`, a venv) inside `<project>/.poweragents/` — simplest for the agent, but hundreds
+  of megabytes of Linux binaries in the person's folder, in their backups and, once data can live on a cloud drive
+  ([D22](#d22)), in its sync; moving a project would carry them (owner, 2026-11-15).
+- The agent writing its own profile-level plugins ([history](history/DECISIONS.md#d40)) — see [D40](#d40).
+- Renaming "plugin" to something people would think of building — plugins stay what one installs (owner, 2026-11-15).
+
+## D44
+
+**Programs — Linux system packages and plugins' CLIs — are installed once for the whole sandbox, on one `PATH`, while
+any installed plugin or any project's setup declares them. Libraries — npm and Python packages — are installed
+separately for each place that holds code: each plugin, and each project's `.poweragents/`. Code uses only the
+libraries its own place declares: a project's script does not use a library a plugin brought, even in the same project.
+Every install draws from one shared cache, so a package used in several places is downloaded and stored once.**
+(2026-11-15, design agent proposal, owner agreed)
+
+**Why.** A script finds its libraries from where its file lies, not from the project the agent is working in, so
+libraries already belong to places that hold code. A script that borrowed a plugin's library would break silently when
+the plugin is removed or changes that library's version; and two plugins in one project cannot clash over a version.
+Programs have one version each anyway: a bundled plugin has one version, and apt carries one version of a package.
+
+**Rejected.**
+
+> **Checked 2026-11-15:** Bun resolves a bare import by walking up from the importing file, ignoring the working
+> directory (tested with Bun 1.4.4: `bun /abs/a/scripts/t.ts` run from `b/` took `a/node_modules`), and honours
+> `NODE_PATH` — [Bun docs, modules](https://bun.sh/docs/runtime/modules): "Bun scans up the file system for a
+> `node_modules` directory". Its install links from the cache by hardlink by default on Linux, the cache set by
+> `BUN_INSTALL_CACHE_DIR` — [Bun docs, cache](https://bun.sh/docs/install/cache). Hardlinks need the cache and the
+> installs on one file system (an OS limit; the docs only say `copyfile` is the fallback).
+>
+> **Checked 2026-11-15:** `uv run script.py` builds an environment from a PEP 723 header with no project files
+> ([uv scripts guide](https://docs.astral.sh/uv/guides/scripts/)); a project's environment can live elsewhere through
+> `UV_PROJECT_ENVIRONMENT`, one path per project ([uv project config](https://docs.astral.sh/uv/concepts/projects/config/)).
+> uv's default link mode on Linux is clone, not hardlink — "Defaults to clone (also known as Copy-on-Write) on macOS
+> and Linux" ([uv settings](https://docs.astral.sh/uv/reference/settings/#link-mode)) — and it copies when it cannot
+> link, so `UV_LINK_MODE=hardlink` has to be set unless the volume supports clones.
+
+**Rejected.**
+
+- One shared environment for all libraries, as today — every library version shared by every plugin and project.
+- A project's scripts using the libraries of the plugins installed in it — breaks silently when the plugin changes.
+
+## D45
+
+**A command for a skill of the project's own setup is `/:<skill>` — the plugin's name left empty means "this
+project's setup". The daemon resolves it in the project the conversation belongs to and, as for a plugin's command
+([D42](#d42)), stops the conversation with a fixed message when that project's setup has no such skill.** (2026-11-15,
+owner, on the design agent's proposal)
+
+**Why.** One grammar for every command: before the colon is where the skill comes from. A fixed form survives renaming
+the project, and the daemon can still decide deterministically that a skill is missing.
+
+> **Checked 2026-11-15:** OpenCode's skill id and name are plain branded strings with no character validation
+> ([`packages/schema/src/skill.ts`](https://github.com/sst/opencode/blob/dev/packages/schema/src/skill.ts), `dev`
+> branch); the folder scan skips only names starting with `.`. Unchecked: whether permission matching
+> (`Permission.evaluate("skill", id, …)`, wildcard patterns) treats a leading `:` specially — to try live with the
+> per-session deny rules before building. A folder named `:sort` is invalid on a Windows host, like every
+> `<plugin>:<skill>` copy ([plugin runtime ADR](../../decisions/plugin-runtime-in-the-sandbox.md)).
+
+**Rejected.**
+
+- No prefix (`/sort`) — the daemon cannot tell a removed skill from one that never existed.
+- A word as prefix (`/project:sort`) — owner preferred a special character.
+- `/.sort` (reads as "here", but follows no existing form) and `/~sort` (`~` means home).
