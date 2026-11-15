@@ -1,0 +1,167 @@
+# Decisions
+
+The decisions in force: grepped and re-entered, never read front to back. A heading is the
+decision's ID alone, so `DECISIONS.md#d3` keeps resolving after the wording is sharpened. Retired
+decisions, the journal and notes from reviews live in [history/](history/).
+
+**Before proposing a change in an area, read the Rejected lines of its decisions and the history
+they link to.** Reopening a rejected option is right when its premise changed; repeating it without
+knowing it was rejected is not.
+
+## D1
+
+**Two goals, in this order: the person's account is not banned, and the agent finishes its task instead of stopping
+at a block or CAPTCHA. It is one real person on their own accounts, on any site, at a human scale.** (2026-11-15,
+owner)
+
+**Why.** The owner's cases: agentic Allegro searches trip a CAPTCHA after some number of actions and the task stops;
+X bans accounts for automation. The person may use any site, so nothing may assume a known list of sites.
+
+> **Checked 2026-11-15:** X's automation rules list "Use non-API-based forms of automation, such as scripting the X
+> website. The use of these techniques may result in the permanent suspension of your account." (primary page
+> `help.x.com/en/rules-and-policies/x-automation` returned 403; quoted by a secondary source). X ToS forbids access
+> "by any means (automated or otherwise) other than through our currently available, published interfaces" —
+> [x.com/tos](https://x.com/en/tos).
+
+**Rejected.**
+
+- Many identities (rotating fingerprints, proxies, profiles), as scraping tools do — that is not the product, and for
+  a logged-in account a changing identity is itself suspicious.
+- Tuning for a fixed list of sites (Allegro, X) — the person may use any site.
+
+## D2
+
+**Stealth means consistency with the real machine: the browser presents its real fingerprint (canvas, WebGL, fonts,
+screen, OS) and removes only what says "automated". Nothing is spoofed beyond that.** (2026-11-15, design agent
+proposal, owner agreed)
+
+**Why.** One person on a real Mac or PC is, by definition, consistent; a spoofed fingerprint introduces mismatches
+that detectors look for. Residential IP, a persistent profile with real logins, and a real Chromium's TLS fingerprint
+come for free.
+
+> **Checked 2026-11-15:** CloakBrowser's Allegro block (issue #16) was Linux system fonts leaking through a spoofed
+> Windows persona; its maintainer on #471: "the main way it shows up is IP reputation" —
+> [CloakBrowser](https://github.com/CloakHQ/CloakBrowser).
+
+**Rejected.**
+
+- Fingerprint spoofing engines (CloakBrowser, Camoufox, Helium's noise patch) — they hide many identities; for one
+  real person they add inconsistencies.
+
+## D3
+
+**The agent's browser stays Chrome for Testing driven over CDP through the daemon's pipe, launched with
+`--disable-blink-features=AutomationControlled`.** (2026-11-15, design agent proposal, owner agreed)
+
+**Why.** It keeps agent-browser and the daemon's CDP multiplexer, which enforces the agent's limits
+([pipe ADR](../../decisions/agent-browser-over-one-pipe.md)). The pipe alone sets `navigator.webdriver = true`; the
+flag turns it back off without giving up the pipe. Keeping up with Chrome stable is a one-line pin bump
+(`packages/daemon/src/browser/chromiumRelease.ts:20`, at stable 157.0.8103.78).
+
+> **Checked 2026-11-15:** `{wrf::EnableAutomationControlled, switches::kRemoteDebuggingPipe, true}` in
+> [runtime_features.cc](https://chromium.googlesource.com/chromium/src/+/main/content/child/runtime_features.cc);
+> local test on CfT 158 headed macOS with the pipe: `navigator.webdriver` true without the flag, false with it.
+
+> **Checked 2026-11-15:** CfT reports only `Not.A/Brand` and `Chromium` in `userAgentData.brands` (no "Google
+> Chrome"), has proprietary codecs, and shows a non-removable "Chrome for Testing" banner in browser UI —
+> [CfT README](https://github.com/chromium/chromium/blob/main/docs/chrome_for_testing/README.md). The brand is a
+> layer to fix ([D4](#d4)).
+
+**Rejected.**
+
+- CloakBrowser — closed-source binary, licence key per launch, "no redistribution (OEM/SaaS license required to serve
+  third parties)" — [licence](https://github.com/CloakHQ/cloakbrowser/blob/main/BINARY-LICENSE.md).
+- Camoufox or any Firefox — Firefox removed CDP as of 141
+  ([fxdx.dev](https://fxdx.dev/cdp-retirement-in-firefox/)), so agent-browser (Firefox only in open PR
+  [#2205](https://github.com/vercel-labs/agent-browser/pull/2205)) and the multiplexer would go.
+- Bundling Google Chrome — not allowed without Google's written permission (Chrome ToS 9.2).
+- Launching the person's installed Chrome with our own profile — correct brand, but no control over the version and
+  nothing for people without Chrome. Reopen if the brand proves unfixable over CDP.
+- Agent-oriented browsers: Ardia (Helium + agent-browser, macOS Apple Silicon only), Yab (closed, WebKit, macOS only,
+  no CDP), Helium and Zen (privacy browsers, no agent features; Zen has no CDP). Their agent layer is the one we
+  already have.
+- Headless agent engines (Obscura, Lightpanda) — headless, no persistent profile, own fingerprint; Lightpanda loaded
+  5/9 protected pages vs Chrome 7/9 in a third-party test.
+- Native web views — WKWebView has no CDP and a default UA detectably short of Safari's
+  ([webkit.org](https://webkit.org/blog/13936/enabling-the-inspection-of-web-content-in-apps/)); WebView2 has CDP
+  and looks like Edge, but it would mean two engines and two control stacks for a gain on Windows only.
+- CEF — one major behind stable and only the Chromium brand; nothing over CfT.
+- Our own patched Chromium now — see [D7](#d7).
+
+## D4
+
+**Stealth is built in the daemon, in layers every browser client gets: the JS environment (launch flags, the "Google
+Chrome" brand set over CDP at browser level, CDP leaks the measurement shows), input (mouse paths and per-key typing
+generated from the agent's clicks and text), and pace ([D5](#d5)).** (2026-11-15, design agent proposal, owner agreed)
+
+**Why.** Every CDP command already passes the daemon's multiplexer, so a fix there covers agent-browser, site helpers
+in any language, and anything later. Vendors document client-side JS fingerprinting first and behaviour second (HUMAN:
+"user-interaction anomalies within mouse clicks, screen touches, cadence and timing" —
+[docs](https://docs.humansecurity.com/applications/bd-detection-overview)).
+
+> **Checked 2026-11-15:** agent-browser v0.43.0 sends `Runtime.enable` on every page
+> (`cli/src/native/browser.rs:1040`); a click is one `mouseMoved` plus press and release at the element centre
+> (`cli/src/native/interaction.rs:59-94`); `type` sends `Input.insertText` per character, key events only for
+> Enter/Tab — [agent-browser](https://github.com/vercel-labs/agent-browser).
+
+**Rejected.**
+
+- Stealth inside each client (Patchright, rebrowser-patches, ghost-cursor per helper) — every client and every
+  language would need its own copy; the daemon sees all traffic once.
+- In-page JS patches (puppeteer-extra-plugin-stealth style) — detectable themselves; that plugin is abandoned since
+  2023 and named as detected in DataDome's docs.
+
+## D5
+
+**The daemon enforces a human pace on every site, and slows down when a page shows a CAPTCHA or block; the agent is
+told when it is being paced.** (2026-11-15, design agent proposal, owner agreed the direction; values open)
+
+**Why.** Blocks after N actions (30 Allegro searches in two minutes) come from volume per session and IP, which no
+fingerprint fix changes. Enforced in the daemon, the agent cannot skip it; telling the agent keeps it from treating
+the wait as a broken browser. A generic pace fits "any site" ([D1](#d1)).
+
+**Rejected.**
+
+- Per-site limits only — needs a known list of sites.
+- Pace as an instruction to the agent — a hurried agent ignores it.
+
+## D6
+
+**Stealth is measured by a repeatable eval over a panel of real protected sites covering the major vendors
+(Cloudflare, DataDome via Allegro, Akamai, HUMAN, Kasada, reCAPTCHA v3) plus fingerprint test pages. A layer stays only
+if it improves the panel. Ban risk is not measured; it is handled by rules.** (2026-11-15, design agent proposal, owner
+agreed)
+
+**Why.** "As good as possible" ([D1](#d1)) needs a number. CAPTCHA rate and actions-until-block are measurable on
+the real site; bans are delayed and account-level, and nobody tests them on real accounts.
+
+> **Checked 2026-11-15:** live test pages:
+> recaptcha-demo.appspot.com/recaptcha-v3-request-scores.php,
+> antcpt.com/eng/information/demo-form/recaptcha-3-test-score.html, abrahamjuliot.github.io/creepjs,
+> bot.sannysoft.com, fingerprintjs.github.io/BotD/main, browserscan.net/bot-detection, demo.turnstile.workers.dev,
+> bot-detector.rebrowser.net, deviceandbrowserinfo.com/are_you_a_bot. No public DataDome test page found; allegro.pl
+> sets a `datadome` cookie, so Allegro is the DataDome test.
+
+**Rejected.**
+
+- Test pages alone — they check single leaks, not whether a real vendor lets the agent through.
+
+## D7
+
+**We build our own patched Chromium only if the eval shows a leak that neither a launch flag nor the CDP layer can
+fix; then we start from Helium's patch pipeline.** (2026-11-15, design agent proposal, owner agreed)
+
+**Why.** Shipping a Chromium is done; building a modified one is a permanent pipeline: per build 100 GB+ disk, 16 GB+
+RAM, "20+ [cores] is not excessive", about an hour on 16 cores, on macOS and Windows, signed, for a milestone every two
+weeks plus weekly security refreshes. A browser holding the person's logins that lags security fixes is worse than one
+that gets detected. Helium shows a one-day lag is achievable; GPL does not touch our app, since the browser runs as a
+separate program.
+
+> **Checked 2026-11-15:** build requirements —
+> [Windows build docs](https://chromium.googlesource.com/chromium/src/+/main/docs/windows_build_instructions.md);
+> two-week milestones since Chrome 153 — [Chrome blog](https://developer.chrome.com/blog/chrome-two-week-release);
+> lag vs stable 157.0.8103.78: Helium 1 day, ungoogled-chromium-macos and Thorium one major.
+
+**Rejected.**
+
+- Building our own Chromium up front — the cost is certain and the gain unmeasured.
