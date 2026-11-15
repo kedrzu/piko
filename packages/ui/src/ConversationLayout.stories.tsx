@@ -5,6 +5,11 @@ import AgentMessage from './AgentMessage.vue';
 import Composer from './Composer.vue';
 import ConversationLayout from './ConversationLayout.vue';
 import styles from './ConversationLayout.stories.module.scss';
+import FileChip from './FileChip.vue';
+import FileLayout from './FileLayout.vue';
+import { POST_IDEAS_MARKDOWN } from './MarkdownEditor.fixtures.js';
+import MarkdownEditor from './MarkdownEditor.vue';
+import SideView from './SideView.vue';
 import UserMessage from './UserMessage.vue';
 
 const meta: Meta<typeof ConversationLayout> = {
@@ -34,6 +39,54 @@ export const Scrolling: Story = {
                             />,
                         ]),
                     footer: () => <Composer placeholder="Napisz do agenta…" />,
+                }}
+            </ConversationLayout>
+        </div>
+    ),
+};
+
+/** Frame 26: a file the agent wrote, open beside the conversation, which narrows to its column. */
+export const WithSideView: Story = {
+    render: () => (
+        <div class={styles['card']}>
+            <ConversationLayout>
+                {{
+                    default: () => [
+                        <UserMessage
+                            key="u"
+                            text="Ułóż mi poranną rutynę na zimę i zapisz plan."
+                        />,
+                        <AgentMessage
+                            key="a"
+                            parts={WINTER_ROUTINE_FINISHED}
+                        >
+                            {{
+                                file: () => (
+                                    <FileChip
+                                        title="plan"
+                                        kind="note"
+                                        place="Zdrowie"
+                                        to="/plan"
+                                    />
+                                ),
+                            }}
+                        </AgentMessage>,
+                    ],
+                    footer: () => <Composer placeholder="Napisz do agenta…" />,
+                    aside: () => (
+                        <SideView
+                            title="plan"
+                            kind="note"
+                            place="Zdrowie"
+                        >
+                            <FileLayout title="plan">
+                                <MarkdownEditor
+                                    markdown={POST_IDEAS_MARKDOWN}
+                                    label="plan"
+                                />
+                            </FileLayout>
+                        </SideView>
+                    ),
                 }}
             </ConversationLayout>
         </div>

@@ -1,0 +1,17 @@
+table:
+  en: Spreadsheet
+  pl: Arkusz
+
+empty:
+  en: This file is empty.
+  pl: Ten plik jest pusty.
+
+truncated:
+  plural: count
+  en:
+    one: Showing the first {shown} rows of {count}.
+    many: Showing the first {shown} rows of {count}.
+  pl:
+    one: Widać pierwsze {shown} wierszy z {count}.
+    few: Widać pierwsze {shown} wierszy z {count}.
+    many: Widać pierwsze {shown} wierszy z {count}.

@@ -10,6 +10,7 @@ import { DAEMON_API_PATH, DEV_SERVER_PORT } from '@poweragents/common/daemonAddr
 
 import { ConversationEventService } from '../conversations/ConversationEventService.js';
 import { DataRootWatchService } from '../dataRoot/DataRootWatchService.js';
+import { FileAgentStateService } from '../files/FileAgentStateService.js';
 import { AiStatusGetEndpointHandler } from './AiStatusGetEndpoint.handler.js';
 import { AppSetupStartEndpointHandler } from './AppSetupStartEndpoint.handler.js';
 import { ChatgptLoginCancelEndpointHandler } from './ChatgptLoginCancelEndpoint.handler.js';
@@ -26,6 +27,13 @@ import { MemoryFileGetEndpointHandler } from './MemoryFileGetEndpoint.handler.js
 import { MemoryFileListEndpointHandler } from './MemoryFileListEndpoint.handler.js';
 import { MemoryRevealEndpointHandler } from './MemoryRevealEndpoint.handler.js';
 import { ProjectCreateEndpointHandler } from './ProjectCreateEndpoint.handler.js';
+import { ProjectFileContentEndpointHandler } from './ProjectFileContentEndpoint.handler.js';
+import { ProjectFileListEndpointHandler } from './ProjectFileListEndpoint.handler.js';
+import { ProjectFileLocateEndpointHandler } from './ProjectFileLocateEndpoint.handler.js';
+import { ProjectFileOpenEndpointHandler } from './ProjectFileOpenEndpoint.handler.js';
+import { ProjectFileReadEndpointHandler } from './ProjectFileReadEndpoint.handler.js';
+import { ProjectFileReleaseEndpointHandler } from './ProjectFileReleaseEndpoint.handler.js';
+import { ProjectFileWriteEndpointHandler } from './ProjectFileWriteEndpoint.handler.js';
 import { ProjectListEndpointHandler } from './ProjectListEndpoint.handler.js';
 import { SandboxStartEndpointHandler } from './SandboxStartEndpoint.handler.js';
 import { SandboxStatusGetEndpointHandler } from './SandboxStatusGetEndpoint.handler.js';
@@ -70,6 +78,13 @@ const HANDLERS = [
     MemoryFileListEndpointHandler,
     MemoryFileGetEndpointHandler,
     MemoryRevealEndpointHandler,
+    ProjectFileListEndpointHandler,
+    ProjectFileReadEndpointHandler,
+    ProjectFileContentEndpointHandler,
+    ProjectFileLocateEndpointHandler,
+    ProjectFileOpenEndpointHandler,
+    ProjectFileWriteEndpointHandler,
+    ProjectFileReleaseEndpointHandler,
 ];
 
 /**
@@ -92,8 +107,9 @@ export const ApiService = defineService({
         logger: Logger,
         conversationEvents: ConversationEventService,
         dataRootEvents: DataRootWatchService,
+        fileAgentEvents: FileAgentStateService,
     },
-    setup({ container, logger, conversationEvents, dataRootEvents }): ApiServiceShape {
+    setup({ container, logger, conversationEvents, dataRootEvents, fileAgentEvents }): ApiServiceShape {
         // A failure's name and message go back to the app, which shows them under "Show details"; the app is the only
         // client. `stackTraces` is what makes the router answer with them instead of a constant `UnknownError`;
         // `toResponse()` then drops the stack, which carries the daemon's internal paths. The whole error is logged.
@@ -168,10 +184,13 @@ export const ApiService = defineService({
                     const sendEvent = (event: DaemonEvent) => send(`data: ${JSON.stringify(event)}\n\n`);
                     const stopConversationEvents = conversationEvents.listen(sendEvent);
                     const stopDataRootEvents = dataRootEvents.listen(sendEvent);
+                    // Sends the files the agent writes now first, so a client that connects shows them at once.
+                    const stopFileAgentEvents = fileAgentEvents.listen(sendEvent);
                     const heartbeat = setInterval(() => send(': heartbeat\n\n'), HEARTBEAT_MS);
                     close = () => {
                         stopConversationEvents();
                         stopDataRootEvents();
+                        stopFileAgentEvents();
                         clearInterval(heartbeat);
                     };
                     // A first comment sends the headers now, so the client's `EventSource` opens at once.

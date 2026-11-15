@@ -61,10 +61,14 @@ test('a toast that is not closable has its × disabled and stays on Escape insid
     await expect.element(toast).toBeVisible();
 });
 
-/** Opens the `Timed` toast with timers faked from before it opens, so the test drives its countdown. */
+/**
+ * Opens the `Timed` toast with timers faked from before it opens, so the test drives its countdown.
+ * `Date` too: reka measures the time left with `Date.now()` when a hover pauses it, so a real clock
+ * would count however long the browser took to deliver the hover against the toast.
+ */
 async function showTimed() {
     await Timed.run({ args: { open: false } });
-    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'Date'] });
     onTestFinished(() => {
         vi.useRealTimers();
     });

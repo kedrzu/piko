@@ -1,3 +1,7 @@
 running:
   en: The agent is working
   pl: Agent pracuje
+
+close:
+  en: Close {title}
+  pl: Zamknij {title}

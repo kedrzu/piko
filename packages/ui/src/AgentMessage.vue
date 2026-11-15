@@ -1,4 +1,4 @@
-<!-- The agent's reply beside its mark: while it works, its text and steps in the order they come, with a caret; once done, the steps collapsed to their count above the text. -->
+<!-- The agent's reply beside its mark: while it works, its text and steps in the order they come, with a caret; once done, the steps collapsed to their count above the text; then a chip (the `file` slot) for each file it wrote. -->
 
 <script lang="ts">
 import { defineProp } from '@nzyme/vue-utils/defineProp.js';
@@ -16,6 +16,14 @@ export const AgentMessageProps = {
   /** The person's next message after this reply: the reply's last UI shows the choice that sent it as chosen. */
   answer: defineProp<string>(),
 } as const;
+
+/** A file the reply wrote or changed, for the `file` slot. */
+export interface AgentMessageFile {
+  /** The step's target: the file's path within the project. */
+  path: string;
+  /** A step writing it is running now. */
+  running: boolean;
+}
 
 /** What the reply reports. */
 export interface AgentMessageEvents {
@@ -48,6 +56,10 @@ type Block =
 
 const props = defineProps(AgentMessageProps);
 defineEmits<AgentMessageEvents>();
+defineSlots<{
+  /** A file the reply wrote or changed, in the order of its first step: its chip. */
+  file?(props: AgentMessageFile): unknown;
+}>();
 
 const emitAsync = useEmitAsync<AgentMessageEvents>();
 const t = useTranslate();
@@ -55,9 +67,27 @@ const blocks = computed(() => (props.running ? toRunningBlocks(props.parts) : to
 // Earlier UIs of the reply were answered or passed over: only the last takes answers, or shows what answered it.
 const lastUiIndex = computed(() => blocks.value.findLastIndex(block => block.type === 'ui'));
 const steps = computed(() => props.parts.filter(part => part.type === 'step'));
+const files = computed(() => toFiles(steps.value));
 
 async function reply(text: string) {
   await emitAsync('reply', text);
+}
+
+/** The files of the reply's write and edit steps; a failed step's file may not exist, so it gives none. */
+function toFiles(parts: readonly ConversationStepPart[]) {
+  const result = new Map<string, AgentMessageFile>();
+  for (const part of parts) {
+    if (
+      (part.kind !== 'writeFile' && part.kind !== 'editFile') ||
+      part.target === undefined ||
+      part.status === 'failed'
+    ) {
+      continue;
+    }
+    const running = part.status === 'running' || (result.get(part.target)?.running ?? false);
+    result.set(part.target, { path: part.target, running });
+  }
+  return [...result.values()];
 }
 
 function toRunningBlocks(parts: readonly ConversationAgentPart[]) {
@@ -151,6 +181,20 @@ function toTextBlocks(text: string): Block[] {
         markdown=""
         caret
       />
+      <div
+        v-if="$slots.file && files.length"
+        :class="$style.agentMessage_files"
+      >
+        <template
+          v-for="file in files"
+          :key="file.path"
+        >
+          <slot
+            name="file"
+            v-bind="file"
+          />
+        </template>
+      </div>
     </div>
   </div>
 </template>
@@ -173,6 +217,12 @@ function toTextBlocks(text: string): Block[] {
   gap: $spacing-16;
   min-width: 0;
   padding-top: $spacing-02;
+}
+
+.agentMessage_files {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-08;
 }
 
 .agentMessage_author {

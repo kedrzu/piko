@@ -31,6 +31,11 @@ export default defineConfig({
             plugins: [storybookTest({ configDir: path.join(import.meta.dirname, '.storybook') }), componentSpecs],
             test: {
                 name: `storybook:${palette}`,
+                // Tabs per project. Left to Vitest it is min(12, CPUs - 1) each: 36 tabs for the three
+                // palettes, and Playwright, which runs in this process beside the three Vite servers,
+                // falls seconds behind the browsers' events, holding a click or hover for 10 s. Four take
+                // as long overall. Set here: a browser project does not inherit `--maxWorkers`.
+                maxWorkers: 4,
                 // `vitest.setup.ts` puts it on `<html>`, where `preview.ts` reads it.
                 provide: { palette },
                 setupFiles: ['./.storybook/vitest.setup.ts'],

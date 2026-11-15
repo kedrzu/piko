@@ -1,4 +1,5 @@
 import { expect, mock, test } from 'bun:test';
+import { createHash } from 'node:crypto';
 import { mkdtempSync } from 'node:fs';
 import { mkdir, writeFile } from 'node:fs/promises';
 import os from 'node:os';
@@ -8,17 +9,21 @@ import { HttpError } from '@nzyme/fetch-utils/HttpError.js';
 import { EnvVariables } from '@nzyme/ioc/helpers/EnvVariables.js';
 import { createTestContainer } from '@nzyme/ioc-testing/createTestContainer.js';
 import type { RpcErrorData } from '@nzyme/rpc/types/RpcError.js';
+import { assert } from '@nzyme/utils/assert.js';
 import { createEventEmitter } from '@nzyme/utils/createEventEmitter.js';
 
 import type { DaemonEvent } from '@poweragents/common/api/DaemonEventTypes.js';
+import type { ProjectFileContentResult } from '@poweragents/common/api/ProjectFileTypes.js';
 import type { SandboxStatus } from '@poweragents/common/api/SandboxTypes.js';
 import { OpencodeEventSubscribeCommand } from '@poweragents/opencode/OpencodeEventSubscribeCommand.js';
 import type { OpencodeEvent } from '@poweragents/opencode/OpencodeEventSubscribeCommand.js';
 import { readSseData } from '@poweragents/opencode/utils/readSseData.js';
 
+import { ProjectService } from '../projects/ProjectService.js';
 import { Sandbox } from '../sandbox/Sandbox.js';
 import type { SandboxState } from '../sandbox/Sandbox.js';
 import { ApiService } from './ApiService.js';
+import type { ApiServiceShape } from './ApiService.js';
 
 const PASSWORD = 'agent-password-must-not-leave-7c2e';
 const STATUS_URL = 'http://127.0.0.1:47610/api/sandbox/status';
@@ -90,6 +95,30 @@ test('logs an unexpected failure whole', async () => {
     await api.handle(new Request(STATUS_URL, { method: 'POST', headers: { Origin: 'tauri://localhost' } }));
 
     expect(logs.find(log => log.message === 'API request failed')?.data).toEqual({ error: failure });
+});
+
+test("serves a project's files: lists, reads and writes them, refusing an unknown project and a malformed body", async () => {
+    const { api, container, dataRoot } = setup();
+    const created = await container.resolve(ProjectService).create('Projekt');
+    assert('created' in created);
+    const projectId = created.created.id;
+    await writeFile(path.join(dataRoot, 'projects', 'Projekt', 'plan.md'), '# Plan\n');
+    const version = createHash('sha256').update('# Plan\n').digest('hex');
+
+    const list = await post(api, 'files/list', { projectId });
+    const write = await post(api, 'files/write', { projectId, path: 'plan.md', content: '# Nowy\n', version });
+    const read = await post(api, 'files/read', { projectId, path: 'plan.md' });
+    const unknown = await post(api, 'files/content', { projectId: 'unknown', path: 'plan.md' });
+    const malformed = await post(api, 'files/locate', { projectId });
+
+    expect(await list.json()).toMatchObject({ entries: [{ name: 'plan.md', kind: 'file' }] });
+    expect(await write.json()).toMatchObject({
+        written: { version: createHash('sha256').update('# Nowy\n').digest('hex') },
+    });
+    expect(await read.json()).toMatchObject({ text: { content: '# Nowy\n' } });
+    const notFound: ProjectFileContentResult = { notFound: true };
+    expect(await unknown.json()).toEqual(notFound);
+    expect(malformed.status).toBe(400);
 });
 
 test('answers the CORS preflight only for the app origins', async () => {
@@ -191,7 +220,7 @@ function setup(agentEvents: OpencodeEvent[] = [], getVerifiedState?: () => Promi
         await Promise.withResolvers<void>().promise;
     });
     container.set(OpencodeEventSubscribeCommand, subscribe);
-    return { api: container.resolve(ApiService), logs, subscribe, dataRoot };
+    return { api: container.resolve(ApiService), container, logs, subscribe, dataRoot };
 }
 
 /** Reads the `data` of `count` events from a server-sent events response (skipping comments), then disconnects. */
@@ -204,6 +233,16 @@ async function readFrames(response: Response, count: number) {
         }
     }
     return frames;
+}
+
+function post(api: ApiServiceShape, endpoint: string, body: object) {
+    return api.handle(
+        new Request(`http://127.0.0.1:47610/api/${endpoint}`, {
+            method: 'POST',
+            headers: { Origin: 'tauri://localhost', 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+        }),
+    );
 }
 
 function preflight(origin: string) {

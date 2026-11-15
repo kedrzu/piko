@@ -1,0 +1,19 @@
+unsupported:
+  en: The app can't show this kind of file.
+  pl: Aplikacja nie pokazuje plików tego rodzaju.
+
+tooLarge:
+  en: This file is too large to show in the app.
+  pl: Ten plik jest za duży, żeby pokazać go w aplikacji.
+
+openHint:
+  en: Open it in the app your computer uses for it, or ask the agent about it in a conversation.
+  pl: Otwórz go w aplikacji, której komputer używa do takich plików, albo zapytaj o niego agenta w rozmowie.
+
+askHint:
+  en: You can ask the agent about it in a conversation.
+  pl: Możesz zapytać o niego agenta w rozmowie.
+
+openInDefaultApp:
+  en: Open in default app
+  pl: Otwórz w domyślnej aplikacji

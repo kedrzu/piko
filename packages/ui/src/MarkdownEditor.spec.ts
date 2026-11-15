@@ -6,7 +6,7 @@ import { AGENT_MARKDOWN, MEMORY_NOTE_MARKDOWN, POST_IDEAS_MARKDOWN } from './Mar
 import * as stories from './MarkdownEditor.stories.jsx';
 import type { MarkdownEditorStoryFile } from './MarkdownEditor.stories.jsx';
 
-const { MemoryNote, PostIdeas, AgentFile, SyntaxView } = composeStories(stories);
+const { MemoryNote, PostIdeas, AgentFile, SyntaxView, ReadOnly } = composeStories(stories);
 
 test('typing writes Markdown with the front matter kept, and the parent passing it back leaves the caret in place', async () => {
     const update = vi.fn<(markdown: string) => void>();
@@ -126,4 +126,23 @@ test('the link dialog takes only a web or mail address, and a pasted script link
     expect(pasted).toContain(`${linked}Zobacz poradnik`);
     expect(pasted).not.toContain('javascript:');
     expect(pasted).not.toMatch(/<img|!\[/);
+});
+
+test('a read-only file takes no typing in either view and offers no formatting, and reports nothing', async () => {
+    const update = vi.fn<(markdown: string) => void>();
+    await ReadOnly.run({ args: { ...ReadOnly.args, 'onUpdate:markdown': update } });
+
+    const editor = page.getByRole('textbox', { name: 'Pomysły na posty' });
+    await expect.element(editor).toHaveAttribute('aria-readonly', 'true');
+    await userEvent.click(page.getByText('Krótka rolka.', { exact: false }));
+    await userEvent.keyboard('{End} dopisane');
+    await expect.element(page.getByRole('button', { name: 'Bold' })).toBeDisabled();
+    await expect.element(page.getByRole('button', { name: 'Link' })).toBeDisabled();
+
+    await userEvent.click(page.getByRole('button', { name: 'Show Markdown syntax' }));
+    const source = page.getByRole('textbox', { name: 'Markdown source' });
+    await userEvent.type(source, ' dopisane');
+    await expect.element(source).toHaveValue(POST_IDEAS_MARKDOWN);
+
+    expect(update).not.toHaveBeenCalled();
 });

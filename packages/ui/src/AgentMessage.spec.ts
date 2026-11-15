@@ -4,8 +4,15 @@ import { page, userEvent } from 'vitest/browser';
 
 import * as stories from './AgentMessage.stories.jsx';
 
-const { AnsweredChoice, FinishedWithActiveUi, FinishedWithInactiveUi, RunningHalfWrittenUi, TwoUis } =
-    composeStories(stories);
+const {
+    AnsweredChoice,
+    FinishedWithActiveUi,
+    FinishedWithInactiveUi,
+    RunningHalfWrittenUi,
+    RunningWithFile,
+    SeveralFiles,
+    TwoUis,
+} = composeStories(stories);
 
 test('only the last UI of the reply takes answers, and only when the reply is active', async () => {
     await TwoUis.run();
@@ -41,4 +48,19 @@ test("the person's next message marks the choice it sent, only in the reply's la
 
     await TwoUis.run({ args: { ...TwoUis.args, uiActive: false, answer: 'Zacznijmy od snu' } });
     await expect.element(page.getByRole('button', { name: 'Sen' })).not.toHaveAttribute('aria-pressed');
+});
+
+test('a chip for each file the reply wrote or changed, once each in step order, none for a failed step', async () => {
+    await SeveralFiles.run();
+
+    const chips = page.getByRole('link');
+    await expect.element(chips.nth(0)).toHaveAccessibleName('Open beside the conversation: notes/Plan.md Zdrowie');
+    await expect.element(chips.nth(1)).toHaveAccessibleName('Open beside the conversation: budget.csv Zdrowie');
+    expect(chips.elements()).toHaveLength(2);
+});
+
+test('a file whose step still runs reads "writing…"', async () => {
+    await RunningWithFile.run();
+
+    await expect.element(page.getByRole('link', { name: 'plan.md' })).toHaveTextContent('writing…');
 });

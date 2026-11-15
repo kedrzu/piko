@@ -13,9 +13,12 @@ export interface OpencodePermissionReplyCommandParams {
     decision: OpencodePermissionDecision;
 }
 
-/** Answers a permission request the agent raised (a `permissionAsked` event). */
+/**
+ * Answers a permission request the agent raised (a `permissionAsked` event). `notFound` when the request is no longer
+ * pending (answered, or dropped with its run) or its session is gone.
+ */
 export interface OpencodePermissionReplyCommandShape {
-    (params: OpencodePermissionReplyCommandParams): Promise<void>;
+    (params: OpencodePermissionReplyCommandParams): Promise<'replied' | 'notFound'>;
 }
 
 /** Answers a permission request. */
@@ -31,8 +34,13 @@ export const OpencodePermissionReplyCommand = defineCommand({
                 contentType: 'application/json',
                 body: { decision: params.decision },
             });
-            if (response.status !== 204) {
-                throw createOpencodeStatusError('replyPermission', response);
+            switch (response.status) {
+                case 204:
+                    return 'replied';
+                case 404:
+                    return 'notFound';
+                default:
+                    throw createOpencodeStatusError('replyPermission', response);
             }
         };
     },

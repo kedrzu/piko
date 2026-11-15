@@ -1,15 +1,17 @@
-import { constants } from 'node:fs';
-import type { Stats } from 'node:fs';
-import { lstat, mkdir, open, readdir } from 'node:fs/promises';
-import type { FileHandle } from 'node:fs/promises';
+import { mkdir, readdir } from 'node:fs/promises';
 import path from 'node:path';
 
 import { defineService } from '@nzyme/ioc/Service.js';
 import { Logger } from '@nzyme/logging/Logger.js';
+import { assertNever } from '@nzyme/utils/assertNever.js';
 
 import type { MemoryFile, MemoryFileGetResult } from '@poweragents/common/api/MemoryTypes.js';
 
 import { MEMORY_FOLDER, POWERAGENTS_DATA_ROOT } from '../env.js';
+import { openRealFile } from '../files/openRealFile.js';
+import type { OpenedRealFile } from '../files/openRealFile.js';
+import { readPrefix } from '../files/readPrefix.js';
+import { toPathSegments } from '../files/toPathSegments.js';
 import { isErrorCode } from '../utils/isErrorCode.js';
 import { isRealFolder } from '../utils/isRealFolder.js';
 
@@ -39,20 +41,9 @@ interface MemoryFileRead {
     updatedAt: number;
 }
 
-/** A Memory file opened after it was found a regular file. */
-interface OpenedMemoryFile {
-    handle: FileHandle;
-    stats: Stats;
-}
-
 const MARKDOWN_EXTENSION = '.md';
 /** A Markdown heading (`# Title`, `## Title ##`): its text without the closing hashes. */
 const HEADING = /^#{1,6}[ \t]+(.*?)(?:[ \t]+#+)?[ \t]*$/;
-/**
- * Opens a file without following a link in its last part (earlier parts are checked with `lstat` before), and without
- * waiting for a writer when a pipe took the file's place since its `lstat`.
- */
-const OPEN_FLAGS = constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK;
 /** The largest file `get()` reads. */
 const GET_MAX_BYTES = 1024 * 1024;
 /** How much of a file `list()` reads for its title. */
@@ -183,90 +174,42 @@ export const MemoryService = defineService({
         }
 
         /**
-         * Opens the file at `segments` under the Memory folder, or `null` when it is missing, not a regular file, or
-         * reached through a link: the Memory folder and every folder on the way must be real folders, and the file a
-         * regular file before it is opened, so a pipe or a device is never opened.
+         * Opens the file at `segments` under the Memory folder with `openRealFile()`, or `null` when it is missing or
+         * refused (reached through a link, not a regular file).
          */
-        async function openFile(segments: string[]): Promise<OpenedMemoryFile | null> {
-            const folders = [root];
-            for (const segment of segments.slice(0, -1)) {
-                folders.push(path.join(folders.at(-1) ?? root, segment));
+        async function openFile(segments: string[]): Promise<OpenedRealFile | null> {
+            const result = await openRealFile(root, segments);
+            if ('opened' in result) {
+                return result.opened;
             }
-            for (const folder of folders) {
-                if (!(await isRealFolder(folder))) {
-                    logger.warn('Memory file not under real folders, refused', { path: segments.join('/') });
-                    return null;
+            if ('refused' in result) {
+                switch (result.refused) {
+                    case 'notUnderRealFolders':
+                        logger.warn('Memory file not under real folders, refused', { path: segments.join('/') });
+                        break;
+                    case 'notRegularFile':
+                        logger.warn('Memory file is not a regular file, refused', { path: segments.join('/') });
+                        break;
+                    case 'link':
+                        logger.warn('Memory file is a link, refused', { path: segments.join('/') });
+                        break;
+                    default:
+                        assertNever(result.refused);
                 }
             }
-
-            const file = path.join(root, ...segments);
-            const linkStats = await lstat(file).catch((error: unknown) => {
-                if (isErrorCode(error, 'ENOENT') || isErrorCode(error, 'ENOTDIR')) {
-                    return null;
-                }
-                throw error;
-            });
-            if (!linkStats) {
-                return null;
-            }
-            if (!linkStats.isFile()) {
-                logger.warn('Memory file is not a regular file, refused', { path: segments.join('/') });
-                return null;
-            }
-
-            const handle = await open(file, OPEN_FLAGS).catch((error: unknown) => {
-                // `ELOOP`: the file is a link.
-                if (isErrorCode(error, 'ELOOP')) {
-                    logger.warn('Memory file is a link, refused', { path: segments.join('/') });
-                    return null;
-                }
-                if (isErrorCode(error, 'ENOENT') || isErrorCode(error, 'ENOTDIR')) {
-                    return null;
-                }
-                throw error;
-            });
-            if (!handle) {
-                return null;
-            }
-            const stats = await handle.stat();
-            if (!stats.isFile()) {
-                await handle.close();
-                return null;
-            }
-            return { handle, stats };
+            return null;
         }
     },
 });
 
-/** Reads at most `maxBytes` from the start of the file. */
-async function readPrefix(handle: FileHandle, maxBytes: number) {
-    const buffer = Buffer.alloc(maxBytes);
-    let length = 0;
-    while (length < maxBytes) {
-        const { bytesRead } = await handle.read(buffer, length, maxBytes - length, length);
-        if (bytesRead === 0) {
-            break;
-        }
-        length += bytesRead;
-    }
-    return buffer.subarray(0, length);
-}
-
 /**
- * A relative Memory path split into its parts, or `null` when it could lead elsewhere or to a file `list()` never gives:
- * absolute, with an empty, `.`, `..` or hidden part, or not Markdown. Both separators split it, so a Windows path is
- * checked the same way.
+ * A relative Memory path split into its parts, or `null` when `toPathSegments()` refuses it or it leads to a file
+ * `list()` never gives: one that is not Markdown.
  * @__NO_SIDE_EFFECTS__
  */
 function toSegments(relativePath: string) {
-    if (relativePath.includes('\0') || path.posix.isAbsolute(relativePath) || path.win32.isAbsolute(relativePath)) {
-        return null;
-    }
-    const segments = relativePath.split(/[\\/]/);
-    if (segments.some(segment => segment.length === 0 || segment.startsWith('.'))) {
-        return null;
-    }
-    return isMarkdown(segments.at(-1) ?? '') ? segments : null;
+    const segments = toPathSegments(relativePath);
+    return segments && isMarkdown(segments.at(-1) ?? '') ? segments : null;
 }
 
 /** @__NO_SIDE_EFFECTS__ */

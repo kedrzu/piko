@@ -131,7 +131,7 @@ $palettes: (
         bg-2: #e2d8f5,
         brand-1: #e0703f,
         brand-2: #8466d2,
-        brand-1-strong: #b8532a, // 4.9:1 with $color-surface, 4.5:1 on $color-surface-soft
+        brand-1-strong: #b5512a, // 5.0:1 with $color-surface, 4.6:1 on $color-surface-soft
     ),
     lemonade: (
         bg-1: #f5ebbf,
@@ -169,6 +169,7 @@ $spacing-18: 18px;
 $spacing-22: 22px;
 $spacing-24: 24px;
 $spacing-28: 28px;
+$spacing-40: 40px;
 $spacing-48: 48px;
 $spacing-56: 56px;
 $spacing-120: 120px;
@@ -220,6 +221,7 @@ $font-size-display: 2.5rem; // 40px, the story panel's headline
 $font-size-title: 2.25rem; // 36px, a step's title
 $font-size-title-s: 1.75rem; // 28px, an empty state's title
 $font-size-dialog-title: 1.5rem; // 24px, a dialog's title
+$font-size-file-title: 1.625rem; // 26px, a previewed file's name
 $font-size-heading: 1.25rem; // 20px, a card's name
 $font-size-brand: 1.1875rem; // 19px, the product name beside the agent mark
 $font-size-lead: 1.0625rem; // 17px, a step's body
@@ -284,4 +286,35 @@ $duration-progress: 1.4s;
     clip-path: inset(50%);
     white-space: nowrap;
     border: 0;
+}
+
+/// A row under the open project in the sidebar (a conversation, a file or a folder): a 26px line with its icon.
+@mixin sidebar-row {
+    display: flex;
+    gap: $spacing-10;
+    align-items: center;
+    min-height: 26px;
+    padding: $spacing-04 $spacing-10;
+    border-radius: $radius-s;
+    color: $color-ink-body;
+    font-size: $font-size-small;
+    line-height: $line-height-snug;
+    text-decoration: none;
+    transition: background-color $duration-fast;
+
+    @include focus-ring;
+    @include hover {
+        background: $color-surface-glass;
+    }
+}
+
+/// The sidebar row open now: white, with a stronger label.
+@mixin sidebar-row-selected {
+    background: $color-surface;
+    color: $color-ink;
+    font-weight: $font-weight-semibold;
+
+    @include hover {
+        background: $color-surface;
+    }
 }

@@ -1,6 +1,7 @@
 import { defineService } from '@nzyme/ioc/Service.js';
 import { Logger } from '@nzyme/logging/Logger.js';
 import { assertNever } from '@nzyme/utils/assertNever.js';
+import { createEventEmitter } from '@nzyme/utils/createEventEmitter.js';
 import { computed, reactive, ref } from 'vue';
 
 import { ConversationCreateEndpoint } from '@poweragents/common/api/ConversationCreateEndpoint.js';
@@ -25,6 +26,8 @@ export const ConversationStore = defineService({
         const conversations = ref<Conversation[] | null>(null);
         /** Counts loads, so an answer for a project opened before is dropped. */
         let loadSeq = 0;
+        /** A project's list as the daemon answered it; never a failed load's stand-in. */
+        const loaded = createEventEmitter<[projectId: string, conversations: readonly Conversation[]]>();
 
         const state = reactive({
             /** The project whose conversations these are. */
@@ -35,7 +38,7 @@ export const ConversationStore = defineService({
 
         events.event.on(onEvent);
 
-        return { state, open, create, find, setRunning };
+        return { state, loaded: loaded.event, open, create, find, setRunning };
 
         /** Loads a project's conversations, unless they are the ones held already. */
         function open(id: string) {
@@ -76,6 +79,7 @@ export const ConversationStore = defineService({
                 const list = await daemon(ConversationListEndpoint, { projectId: id });
                 if (seq === loadSeq) {
                     conversations.value = list;
+                    loaded.emit(id, list);
                 }
             } catch (error) {
                 // The sidebar keeps showing the project alone; the next open or reconnect tries again.
@@ -116,6 +120,8 @@ export const ConversationStore = defineService({
                     // The open conversation's.
                     break;
                 case 'projectsChanged':
+                case 'projectFilesChanged':
+                case 'fileAgentChanged':
                 case 'memoryChanged':
                     // Not about conversations.
                     break;

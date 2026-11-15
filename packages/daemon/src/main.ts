@@ -4,6 +4,7 @@ import { DAEMON_EVENTS_PATH } from '@poweragents/common/api/DaemonEventTypes.js'
 import { DAEMON_API_PATH, DAEMON_PORT } from '@poweragents/common/daemonAddress.js';
 
 import { ApiService } from './api/ApiService.js';
+import { ConversationEventService } from './conversations/ConversationEventService.js';
 import { POWERAGENTS_VERSION } from './env.js';
 import { DaemonLoggerTransport } from './logging/DaemonLoggerTransport.js';
 import { MemoryService } from './memory/MemoryService.js';
@@ -48,6 +49,10 @@ container
     .resolve(Sandbox)
     .start()
     .catch(() => undefined);
+
+// The agent's event feed starts with the daemon, not with the app: the agent asks before every file edit and the
+// daemon answers (`FileHoldService`), so with the app closed the agent would stall otherwise. It waits for the sandbox.
+container.resolve(ConversationEventService).start();
 
 // It listens on loopback only: the desktop app reaches it on this machine, and remote clients (the phone) will come
 // through the relay, never through an open port. `/status` stays open to any caller: it reveals only that the daemon

@@ -1,0 +1,7 @@
+agentWriting:
+  en[auto]: the agent is writing in it
+  pl: agent w nim pisze
+
+agentWaiting:
+  en[auto]: the agent is waiting to change it
+  pl: agent czeka, żeby go zmienić

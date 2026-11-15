@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite';
 
-import { Brain, LogIn } from '@lucide/vue';
+import { LogIn } from '@lucide/vue';
 
 import { WINTER_ROUTINE_FINISHED, WINTER_ROUTINE_RUNNING } from './AgentMessage.fixtures.js';
 import AgentMessage from './AgentMessage.vue';
@@ -14,7 +14,7 @@ import ProjectEmptyState from './ProjectEmptyState.vue';
 import type { ProjectSidebarConversation, ProjectSidebarItem } from './ProjectSidebar.vue';
 import ProjectSidebar from './ProjectSidebar.vue';
 import NoProjectsState from './NoProjectsState.vue';
-import ConversationTab from './ConversationTab.vue';
+import TabBar from './TabBar.vue';
 import MemoryEmptyState from './MemoryEmptyState.vue';
 import { MEMORY_FILES, MEMORY_NOW, WORK_MARKDOWN } from './MemoryLayout.fixtures.js';
 import MemoryLayout from './MemoryLayout.vue';
@@ -74,9 +74,17 @@ export const ProjectOpen: Story = {
                     />
                 ),
                 header: () => (
-                    <ConversationTab
-                        title="Nowa rozmowa"
-                        color="pink"
+                    <TabBar
+                        tabs={[
+                            {
+                                id: 'new',
+                                title: 'Nowa rozmowa',
+                                to: '/projects/p2',
+                                icon: 'conversation',
+                                color: 'pink',
+                            },
+                        ]}
+                        activeId="new"
                     />
                 ),
                 default: () => (
@@ -105,10 +113,18 @@ export const ConversationRunning: Story = {
                     />
                 ),
                 header: () => (
-                    <ConversationTab
-                        title="Poranna rutyna na zimę"
-                        color="pink"
-                        running
+                    <TabBar
+                        tabs={[
+                            {
+                                id: 'c1',
+                                title: 'Poranna rutyna na zimę',
+                                to: '/projects/p2/conversations/c1',
+                                icon: 'conversation',
+                                color: 'pink',
+                                running: true,
+                            },
+                        ]}
+                        activeId="c1"
                     />
                 ),
                 default: () => (
@@ -150,9 +166,17 @@ export const ConversationFinished: Story = {
                     />
                 ),
                 header: () => (
-                    <ConversationTab
-                        title="Poranna rutyna na zimę"
-                        color="pink"
+                    <TabBar
+                        tabs={[
+                            {
+                                id: 'c1',
+                                title: 'Poranna rutyna na zimę',
+                                to: '/projects/p2/conversations/c1',
+                                icon: 'conversation',
+                                color: 'pink',
+                            },
+                        ]}
+                        activeId="c1"
                     />
                 ),
                 default: () => (
@@ -186,9 +210,17 @@ export const ConversationSignedOut: Story = {
                     />
                 ),
                 header: () => (
-                    <ConversationTab
-                        title="Poranna rutyna na zimę"
-                        color="pink"
+                    <TabBar
+                        tabs={[
+                            {
+                                id: 'c1',
+                                title: 'Poranna rutyna na zimę',
+                                to: '/projects/p2/conversations/c1',
+                                icon: 'conversation',
+                                color: 'pink',
+                            },
+                        ]}
+                        activeId="c1"
                     />
                 ),
                 default: () => (
@@ -238,10 +270,9 @@ export const MemoryFiles: Story = {
                     />
                 ),
                 header: () => (
-                    <ConversationTab
-                        title="Pamięć"
-                        color="violet"
-                        icon={Brain}
+                    <TabBar
+                        tabs={[{ id: 'memory', title: 'Pamięć', to: '/memory', icon: 'memory', color: 'violet' }]}
+                        activeId="memory"
                     />
                 ),
                 default: () => (
@@ -275,10 +306,9 @@ export const MemoryEmpty: Story = {
                     />
                 ),
                 header: () => (
-                    <ConversationTab
-                        title="Pamięć"
-                        color="violet"
-                        icon={Brain}
+                    <TabBar
+                        tabs={[{ id: 'memory', title: 'Pamięć', to: '/memory', icon: 'memory', color: 'violet' }]}
+                        activeId="memory"
                     />
                 ),
                 default: () => <MemoryEmptyState />,

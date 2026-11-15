@@ -209,6 +209,8 @@ export const ProjectStore = defineService({
                     }
                     break;
                 case 'memoryChanged':
+                case 'projectFilesChanged':
+                case 'fileAgentChanged':
                 case 'conversationCreated':
                 case 'conversationRenamed':
                 case 'runningChanged':

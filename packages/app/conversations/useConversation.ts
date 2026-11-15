@@ -326,7 +326,12 @@ export function useConversation(options: UseConversationOptions): ConversationVi
     }
 
     function onEvent(event: DaemonEvent) {
-        if (event.type === 'projectsChanged' || event.type === 'memoryChanged') {
+        if (
+            event.type === 'projectsChanged' ||
+            event.type === 'projectFilesChanged' ||
+            event.type === 'memoryChanged' ||
+            event.type === 'fileAgentChanged'
+        ) {
             return;
         }
         if (event.type === 'runFinished' || (event.type === 'runningChanged' && !event.running)) {

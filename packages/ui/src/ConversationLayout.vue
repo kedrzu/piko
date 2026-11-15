@@ -1,4 +1,4 @@
-<!-- A conversation's screen inside the app shell's card: its messages in a centred column that scrolls and follows new text while it is scrolled to the end, and the composer (with any banner) under it. -->
+<!-- A conversation's screen inside the app shell's card: its messages in a centred column that scrolls and follows new text while it is scrolled to the end, and the composer (with any banner) under it; with a side view (frame 26), the conversation narrows to a 470px column beside it. -->
 
 <script lang="ts">
 export const ConversationLayoutEmits = {
@@ -18,6 +18,8 @@ defineSlots<{
   default(): unknown;
   /** Under the messages: a banner and the composer. */
   footer(): unknown;
+  /** Beside the conversation, taking the rest of the width: a file open in the side view. */
+  aside?(): unknown;
 }>();
 const emit = defineEmits(ConversationLayoutEmits);
 defineExpose({ scrollToEnd });
@@ -82,37 +84,54 @@ function onScroll() {
 </script>
 
 <template>
-  <div :class="$style.conversationLayout">
-    <!-- A named, focusable region: the keyboard scrolls the messages even when none of them holds a control. -->
-    <div
-      ref="scroller"
-      :class="$style.conversationLayout_scroller"
-      role="region"
-      :aria-label="t(l.messages)"
-      tabindex="0"
-      @scroll.passive="onScroll"
-    >
+  <div :class="[$style.conversationLayout, $slots.aside && $style.conversationLayout_split]">
+    <div :class="$style.conversationLayout_conversation">
+      <!-- A named, focusable region: the keyboard scrolls the messages even when none of them holds a control. -->
       <div
-        ref="content"
-        :class="$style.conversationLayout_messages"
+        ref="scroller"
+        :class="$style.conversationLayout_scroller"
+        role="region"
+        :aria-label="t(l.messages)"
+        tabindex="0"
+        @scroll.passive="onScroll"
       >
-        <slot />
+        <div
+          ref="content"
+          :class="$style.conversationLayout_messages"
+        >
+          <slot />
+        </div>
+      </div>
+      <div :class="$style.conversationLayout_footer">
+        <slot name="footer" />
       </div>
     </div>
-    <div :class="$style.conversationLayout_footer">
-      <slot name="footer" />
-    </div>
+    <slot name="aside" />
   </div>
 </template>
 
 <style lang="scss" module>
 $column-width: 760px; // the messages and the composer, as screens 56–61 draw them
+$split-width: 470px; // the conversation beside a side view, as frame 26 draws it
 
 .conversationLayout {
   display: flex;
   flex: 1;
-  flex-direction: column;
   min-height: 0;
+}
+
+.conversationLayout_conversation {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+
+  .conversationLayout_split > & {
+    flex: none;
+    width: $split-width;
+    border-right: 1px solid $color-border;
+  }
 }
 
 .conversationLayout_scroller {
@@ -144,5 +163,9 @@ $column-width: 760px; // the messages and the composer, as screens 56–61 draw 
   max-width: $column-width;
   margin: 0 auto;
   padding: 0 $spacing-24 $spacing-24;
+
+  .conversationLayout_split & {
+    padding-bottom: $spacing-18;
+  }
 }
 </style>

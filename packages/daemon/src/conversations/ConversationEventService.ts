@@ -9,19 +9,29 @@ import { OpencodeEventSubscribeCommand } from '@poweragents/opencode/OpencodeEve
 import type { OpencodeSessionEvent } from '@poweragents/opencode/OpencodeEventSubscribeCommand.js';
 
 import { toAiProvider } from '../ai/utils/toAiProvider.js';
+import { AgentPathService } from '../files/AgentPathService.js';
+import { FileAgentStateService } from '../files/FileAgentStateService.js';
+import { FileHoldService } from '../files/FileHoldService.js';
 import { ProjectService } from '../projects/ProjectService.js';
 import { Sandbox } from '../sandbox/Sandbox.js';
+import { readWrittenPaths } from './utils/readWrittenPaths.js';
 import { toAgentDir } from './utils/toAgentDir.js';
 import { toConversationError } from './utils/toConversationError.js';
 import { toConversationStep } from './utils/toConversationStep.js';
 
 /**
  * What happens in the person's conversations, live, for the daemon's event stream. The daemon holds one feed of the
- * agent's events, started by the first listener and kept for the daemon's lifetime: it waits for a ready sandbox and
- * reconnects with backoff when it drops, then sends `streamRestored` once the feed is open again, since what happened
- * meanwhile was not streamed.
+ * agent's events, started with the daemon (or by the first listener) and kept for the daemon's lifetime: it waits for a
+ * ready sandbox and reconnects with backoff when it drops, then sends `streamRestored` once the feed is open again,
+ * since what happened meanwhile was not streamed. It also tells `FileAgentStateService` which project files the agent's
+ * tool calls write, and gives `FileHoldService` the agent's permission requests to answer.
  */
 export interface ConversationEventServiceShape {
+    /**
+     * Starts the feed without a listener: the agent's permission requests are answered even with the app closed, or the
+     * agent would stall on its next edit. Starting again does nothing.
+     */
+    start(): void;
     /** Calls `listener` with every event from now on, until the returned function is called or the listener throws. */
     listen(listener: (event: DaemonEvent) => void): () => void;
 }
@@ -37,17 +47,24 @@ export const ConversationEventService = defineService({
         projects: ProjectService,
         sandbox: Sandbox,
         subscribe: OpencodeEventSubscribeCommand,
+        agentPaths: AgentPathService,
+        fileAgents: FileAgentStateService,
+        fileHolds: FileHoldService,
     },
-    setup({ logger, projects, sandbox, subscribe }): ConversationEventServiceShape {
+    setup({ logger, projects, sandbox, subscribe, agentPaths, fileAgents, fileHolds }): ConversationEventServiceShape {
         const emitter = createEventEmitter<[event: DaemonEvent]>();
         let feed: Promise<void> | undefined;
 
-        return { listen };
+        return { start, listen };
+
+        function start() {
+            feed ??= runFeed();
+        }
 
         function listen(listener: (event: DaemonEvent) => void) {
             let listening = true;
             emitter.event.on(guarded);
-            feed ??= runFeed();
+            start();
             return stop;
 
             // A listener that throws (a client's closed connection) is dropped, so it never breaks the feed of the rest.
@@ -86,10 +103,15 @@ export const ConversationEventService = defineService({
                             if (lostEvents) {
                                 lostEvents = false;
                                 logger.info('Agent event feed restored');
+                                fileAgents.reset();
                                 emitter.emit({ type: 'streamRestored' });
                             }
+                            // Requests asked while the feed was down (or the daemon was not running) are answered too.
+                            await fileHolds.feedOpened();
                             continue;
                         }
+                        await trackFileAgents(event);
+                        await forwardToHolds(event);
                         for (const mapped of await mapEvent(event)) {
                             emitter.emit(mapped);
                         }
@@ -169,14 +191,62 @@ export const ConversationEventService = defineService({
                         },
                         { type: 'runningChanged', conversationId, running: false },
                     ];
-                // A failed model step is retried or ends the run, which reports the error; the agent runs without
-                // permission prompts.
+                // A failed model step is retried or ends the run, which reports the error; the agent's permission
+                // requests are the daemon's to answer (`FileHoldService`), never the person's.
                 case 'stepFailed':
                 case 'retryScheduled':
                 case 'permissionAsked':
                     return [];
                 default:
                     return assertNever(event, 'Unknown agent event');
+            }
+        }
+
+        /** Tells `fileAgents` about the agent's tool calls that write project files, and when they end. */
+        async function trackFileAgents(event: OpencodeSessionEvent) {
+            switch (event.type) {
+                case 'sessionCreated':
+                    agentPaths.noteSession(event.sessionId, event.directory);
+                    break;
+                case 'toolStarted': {
+                    const { kind } = toConversationStep({
+                        callId: event.callId,
+                        toolName: event.name,
+                        input: event.input,
+                        status: 'running',
+                    });
+                    const paths = readWrittenPaths(kind, event.input);
+                    if (paths.length > 0) {
+                        const files = await agentPaths.toProjectFiles(event.sessionId, paths);
+                        fileAgents.toolStarted({ conversationId: event.sessionId, callId: event.callId, files });
+                    }
+                    break;
+                }
+                case 'toolFinished':
+                case 'toolFailed':
+                    fileAgents.toolEnded(event.sessionId, event.callId);
+                    break;
+                case 'runFinished':
+                    fileAgents.runEnded(event.sessionId);
+                    break;
+                case 'sessionRenamed':
+                case 'runStarted':
+                case 'textDelta':
+                case 'stepFailed':
+                case 'retryScheduled':
+                case 'permissionAsked':
+                    break;
+                default:
+                    assertNever(event, 'Unknown agent event');
+            }
+        }
+
+        /** Gives `fileHolds` the agent's permission requests and the ends of its runs. */
+        async function forwardToHolds(event: OpencodeSessionEvent) {
+            if (event.type === 'permissionAsked') {
+                await fileHolds.permissionAsked(event);
+            } else if (event.type === 'runFinished') {
+                await fileHolds.runEnded(event.sessionId);
             }
         }
 

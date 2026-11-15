@@ -26,9 +26,16 @@ export default {
                     component: () => import('@/projects/ProjectPage.vue'),
                 },
                 {
+                    // A file open beside the conversation is `?file=<path in the project>`: a path holds `/`.
                     path: 'projects/:projectId/conversations/:conversationId',
                     name: 'conversation',
                     component: () => import('@/conversations/ConversationPage.vue'),
+                },
+                {
+                    // The open file is `?path=<path in the project>`: a path holds `/`.
+                    path: 'projects/:projectId/files',
+                    name: 'file',
+                    component: () => import('@/files/FilePage.vue'),
                 },
             ],
         },
