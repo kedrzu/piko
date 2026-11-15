@@ -3,7 +3,7 @@ import { chromium } from 'playwright';
 import type { EvalDriver } from './StealthEvalTypes.js';
 
 /**
- * The known-bot control (design D9): Playwright's bundled Chromium, headless, launched plain with no flags, so it
+ * The known-bot control (stealth-browsing D9): Playwright's bundled Chromium, headless, launched plain with no flags, so it
  * looks exactly as automated as it is.
  */
 export async function createPlaywrightDriver(): Promise<EvalDriver> {

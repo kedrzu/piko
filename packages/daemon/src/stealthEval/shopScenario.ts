@@ -1,6 +1,6 @@
 import type { ScenarioStep } from './StealthEvalTypes.js';
 
-/** The test shop (design D11): public, because the daemon's proxy refuses loopback. */
+/** The test shop (stealth-browsing D11): public, because the daemon's proxy refuses loopback. */
 export const SHOP_URL = 'https://kedrzu.github.io/stealth-eval-page/';
 
 /** How far ahead the order's delivery date is; the shop refuses a date in the past. */

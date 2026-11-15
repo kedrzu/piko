@@ -18,7 +18,7 @@ const SCORES_POLL_MS = 2000;
 const READ_RESULTS = "JSON.parse(document.getElementById('eval-results').textContent)";
 
 /**
- * The reCAPTCHA probe (design D11): makes the shop visit on the driver, then waits until every action has a score or an
+ * The reCAPTCHA probe (stealth-browsing D11): makes the shop visit on the driver, then waits until every action has a score or an
  * error and returns the visit as the shop recorded it. On timeout it returns what is there, pending actions included.
  */
 export async function runShopProbe(params: RunShopProbeParams): Promise<ShopVisit> {

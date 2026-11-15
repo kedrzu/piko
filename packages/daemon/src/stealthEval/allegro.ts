@@ -83,7 +83,7 @@ const QUERIES = [
 export const ALLEGRO_MAX_CAP = QUERIES.length;
 
 /**
- * The Allegro probe (design D9): opens Allegro, accepts its consent banner if shown, then searches at a fixed interval,
+ * The Allegro probe (stealth-browsing D9): opens Allegro, accepts its consent banner if shown, then searches at a fixed interval,
  * typing each query into the search box and pressing Enter, until DataDome shows a CAPTCHA or the cap is reached.
  */
 export async function runAllegroProbe(params: RunAllegroProbeParams): Promise<AllegroRun> {

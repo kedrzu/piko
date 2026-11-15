@@ -47,7 +47,7 @@ const READ_POLL_MS = 1000;
 const VERDICT_VALUES: readonly LeakVerdict[] = ['pass', 'fail', 'unknown'];
 
 /**
- * The fingerprint test pages (design D6). Every `read` was written against the page's live DOM on 2026-11-15, from a
+ * The fingerprint test pages (stealth-browsing D6). Every `read` was written against the page's live DOM on 2026-11-15, from a
  * plain headless Chromium and a headed Chrome; a page that changes its DOM reads as `unknown` with the error.
  */
 export const LEAK_PAGES: LeakPage[] = [
@@ -153,7 +153,7 @@ export const LEAK_PAGES: LeakPage[] = [
 ];
 
 /**
- * The leak probe (design D6): opens every test page once, waits until it has finished its checks and reads its
+ * The leak probe (stealth-browsing D6): opens every test page once, waits until it has finished its checks and reads its
  * verdict. A page that cannot be read is recorded as `unknown` with the error; the other pages still run.
  */
 export async function runLeakPagesProbe(params: RunLeakPagesProbeParams): Promise<LeakPageResult[]> {

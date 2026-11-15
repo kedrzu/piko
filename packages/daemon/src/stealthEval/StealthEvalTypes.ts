@@ -1,4 +1,4 @@
-/** Who ran a visit: the agent's own browser, the plain headless control or the person by hand (design D9). */
+/** Who ran a visit: the agent's own browser, the plain headless control or the person by hand (stealth-browsing D9). */
 export type RunnerName = 'agent' | 'headless' | 'person';
 
 /**
@@ -104,7 +104,7 @@ export interface ShopVisit {
 /** How a leak test page judged the browser: `unknown` when the page never finished or its verdict could not be read. */
 export type LeakVerdict = 'pass' | 'fail' | 'unknown';
 
-/** One fingerprint test page's verdict (design D6). */
+/** One fingerprint test page's verdict (stealth-browsing D6). */
 export interface LeakPageResult {
     page: string;
     url: string;
@@ -117,7 +117,7 @@ export interface LeakPageResult {
     error: string | null;
 }
 
-/** The protection vendors the panel covers (design D6). */
+/** The protection vendors the panel covers (stealth-browsing D6). */
 export type PanelVendor = 'Cloudflare' | 'Akamai' | 'HUMAN' | 'Kasada' | 'DataDome';
 
 /** Whether one load of a protected site reached the real site. */
@@ -150,7 +150,7 @@ export interface AllegroSearch {
     detail: string | null;
 }
 
-/** Allegro searches at a fixed interval until DataDome shows a CAPTCHA or the cap is reached (design D9). */
+/** Allegro searches at a fixed interval until DataDome shows a CAPTCHA or the cap is reached (stealth-browsing D9). */
 export interface AllegroRun {
     intervalMs: number;
     cap: number;

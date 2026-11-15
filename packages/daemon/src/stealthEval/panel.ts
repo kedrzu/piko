@@ -35,7 +35,7 @@ interface PanelSite {
 }
 
 /**
- * Two sites per vendor where possible (design D6), checked 2026-11-15 from a residential connection: curl was refused
+ * Two sites per vendor where possible (stealth-browsing D6), checked 2026-11-15 from a residential connection: curl was refused
  * by each (or, for Southwest and Allegro, got the vendor's cookies), and the vendor's markers were seen in a browser.
  * G2 turned out to be DataDome, not Cloudflare: its 403 carries `x-datadome: protected` and a
  * `geo.captcha-delivery.com` iframe. Lufthansa let even the plain headless Chromium through at once, so it told nothing
@@ -104,7 +104,7 @@ const READ_FACTS = `(() => {
 })()`;
 
 /**
- * The vendor panel (design D6): loads every site once, waits up to 30 s for a JavaScript challenge to resolve, and
+ * The vendor panel (stealth-browsing D6): loads every site once, waits up to 30 s for a JavaScript challenge to resolve, and
  * records whether the real site rendered, the marker that decided it and the vendors' cookies. Nothing is clicked or
  * submitted.
  */
