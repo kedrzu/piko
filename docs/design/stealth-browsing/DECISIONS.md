@@ -297,20 +297,33 @@ client code.
 **The reCAPTCHA probe is a small static multi-page shop on GitHub Pages, no backend: a product list with search,
 filters and pagination; a product page with a long description, tabs, a gallery and expandable sections; an order or
 contact form (text, select, checkbox, date, validation, submit); and a cookie-consent modal. At every meaningful action
-the page requests a token named after that action and appends it to a list in the DOM. It also records how input
+the page requests a token named after that action, assesses it at once itself with a public API key restricted to the
+reCAPTCHA API and the page's domain, and appends the score to a list in the DOM. It also records how input
 arrived — mouse movements before each click, whether text came as key events, the timing between them — into the
 DOM. Scenarios ("search, open two products, read a description, submit the form") live in the eval in this repo, and
 the agent, the headless control and the person run the same ones.** (2026-11-15, owner asked for content that
 reproduces reading, submits and component interactions; shape and input recording are the design agent's proposal,
-owner agreed)
+owner agreed; assessment in the page chosen by the owner on 2026-11-15, when building showed the person's run could not
+be read otherwise)
 
 **Why.** reCAPTCHA v3 scores actions within a visit, not a single page load, so a page with content measures a
 whole visit. Several pages, because moving between pages is the core of what the agent does (search, list, product on
-Allegro). Input recording does not show whether sites react; it shows exactly how the agent's input differs from the
+Allegro). A token lives two minutes and can be assessed once, and nothing is attached to the person's own Chrome to read
+it in time, so the page assesses each token as it gets it; every runner is then read the same way. Input recording does not show whether sites react; it shows exactly how the agent's input differs from the
 person's, which informs whether to build the input layer ([D4](#d4)) and then checks it.
+
+> **Checked 2026-11-15:** `recaptchaenterprise.googleapis.com` answers a browser `POST …/assessments?key=` from
+> `https://kedrzu.github.io` (CORS preflight allows the origin and POST). API key "stealth eval page" in
+> `poweragents-stealth-eval`, restricted to that API and referrer `https://kedrzu.github.io/*`;
+> `CreateAssessmentRequests` capped at 300 a day. A Playwright-driven headed Chrome on the live shop got per-action
+> scores 0.5–1.0.
 
 **Rejected.**
 
+- Tokens left in the DOM for the eval to assess — the person's run in their own Chrome has no eval attached, and its
+  early tokens expire before the visit ends ([history](history/DECISIONS.md#d11)).
+- A person's run in the agent's browser instead, read over CDP — no key needed, but the control would carry the
+  agent's fingerprint and stop being a known human.
 - A single page with components — measures clicking, not navigation.
 - The current one-page probe (a text field and a button, `kedrzu/stealth-eval-page`) — no visit to score; it is
   replaced by the shop.

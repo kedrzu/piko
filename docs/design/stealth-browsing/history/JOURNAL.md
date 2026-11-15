@@ -183,3 +183,4 @@
   multi-page test shop with per-action tokens and input recording; scenarios in the eval (D11).
 - Owner closed the design (2026-11-15). Next: `/dev:deliver`, first milestone the baseline measurement with the test
   shop and both controls.
+- Delivery: building showed tokens in the DOM cannot be read from the person's own Chrome in time (two-minute life). Owner chose assessment in the page with a restricted public key (D11 partly replaced, prior form in history).
