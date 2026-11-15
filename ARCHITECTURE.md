@@ -77,6 +77,16 @@ The Vue packages are not emitted: `ui` exports its sources and is type-checked b
   to `packages/daemon/vendor/lima`. `limactl` must keep the `com.apple.security.virtualization` entitlement it ships
   with, or Lima's vz driver cannot start the VM: the ad-hoc signed bundle leaves it as is, and a signing setup must
   re-sign it with that entitlement.
+- The bundled plugins (design D36) come from the app the same way: the bundle carries `packages/daemon/plugins` as a
+  resource on every platform (`tauri.conf.json`), passed as `POWERAGENTS_PLUGINS_DIR`, which in development defaults to
+  that folder (empty for now; the tests' plugins are in `packages/daemon/src/plugins/fixtures`). The person's own
+  plugins are folders in the data root's `plugins/` (design D40).
+- The daemon keeps its plugin state in the data root's hidden `.poweragents/`: `plugins.json` (installed bundled
+  plugins), copies of the installed bundled plugins and `skills/<plugin>:<skill>/` copies of every installed plugin's
+  skills (`PluginService`). The container mounts it a second time read-only, so the agent reads it but cannot change it.
+  The plugins' programs live on the `poweragents-env` volume (`PluginEnvironment`). The agent reaches the daemon through
+  the `poweragents` CLI in its image, which calls the sandbox API on host port 47614 (`SandboxApiService`). Decision:
+  `docs/decisions/plugin-runtime-in-the-sandbox.md`.
 - The first start downloads what the sandbox needs (the VM's Ubuntu image, then the agent's image built in the VM);
   the installer carries no image. `POWERAGENTS_LIMA_HOME` (the VM, default `~/.poweragents/lima`; the agent's password
   sits in the folder above it) and `POWERAGENTS_DATA_ROOT` move a first start into a scratch folder, leaving the real VM
@@ -90,7 +100,7 @@ The Vue packages are not emitted: `ui` exports its sources and is type-checked b
   `~/.poweragents/chromium` (sha256-checked; the installer carries no browser). It launches on first use over
   `--remote-debugging-pipe` with minimized windows and its profile in `~/.poweragents/browser-profile`. The sandbox
   reaches it only through the daemon's tunnel on host port 47612, guarded by a bearer token from
-  `~/.poweragents/browser-token` (the one firewall opening), which enforces the agent's limits (`checkCdpRequest`).
+  `~/.poweragents/browser-token` (a firewall opening, beside the sandbox API's), which enforces the agent's limits (`checkCdpRequest`).
   Downloads go to a daemon-owned staging folder, then into the data root's `downloads/`. Decision:
   `docs/decisions/agent-browser-over-one-pipe.md`.
 - Every request the browser makes goes through the daemon's proxy on port 47613, which refuses non-public addresses

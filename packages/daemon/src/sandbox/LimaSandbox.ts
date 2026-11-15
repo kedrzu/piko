@@ -11,11 +11,19 @@ import { createSingleRunner } from '@nzyme/utils/createSingleRunner.js';
 import { createStopwatch } from '@nzyme/utils/createStopwatch.js';
 import { waitUntil } from '@nzyme/utils/waitUntil.js';
 
-import { BROWSER_TUNNEL_PORT, POWERAGENTS_DATA_ROOT, POWERAGENTS_LIMA_DIR, POWERAGENTS_LIMA_HOME } from '../env.js';
+import {
+    BROWSER_TUNNEL_PORT,
+    DAEMON_FOLDER,
+    POWERAGENTS_DATA_ROOT,
+    POWERAGENTS_LIMA_DIR,
+    POWERAGENTS_LIMA_HOME,
+    SANDBOX_API_PORT,
+} from '../env.js';
 import {
     AGENT_CONTAINER,
     AGENT_DATA_ROOT,
     AGENT_HOST_PORT,
+    AGENT_SKILLS_DIR,
     AGENT_SPEC_LABEL,
     buildAgentRunArgs,
     HOST_GATEWAY,
@@ -27,10 +35,18 @@ import { buildLimaConfig } from './buildLimaConfig.js';
 import { readOrCreatePassword } from './readOrCreatePassword.js';
 import AGENT_CONTAINERFILE_BASE from '../../sandbox/agent.Containerfile' with { type: 'text' };
 import GENERATIVE_UI_SKILL from '../../sandbox/generative-ui.skill.gen.md' with { type: 'text' };
-import { Sandbox } from './Sandbox.js';
+// A text import: Bun inlines the script as a string (`containerfile.d.ts`), while `import/default` reads the file as the
+// module it would be when run, which has no default export.
+// oxlint-disable-next-line import/default
+import POWERAGENTS_CLI from '../../sandbox/poweragents.js' with { type: 'text' };
+import { Sandbox, SKILLS_SYNC_FILE } from './Sandbox.js';
 import type { SandboxEndpoint, SandboxExecParams, SandboxProcess, SandboxState } from './Sandbox.js';
 
-const AGENT_CONTAINERFILE = buildAgentContainerfile(AGENT_CONTAINERFILE_BASE, GENERATIVE_UI_SKILL);
+const AGENT_CONTAINERFILE = buildAgentContainerfile({
+    base: AGENT_CONTAINERFILE_BASE,
+    skill: GENERATIVE_UI_SKILL,
+    cli: POWERAGENTS_CLI,
+});
 
 const INSTANCE = 'poweragents-default';
 /** The agent's images, tagged by `getImageTag()`. */
@@ -43,9 +59,12 @@ const VM_MEMORY_GIB = 3;
 /**
  * The private addresses the sandbox may reach (design D8: the agent sees nothing else of the computer or its networks).
  * A port on the computer is `{ address: HOST_GATEWAY, port }`; a LAN device's is its address. Now only the daemon's
- * browser tunnel.
+ * browser tunnel and its sandbox API.
  */
-const FIREWALL_OPENINGS: FirewallOpening[] = [{ address: HOST_GATEWAY, port: BROWSER_TUNNEL_PORT }];
+const FIREWALL_OPENINGS: FirewallOpening[] = [
+    { address: HOST_GATEWAY, port: BROWSER_TUNNEL_PORT },
+    { address: HOST_GATEWAY, port: SANDBOX_API_PORT },
+];
 /** The VM's boot-time nftables ruleset; it holds only the sandbox's rules, so it never flushes Lima's own. */
 const FIREWALL_FILE = '/etc/nftables.conf';
 const AGENT_READY_TIMEOUT_MS = 120_000;
@@ -104,6 +123,7 @@ export const LimaSandbox = defineService({
             start,
             stop,
             exec,
+            notifySkillsChanged,
         };
 
         function start() {
@@ -153,6 +173,16 @@ export const LimaSandbox = defineService({
                 exited: child.exited,
                 kill: () => child.kill(),
             };
+        }
+
+        async function notifySkillsChanged() {
+            if (state.status !== 'ready') {
+                return;
+            }
+
+            // From the VM, not the container: the container mounts the daemon's folder read-only. A write of a plain
+            // file wakes OpenCode's watcher, which then sees every change; a dotfile does not.
+            await limactl(shellArgs('sh', '-c', `date > ${AGENT_SKILLS_DIR}/${SKILLS_SYNC_FILE}`));
         }
 
         async function getVerifiedState() {
@@ -217,6 +247,9 @@ export const LimaSandbox = defineService({
         async function startVm() {
             const stopwatch = createStopwatch();
             await mkdir(dataRoot, { recursive: true });
+            // The agent's container mounts the daemon's folder read-only over the data root, so it must exist before the
+            // container starts, also when the daemon's first sync of it has not run or has failed.
+            await mkdir(path.join(dataRoot, DAEMON_FOLDER), { recursive: true });
             await mkdir(limaHome, { recursive: true });
 
             const status = await getVmStatus();

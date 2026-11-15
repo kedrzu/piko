@@ -2,6 +2,7 @@ import { HttpError } from '@nzyme/fetch-utils/HttpError.js';
 import { defineService } from '@nzyme/ioc/Service.js';
 import { Logger } from '@nzyme/logging/Logger.js';
 
+import type { ConversationSendResult } from '@poweragents/common/api/ConversationTypes.js';
 import type { ScheduleRun } from '@poweragents/common/api/ScheduleTypes.js';
 import { OpencodeSessionActiveListCommand } from '@poweragents/opencode/OpencodeSessionActiveListCommand.js';
 import { OpencodeSessionFormListCommand } from '@poweragents/opencode/OpencodeSessionFormListCommand.js';
@@ -228,11 +229,13 @@ export const ScheduleRunnerService = defineService({
             }
 
             let conversationId: string | undefined;
+            let sent: ConversationSendResult;
             try {
                 conversationId = (await conversations.create(project.id)).id;
                 await deps.rename({ sessionId: conversationId, title: definition.name });
-                // Sent as the person's message: the conversation shows what the schedule asked.
-                await conversations.send({ projectId: project.id, conversationId, text: definition.prompt });
+                // Sent as the person's message: the conversation shows what the schedule asked. Through the conversation
+                // service like any message, so a plugin's command runs only where the plugin is installed (design D42).
+                sent = await conversations.send({ projectId: project.id, conversationId, text: definition.prompt });
             } catch (error) {
                 // Once the conversation exists, the term is handled either way: waiting would start a second one.
                 if (conversationId === undefined && isSandboxNotReady(error)) {
@@ -246,6 +249,22 @@ export const ScheduleRunnerService = defineService({
                     outcome: 'failed',
                     ...(conversationId !== undefined && { conversationId }),
                     message: toMessage(error),
+                };
+            }
+            if (sent.stoppedBy) {
+                // No run started: the prompt waits in the conversation beside the note, for the person to see. The term
+                // is handled, as a retry would only meet the same missing plugin.
+                logger.warn('Schedule run not started, its plugin is not installed here', {
+                    ...fields,
+                    conversationId,
+                    plugin: sent.stoppedBy.plugin,
+                });
+                return {
+                    term,
+                    at: now,
+                    outcome: 'failed',
+                    conversationId,
+                    message: buildPluginMissingMessage(sent.stoppedBy.plugin),
                 };
             }
             logger.info('Schedule run started', { ...fields, conversationId });
@@ -315,6 +334,14 @@ function toZonedIso(epochMs: number, timeZone: string) {
     return Temporal.Instant.fromEpochMilliseconds(epochMs)
         .toZonedDateTimeISO(timeZone)
         .toString({ timeZoneName: 'never' });
+}
+
+/**
+ * Why a run whose prompt starts with a plugin's command did not start; for the agent, which reads it in the state file.
+ * @__NO_SIDE_EFFECTS__
+ */
+function buildPluginMissingMessage(plugin: string) {
+    return `The prompt starts with a command of the plugin ${plugin}, which is not installed in this project or the profile: it was not run.`;
 }
 
 /** @__NO_SIDE_EFFECTS__ */

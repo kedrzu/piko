@@ -23,6 +23,9 @@ import type {
 } from '@poweragents/opencode/OpencodeSessionPromptCommand.js';
 import { OpencodeSessionRenameCommand } from '@poweragents/opencode/OpencodeSessionRenameCommand.js';
 import type { OpencodeSessionRenameCommandParams } from '@poweragents/opencode/OpencodeSessionRenameCommand.js';
+import { OpencodeSessionSyntheticCommand } from '@poweragents/opencode/OpencodeSessionSyntheticCommand.js';
+import type { OpencodeSessionSyntheticCommandParams } from '@poweragents/opencode/OpencodeSessionSyntheticCommand.js';
+import { OpencodeSessionUpdateCommand } from '@poweragents/opencode/OpencodeSessionUpdateCommand.js';
 import type { OpencodeSession } from '@poweragents/opencode/OpencodeTypes.js';
 
 import { ConversationService } from '../conversations/ConversationService.js';
@@ -63,6 +66,7 @@ test('a due term starts a conversation named after the schedule with its prompt,
         directory: '/Poweragents/projects/Alfa',
         providerId: 'claude-agent',
         modelId: 'sonnet',
+        permissions: [],
     };
     expect(fixture.createSession).toHaveBeenCalledTimes(1);
     expect(fixture.createSession).toHaveBeenCalledWith(expectedSession);
@@ -211,6 +215,35 @@ test('a run OpenCode fails is recorded as failed with why, and not retried', asy
     expect(fixture.logs.some(log => log.level === 'error' && log.message === 'Schedule run failed')).toBe(true);
 });
 
+test('a prompt with the command of a plugin not installed here starts no run: the term fails, and the next one runs', async () => {
+    const fixture = await setup();
+    const schedule = await fixture.createSchedule({ ...DAILY, prompt: '/email-sorting:sort nowe maile' });
+    await fixture.tick('2026-11-13T06:00');
+
+    await fixture.tick('2026-11-13T07:01');
+    await fixture.tick('2026-11-14T07:01');
+
+    // The prompt waits in the conversation beside the note for the agent, never starting a run.
+    const waiting: OpencodeSessionPromptCommandParams = {
+        sessionId: 'ses_1',
+        text: '/email-sorting:sort nowe maile',
+        resume: false,
+    };
+    expect(fixture.prompt).toHaveBeenCalledWith(waiting);
+    expect(fixture.synthetic).toHaveBeenCalledTimes(2);
+    const failed: ScheduleRun = {
+        term: at('2026-11-13T07:00'),
+        at: at('2026-11-13T07:01'),
+        outcome: 'failed',
+        conversationId: 'ses_1',
+        message:
+            'The prompt starts with a command of the plugin email-sorting, which is not installed in this project or the profile: it was not run.',
+    };
+    const runs = (await fixture.readState(schedule.id)).runs;
+    expect(runs.map(run => run.conversationId)).toEqual(['ses_2', 'ses_1']);
+    expect(runs[1]).toEqual(failed);
+});
+
 test('a term waits while the sandbox is not ready, also when creating its conversation finds it not ready', async () => {
     const fixture = await setup();
     const schedule = await fixture.createSchedule(DAILY);
@@ -315,6 +348,7 @@ async function setup() {
     container.set(EnvVariables, {
         POWERAGENTS_DATA_ROOT: path.join(tmp, 'root'),
         POWERAGENTS_LIMA_HOME: path.join(tmp, 'home', 'lima'),
+        POWERAGENTS_PLUGINS_DIR: path.join(import.meta.dirname, '..', 'plugins', 'fixtures', 'bundled'),
     });
     // Conversations start on the connected provider's model: Claude here.
     container.set(ClaudeSignInService, {
@@ -339,6 +373,7 @@ async function setup() {
         exec: () => {
             throw new Error('not used');
         },
+        notifySkillsChanged: () => Promise.resolve(),
     });
 
     const sessions: OpencodeSession[] = [];
@@ -358,9 +393,12 @@ async function setup() {
         Promise.resolve({ messageId: 'msg_1', admittedAt: 1 }),
     );
     const rename = mock((_params: OpencodeSessionRenameCommandParams) => Promise.resolve());
+    const synthetic = mock((_params: OpencodeSessionSyntheticCommandParams) => Promise.resolve());
     container.set(OpencodeSessionCreateCommand, createSession);
     container.set(OpencodeSessionPromptCommand, prompt);
     container.set(OpencodeSessionRenameCommand, rename);
+    container.set(OpencodeSessionSyntheticCommand, synthetic);
+    container.set(OpencodeSessionUpdateCommand, () => Promise.resolve());
     container.set(OpencodeSessionListCommand, () => Promise.resolve([...sessions]));
     container.set(OpencodeSessionGetCommand, id => Promise.resolve(sessions.find(item => item.id === id) ?? null));
     container.set(OpencodeSessionActiveListCommand, () => Promise.resolve(new Set(active)));
@@ -386,6 +424,7 @@ async function setup() {
         createSession,
         prompt,
         rename,
+        synthetic,
         setSandbox(state: SandboxState) {
             sandboxState = state;
         },

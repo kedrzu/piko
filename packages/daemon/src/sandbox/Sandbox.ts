@@ -22,6 +22,12 @@ export interface SandboxEndpoint {
     password: string;
 }
 
+/**
+ * The file `Sandbox.notifySkillsChanged()` writes in the daemon's skill folder. No skill copy has this name: a skill's id
+ * is `<plugin>:<skill>`.
+ */
+export const SKILLS_SYNC_FILE = 'synced';
+
 /** A command to run inside the agent's container. */
 export interface SandboxExecParams {
     command: string[];
@@ -72,6 +78,12 @@ export interface Sandbox {
     stop(): Promise<void>;
     /** Runs a command in the agent's container; the sandbox must be ready. */
     exec(params: SandboxExecParams): SandboxProcess;
+    /**
+     * Makes the agent rescan its skills after the daemon changed the skill copies. The agent's file watcher misses
+     * changes made from the host, so this writes `SKILLS_SYNC_FILE` in the skill folder from inside the sandbox, which
+     * wakes its rescan. Does nothing unless ready: the agent scans its skills when it starts.
+     */
+    notifySkillsChanged(): Promise<void>;
 }
 
 /** The sandbox of the current profile. */

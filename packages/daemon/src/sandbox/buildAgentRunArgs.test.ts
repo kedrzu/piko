@@ -1,6 +1,7 @@
 import { expect, test } from 'bun:test';
 
-import { buildAgentRunArgs } from './buildAgentRunArgs.js';
+import AGENT_CONTAINERFILE from '../../sandbox/agent.Containerfile' with { type: 'text' };
+import { AGENT_SKILLS_DIR, buildAgentRunArgs } from './buildAgentRunArgs.js';
 
 const IMAGE = 'poweragents-agent:abc';
 const { args: ARGS } = buildAgentRunArgs(IMAGE);
@@ -12,13 +13,16 @@ test('publishes the agent on the loopback only', () => {
     expect(ARGS.some(arg => arg.startsWith('--publish=') || arg === '--network=host' || arg === 'host')).toBe(false);
 });
 
-test('mounts the data root and the two state volumes, and nothing else', () => {
+test("mounts the data root, the daemon's folder read-only over it and the three state volumes, and nothing else", () => {
     const volumes = ARGS.flatMap((arg, index) => (arg === '--volume' || arg === '-v' ? [ARGS[index + 1]] : []));
 
+    // The read-only mount comes after the data root's, so it shadows the writable one at exactly the same path.
     expect(volumes).toEqual([
         '/Poweragents:/Poweragents',
+        '/Poweragents/.poweragents:/Poweragents/.poweragents:ro',
         'poweragents-claude:/root/.claude',
         'poweragents-opencode:/root/.local/share/opencode',
+        'poweragents-env:/opt/poweragents/env',
     ]);
     expect(ARGS.some(arg => arg.startsWith('--volume=') || arg.startsWith('--mount'))).toBe(false);
 });
@@ -44,6 +48,12 @@ test('tells the agent where the browser tunnel is, without its token', () => {
     expect(ARGS.some(arg => arg.includes('POWERAGENTS_BROWSER_TOKEN'))).toBe(false);
 });
 
+test("tells the agent where the daemon's sandbox API is", () => {
+    const envs = ARGS.flatMap((arg, index) => (arg === '--env' ? [ARGS[index + 1]] : []));
+
+    expect(envs).toContain('POWERAGENTS_DAEMON_URL=http://192.168.5.2:47614');
+});
+
 test('labels the container with a spec that changes with the image', () => {
     const run = buildAgentRunArgs(IMAGE);
     const other = buildAgentRunArgs('poweragents-agent:def');
@@ -51,6 +61,15 @@ test('labels the container with a spec that changes with the image', () => {
     expect(run.args.slice(0, 3)).toEqual(['run', '--label', `poweragents.spec=${run.spec}`]);
     expect(buildAgentRunArgs(IMAGE).spec).toBe(run.spec);
     expect(other.spec).not.toBe(run.spec);
+});
+
+test("points OpenCode's global skills at the folder the daemon copies the plugins' skills into", () => {
+    const opencodeJson = /^COPY <<EOF \/root\/\.config\/opencode\/opencode\.json\n([\s\S]*?)\nEOF$/m.exec(
+        AGENT_CONTAINERFILE,
+    );
+
+    const config: unknown = JSON.parse(opencodeJson?.[1] ?? 'null');
+    expect(config).toMatchObject({ skills: [AGENT_SKILLS_DIR] });
 });
 
 function isPublishFlag(arg: string) {

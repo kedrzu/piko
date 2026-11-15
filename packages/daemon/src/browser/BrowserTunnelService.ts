@@ -1,11 +1,11 @@
-import { randomUUID, timingSafeEqual } from 'node:crypto';
-import { readFile } from 'node:fs/promises';
+import { randomUUID } from 'node:crypto';
 import path from 'node:path';
 
 import { defineService } from '@nzyme/ioc/Service.js';
 import { Logger } from '@nzyme/logging/Logger.js';
 
 import { BROWSER_TUNNEL_PORT, POWERAGENTS_DATA_ROOT, POWERAGENTS_LIMA_HOME } from '../env.js';
+import { SandboxTokenCheckCommand } from '../sandbox/SandboxTokenCheckCommand.js';
 import { BrowserService } from './BrowserService.js';
 import { ChromiumInstall } from './ChromiumInstall.js';
 import { connectTunnelClient } from './connectTunnelClient.js';
@@ -39,9 +39,6 @@ interface TunnelSocketData {
 
 /** The only path a socket may open: an OpenCode session id (`ses_…`) names the conversation. */
 const SESSION_PATH = /^\/session\/([\w-]{1,128})$/;
-/** What `readOrCreatePassword` writes; any other content of the token file is refused. */
-const TOKEN_PATTERN = /^[\w-]{32}$/;
-const BEARER_PREFIX = 'Bearer ';
 
 export const BrowserTunnelService = defineService({
     name: 'BrowserTunnelService',
@@ -51,12 +48,10 @@ export const BrowserTunnelService = defineService({
         install: ChromiumInstall,
         limaHome: POWERAGENTS_LIMA_HOME,
         dataRoot: POWERAGENTS_DATA_ROOT,
+        checkToken: SandboxTokenCheckCommand,
     },
-    setup({ logger, browser, install, limaHome, dataRoot }): BrowserTunnelServiceShape {
-        const stateFolder = path.dirname(limaHome);
-        // Created by the sandbox, which hands the same token to the agent; the tunnel only reads it.
-        const tokenFile = path.join(stateFolder, 'browser-token');
-        const uploadsFolder = path.join(stateFolder, 'browser-uploads');
+    setup({ logger, browser, install, limaHome, dataRoot, checkToken }): BrowserTunnelServiceShape {
+        const uploadsFolder = path.join(path.dirname(limaHome), 'browser-uploads');
 
         return { listen };
 
@@ -114,7 +109,7 @@ export const BrowserTunnelService = defineService({
             if (request.headers.has('origin')) {
                 return new Response('Forbidden', { status: 403 });
             }
-            if (!(await isAuthorized(request.headers.get('authorization')))) {
+            if (!(await checkToken(request.headers.get('authorization')))) {
                 return new Response('Unauthorized', { status: 401 });
             }
             const conversationId = SESSION_PATH.exec(new URL(request.url).pathname)?.[1];
@@ -130,36 +125,6 @@ export const BrowserTunnelService = defineService({
                 });
             }
             return conversationId;
-        }
-
-        async function isAuthorized(header: string | null) {
-            if (header?.startsWith(BEARER_PREFIX) !== true) {
-                return false;
-            }
-            const token = await readToken();
-            if (token == null) {
-                return false;
-            }
-            const given = Buffer.from(header.slice(BEARER_PREFIX.length));
-            const expected = Buffer.from(token);
-            return given.length === expected.length && timingSafeEqual(given, expected);
-        }
-
-        /**
-         * Read on every upgrade, since `LimaSandbox` creates the file and may do so after the tunnel starts; `null` while
-         * none is usable.
-         */
-        async function readToken() {
-            try {
-                const token = await readFile(tokenFile, 'utf8');
-                if (TOKEN_PATTERN.test(token)) {
-                    return token;
-                }
-                logger.warn('The browser token file holds no valid token');
-            } catch (error) {
-                logger.warn('The browser token could not be read', { error });
-            }
-            return null;
         }
     },
 });

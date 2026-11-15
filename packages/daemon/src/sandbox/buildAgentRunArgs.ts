@@ -1,6 +1,6 @@
 import path from 'node:path';
 
-import { BROWSER_TUNNEL_PORT, PROJECTS_FOLDER } from '../env.js';
+import { BROWSER_TUNNEL_PORT, DAEMON_FOLDER, PROJECTS_FOLDER, SANDBOX_API_PORT } from '../env.js';
 
 /** The `nerdctl run` arguments of the agent's container, and the spec they carry. */
 export interface AgentRunArgs {
@@ -20,6 +20,15 @@ export const AGENT_CONTAINER = 'poweragents-agent';
 export const AGENT_DATA_ROOT = '/Poweragents';
 /** The projects' folder as the agent sees it. */
 export const AGENT_PROJECTS_DIR = path.posix.join(AGENT_DATA_ROOT, PROJECTS_FOLDER);
+/** The daemon's folder as the agent sees it: mounted read-only over the writable data root. */
+export const AGENT_DAEMON_DIR = path.posix.join(AGENT_DATA_ROOT, DAEMON_FOLDER);
+/** The skill copies the agent loads; the global `opencode.json` of `agent.Containerfile` names the same folder. */
+export const AGENT_SKILLS_DIR = path.posix.join(AGENT_DAEMON_DIR, 'skills');
+/**
+ * The plugins' environment as the agent sees it, on the `poweragents-env` volume: Node packages in `node/`, a Python venv
+ * in `python/`. The image's `PATH` (`agent.Containerfile`) leads with their bin folders.
+ */
+export const AGENT_ENV_DIR = '/opt/poweragents/env';
 /** The port the agent is published on, on the VM's loopback (Lima forwards it to the host's), next to the daemon's. */
 export const AGENT_HOST_PORT = 47611;
 
@@ -31,10 +40,12 @@ const OPENCODE_PORT = 4096;
 
 /**
  * Builds the `nerdctl` arguments that start the agent's container: OpenCode serving on the loopback only, behind the
- * password nerdctl reads from its stdin (`OPENCODE_SERVER_PASSWORD=…`) and the browser tunnel's address (its token comes
- * the same way, `POWERAGENTS_BROWSER_TOKEN=…`), with the profile's data root and two named volumes keeping Claude's login and OpenCode's
- * conversations across container recreation. The secrets never appear in the arguments, which other processes can
- * read.
+ * password nerdctl reads from its stdin (`OPENCODE_SERVER_PASSWORD=…`), with the addresses of the browser tunnel (its
+ * token comes the same way, `POWERAGENTS_BROWSER_TOKEN=…`) and of the daemon's sandbox API. It mounts the profile's data
+ * root, the daemon's folder in it a second time read-only (the later mount shadows the writable one, so the agent reads
+ * the plugin copies and the manifest but cannot change them), and three named volumes: Claude's login, OpenCode's
+ * conversations and the plugins' environment, kept across container recreation. The secrets never appear in the
+ * arguments, which other processes can read.
  *
  * OpenCode runs as `serve --stdio` because only that mode deletes the password from its own environment after reading
  * it (OpenCode 2.2.7); plain `serve` keeps it there, and the agent's shell and Claude Code inherit it. `--stdio` stops
@@ -55,13 +66,19 @@ export function buildAgentRunArgs(image: string): AgentRunArgs {
         '--volume',
         `${AGENT_DATA_ROOT}:${AGENT_DATA_ROOT}`,
         '--volume',
+        `${AGENT_DAEMON_DIR}:${AGENT_DAEMON_DIR}:ro`,
+        '--volume',
         'poweragents-claude:/root/.claude',
         '--volume',
         'poweragents-opencode:/root/.local/share/opencode',
+        '--volume',
+        `poweragents-env:${AGENT_ENV_DIR}`,
         '--env',
         'CLAUDE_CONFIG_DIR=/root/.claude',
         '--env',
         `POWERAGENTS_BROWSER_URL=ws://${HOST_GATEWAY}:${BROWSER_TUNNEL_PORT}`,
+        '--env',
+        `POWERAGENTS_DAEMON_URL=http://${HOST_GATEWAY}:${SANDBOX_API_PORT}`,
         '--env-file',
         '/dev/stdin',
         '--workdir',
