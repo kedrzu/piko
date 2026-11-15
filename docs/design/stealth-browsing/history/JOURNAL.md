@@ -165,3 +165,7 @@
   itself, so no backend. Not confirmed.
 - Owner: create the repo. Created public `kedrzu/stealth-eval-page` with GitHub Pages; end-to-end check: a
   Playwright-driven Chrome scored 0.9 (single run, no billing). Billing still for the owner to attach.
+- Owner attached billing to `poweragents-stealth-eval` (gcloud: billingEnabled True). Re-ran the probe from
+  Playwright MCP's Chrome: still 0.9, no reasons. Owner asked how Claude in Chrome drives the browser; researching.
+- Claude in Chrome: extension in the person's real Chrome, CDP through `chrome.debugger`, native messaging to Claude
+  Code. Recorded as a Rejected line of D3 (same protocol; the real profile is what poweragents D27 rejected).

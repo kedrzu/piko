@@ -86,6 +86,16 @@ flag turns it back off without giving up the pipe. Keeping up with Chrome stable
   ([webkit.org](https://webkit.org/blog/13936/enabling-the-inspection-of-web-content-in-apps/)); WebView2 has CDP
   and looks like Edge, but it would mean two engines and two control stacks for a gain on Windows only.
 - CEF — one major behind stable and only the Chromium brand; nothing over CfT.
+- Driving the person's own Chrome through an extension, as Claude in Chrome does — it is the same CDP, reached
+  through `chrome.debugger`; what differs is the person's real profile, which poweragents rejected for the agent
+  ([poweragents D27](../poweragents/DECISIONS.md#d27)).
+
+  > **Checked 2026-11-15:** Claude in Chrome's control permission is `debugger` — "allows Claude to actually control
+  > your browser" ([support](https://support.claude.com/en/articles/12012173-getting-started-with-claude-in-chrome));
+  > Claude Code reaches it through a native messaging host and the `claude-in-chrome` MCP server, and it "shares
+  > your browser's login state"; on a CAPTCHA "it pauses and asks you to handle it manually"
+  > ([docs](https://code.claude.com/docs/en/chrome)). The extension debugger API exposes `Runtime`, `Input`,
+  > `Page` and others ([chrome.debugger](https://developer.chrome.com/docs/extensions/reference/api/debugger)).
 - Our own patched Chromium now — see [D7](#d7).
 
 ## D4
