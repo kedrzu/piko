@@ -1,6 +1,8 @@
 import type { Logger } from '@nzyme/logging/Logger.js';
 import { isPlainObject } from '@nzyme/utils/isPlainObject.js';
 
+import { isStringArray } from '../utils/isStringArray.js';
+import { attachTargetSession } from './attachTargetSession.js';
 import { buildChromeBrand } from './buildChromeBrand.js';
 import type { BrandVersion, UserAgentOverride, UserAgentMetadata } from './buildChromeBrand.js';
 import type { CdpEvent } from './CdpTypes.js';
@@ -85,8 +87,9 @@ export function createBrandOverride(params: CreateBrandOverrideParams): BrandOve
     }
 
     /**
-     * Whether the session comes from the daemon's auto-attach: at the browser, a top-level attach nobody announced with
-     * `expectAttach` (it comes as the target is created, before anyone could ask for it), claimed here for the daemon;
+     * Whether the session comes from the daemon's auto-attach: at the browser, a top-level attach ownership left unclaimed
+     * (nobody announced it with `expectAttach`, or it is held waiting for the debugger, which an explicit attach never
+     * is: it comes as the target is created, before anyone could ask for it), claimed here for the daemon;
      * under a session, one whose parent is the daemon's, which ownership has already given to the daemon.
      */
     function isOwnAutoAttach(sessionId: string, targetId: string, parentSessionId: string | undefined) {
@@ -123,7 +126,7 @@ export function createBrandOverride(params: CreateBrandOverrideParams): BrandOve
             throw new TypeError('Target.createTarget gave no target id');
         }
         try {
-            const sessionId = await attach(targetId);
+            const sessionId = await attachTargetSession({ send, ownership, originator: { type: 'daemon' }, targetId });
             await send('Page.navigate', { url: IDENTITY_PAGE_URL }, sessionId);
             const reply = await send(
                 'Runtime.evaluate',
@@ -141,21 +144,6 @@ export function createBrandOverride(params: CreateBrandOverrideParams): BrandOve
                 logger.warn('The identity page could not be closed', { error }),
             );
         }
-    }
-
-    async function attach(targetId: string) {
-        const release = ownership.expectAttach({ type: 'daemon' }, targetId);
-        let reply: unknown;
-        try {
-            reply = await send('Target.attachToTarget', { targetId, flatten: true });
-        } finally {
-            release();
-        }
-        const sessionId = isPlainObject(reply) ? reply['sessionId'] : undefined;
-        if (typeof sessionId !== 'string') {
-            throw new TypeError('Target.attachToTarget gave no session id');
-        }
-        return sessionId;
     }
 }
 
@@ -177,7 +165,7 @@ function readIdentityValue(value: unknown): [string, UserAgentMetadata] | null {
         typeof mobile !== 'boolean' ||
         typeof bitness !== 'string' ||
         typeof wow64 !== 'boolean' ||
-        !isStringList(formFactors)
+        !isStringArray(formFactors)
     ) {
         return null;
     }
@@ -207,8 +195,4 @@ function isBrandList(value: unknown): value is BrandVersion[] {
                 isPlainObject(item) && typeof item['brand'] === 'string' && typeof item['version'] === 'string',
         )
     );
-}
-
-function isStringList(value: unknown): value is string[] {
-    return Array.isArray(value) && value.every((item: unknown) => typeof item === 'string');
 }

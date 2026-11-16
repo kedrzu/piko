@@ -17,6 +17,7 @@ import { withTimeout } from '@nzyme/utils/withTimeout.js';
 import { BROWSER_PROXY_PORT, DOWNLOADS_FOLDER, POWERAGENTS_DATA_ROOT, POWERAGENTS_LIMA_HOME } from '../env.js';
 import { isErrorCode } from '../utils/isErrorCode.js';
 import { isRealFolder } from '../utils/isRealFolder.js';
+import { attachTargetSession } from './attachTargetSession.js';
 import { buildChromiumArgs } from './buildChromiumArgs.js';
 import { CdpError } from './CdpTypes.js';
 import type { CdpErrorReply, CdpEvent } from './CdpTypes.js';
@@ -219,17 +220,7 @@ export const BrowserService = defineService({
 
         /** Runs `action` on a session of the daemon's own, so its events never reach a client; detaches afterwards. */
         async function withDaemonSession<T>(targetId: string, action: (sessionId: string) => Promise<T>) {
-            const release = ownership.expectAttach({ type: 'daemon' }, targetId);
-            let reply: unknown;
-            try {
-                reply = await send('Target.attachToTarget', { targetId, flatten: true });
-            } finally {
-                release();
-            }
-            const sessionId = isPlainObject(reply) ? reply['sessionId'] : undefined;
-            if (typeof sessionId !== 'string') {
-                throw new TypeError('Target.attachToTarget gave no session id');
-            }
+            const sessionId = await attachTargetSession({ send, ownership, originator: { type: 'daemon' }, targetId });
             ownership.claimSession({ type: 'daemon' }, sessionId, targetId);
             try {
                 return await action(sessionId);
