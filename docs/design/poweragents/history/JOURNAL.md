@@ -244,3 +244,9 @@ Append-only. One line per turn that settled something, was rejected, or got an a
   `instructions`. Asked owner what "techniczny plik używany w różnych sytuacjach" means for PROJECT.md.
 - 2026-11-16 — Owner confirmed: PROJECT.md may be shown by the app where it explains a project (D47 sharpened); the
   check's scope agreed, recorded as D48. Blocking questions closed; next: rightsize before proposing to close.
+- 2026-11-16 — Rightsize (three passes) put to the owner, who took every recommendation and dropped PROJECT.md:
+  plugins keep one shared library environment, only setups get their own (D44); plain `/<skill>` for setup skills,
+  copies need the project id (D45); Python per-script PEP 723 headers, agent installs a missing setup, daemon only at
+  sandbox rebuild (D46); only `.poweragents/AGENTS.md`, no PROJECT.md (D47); check covers schedule commands only
+  (D48). Old forms to history; plugins.md updated. Kept without asking (owner already chose): programs declared per
+  project, shared caches, an agent-facing AGENTS.md. Ready to propose closing.

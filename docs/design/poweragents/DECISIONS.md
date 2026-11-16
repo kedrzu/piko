@@ -909,18 +909,16 @@ are a later design: the agent would turn a project's setup into one once the per
 ## D44
 
 **Programs — Linux system packages and plugins' CLIs — are installed once for the whole sandbox, on one `PATH`, while
-any installed plugin or any project's setup declares them. Libraries — npm and Python packages — are installed
-separately for each place that holds code: each plugin, and each project's `.poweragents/`. Code uses only the
-libraries its own place declares: a project's script does not use a library a plugin brought, even in the same project.
-Every install draws from one shared cache, so a package used in several places is downloaded and stored once.**
-(2026-11-15, design agent proposal, owner agreed)
+any installed plugin or any project's setup declares them. Plugins' libraries stay in the one shared environment the
+daemon builds today. A project's setup has its own libraries, and its scripts use only those: never a library a plugin
+brought, even in the same project. Every install draws from shared caches (Bun's, uv's) on the sandbox's volume, so a
+package used in several places is downloaded and stored once.** (2026-11-16, owner, simplified at the rightsize review)
 
-**Why.** A script finds its libraries from where its file lies, not from the project the agent is working in, so
-libraries already belong to places that hold code. A script that borrowed a plugin's library would break silently when
-the plugin is removed or changes that library's version; and two plugins in one project cannot clash over a version.
-Programs have one version each anyway: a bundled plugin has one version, and apt carries one version of a package.
-
-**Rejected.**
+**Why.** A script finds its libraries from where its file lies, not from the project the agent is working in, so a
+project's libraries already belong to its setup. A script that borrowed a plugin's library would break silently when
+the plugin is removed or changes that library's version. Plugins need no separate libraries: they are all ours and
+ship with the app ([D36](#d36)), so a version clash between them is caught before release. Programs have one version
+each anyway.
 
 > **Checked 2026-11-15:** Bun resolves a bare import by walking up from the importing file, ignoring the working
 > directory (tested with Bun 1.4.4: `bun /abs/a/scripts/t.ts` run from `b/` took `a/node_modules`), and honours
@@ -930,89 +928,85 @@ Programs have one version each anyway: a bundled plugin has one version, and apt
 > installs on one file system (an OS limit; the docs only say `copyfile` is the fallback).
 >
 > **Checked 2026-11-15:** `uv run script.py` builds an environment from a PEP 723 header with no project files
-> ([uv scripts guide](https://docs.astral.sh/uv/guides/scripts/)); a project's environment can live elsewhere through
-> `UV_PROJECT_ENVIRONMENT`, one path per project ([uv project config](https://docs.astral.sh/uv/concepts/projects/config/)).
-> uv's default link mode on Linux is clone, not hardlink — "Defaults to clone (also known as Copy-on-Write) on macOS
-> and Linux" ([uv settings](https://docs.astral.sh/uv/reference/settings/#link-mode)) — and it copies when it cannot
-> link, so `UV_LINK_MODE=hardlink` has to be set unless the volume supports clones.
+> ([uv scripts guide](https://docs.astral.sh/uv/guides/scripts/)). uv's default link mode on Linux is clone, not
+> hardlink — "Defaults to clone (also known as Copy-on-Write) on macOS and Linux"
+> ([uv settings](https://docs.astral.sh/uv/reference/settings/#link-mode)) — and it copies when it cannot link, so
+> `UV_LINK_MODE=hardlink` has to be set unless the volume supports clones.
 
 **Rejected.**
 
-- One shared environment for all libraries, as today — every library version shared by every plugin and project.
+- Separate libraries for each plugin too ([history](history/DECISIONS.md#d44)) — guards against a version clash
+  between plugins we build and ship together ourselves (owner, 2026-11-16, rightsize review).
 - A project's scripts using the libraries of the plugins installed in it — breaks silently when the plugin changes.
 
 ## D45
 
-**A command for a skill of the project's own setup is `/:<skill>` — the plugin's name left empty means "this
-project's setup". The daemon resolves it in the project the conversation belongs to and, as for a plugin's command
-([D42](#d42)), stops the conversation with a fixed message when that project's setup has no such skill.** (2026-11-15,
-owner, on the design agent's proposal)
+**A command for a skill of the project's own setup is its plain name, `/<skill>`. Every plugin command carries its
+plugin's name before a colon ([D42](#d42)), so a command without a colon can only mean the setup of the project the
+conversation belongs to. The daemon resolves it there and, as for a plugin's command, stops the conversation with a
+fixed message when the setup has no such skill. A setup skill's name has no colon.** (2026-11-16, owner, at the
+rightsize review)
 
-**Why.** One grammar for every command: before the colon is where the skill comes from. A fixed form survives renaming
-the project, and the daemon can still decide deterministically that a skill is missing.
+**Why.** The form alone tells the daemon where to look, so it decides deterministically that a skill is missing, and
+the name survives renaming the project.
 
-> **Checked 2026-11-15:** OpenCode's skill id and name are plain branded strings with no character validation
-> ([`packages/schema/src/skill.ts`](https://github.com/sst/opencode/blob/dev/packages/schema/src/skill.ts), `dev`
-> branch); the folder scan skips only names starting with `.`. Unchecked: whether permission matching
-> (`Permission.evaluate("skill", id, …)`, wildcard patterns) treats a leading `:` specially — to try live with the
-> per-session deny rules before building. A folder named `:sort` is invalid on a Windows host, like every
-> `<plugin>:<skill>` copy ([plugin runtime ADR](../../decisions/plugin-runtime-in-the-sandbox.md)).
+**Consequence.** Two projects may each have a skill called `sort`, so the daemon's copies of setup skills
+([plugin runtime ADR](../../decisions/plugin-runtime-in-the-sandbox.md)) need the project's id in their folder name,
+with the daemon mapping `/sort` in a conversation to its project's copy. How exactly is for the build to settle,
+together with whether OpenCode can find a project's skills in its folder by itself (unchecked).
 
 **Rejected.**
 
-- No prefix (`/sort`) — the daemon cannot tell a removed skill from one that never existed.
-- A word as prefix (`/project:sort`) — owner preferred a special character.
-- `/.sort` (reads as "here", but follows no existing form) and `/~sort` (`~` means home).
+- `/:<skill>`, an empty plugin name ([history](history/DECISIONS.md#d45)) — a folder named `:sort` is invalid on
+  Windows and a leading `:` in permission matching was unchecked, for no gain once a missing colon already marks the
+  project's setup (owner, 2026-11-16).
+- A word as prefix (`/project:sort`) — owner preferred no word.
 
 ## D46
 
-**A project's setup declares its libraries in the files the agent already knows, inside `.poweragents/`:
-`package.json` with `bun.lock`, and one `pyproject.toml` with `uv.lock` for the whole project. The installed packages
-live in the sandbox's volume, one folder per project id; `.poweragents/node_modules` and `.poweragents/.venv` are
-symlinks to it. The agent installs libraries itself, with `bun add` / `uv add` in `.poweragents/`, which changes the
-declaration and installs in one step; the daemon only rebuilds from the files — when the sandbox is rebuilt or a
-project arrives from elsewhere — and recreates the symlinks. System programs are listed in a small file in
-`.poweragents/`, and the agent asks the daemon to apply it with `poweragents apply`.** (2026-11-16, owner; one
-`pyproject.toml` per project rather than per-script headers is the design agent's proposal, not yet confirmed)
+**A project's setup declares its JS libraries in `.poweragents/package.json` with `bun.lock`; `.poweragents/node_modules`
+is a symlink to a folder for that project, by its id, in the sandbox's volume. Its Python scripts declare their
+dependencies in their own header (PEP 723) and run with `uv run`, which builds their environments in uv's cache in the
+sandbox. The agent installs libraries itself (`bun add` in `.poweragents/`), and when it finds a setup not installed —
+e.g. a project that came from another machine — it runs `bun install` itself. The daemon reinstalls every project's
+libraries only when it rebuilds the sandbox. System programs are listed in a small file in `.poweragents/`, and the
+agent asks the daemon to apply it with `poweragents apply`.** (2026-11-16, owner; simplified at the rightsize review)
 
 **Why.** The agent is fluent in these tools, and the files remain the only source the environment is rebuilt from
 ([D25](#d25)), so a daemon in between would protect nothing. Lockfiles here are the source, not a record of the result:
-the agent writes them ([D26](#d26)). Folders named by project id survive renaming the project. One Python file per
-project keeps "what this project needs" in one place and matches JS. System programs need the whole sandbox rebuilt
-from declarations, which only the daemon does.
+the agent writes them ([D26](#d26)). A folder named by project id survives renaming the project. Python's per-script
+headers need no symlink, no `--project` flag and nothing from the daemon. System programs need the whole sandbox
+rebuilt from declarations, which only the daemon does.
 
 > **Checked 2026-11-16 (macOS, Bun 1.4.4, uv 0.13.0):** with `.poweragents/node_modules` a symlink to another folder,
 > `bun add is-odd@3.0.1` installed there and `bun <abs>/.poweragents/scripts/t.ts` resolved it from any working
-> directory. With `.poweragents/.venv` a symlink, `uv add six==1.16.0` installed there; `uv run t.py` from
-> `.poweragents/scripts/` found the project, but from the project's root it needs `uv run --project .poweragents`, which
-> the agent's instructions say. Not yet repeated in the Linux sandbox on its volume.
+> directory. Not yet repeated in the Linux sandbox on its volume, nor with the symlink dangling (a project from another
+> machine) before `bun install`.
 
 **Open.** The format of the programs file waits for how a system program is installed ([D26](#d26), deferred). How
 iCloud and Google Drive treat a dangling symlink is unchecked; it returns with cloud drives ([D22](#d22)).
 
 **Rejected.**
 
+- One `pyproject.toml` with `uv.lock` per project and `.venv` a symlink ([history](history/DECISIONS.md#d46)) — needs
+  the symlink, `uv run --project .poweragents` everywhere and the daemon rebuilding Python; its argument, one place
+  showing what the project needs, was the design agent's (owner, 2026-11-16, rightsize review).
+- The daemon detecting a project that arrived from elsewhere and installing it — no way to detect it was ever
+  described; the agent installing on first need costs one install's time.
 - The agent edits the files and asks the daemon to install, as with plugins — a go-between with no protection behind
   it.
-- Dependencies declared in each Python script's header (PEP 723, `uv run` builds an environment per script) — no single
-  place showing what the project needs, and unlike JS.
 - `UV_PROJECT_ENVIRONMENT` pointing at the volume — one value for the whole shell, while every project needs its own.
 
 ## D47
 
-**A project with a setup has two descriptions of it, one per reader. `PROJECT.md`, in the project's folder, is for the
-person: in plain words and their language, what the project can do, what was installed for it and why. It is not
-loaded into the agent's conversations; the app may show it to the person wherever it explains a project or what is
-installed. `.poweragents/AGENTS.md` is for the agent: what the setup holds and how to use
-it — which skills and scripts exist, how to run them (`uv run --project .poweragents …`) — with details in references
-beside it and in the setup's own files. It is loaded into every conversation of the project. The agent keeps both
-current whenever it changes the setup.** (2026-11-16, owner; the file name and place of the agent's text are the design
-agent's proposal)
+**A project with a setup has `.poweragents/AGENTS.md`, for the agent: what the setup holds and how to use it — which
+skills and scripts exist and how to run them — with details in references beside it and in the setup's own files. It
+is loaded into every conversation of the project, and the agent keeps it current whenever it changes the setup. There
+is no separate description for the person: asked what a project can do, the agent explains it from that file.**
+(2026-11-16, owner)
 
-**Why.** Someone opening the project should see what is there without opening a hidden folder, against the line that
-nothing is a black box ([D9](#d9)); a text written for them is not a good instruction for the agent, and the reverse.
-The agent's text stays in `.poweragents/` with the rest of what only the agent needs, so the only file the person sees
-is one written for them.
+**Why.** The agent needs to know a setup exists before it reads `.poweragents/`. A text for the person had no case
+strong enough to justify a second file to keep in step; it can be added when one appears.
 
 > **Checked 2026-11-16:** on OpenCode's `dev` branch, a relative entry in a global `opencode.json` `instructions` is
 > searched from the session's directory up to the project root — "Relative patterns search upward from the location to
@@ -1022,32 +1016,29 @@ is one written for them.
 > automatically. Not checked on 2.2.7, the version the sandbox runs; and its file watcher misses changes made from the
 > host until a write from the VM side wakes it ([plugin runtime ADR](../../decisions/plugin-runtime-in-the-sandbox.md)).
 
-**Consequence.** Two texts can drift apart; nothing checks prose, so keeping them in step rests on the agent's
-instructions.
-
 **Rejected.**
 
-- One text for both readers, `PROJECT.md` loaded into every conversation ([history](history/DECISIONS.md#d47)) —
-  `PROJECT.md` is for the person (owner, 2026-11-16).
-- The description inside `.poweragents/`, shown on the project's page in the app — the person could see and correct
-  it only through a screen we would have to build (owner, 2026-11-16).
-- The agent's `AGENTS.md` in the project's folder, where OpenCode finds it unaided — a second file in the person's view
-  that is not written for them.
+- `PROJECT.md` in the project's folder, for the person, besides the agent's file
+  ([history](history/DECISIONS.md#d47)) — not enough reason for a second text to keep in step; added later if needed
+  (owner, 2026-11-16).
+- One text for both readers, `PROJECT.md` loaded into every conversation — a text for the person is a poor instruction
+  for the agent (owner, 2026-11-16).
+- The agent's `AGENTS.md` in the project's folder, where OpenCode finds it unaided — a technical file in the person's
+  view.
 
 ## D48
 
-**`poweragents check`, run in the sandbox, tells the agent whether a project is consistent. The agent's instructions
-have it run the check after every change to a project's setup or schedules. It checks only what needs no reading of
-prose: every schedule's command exists (`/<plugin>:<skill>` of a plugin installed and visible in that project, or
-`/:<skill>` of its setup); the declarations install (lockfiles match `package.json` and `pyproject.toml`, the programs
-file parses); every skill file has a valid header and name.** (2026-11-16, owner's idea, scope proposed by the design
-agent and agreed)
+**`poweragents check`, run in the sandbox, tells the agent whether every schedule of a project calls a command that
+exists: `/<plugin>:<skill>` of a plugin installed and visible in that project, or `/<skill>` of its setup. The agent's
+instructions have it run the check after every change to a project's setup or schedules.** (2026-11-16, owner's idea;
+scope narrowed at the rightsize review)
 
 **Why.** The agent changes setups and schedules on its own, and a schedule calling a skill it renamed fails only at the
-next run, possibly at night. A check it can run catches that while the conversation is still open. Checks that judge
-prose would guess.
+next run, possibly at night. A check it can run catches that while the conversation is still open.
 
 **Rejected.**
 
-- Checking that skills refer to scripts that exist, or that `PROJECT.md` and `AGENTS.md` describe the setup as it is —
-  needs reading prose; the check would guess.
+- Also checking that lockfiles match and skill headers parse ([history](history/DECISIONS.md#d48)) — `bun add` keeps
+  lockfiles in step and OpenCode validates headers when it loads a skill (owner, 2026-11-16, rightsize review).
+- Checking that skills refer to scripts that exist, or that `AGENTS.md` describes the setup as it is — needs reading
+  prose; the check would guess.

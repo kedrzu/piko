@@ -55,21 +55,21 @@ agent wrote — skills, scripts, which libraries and programs they need — and 
 moves as a handful of text files.
 
 Programs such as Blender or `ffmpeg` are installed once for the whole sandbox, as long as some plugin or some project
-needs them. Libraries are installed separately for each plugin and each project, all from one shared cache, and a
-project's script uses only the libraries its own setup names, never one a plugin happened to bring
-([programs shared, libraries per place](DECISIONS.md#d44)). A skill of the project's setup is called with an empty
-plugin name, `/:sort`, and the daemon stops a conversation whose project has no such skill, as it does for a missing
-plugin ([commands of the project's setup](DECISIONS.md#d45)).
+needs them. Plugins share one set of libraries, since we build them all and resolve any clash before release; a
+project's setup has its own, and its scripts use only those, never one a plugin happened to bring
+([programs shared, libraries per project](DECISIONS.md#d44)). A skill of the project's setup is called by its plain
+name, `/sort`: every plugin command carries its plugin's name before a colon, so one without it can only mean this
+project's setup, and the daemon stops a conversation whose project has no such skill, as it does for a missing plugin
+([commands of the project's setup](DECISIONS.md#d45)).
 
-Inside `.poweragents/` the files are the ones the agent knows from any software project — `package.json`,
-`pyproject.toml` and their lockfiles — and it installs libraries itself with `bun add` or `uv add`; the installed
-packages sit in the sandbox, reached through two links, and the daemon rebuilds them from the files whenever the sandbox
-is rebuilt. System programs are listed in a small file the daemon applies on request
-([how a setup declares what it needs](DECISIONS.md#d46)). A project with a setup carries two descriptions of it: a
-`PROJECT.md` in its folder, for the person, saying what the project can do and what was installed for it, and an
-`AGENTS.md` inside `.poweragents/`, for the agent, loaded into every conversation there
-([one text per reader](DECISIONS.md#d47)). After changing a setup or a schedule, the agent runs a check that every
-schedule's command exists and every declaration installs ([what the check covers](DECISIONS.md#d48)).
+Inside `.poweragents/` the agent works as in any software project. JS libraries go in a `package.json` with its
+lockfile, installed with `bun add` into the sandbox through a link; a Python script names its own dependencies in its
+header and runs with `uv run`. When a setup is not installed yet — a project brought from another machine — the agent
+installs it; the daemon reinstalls every setup only when it rebuilds the sandbox. System programs are listed in a small
+file the daemon applies on request ([how a setup declares what it needs](DECISIONS.md#d46)). The agent learns what a
+setup holds from an `AGENTS.md` inside `.poweragents/`, loaded into every conversation there; asked what a project can
+do, it explains from that file ([the agent's description of a setup](DECISIONS.md#d47)). After changing a setup or a
+schedule, the agent runs a check that every schedule's command exists ([what the check covers](DECISIONS.md#d48)).
 
 ## Installing without asking
 
