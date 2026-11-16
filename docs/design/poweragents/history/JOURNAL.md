@@ -250,3 +250,7 @@ Append-only. One line per turn that settled something, was rejected, or got an a
   sandbox rebuild (D46); only `.poweragents/AGENTS.md`, no PROJECT.md (D47); check covers schedule commands only
   (D48). Old forms to history; plugins.md updated. Kept without asking (owner already chose): programs declared per
   project, shared caches, an agent-facing AGENTS.md. Ready to propose closing.
+- 2026-11-16 — Owner closed the project-setup round (PR #61). To confirm live before building: `node_modules` symlink
+  on the sandbox volume (and dangling), `.poweragents/AGENTS.md` via `instructions` on OpenCode 2.2.7, how setup skill
+  copies avoid colliding across projects (D45). Deferred: programs file format (D26), the person's own plugins. Code
+  still implements agent-written plugins (D40 divergence).
