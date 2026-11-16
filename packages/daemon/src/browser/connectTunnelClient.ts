@@ -6,6 +6,7 @@ import { CdpError } from './CdpTypes.js';
 import type { CdpEvent } from './CdpTypes.js';
 import { checkCdpRequest } from './checkCdpRequest.js';
 import type { CdpParams } from './checkCdpRequest.js';
+import { createIsolatedWorlds } from './createIsolatedWorlds.js';
 import { readTargetInfo } from './readTargetInfo.js';
 import { stageUpload } from './stageUpload.js';
 
@@ -63,7 +64,8 @@ const TARGET_EVENTS = new Set([
 export function connectTunnelClient(params: ConnectTunnelClientParams): TunnelClient {
     const { clientId, conversationId, socket, browser, dataRoot, uploadsFolder, logger } = params;
     const { ownership } = browser;
-    const context = { clientId, conversationId, ownership, dataRoot };
+    const worlds = createIsolatedWorlds(browser);
+    const context = { clientId, conversationId, ownership, worlds, dataRoot };
 
     /** Top-level sessions this client opened, detached when it goes. */
     const sessions = new Set<string>();
@@ -137,6 +139,14 @@ export function connectTunnelClient(params: ConnectTunnelClientParams): TunnelCl
                 case 'upload':
                     touchSession(decision.sessionId);
                     sendReply(id, await upload(decision.files, decision.params, decision.sessionId));
+                    return;
+                case 'isolate':
+                    touchSession(decision.call.sessionId);
+                    sendReply(id, await worlds.send(decision.call));
+                    return;
+                case 'createWorld':
+                    touchSession(decision.sessionId);
+                    sendReply(id, await worlds.createClientWorld(decision.sessionId, decision.world));
                     return;
                 case 'forward':
                     touchSession(decision.sessionId);
@@ -252,6 +262,7 @@ export function connectTunnelClient(params: ConnectTunnelClientParams): TunnelCl
         if (closed) {
             return;
         }
+        forgetDetached(event);
         if (event.sessionId != null) {
             if (isOwnSession(event.sessionId)) {
                 sendEvent(event);
@@ -273,6 +284,14 @@ export function connectTunnelClient(params: ConnectTunnelClientParams): TunnelCl
         }
         if (TARGET_EVENTS.has(event.method)) {
             onTargetEvent(event, eventParams);
+        }
+    }
+
+    /** Drops what `worlds` holds for a detached session; a nested session's detach comes on its parent session. */
+    function forgetDetached(event: CdpEvent) {
+        const sessionId = isPlainObject(event.params) ? event.params['sessionId'] : undefined;
+        if (event.method === 'Target.detachedFromTarget' && typeof sessionId === 'string') {
+            worlds.forget(sessionId);
         }
     }
 
