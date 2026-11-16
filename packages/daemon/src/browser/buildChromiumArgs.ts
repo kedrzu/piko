@@ -13,9 +13,10 @@ export interface BuildChromiumArgsOptions {
  * through the daemon's proxy. `<-loopback>` removes the proxy's implicit bypass of loopback, so `localhost` goes to the
  * proxy too and is refused there; WebRTC may use UDP only through the proxy, which has none, and QUIC is off because the
  * proxy carries no UDP. `AutomationControlled` off: the pipe alone makes Chrome report `navigator.webdriver = true` to
- * every page, and the flag turns that off without giving up the pipe (stealth-browsing D3). `--use-mock-keychain` keeps the macOS Keychain out: without it the first network request waits
- * on a Keychain access prompt for the cookie key, which either steals focus or, from a background daemon, never
- * resolves; the profile's cookies are then protected by the private folder they live in, not by the Keychain.
+ * every page, and the flag turns that off without giving up the pipe (stealth-browsing D3). `--use-mock-keychain` keeps
+ * the macOS Keychain out: without it the first network request waits on a Keychain access prompt for the cookie key,
+ * which either steals focus or, from a background daemon, never resolves; the profile's cookies are then protected by
+ * the private folder they live in, not by the Keychain.
  * `PaintHolding` off: after a navigation Chrome drops input until the new page is first painted, and a page in a
  * minimized window is never painted, so without it the agent's clicks and keys would never reach a page it opened
  * (checked 2026-11-14 on Chrome for Testing 157: a click on a minimized example.com lands only with it disabled).
