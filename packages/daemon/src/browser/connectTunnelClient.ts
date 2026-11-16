@@ -65,7 +65,7 @@ export function connectTunnelClient(params: ConnectTunnelClientParams): TunnelCl
     const { clientId, conversationId, socket, browser, dataRoot, uploadsFolder, logger } = params;
     const { ownership } = browser;
     const worlds = createIsolatedWorlds(browser);
-    const context = { clientId, conversationId, ownership, worlds, dataRoot };
+    const context = { clientId, conversationId, ownership, dataRoot };
 
     /** Top-level sessions this client opened, detached when it goes. */
     const sessions = new Set<string>();
@@ -177,8 +177,6 @@ export function connectTunnelClient(params: ConnectTunnelClientParams): TunnelCl
                 return createTarget(forwardParams);
             case 'Target.attachToTarget':
                 return attachToTarget(forwardParams);
-            case 'Page.createIsolatedWorld':
-                return createIsolatedWorld(forwardParams, sessionId);
             default:
                 return browser.send(method, forwardParams, sessionId);
         }
@@ -256,19 +254,11 @@ export function connectTunnelClient(params: ConnectTunnelClientParams): TunnelCl
         return reply;
     }
 
-    async function createIsolatedWorld(worldParams: CdpParams, sessionId: string | undefined) {
-        const reply = await browser.send('Page.createIsolatedWorld', worldParams, sessionId);
-        if (sessionId != null) {
-            worlds.recordWorld(sessionId, reply);
-        }
-        return reply;
-    }
-
     function onEvent(event: CdpEvent) {
         if (closed) {
             return;
         }
-        observeWorlds(event);
+        forgetDetached(event);
         if (event.sessionId != null) {
             if (isOwnSession(event.sessionId)) {
                 sendEvent(event);
@@ -293,16 +283,10 @@ export function connectTunnelClient(params: ConnectTunnelClientParams): TunnelCl
         }
     }
 
-    /** Feeds `worlds` the sessions of this client: auto-attached ones carry their parent's `sessionId`. */
-    function observeWorlds(event: CdpEvent) {
-        const eventParams = isPlainObject(event.params) ? event.params : {};
-        const sessionId = eventParams['sessionId'];
-        if (typeof sessionId !== 'string') {
-            return;
-        }
-        if (event.method === 'Target.attachedToTarget' && isOwnSession(sessionId)) {
-            worlds.observeAttached(eventParams);
-        } else if (event.method === 'Target.detachedFromTarget') {
+    /** Drops what `worlds` cached for a detached session; a nested session's detach comes on its parent session. */
+    function forgetDetached(event: CdpEvent) {
+        const sessionId = isPlainObject(event.params) ? event.params['sessionId'] : undefined;
+        if (event.method === 'Target.detachedFromTarget' && typeof sessionId === 'string') {
             worlds.forget(sessionId);
         }
     }

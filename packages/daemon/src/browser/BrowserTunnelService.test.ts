@@ -23,8 +23,13 @@ const HEADLESS_ARGS = ['--headless=new', '--no-sandbox'];
 const TIMEOUT_MS = 20_000;
 const TOKEN = 'abcdefghijklmnopqrstuvwxyz012345';
 
-/** A page the client serves itself through `Fetch`, so it never reaches the network. */
+/** Pages the client serves itself through `Fetch` (`servePages`), so they never reach the network. */
 const DETECTOR_URL = 'https://detector.test/';
+/** The detector with two frames: one of its own origin, and one of another origin of its site, hence its process. */
+const FRAMES_URL = 'https://detector.test/frames';
+const SAME_ORIGIN_FRAME_URL = 'https://detector.test/frame';
+const CROSS_ORIGIN_FRAME_URL = 'https://detector.test:8443/frame';
+const WORKER_URL = 'https://detector.test/worker';
 /**
  * The page's own detector, after rebrowser's bot-detector: an Error logged with `console.debug` is serialised only
  * while Runtime is enabled, which formats its stack through `Error.prepareStackTrace`. (Its `name` is read either
@@ -32,17 +37,33 @@ const DETECTOR_URL = 'https://detector.test/';
  * looks for the globals the client's code sets and counts main-world `querySelector` calls, and writes what it saw to
  * the DOM, where the client reads it.
  */
-const DETECTOR_HTML = `<!doctype html><html><body><h1>Detector</h1><pre id="detections"></pre><script>
+const DETECTOR_HTML = detectorHtml('');
+/** A framed page's own detector: whether the client's global reached the frame's world, in `#mark`. */
+const FRAME_HTML = `<!doctype html><html><body><p id="mark"></p><script>
+    setInterval(() => { document.getElementById('mark').textContent = '__fnMark' in window ? 'seen' : 'clean'; }, 50);
+</script></body></html>`;
+/** A page with a worker; what the worker posts lands in `data-worker`: `alive` at start, `reached` if code reaches it. */
+const WORKER_HTML = `<!doctype html><html><body><script>
+    const worker = new Worker(URL.createObjectURL(new Blob(["postMessage('alive'); self.reach = () => postMessage('reached');"])));
+    worker.onmessage = event => { document.body.dataset.worker = event.data; };
+</script></body></html>`;
+
+/** The detector page, with `body` after it. */
+function detectorHtml(body: string) {
+    return `<!doctype html><html><body><h1>Detector</h1><pre id="detections"></pre>${body}<script>
     const detections = { runtime: 0, globals: [], querySelector: 0 };
     const querySelector = Document.prototype.querySelector;
     Document.prototype.querySelector = function (...args) { detections.querySelector++; return querySelector.apply(this, args); };
     Error.prepareStackTrace = (error, frames) => { detections.runtime++; return 'stack'; };
     setInterval(() => {
         console.debug(new Error('probe'));
-        detections.globals = ['__agentMark', '__initMark', '__fnMark', '__agentBinding'].filter(name => name in window);
+        detections.globals = ['__agentMark', '__initMark', '__loadMark', '__fnMark', '__agentBinding'].filter(
+            name => name in window,
+        );
         document.getElementById('detections').textContent = JSON.stringify(detections);
     }, 50);
 </script></body></html>`;
+}
 
 /** What `DETECTOR_HTML` writes to its page. */
 interface DetectorFindings {
@@ -194,20 +215,19 @@ test('a page script sees no enabled Runtime and nothing the client runs, while t
     const client = await connect(port, 'conv-a');
     const targetId = await createTarget(client);
     const sessionId = await attach(client, targetId);
-    serveDetectorPage(client, sessionId);
-    await client.call('Fetch.enable', { patterns: [{ urlPattern: `${DETECTOR_URL}*` }] }, sessionId);
-    await client.call('Page.enable', {}, sessionId);
+    await servePages(client, sessionId, { [DETECTOR_URL]: DETECTOR_HTML });
 
     // What agent-browser sends: the enables, an init script, a binding, then evaluation in every form.
     await client.call('Runtime.enable', {}, sessionId);
     await client.call('Console.enable', {}, sessionId);
     await client.call('Page.addScriptToEvaluateOnNewDocument', { source: 'window.__initMark = 1;' }, sessionId);
+    await client.call('Page.addScriptToEvaluateOnLoad', { scriptSource: 'window.__loadMark = 1;' }, sessionId);
     await client.call('Runtime.addBinding', { name: '__agentBinding' }, sessionId);
     await navigate(client, sessionId, DETECTOR_URL);
     expect(await evaluate(client, sessionId, "window.__agentMark = 1; document.querySelector('h1').textContent")).toBe(
         'Detector',
     );
-    expect(await evaluate(client, sessionId, 'window.__initMark')).toBe(1);
+    expect(await evaluate(client, sessionId, '[window.__initMark, window.__loadMark]')).toEqual([1, 1]);
     const tree = await client.call('DOM.getDocument', {}, sessionId);
     const root = isPlainObject(tree) && isPlainObject(tree['root']) ? tree['root']['nodeId'] : undefined;
     const found = await client.call('DOM.querySelector', { nodeId: root, selector: 'h1' }, sessionId);
@@ -228,9 +248,22 @@ test('a page script sees no enabled Runtime and nothing the client runs, while t
         sessionId,
     );
     expect(isPlainObject(called) && isPlainObject(called['result']) ? called['result']['value'] : null).toBe('H1');
-    await expect(client.call('Runtime.evaluate', { expression: '1', contextId: 1 }, sessionId)).rejects.toThrow(
-        'isolated world',
+    // No context id is taken from the client, not even one of a world it created: ids are reused across processes.
+    const frameTree = await client.call('Page.getFrameTree', {}, sessionId);
+    const frame =
+        isPlainObject(frameTree) && isPlainObject(frameTree['frameTree']) ? frameTree['frameTree']['frame'] : undefined;
+    const world = await client.call(
+        'Page.createIsolatedWorld',
+        { frameId: isPlainObject(frame) ? frame['id'] : undefined, worldName: 'own' },
+        sessionId,
     );
+    const ownContextId = isPlainObject(world) ? world['executionContextId'] : undefined;
+    expect(typeof ownContextId).toBe('number');
+    for (const contextId of [1, ownContextId]) {
+        await expect(client.call('Runtime.evaluate', { expression: '1', contextId }, sessionId)).rejects.toThrow(
+            'no context can be named',
+        );
+    }
 
     // A navigation in between: the next evaluation lands in the new document's world, where the init script ran.
     await navigate(client, sessionId, DETECTOR_URL);
@@ -248,6 +281,74 @@ test('a page script sees no enabled Runtime and nothing the client runs, while t
     await waitUntil(async () => isDetected(await readDetections(client, sessionId)), {
         timeoutMs: TIMEOUT_MS,
     });
+}, 30_000);
+
+test('a node of a framed page resolves into its own frame, out of reach of every page script', async () => {
+    const { port } = await startTunnel();
+    const client = await connect(port, 'conv-a');
+    const targetId = await createTarget(client);
+    const sessionId = await attach(client, targetId);
+    await servePages(client, sessionId, {
+        [FRAMES_URL]: detectorHtml(`<iframe src="/frame"></iframe><iframe src="${CROSS_ORIGIN_FRAME_URL}"></iframe>`),
+        [SAME_ORIGIN_FRAME_URL]: FRAME_HTML,
+        [CROSS_ORIGIN_FRAME_URL]: FRAME_HTML,
+    });
+    await navigate(client, sessionId, FRAMES_URL);
+
+    // agent-browser's refs: a backendNodeId, resolved with no context, then a function called on the object.
+    const tree = await client.call('DOM.getDocument', { depth: -1, pierce: true }, sessionId);
+    const marks = findNodes(isPlainObject(tree) ? tree['root'] : undefined, node => {
+        const attributes = node['attributes'];
+        return Array.isArray(attributes) && attributes[0] === 'id' && attributes[1] === 'mark';
+    });
+    expect(marks).toHaveLength(2);
+    const seen: unknown[] = [];
+    for (const backendNodeId of marks) {
+        seen.push(
+            await callOnNode(
+                client,
+                sessionId,
+                backendNodeId,
+                'function () { window.__fnMark = 1; return document.URL; }',
+            ),
+        );
+    }
+    expect(seen).toEqual([SAME_ORIGIN_FRAME_URL, CROSS_ORIGIN_FRAME_URL]);
+
+    await Bun.sleep(300);
+    const marked: unknown[] = [];
+    for (const backendNodeId of marks) {
+        marked.push(await callOnNode(client, sessionId, backendNodeId, 'function () { return this.textContent; }'));
+    }
+    expect(marked).toEqual(['clean', 'clean']);
+    const clean: DetectorFindings = { runtime: 0, globals: [], querySelector: 0 };
+    expect(await readDetections(client, sessionId)).toEqual(clean);
+}, 30_000);
+
+test("code sent to a worker's session never reaches the worker", async () => {
+    const { port } = await startTunnel();
+    const client = await connect(port, 'conv-a');
+    const targetId = await createTarget(client);
+    const sessionId = await attach(client, targetId);
+    await servePages(client, sessionId, { [WORKER_URL]: WORKER_HTML });
+    await navigate(client, sessionId, WORKER_URL);
+    await waitUntil(async () => (await evaluate(client, sessionId, 'document.body.dataset.worker')) === 'alive', {
+        timeoutMs: TIMEOUT_MS,
+    });
+
+    await client.call(
+        'Target.setAutoAttach',
+        { autoAttach: true, waitForDebuggerOnStart: false, flatten: true },
+        sessionId,
+    );
+    await waitUntil(() => findWorkerSession(client) != null, { timeoutMs: TIMEOUT_MS });
+    const workerSession = findWorkerSession(client);
+    await expect(client.call('Runtime.evaluate', { expression: 'reach()' }, workerSession)).rejects.toThrow(
+        'cannot run in a worker',
+    );
+
+    await Bun.sleep(300);
+    expect(await evaluate(client, sessionId, 'document.body.dataset.worker')).toBe('alive');
 }, 30_000);
 
 test('a closed socket detaches its sessions and leaves its pages', async () => {
@@ -413,8 +514,11 @@ async function evaluate(client: TestClient, sessionId: string, expression: strin
     return isPlainObject(result) ? result['value'] : undefined;
 }
 
-/** Answers every request the page makes on `sessionId` from `DETECTOR_HTML`, the document itself, a 404 the rest. */
-function serveDetectorPage(client: TestClient, sessionId: string) {
+/**
+ * Intercepts the page's requests on `sessionId` with `Fetch` and answers each from `pages` by URL, a 404 the rest;
+ * enables Page for its load events.
+ */
+async function servePages(client: TestClient, sessionId: string, pages: Record<string, string>) {
     client.socket.addEventListener('message', event => {
         const message: unknown = JSON.parse(String(event.data));
         if (
@@ -425,18 +529,73 @@ function serveDetectorPage(client: TestClient, sessionId: string) {
             return;
         }
         const { requestId, request } = message['params'];
-        const isDocument = isPlainObject(request) && request['url'] === DETECTOR_URL;
+        const url = isPlainObject(request) ? request['url'] : undefined;
+        const html = typeof url === 'string' && Object.hasOwn(pages, url) ? pages[url] : undefined;
         void client.call(
             'Fetch.fulfillRequest',
             {
                 requestId,
-                responseCode: isDocument ? 200 : 404,
+                responseCode: html == null ? 404 : 200,
                 responseHeaders: [{ name: 'Content-Type', value: 'text/html' }],
-                body: Buffer.from(isDocument ? DETECTOR_HTML : '').toString('base64'),
+                body: Buffer.from(html ?? '').toString('base64'),
             },
             sessionId,
         );
     });
+    await client.call('Fetch.enable', { patterns: [{ urlPattern: 'https://detector.test*' }] }, sessionId);
+    await client.call('Page.enable', {}, sessionId);
+}
+
+/** Resolves a node as agent-browser does, with no context, and calls `functionDeclaration` on it; its value. */
+async function callOnNode(client: TestClient, sessionId: string, backendNodeId: number, functionDeclaration: string) {
+    const resolved = await client.call('DOM.resolveNode', { backendNodeId }, sessionId);
+    const objectId =
+        isPlainObject(resolved) && isPlainObject(resolved['object']) ? resolved['object']['objectId'] : undefined;
+    const called = await client.call(
+        'Runtime.callFunctionOn',
+        { objectId, functionDeclaration, returnByValue: true },
+        sessionId,
+    );
+    return isPlainObject(called) && isPlainObject(called['result']) ? called['result']['value'] : undefined;
+}
+
+/** The backendNodeIds of the nodes `matches` picks in a `DOM.getDocument` tree, frames' documents included. */
+function findNodes(root: unknown, matches: (node: Record<string, unknown>) => boolean) {
+    const found: number[] = [];
+    const pending: unknown[] = [root];
+    while (pending.length > 0) {
+        const node = pending.shift();
+        if (!isPlainObject(node)) {
+            continue;
+        }
+        if (matches(node) && typeof node['backendNodeId'] === 'number') {
+            found.push(node['backendNodeId']);
+        }
+        const children = node['children'];
+        if (Array.isArray(children)) {
+            const list: readonly unknown[] = children;
+            pending.push(...list);
+        }
+        pending.push(node['contentDocument']);
+    }
+    return found;
+}
+
+/** The session a client was auto-attached to a worker on. */
+function findWorkerSession(client: TestClient) {
+    for (const message of client.messages) {
+        const params = message['params'];
+        if (
+            message['method'] === 'Target.attachedToTarget' &&
+            isPlainObject(params) &&
+            isPlainObject(params['targetInfo']) &&
+            params['targetInfo']['type'] === 'worker' &&
+            typeof params['sessionId'] === 'string'
+        ) {
+            return params['sessionId'];
+        }
+    }
+    return undefined;
 }
 
 async function navigate(client: TestClient, sessionId: string, url: string) {

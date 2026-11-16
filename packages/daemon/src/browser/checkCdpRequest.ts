@@ -2,7 +2,7 @@ import { assert } from '@nzyme/utils/assert.js';
 import { isPlainObject } from '@nzyme/utils/isPlainObject.js';
 
 import { ISOLATED_WORLD_NAME } from './createIsolatedWorlds.js';
-import type { IsolatedCall, IsolatedWorlds } from './createIsolatedWorlds.js';
+import type { IsolatedCall } from './createIsolatedWorlds.js';
 import type { TargetOwnership } from './createTargetOwnership.js';
 import { isAllowedUrl } from './isAllowedUrl.js';
 import { toHostUploadPath } from './toHostUploadPath.js';
@@ -14,8 +14,6 @@ export interface CdpRequestContext {
     /** The conversation the socket belongs to; it owns the pages the client may touch. */
     conversationId: string;
     ownership: Pick<TargetOwnership, 'getTargetOwner' | 'getSessionOriginator'>;
-    /** The client's isolated contexts and worker sessions. */
-    worlds: Pick<IsolatedWorlds, 'isIsolatedContext' | 'isWorker'>;
     /** The profile's data root on this computer, for upload paths. */
     dataRoot: string;
 }
@@ -32,7 +30,7 @@ export type CdpRequestDecision =
      * `sessionId` with `params` plus `files` set to the copies' paths.
      */
     | { type: 'upload'; files: string[]; params: CdpParams; sessionId: string }
-    /** Run it in the daemon's isolated world of the session's main frame (`IsolatedWorlds.send`). */
+    /** Run it in the daemon's isolated world (`IsolatedWorlds.send`). */
     | { type: 'isolate'; call: IsolatedCall }
     /** Answer the client with `result` without touching the browser. */
     | { type: 'reply'; result: CdpParams }
@@ -50,7 +48,7 @@ export type CdpRequestDecision =
  * Runtime, Console or Debugger domain is measurable from the page, so the daemon answers those itself and never enables
  * them; every evaluation, resolved node, init script and binding goes to an isolated world (`ISOLATED_WORLD_NAME`),
  * never the page's own. Runtime keeps what agent-browser calls and what works on objects it got back (properties,
- * releasing, awaiting); `compileScript` and `runScript` pass only into an isolated context. Cookies stay open on
+ * releasing, awaiting); `compileScript` and `runScript` are left out, as they need a context id. Cookies stay open on
  * purpose (Network's and Storage's cookie methods): the agent shares the profile's logins by design; the rest of
  * Storage (quota, origin data, shared storage, interest groups) is not needed. IO is limited to reading and closing
  * streams the page's own commands returned. Browser offers only `getVersion`; the rest of it (download behaviour,
@@ -88,8 +86,6 @@ const ALLOWED_METHODS: Record<string, '*' | readonly string[]> = {
         'releaseObjectGroup',
         'runIfWaitingForDebugger',
         'addBinding',
-        'compileScript',
-        'runScript',
     ],
     Security: '*',
     Storage: ['getCookies', 'setCookies', 'clearCookies'],
@@ -227,24 +223,19 @@ function checkMethod(request: CheckedRequest, context: CdpRequestContext): CdpRe
         case 'Debugger.disable':
             return { type: 'reply', result: {} };
         case 'Runtime.evaluate':
-            return checkIsolated(request, 'contextId', context);
+            return checkIsolated(request, 'contextId');
         case 'Runtime.callFunctionOn':
-            // An object came from an isolated world: nothing else hands out objects.
-            return params['objectId'] != null &&
-                params['executionContextId'] == null &&
-                params['uniqueContextId'] == null
-                ? forward(request)
-                : checkIsolated(request, 'executionContextId', context);
         case 'DOM.resolveNode':
-            return checkIsolated(request, 'executionContextId', context);
-        case 'Runtime.compileScript':
-        case 'Runtime.runScript':
-            return isIsolatedContext(request, params['executionContextId'], context)
-                ? forward(request)
-                : reject(`${method}: name the executionContextId of an isolated world`);
+            return checkIsolated(request, 'executionContextId');
         case 'Runtime.addBinding':
             // A binding is a global of the world it lands in; never the page's.
             return forward(request, { name: params['name'], executionContextName: ISOLATED_WORLD_NAME });
+        case 'Page.addScriptToEvaluateOnLoad':
+            // Deprecated and world-less: the page's own world would run it. The reply, `{ identifier }`, is the same.
+            return forward(
+                { ...request, method: 'Page.addScriptToEvaluateOnNewDocument' },
+                { source: params['scriptSource'], worldName: ISOLATED_WORLD_NAME },
+            );
         case 'Page.addScriptToEvaluateOnNewDocument':
             return forward(request, {
                 ...params,
@@ -306,33 +297,23 @@ function checkFileInput(request: CheckedRequest, context: CdpRequestContext): Cd
 }
 
 /**
- * A call that runs code or creates an object in an execution context: it may name only a context of an isolated world
- * (a `uniqueContextId` never comes from one, since `Page.createIsolatedWorld` replies with the plain id); with none, it
- * is run in the daemon's world. A worker has no isolated world, so code never runs in one.
+ * A call that runs code or creates an object in an execution context: the daemon always picks the context, its own
+ * isolated world, so a client may name none. A context id is not proof of a world: Chrome reuses ids across renderer
+ * processes, so an id an isolated world had can name the page's own world after a cross-site navigation. A call on an
+ * object (`Runtime.callFunctionOn` with `objectId`) runs where the object lives, an isolated world, since nothing else
+ * hands out objects. A client's own `Page.createIsolatedWorld` still goes out: it only creates a world, whose id no call
+ * may then name.
  */
-function checkIsolated(
-    request: CheckedRequest,
-    contextParam: IsolatedCall['contextParam'],
-    context: CdpRequestContext,
-): CdpRequestDecision {
+function checkIsolated(request: CheckedRequest, contextParam: IsolatedCall['contextParam']): CdpRequestDecision {
     const { method, params, sessionId } = request;
     assert(sessionId != null, 'Only a session-level call needs an isolated world');
-    if (params['uniqueContextId'] != null) {
-        return reject(`${method}: name the ${contextParam} of an isolated world, not a uniqueContextId`);
+    if (params['contextId'] != null || params['executionContextId'] != null || params['uniqueContextId'] != null) {
+        return reject(`${method}: code runs only in poweragents' own isolated world, so no context can be named`);
     }
-    if (params[contextParam] != null) {
-        return isIsolatedContext(request, params[contextParam], context)
-            ? forward(request)
-            : reject(`${method}: only the ${contextParam} of an isolated world can be used`);
-    }
-    if (context.worlds.isWorker(sessionId)) {
-        return reject(`${method}: code cannot run in a worker of the agent's browser`);
+    if (params['objectId'] != null && method === 'Runtime.callFunctionOn') {
+        return forward(request);
     }
     return { type: 'isolate', call: { method, params, sessionId, contextParam } };
-}
-
-function isIsolatedContext(request: CheckedRequest, contextId: unknown, context: CdpRequestContext) {
-    return request.sessionId != null && context.worlds.isIsolatedContext(request.sessionId, contextId);
 }
 
 function isAllowedMethod(method: string) {
