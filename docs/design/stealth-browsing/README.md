@@ -138,6 +138,5 @@ The design was closed on 2026-11-15 and is ready to be built.
 In scope: the browser's stealth layers and the eval. Out of scope: ready-made commands for popular sites, which get a
 design of their own later, and how the agent posts on X ([what this design leaves out](DECISIONS.md#d10)).
 
-The eval's first measurement of the browser as it is today is what the pace values come from, and its numbers decide
-whether human-like input and the browser's name are built, in which order, and whether we will ever need our own
-Chromium build.
+The eval's measurements are what the pace values come from, and its numbers decide whether human-like input is built
+and whether we will ever need our own Chromium build.
