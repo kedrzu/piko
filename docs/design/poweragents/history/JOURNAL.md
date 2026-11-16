@@ -235,3 +235,7 @@ Append-only. One line per turn that settled something, was rejected, or got an a
 - 2026-11-16 — Owner: the agent installs libraries itself; system programs through a file and `poweragents apply`.
   Recorded D46 (one pyproject per project is the design agent's, flagged unconfirmed). Next offered: the human
   description of a project's setup, and the check the agent runs after its changes.
+- 2026-11-16 — Owner chose a visible description file, named `PROJECT.md` (D47); OpenCode `instructions` lookup
+  checked on `dev`, not on 2.2.7; host edits may reach a running session late (watcher). Check after the agent's
+  changes (`poweragents check`: schedule commands exist, declarations install, skill files parse) proposed, awaiting
+  owner.
