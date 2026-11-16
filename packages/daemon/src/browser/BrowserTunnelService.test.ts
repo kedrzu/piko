@@ -223,7 +223,9 @@ test('a page script sees no enabled Runtime and nothing the client runs, while t
     await client.call('Runtime.enable', {}, sessionId);
     await client.call('Console.enable', {}, sessionId);
     await client.call('Page.addScriptToEvaluateOnNewDocument', { source: 'window.__initMark = 1;' }, sessionId);
-    await client.call('Page.addScriptToEvaluateOnLoad', { scriptSource: 'window.__loadMark = 1;' }, sessionId);
+    await expect(
+        client.call('Page.addScriptToEvaluateOnLoad', { scriptSource: 'window.__loadMark = 1;' }, sessionId),
+    ).rejects.toThrow('use Page.addScriptToEvaluateOnNewDocument');
     await expect(client.call('Runtime.addBinding', { name: '__agentBinding' }, sessionId)).rejects.toThrow(
         "page code cannot call the agent's functions",
     );
@@ -231,7 +233,7 @@ test('a page script sees no enabled Runtime and nothing the client runs, while t
     expect(await evaluate(client, sessionId, "window.__agentMark = 1; document.querySelector('h1').textContent")).toBe(
         'Detector',
     );
-    expect(await evaluate(client, sessionId, '[window.__initMark, window.__loadMark]')).toEqual([1, 1]);
+    expect(await evaluate(client, sessionId, '[window.__initMark, window.__loadMark]')).toEqual([1, null]);
     const tree = await client.call('DOM.getDocument', {}, sessionId);
     const root = isPlainObject(tree) && isPlainObject(tree['root']) ? tree['root']['nodeId'] : undefined;
     const found = await client.call('DOM.querySelector', { nodeId: root, selector: 'h1' }, sessionId);

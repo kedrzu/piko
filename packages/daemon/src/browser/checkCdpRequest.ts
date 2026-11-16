@@ -239,11 +239,8 @@ function checkMethod(request: CheckedRequest, context: CdpRequestContext): CdpRe
             // A binding exists for page code to call; one in an isolated world never could, so it would do nothing.
             return reject(`${method}: page code cannot call the agent's functions (stealth-browsing D8)`);
         case 'Page.addScriptToEvaluateOnLoad':
-            // Deprecated and world-less: the page's own world would run it. The reply, `{ identifier }`, is the same.
-            return forward(
-                { ...request, method: 'Page.addScriptToEvaluateOnNewDocument' },
-                { source: params['scriptSource'], worldName: ISOLATED_WORLD_NAME },
-            );
+            // Deprecated and world-less: the page's own world would run it (stealth-browsing D8).
+            return reject(`${method}: use Page.addScriptToEvaluateOnNewDocument`);
         case 'Page.addScriptToEvaluateOnNewDocument':
             return forward(request, {
                 ...params,

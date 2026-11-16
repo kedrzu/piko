@@ -347,11 +347,6 @@ test('an init script lands in the isolated world', () => {
     expect(check('Page.addScriptToEvaluateOnNewDocument', { source: 'x', worldName: 'own' }, 's-a')).toMatchObject({
         params: { source: 'x', worldName: 'own' },
     });
-    // The deprecated, world-less form becomes the one that takes a world.
-    expect(check('Page.addScriptToEvaluateOnLoad', { scriptSource: 'x' }, 's-a')).toEqual({
-        type: 'forward',
-        method: 'Page.addScriptToEvaluateOnNewDocument',
-        params: { source: 'x', worldName: ISOLATED_WORLD_NAME },
-        sessionId: 's-a',
-    });
+    // The deprecated, world-less form would run in the page's own world.
+    expect(check('Page.addScriptToEvaluateOnLoad', { scriptSource: 'x' }, 's-a')).toMatchObject({ type: 'reject' });
 });
