@@ -155,6 +155,10 @@ export function connectTunnelClient(params: ConnectTunnelClientParams): TunnelCl
                 sendError(id, SERVER_ERROR, verdict.message);
                 return;
             }
+            // The socket closed while it waited: its sessions are detached, and nothing is sent for it any more.
+            if (closed) {
+                return;
+            }
             // Runs up to the browser call before the next command of the session is let go.
             const executed = execute(id, decision);
             markSent();

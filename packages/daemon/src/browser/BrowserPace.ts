@@ -34,7 +34,7 @@ export interface BrowserPaceShape {
 
 /** What the pace knows about one site. */
 interface SiteState {
-    /** The last page load on the site, or the slot reserved by the last command let through, whichever is later. */
+    /** The last page load on the site, or the slot reserved by the last loading command let through, whichever is later. */
     lastSlot?: number;
     /** Blocks within the last hour, oldest first. */
     blocks: number[];
@@ -66,6 +66,10 @@ const MAX_HOLD_MS = 15 * SECOND_MS;
 const BLOCK_MEMORY_MS = HOUR_MS;
 /** Main-document statuses that are a block. */
 const BLOCK_STATUSES = new Set([403, 429]);
+/** The commands that surely load a page, so take the site's slot when let through. */
+const LOADING_METHODS = new Set(['Page.navigate', 'Page.reload', 'Target.createTarget']);
+/** Why a site is paced after a block, in a refusal. */
+const AFTER_BLOCK = 'after it blocked or challenged the agent';
 
 export const BrowserPace = defineService({
     name: 'BrowserPace',
@@ -87,9 +91,39 @@ export const BrowserPace = defineService({
                 return { type: 'go' };
             }
             const state = getSite(site);
+            const blocked = findBlockRefusal(command, site, state);
+            if (blocked != null) {
+                return blocked;
+            }
+            const now = clock.now();
+            const doubled = now < state.doubledUntil;
+            const interval = doubled ? DOUBLED_INTERVAL_MS : INTERVAL_MS;
+            const slot = Math.max(now, state.lastSlot == null ? now : state.lastSlot + interval);
+            const wait = slot - now;
+            if (wait > MAX_HOLD_MS) {
+                logRefusal(command, site, 'busy', wait);
+                return refuse(site, doubled ? AFTER_BLOCK : `at one page load every ${interval / SECOND_MS} s`, wait);
+            }
+
+            // Only a command that surely loads a page takes the slot; a click or Enter waits for it, and a load it
+            // causes is counted when its document arrives.
+            if (LOADING_METHODS.has(command.method)) {
+                state.lastSlot = slot;
+            }
+            if (wait > 0) {
+                logger.debug('A command waits for its site', { site, method: command.method, waitMs: wait });
+                await new Promise<void>(resolve => {
+                    clock.setTimeout(resolve, wait);
+                });
+            }
+            // A block recognised while it waited, from the previous command or another conversation, stops it too.
+            return findBlockRefusal(command, site, state) ?? { type: 'go' };
+        }
+
+        /** The refusal for a site that is paused or stopped after a block, now; `null` when it is neither. */
+        function findBlockRefusal(command: PacedCommand, site: string, state: SiteState): PaceVerdict | null {
             const now = clock.now();
             forgetOldBlocks(state, now);
-
             if (now < state.stoppedUntil) {
                 logRefusal(command, site, 'stopped', state.stoppedUntil - now);
                 return {
@@ -97,29 +131,12 @@ export const BrowserPace = defineService({
                     message: `${site} blocked or challenged the agent twice within an hour, so poweragents has stopped acting on it for now. Ask the person to step in.`,
                 };
             }
-            const blocked = now < state.doubledUntil;
-            const interval = blocked ? DOUBLED_INTERVAL_MS : INTERVAL_MS;
-            const slot = Math.max(now, state.pausedUntil, state.lastSlot == null ? now : state.lastSlot + interval);
-            const wait = slot - now;
-            if (now < state.pausedUntil || wait > MAX_HOLD_MS) {
-                logRefusal(command, site, now < state.pausedUntil ? 'paused' : 'busy', wait);
-                const why = blocked
-                    ? 'after it blocked or challenged the agent'
-                    : `at one page load every ${interval / SECOND_MS} s`;
-                return {
-                    type: 'refuse',
-                    message: `poweragents is pacing ${site} ${why}: the next action on it is possible in ${formatWait(wait)}. Work on something else meanwhile, or ask the person for help.`,
-                };
+            if (now < state.pausedUntil) {
+                const wait = state.pausedUntil - now;
+                logRefusal(command, site, 'paused', wait);
+                return refuse(site, AFTER_BLOCK, wait);
             }
-
-            state.lastSlot = slot;
-            if (wait > 0) {
-                logger.debug('A command waits for its site', { site, method: command.method, waitMs: wait });
-                await new Promise<void>(resolve => {
-                    clock.setTimeout(resolve, wait);
-                });
-            }
-            return { type: 'go' };
+            return null;
         }
 
         /** The URL a command acts on: its target URL for a navigation, else the page of its session, if it acts at all. */
@@ -311,6 +328,14 @@ function findChallengeVendor(url: string) {
 
 function isHostOf(hostname: string, domain: string) {
     return hostname === domain || hostname.endsWith(`.${domain}`);
+}
+
+/** A refusal naming the site, why it is paced and when it can be acted on again. */
+function refuse(site: string, why: string, wait: number): PaceVerdict {
+    return {
+        type: 'refuse',
+        message: `poweragents is pacing ${site} ${why}: the next action on it is possible in ${formatWait(wait)}. Work on something else meanwhile, or ask the person for help.`,
+    };
 }
 
 /** A wait in words: seconds under a minute, else whole minutes, rounded up. */

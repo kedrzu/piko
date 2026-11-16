@@ -150,7 +150,7 @@ test("loads of a subframe or of a page no conversation owns don't count", async 
     expect(await track(pace.gate(navigate('https://shop.pl/'))).settled()).toEqual({ type: 'go' });
 });
 
-test("a click and Enter wait for the page's site; moves, typing and a double click's second press do not", async () => {
+test("a click and Enter wait for the page's last load but take no slot; moves, typing and a double click's second press do not wait", async () => {
     const { pace, clock, emit } = setup();
     emit(pageUrl('T1', 'https://shop.pl/'));
     emit(documentResponse('S1', 'T1', 'L1', 'https://shop.pl/', 200));
@@ -165,11 +165,27 @@ test("a click and Enter wait for the page's site; moves, typing and a double cli
     }
     const click = track(pace.gate(input('Input.dispatchMouseEvent', { type: 'mousePressed', clickCount: 1 })));
     const enter = track(pace.gate(input('Input.dispatchKeyEvent', { type: 'rawKeyDown', key: 'Enter' })));
-    clock.advance(5 * SECOND);
-    expect(await click.settled()).toEqual({ type: 'go' });
+    clock.advance(5 * SECOND - 1);
+    expect(await click.settled()).toBeUndefined();
     expect(await enter.settled()).toBeUndefined();
-    clock.advance(5 * SECOND);
+    clock.advance(1);
+    expect(await click.settled()).toEqual({ type: 'go' });
     expect(await enter.settled()).toEqual({ type: 'go' });
+    // With no load since, the next click goes at once.
+    expect(await track(pace.gate(input('Input.dispatchMouseEvent', { type: 'mousePressed' }))).settled()).toEqual({
+        type: 'go',
+    });
+});
+
+test('a held command is refused when its site gets blocked while it waits', async () => {
+    const { pace, clock, emit } = setup();
+    emit(pageUrl('T1', 'https://shop.pl/'));
+    emit(documentResponse('S1', 'T1', 'L1', 'https://shop.pl/', 200));
+    const held = track(pace.gate(navigate('https://shop.pl/next')));
+    emit(documentResponse('S1', 'T1', 'L2', 'https://shop.pl/blocked', 403));
+    clock.advance(5 * SECOND);
+
+    expect(await held.settled()).toMatchObject({ type: 'refuse' });
 });
 
 /** A pace over a fake browser with one agent page `T1` (sessions `S1`, `S2`) and a clock moved by `advance()`. */
