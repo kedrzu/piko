@@ -54,6 +54,37 @@ in any language, and anything later. Vendors document client-side JS fingerprint
 - In-page JS patches (puppeteer-extra-plugin-stealth style) — detectable themselves; that plugin is abandoned since
   2023 and named as detected in DataDome's docs.
 
+Retired 2026-11-16, partly replaced: the brand moved from "built once the eval shows sites react" to "built
+regardless" by the owner; the rest holds in [D4](../DECISIONS.md#d4).
+
+**Stealth is built in the daemon, in layers every browser client gets. Built first, regardless of measurement: the
+launch flag ([D3](#d3)), the guarantee that page scripts never observe our code ([D8](#d8)) and pace ([D5](#d5)).
+Built only once the eval shows sites react to them, in the order it shows: input (mouse paths and per-key typing
+generated from the agent's clicks and text) and the "Google Chrome" brand set over CDP on every target, workers
+included.** (2026-11-15, design agent proposal; the split by measurement is the owner's choice after the rightsize
+review)
+
+**Why.** Every CDP command already passes the daemon's multiplexer, so a fix there covers agent-browser, site helpers
+in any language, and anything later. Vendors document client-side JS fingerprinting first and behaviour second (HUMAN:
+"user-interaction anomalies within mouse clicks, screen touches, cadence and timing" —
+[docs](https://docs.humansecurity.com/applications/bd-detection-overview)).
+
+> **Checked 2026-11-15:** agent-browser v0.43.0 sends `Runtime.enable` on every page
+> (`cli/src/native/browser.rs:1040`); a click is one `mouseMoved` plus press and release at the element centre
+> (`cli/src/native/interaction.rs:59-94`); `type` sends `Input.insertText` per character, key events only for
+> Enter/Tab — [agent-browser](https://github.com/vercel-labs/agent-browser).
+
+**Rejected.**
+
+- Building input and brand layers up front — no evidence yet that either affects blocks; the owner chose measurement
+  first ([history](history/DECISIONS.md#d4)).
+- Fixing only the CDP leaks the measurement shows — the owner wants no traces regardless of measurement
+  ([history](history/DECISIONS.md#d4)).
+- Stealth inside each client (Patchright, rebrowser-patches, ghost-cursor per helper) — every client and every
+  language would need its own copy; the daemon sees all traffic once.
+- In-page JS patches (puppeteer-extra-plugin-stealth style) — detectable themselves; that plugin is abandoned since
+  2023 and named as detected in DataDome's docs.
+
 ## D11
 
 Retired 2026-11-15, partly replaced: the page now assesses each token itself and keeps the score; the rest holds in

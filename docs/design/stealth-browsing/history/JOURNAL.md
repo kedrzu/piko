@@ -185,3 +185,4 @@
   shop and both controls.
 - Delivery: building showed tokens in the DOM cannot be read from the person's own Chrome in time (two-minute life). Owner chose assessment in the page with a restricted public key (D11 partly replaced, prior form in history).
 - Delivery (2026-11-16): Allegro after M2 passed 40 searches at 8 s and at 5 s. Owner chose: pace from measurement (asked for a lower threshold — 5 s passed), passive block recognition, short holds and worded refusals (D5 partly replaced, prior form in history).
+- Delivery (2026-11-16): after M3 the brand was the only leak the test pages reported. Owner asked what it meant and why wait; chose to build it now (D4 partly replaced, prior form in history).

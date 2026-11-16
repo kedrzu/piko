@@ -74,10 +74,11 @@ Today this browser gives itself away in three known ways:
 Every command the agent sends to the browser already passes through the daemon, which uses that position to keep the
 agent inside its limits. Stealth goes there too ([layers in the daemon](DECISIONS.md#d4)), in three layers:
 
-- **What a page's scripts can see.** A launch flag, and no trace of remote control (more on this below).
+- **What a page's scripts can see.** A launch flag, no trace of remote control (more on this below), and the name
+  "Google Chrome" everywhere a page or its background workers can read it.
 - **How input arrives.** A click from the agent becomes a mouse movement along a curve, and text becomes key presses
   at a typing pace. This one waits for evidence: it is built only once the measurement shows sites reacting to how
-  input arrives, and the same goes for making the browser call itself "Google Chrome" rather than "Chromium".
+  input arrives.
 - **How fast the agent goes.** The daemon holds every site to a human pace: one page load every five seconds, whatever
   the number of conversations. It notices a CAPTCHA or block from what the page already reports, without touching it,
   and then pauses that site and slows down for an hour; a second block makes the agent ask the person. A short wait is

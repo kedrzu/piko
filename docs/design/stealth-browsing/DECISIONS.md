@@ -100,12 +100,12 @@ flag turns it back off without giving up the pipe. Keeping up with Chrome stable
 
 ## D4
 
-**Stealth is built in the daemon, in layers every browser client gets. Built first, regardless of measurement: the
-launch flag ([D3](#d3)), the guarantee that page scripts never observe our code ([D8](#d8)) and pace ([D5](#d5)).
-Built only once the eval shows sites react to them, in the order it shows: input (mouse paths and per-key typing
-generated from the agent's clicks and text) and the "Google Chrome" brand set over CDP on every target, workers
-included.** (2026-11-15, design agent proposal; the split by measurement is the owner's choice after the rightsize
-review)
+**Stealth is built in the daemon, in layers every browser client gets. Built regardless of measurement: the launch
+flag ([D3](#d3)), the guarantee that page scripts never observe our code ([D8](#d8)), pace ([D5](#d5)) and the
+"Google Chrome" brand set over CDP on every target, workers included. Built only once the eval shows sites react to
+it: input (mouse paths and per-key typing generated from the agent's clicks and text).** (2026-11-15, design agent
+proposal; the split by measurement is the owner's choice after the rightsize review; the brand moved to the first group
+by the owner on 2026-11-16)
 
 **Why.** Every CDP command already passes the daemon's multiplexer, so a fix there covers agent-browser, site helpers
 in any language, and anything later. Vendors document client-side JS fingerprinting first and behaviour second (HUMAN:
@@ -117,10 +117,17 @@ in any language, and anything later. Vendors document client-side JS fingerprint
 > (`cli/src/native/interaction.rs:59-94`); `type` sends `Input.insertText` per character, key events only for
 > Enter/Tab — [agent-browser](https://github.com/vercel-labs/agent-browser).
 
+> **Checked 2026-11-16:** after the launch flag, the isolated-world rule and pace, the brand is the only leak the
+> public test pages still report (rebrowser `useragent`); the agent scores as the person does on reCAPTCHA (0.90),
+> and indeed.com and kohls.com still block it for reasons not yet known. The owner chose to remove the last known leak
+> rather than wait for a site to show it matters.
+
 **Rejected.**
 
-- Building input and brand layers up front — no evidence yet that either affects blocks; the owner chose measurement
-  first ([history](history/DECISIONS.md#d4)).
+- Building the input layer up front — no evidence that it affects blocks; the agent already scores as the person does
+  ([history](history/DECISIONS.md#d4)).
+- Waiting for evidence before building the brand — the measurement-first rule the owner set on 2026-11-15; he
+  dropped it for the brand once it was the last known leak ([history](history/DECISIONS.md#d4)).
 - Fixing only the CDP leaks the measurement shows — the owner wants no traces regardless of measurement
   ([history](history/DECISIONS.md#d4)).
 - Stealth inside each client (Patchright, rebrowser-patches, ghost-cursor per helper) — every client and every
