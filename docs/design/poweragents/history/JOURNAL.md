@@ -239,3 +239,6 @@ Append-only. One line per turn that settled something, was rejected, or got an a
   checked on `dev`, not on 2.2.7; host edits may reach a running session late (watcher). Check after the agent's
   changes (`poweragents check`: schedule commands exist, declarations install, skill files parse) proposed, awaiting
   owner.
+- 2026-11-16 — Owner: `PROJECT.md` is for the person only; the agent's guidance belongs in AGENTS.md and references.
+  D47 rewritten (old form to history): agent text at `.poweragents/AGENTS.md` (design agent's proposal), loaded via
+  `instructions`. Asked owner what "techniczny plik używany w różnych sytuacjach" means for PROJECT.md.

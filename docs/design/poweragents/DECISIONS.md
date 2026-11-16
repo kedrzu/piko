@@ -1000,29 +1000,35 @@ iCloud and Google Drive treat a dangling symlink is unchecked; it returns with c
 
 ## D47
 
-**Every project with a setup has a `PROJECT.md` in its folder: what the agent has built there, in plain words and the
-person's language — what the project can do, what it installed and why. The agent keeps it current whenever it changes
-the setup; the person can read and correct it like any file. The same text is the agent's index of the setup, loaded
-into every conversation of the project; how to do things stays in the skills.** (2026-11-16, owner; one text for both
-readers is the design agent's proposal)
+**A project with a setup has two descriptions of it, one per reader. `PROJECT.md`, in the project's folder, is for the
+person: in plain words and their language, what the project can do, what was installed for it and why. It is not
+loaded into the agent's conversations. `.poweragents/AGENTS.md` is for the agent: what the setup holds and how to use
+it — which skills and scripts exist, how to run them (`uv run --project .poweragents …`) — with details in references
+beside it and in the setup's own files. It is loaded into every conversation of the project. The agent keeps both
+current whenever it changes the setup.** (2026-11-16, owner; the file name and place of the agent's text are the design
+agent's proposal)
 
 **Why.** Someone opening the project should see what is there without opening a hidden folder, against the line that
-nothing is a black box ([D9](#d9)). It is a file for people, not a technical one, so it does not clutter the project
-the way `package.json` would. The agent needs to know a setup exists before it reads `.poweragents/`.
+nothing is a black box ([D9](#d9)); a text written for them is not a good instruction for the agent, and the reverse.
+The agent's text stays in `.poweragents/` with the rest of what only the agent needs, so the only file the person sees
+is one written for them.
 
 > **Checked 2026-11-16:** on OpenCode's `dev` branch, a relative entry in a global `opencode.json` `instructions` is
 > searched from the session's directory up to the project root — "Relative patterns search upward from the location to
 > the project root" ([instruction.ts](https://raw.githubusercontent.com/anomalyco/opencode/dev/packages/core/src/config/plugin/instruction.ts)).
-> So `"instructions": ["PROJECT.md"]` in the image's config loads each project's own file. It is watched and a change
-> reaches a running session as a diff. Only `AGENTS.md` is found automatically. Not checked on 2.2.7, the version the
-> sandbox runs; and its file watcher misses changes made from the host until a write from the VM side wakes it
-> ([plugin runtime ADR](../../decisions/plugin-runtime-in-the-sandbox.md)), so a correction the person makes in the app
-> may reach a running conversation late.
+> So `"instructions": [".poweragents/AGENTS.md"]` in the image's config loads each project's own file. It is watched
+> and a change reaches a running session as a diff. Only `AGENTS.md` in the directory itself or above is found
+> automatically. Not checked on 2.2.7, the version the sandbox runs; and its file watcher misses changes made from the
+> host until a write from the VM side wakes it ([plugin runtime ADR](../../decisions/plugin-runtime-in-the-sandbox.md)).
+
+**Consequence.** Two texts can drift apart; nothing checks prose, so keeping them in step rests on the agent's
+instructions.
 
 **Rejected.**
 
+- One text for both readers, `PROJECT.md` loaded into every conversation ([history](history/DECISIONS.md#d47)) —
+  `PROJECT.md` is for the person (owner, 2026-11-16).
 - The description inside `.poweragents/`, shown on the project's page in the app — the person could see and correct
   it only through a screen we would have to build (owner, 2026-11-16).
-- `AGENTS.md` as the name — the owner chose `PROJECT.md`; OpenCode then needs it listed in `instructions`.
-- Separate texts for the person and for the agent — the skills already tell the agent how; two descriptions would
-  drift.
+- The agent's `AGENTS.md` in the project's folder, where OpenCode finds it unaided — a second file in the person's view
+  that is not written for them.

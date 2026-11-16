@@ -446,3 +446,34 @@ owner)
 distribution package via apt (version is whatever the base environment's distribution carries), as a
 pinned release archive with a checksum (the plugin controls the version), or both as two kinds.
 Neither is ruled out.
+
+## D47
+
+Retired in part 2026-11-16: `PROJECT.md` is for the person only; what the agent needs is in `.poweragents/AGENTS.md`. Rewritten in place as [D47](../DECISIONS.md#d47).
+
+**Every project with a setup has a `PROJECT.md` in its folder: what the agent has built there, in plain words and the
+person's language — what the project can do, what it installed and why. The agent keeps it current whenever it changes
+the setup; the person can read and correct it like any file. The same text is the agent's index of the setup, loaded
+into every conversation of the project; how to do things stays in the skills.** (2026-11-16, owner; one text for both
+readers is the design agent's proposal)
+
+**Why.** Someone opening the project should see what is there without opening a hidden folder, against the line that
+nothing is a black box ([D9](#d9)). It is a file for people, not a technical one, so it does not clutter the project
+the way `package.json` would. The agent needs to know a setup exists before it reads `.poweragents/`.
+
+> **Checked 2026-11-16:** on OpenCode's `dev` branch, a relative entry in a global `opencode.json` `instructions` is
+> searched from the session's directory up to the project root — "Relative patterns search upward from the location to
+> the project root" ([instruction.ts](https://raw.githubusercontent.com/anomalyco/opencode/dev/packages/core/src/config/plugin/instruction.ts)).
+> So `"instructions": ["PROJECT.md"]` in the image's config loads each project's own file. It is watched and a change
+> reaches a running session as a diff. Only `AGENTS.md` is found automatically. Not checked on 2.2.7, the version the
+> sandbox runs; and its file watcher misses changes made from the host until a write from the VM side wakes it
+> ([plugin runtime ADR](../../decisions/plugin-runtime-in-the-sandbox.md)), so a correction the person makes in the app
+> may reach a running conversation late.
+
+**Rejected.**
+
+- The description inside `.poweragents/`, shown on the project's page in the app — the person could see and correct
+  it only through a screen we would have to build (owner, 2026-11-16).
+- `AGENTS.md` as the name — the owner chose `PROJECT.md`; OpenCode then needs it listed in `instructions`.
+- Separate texts for the person and for the agent — the skills already tell the agent how; two descriptions would
+  drift.
