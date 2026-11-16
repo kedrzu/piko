@@ -132,7 +132,7 @@ in any language, and anything later. Vendors document client-side JS fingerprint
 
 **The daemon enforces a human pace on every site and backs off when a page shows a CAPTCHA or block. Pace: at most one
 page load per site every 5 seconds, shared by every conversation. A block is recognised passively, from the page events
-the tunnel already relays to the client: a main document answered 403 or 429, or a request to a known challenge host.
+the tunnel already relays to the client: a main document answered 403 or 429, or a request to a known challenge URL.
 After a first block the site gets a 5-minute pause and a doubled interval for an hour; a second block within the hour
 refuses further actions on that site and tells the agent to ask the person. A wait of up to about 15 seconds is held
 silently; a longer one is refused with a message saying why and for how long, and the agent's instructions say such a
@@ -143,7 +143,9 @@ owner's choice; values, recognition and the message chosen by the owner on 2026-
 daemon, the agent cannot skip it; telling the agent keeps it from treating the wait as a broken browser. A generic pace
 fits "any site" ([D1](#d1)). Passive recognition sends nothing a page could observe. agent-browser gives every CDP
 command 30 seconds and shows a refusal's text to the agent, so a short hold fits inside a command and a long wait
-needs words.
+needs words. A navigation the agent writes in its own page script is counted when its document arrives but not
+held: the daemon gates the commands that load pages, and agent-browser's back and forward are such commands, but it
+does not read the agent's scripts.
 
 > **Checked 2026-11-16:** Allegro from the owner's home connection, the agent's browser after the launch flag and the
 > isolated-world rule: 40 searches at 8-second intervals and 40 at 5-second intervals, each with results in about 1.3
