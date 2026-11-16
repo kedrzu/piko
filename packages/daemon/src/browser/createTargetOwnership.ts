@@ -127,6 +127,10 @@ export function createTargetOwnership(): TargetOwnership {
             return;
         }
 
+        // An explicit `Target.attachToTarget` never waits for the debugger; a held new target is the daemon's auto-attach.
+        if (params['waitingForDebugger'] === true) {
+            return;
+        }
         const expected = expectedAttaches.get(info.targetId)?.shift();
         if (expected) {
             sessions.set(sessionId, { originator: expected.originator, targetId: info.targetId });

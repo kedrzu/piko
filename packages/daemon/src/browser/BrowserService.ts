@@ -17,10 +17,13 @@ import { withTimeout } from '@nzyme/utils/withTimeout.js';
 import { BROWSER_PROXY_PORT, DOWNLOADS_FOLDER, POWERAGENTS_DATA_ROOT, POWERAGENTS_LIMA_HOME } from '../env.js';
 import { isErrorCode } from '../utils/isErrorCode.js';
 import { isRealFolder } from '../utils/isRealFolder.js';
+import { attachTargetSession } from './attachTargetSession.js';
 import { buildChromiumArgs } from './buildChromiumArgs.js';
 import { CdpError } from './CdpTypes.js';
 import type { CdpErrorReply, CdpEvent } from './CdpTypes.js';
 import { ChromiumInstall } from './ChromiumInstall.js';
+import { createBrandOverride } from './createBrandOverride.js';
+import type { BrandOverride } from './createBrandOverride.js';
 import { createTargetOwnership } from './createTargetOwnership.js';
 import type { TargetOwnership } from './createTargetOwnership.js';
 import { FocusKeeper } from './FocusKeeper.js';
@@ -32,7 +35,8 @@ import { splitPipeFrames } from './splitPipeFrames.js';
  * The agent's one browser (ADR `docs/decisions/agent-browser-over-one-pipe.md`): a Chrome for Testing the daemon
  * launches with no window and drives over `--remote-debugging-pipe`, so no other local process can reach it. Every
  * client of the tunnel and the daemon itself share this one connection; `ownership` says which pages and sessions are
- * whose. Popups are minimized at once, and downloads land in the data root's Downloads folder.
+ * whose. Popups are minimized at once, downloads land in the data root's Downloads folder, and every page and worker
+ * names itself Google Chrome (`createBrandOverride`).
  */
 export interface BrowserServiceShape {
     /**
@@ -93,6 +97,7 @@ interface BrowserRun {
     pending: Map<number, PendingCall>;
     /** Suggested file names of downloads in progress, by guid. */
     downloads: Map<string, string>;
+    brand: BrandOverride;
     ready: boolean;
     /** The end of the browser's stderr, logged when it exits. */
     stderrTail: string;
@@ -112,6 +117,8 @@ const STDERR_TAIL_LENGTH = 2000;
 const THUMBNAIL_QUALITY = 60;
 /** How long a thumbnail may take before the handoff goes without one. */
 const THUMBNAIL_TIMEOUT_MS = 10_000;
+/** How long reading the browser's own identity at launch may take before the launch fails and is retried. */
+const BRAND_START_TIMEOUT_MS = 15_000;
 /** A download guid as the browser makes it; anything else never becomes part of a path. */
 const DOWNLOAD_GUID = /^[\w-]+$/;
 
@@ -215,17 +222,7 @@ export const BrowserService = defineService({
 
         /** Runs `action` on a session of the daemon's own, so its events never reach a client; detaches afterwards. */
         async function withDaemonSession<T>(targetId: string, action: (sessionId: string) => Promise<T>) {
-            const release = ownership.expectAttach({ type: 'daemon' }, targetId);
-            let reply: unknown;
-            try {
-                reply = await send('Target.attachToTarget', { targetId, flatten: true });
-            } finally {
-                release();
-            }
-            const sessionId = isPlainObject(reply) ? reply['sessionId'] : undefined;
-            if (typeof sessionId !== 'string') {
-                throw new TypeError('Target.attachToTarget gave no session id');
-            }
+            const sessionId = await attachTargetSession({ send, ownership, originator: { type: 'daemon' }, targetId });
             ownership.claimSession({ type: 'daemon' }, sessionId, targetId);
             try {
                 return await action(sessionId);
@@ -271,6 +268,15 @@ export const BrowserService = defineService({
                     eventsEnabled: true,
                 });
                 await call(current, 'Target.setDiscoverTargets', { discover: true });
+                // A page that never answers would leave every later start waiting on this launch; failing kills the
+                // browser, and the next start launches a new one.
+                await withTimeout({
+                    operation: current.brand.start(),
+                    timeoutMs: BRAND_START_TIMEOUT_MS,
+                    onTimeout: () => {
+                        throw new Error("The browser's identity could not be read in time");
+                    },
+                });
             } catch (error) {
                 logger.error('The browser could not be configured', { error });
                 current.child.kill('SIGKILL');
@@ -305,6 +311,11 @@ export const BrowserService = defineService({
                 pipe,
                 pending: new Map(),
                 downloads: new Map(),
+                brand: createBrandOverride({
+                    send: (method, params, sessionId) => call(current, method, params, sessionId),
+                    ownership,
+                    logger,
+                }),
                 ready: false,
                 stderrTail: '',
             };
@@ -367,6 +378,7 @@ export const BrowserService = defineService({
 
         function dispatchEvent(current: BrowserRun, event: CdpEvent) {
             ownership.observe(event);
+            current.brand.observe(event);
             switch (event.method) {
                 case 'Target.targetCreated': {
                     const info = readTargetInfo(event.params);

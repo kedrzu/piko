@@ -22,6 +22,7 @@ import { ProjectService } from '../projects/ProjectService.js';
 import type { LocalProject } from '../projects/ProjectService.js';
 import { isErrorCode } from '../utils/isErrorCode.js';
 import { isRealFolder } from '../utils/isRealFolder.js';
+import { isStringArray } from '../utils/isStringArray.js';
 import { replaceFile } from '../utils/replaceFile.js';
 import { findScheduleTerms } from './utils/findScheduleTerms.js';
 import { parseScheduleDefinition } from './utils/parseScheduleDefinition.js';
@@ -565,13 +566,4 @@ function parseOutcome(value: unknown): ScheduleRunOutcome | undefined {
 /** @__NO_SIDE_EFFECTS__ */
 function isOptionalString(value: unknown): value is string | undefined {
     return value === undefined || typeof value === 'string';
-}
-
-/** @__NO_SIDE_EFFECTS__ */
-function isStringArray(value: unknown): value is string[] {
-    if (!Array.isArray(value)) {
-        return false;
-    }
-    const items: unknown[] = value;
-    return items.every(item => typeof item === 'string');
 }

@@ -17,6 +17,10 @@ export interface ChromiumReleaseSource {
     (): ChromiumRelease | null;
 }
 
+/**
+ * A bump also re-checks the Google Chrome brand (`buildChromeBrand.ts`): read `navigator.userAgentData` brands and
+ * `fullVersionList` from installed Google Chrome of the new version and update the test's expected lists if they differ.
+ */
 const VERSION = '157.0.8103.78';
 
 const PINNED: Record<string, { sha256: string } | undefined> = {

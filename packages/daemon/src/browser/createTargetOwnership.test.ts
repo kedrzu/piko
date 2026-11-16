@@ -45,6 +45,17 @@ test('two attaches of one target are matched in the order they were sent', () =>
     expect(ownership.getSessionOriginator('session-a')).toEqual(CLIENT_A);
 });
 
+test("the daemon's held auto-attach of a new target leaves a pending client attach to the client's own event", () => {
+    const ownership = createTargetOwnership();
+    ownership.expectAttach(CLIENT_A, 'popup-1');
+
+    ownership.observe(attached('session-held', 'popup-1', undefined, true));
+    ownership.observe(attached('session-a', 'popup-1'));
+
+    expect(ownership.getSessionOriginator('session-held')).toBeUndefined();
+    expect(ownership.getSessionOriginator('session-a')).toEqual(CLIENT_A);
+});
+
 test('a released attach that got no event claims nothing later', () => {
     const ownership = createTargetOwnership();
     const release = ownership.expectAttach(CLIENT_A, 'page-1');
@@ -113,10 +124,10 @@ function targetCreated(targetId: string, openerId?: string): CdpEvent {
     return { method: 'Target.targetCreated', params: { targetInfo: { targetId, type: 'page', openerId } } };
 }
 
-function attached(sessionId: string, targetId: string, parentSessionId?: string): CdpEvent {
+function attached(sessionId: string, targetId: string, parentSessionId?: string, waitingForDebugger = false): CdpEvent {
     return {
         method: 'Target.attachedToTarget',
-        params: { sessionId, targetInfo: { targetId, type: 'page' }, waitingForDebugger: false },
+        params: { sessionId, targetInfo: { targetId, type: 'page' }, waitingForDebugger },
         sessionId: parentSessionId,
     };
 }
