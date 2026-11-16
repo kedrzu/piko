@@ -177,6 +177,9 @@ for you is open to you. Drive it with the `agent-browser` command from the shell
 Downloads land in `/Poweragents/downloads`; move a file into the project when it belongs there. Upload only files under
 `/Poweragents/...`. The browser cannot open local files or the person's local network.
 
+The browser holds every site to a human pace, so a command may take a few seconds longer; a message saying poweragents is
+pacing a site is deliberate, so follow it.
+
 When a login, a CAPTCHA or a payment needs the person, stop and say so plainly in the conversation; do not try to get
 around it. Do not close the browser when you finish: the person may want to see the page.
 

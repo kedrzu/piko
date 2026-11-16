@@ -1,3 +1,5 @@
+import { findChallengeVendor } from '../utils/findChallengeVendor.js';
+
 import { asArray, asNumber, asObject, asOneOf, asString, asStringArray } from './jsonShape.js';
 import type { EvalDriver, PanelOutcome, PanelSiteResult, PanelVendor } from './StealthEvalTypes.js';
 
@@ -227,7 +229,7 @@ export function parsePanelResults(value: unknown): PanelSiteResult[] {
 /** A vendor's challenge or block marker on the page, described; `null` when there is none. */
 function findChallengeMarker(facts: PanelPageFacts) {
     // DataDome: its CAPTCHA, interstitial or block page comes in an iframe; the page around it is empty.
-    const dataDome = facts.iframes.find(src => src.includes('captcha-delivery.com'));
+    const dataDome = facts.iframes.find(src => findChallengeVendor(src) === 'DataDome');
     if (dataDome != null) {
         return `DataDome iframe ${describeUrl(dataDome)}`;
     }
@@ -241,9 +243,7 @@ function findChallengeMarker(facts: PanelPageFacts) {
     // Cloudflare: the challenge page's orchestrating script. A normal page behind Cloudflare loads
     // `/cdn-cgi/challenge-platform/scripts/jsd/main.js`, which has no `/orchestrate/`. The title is localised
     // ("Just a moment...", "Cierpliwości...", "Security Check - Indeed.com"), so it is not the marker.
-    const cloudflare = facts.scripts.find(
-        src => src.includes('/cdn-cgi/challenge-platform/') && src.includes('/orchestrate/'),
-    );
+    const cloudflare = facts.scripts.find(src => findChallengeVendor(src) === 'Cloudflare');
     if (cloudflare != null) {
         return `Cloudflare challenge script ${describeUrl(cloudflare)}`;
     }

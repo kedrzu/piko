@@ -6,6 +6,8 @@ export interface TargetInfoFields {
     type: string;
     /** The page that opened this one: set for a popup. */
     openerId?: string;
+    /** The URL the target shows; its main frame's committed URL for a page. */
+    url?: string;
 }
 
 /**
@@ -18,10 +20,11 @@ export function readTargetInfo(params: unknown): TargetInfoFields | null {
     if (!isPlainObject(info) || typeof info['targetId'] !== 'string' || typeof info['type'] !== 'string') {
         return null;
     }
-    const openerId = info['openerId'];
+    const { openerId, url } = info;
     return {
         targetId: info['targetId'],
         type: info['type'],
         openerId: typeof openerId === 'string' ? openerId : undefined,
+        url: typeof url === 'string' ? url : undefined,
     };
 }
