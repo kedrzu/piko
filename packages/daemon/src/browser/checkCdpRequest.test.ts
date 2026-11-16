@@ -5,11 +5,17 @@ import { expect, test } from 'bun:test';
 import { checkCdpRequest } from './checkCdpRequest.js';
 import type { CdpRequestContext } from './checkCdpRequest.js';
 import { ISOLATED_WORLD_NAME } from './createIsolatedWorlds.js';
+import type { ClientWorld } from './createIsolatedWorlds.js';
 import { createTargetOwnership } from './createTargetOwnership.js';
 
 const DATA_ROOT = '/Users/someone/Poweragents';
+/** The world `c1` created on `s-a`, which it was given context id 7 for. */
+const OWN_WORLD: ClientWorld = { frameId: 'f', worldName: 'own', grantUniveralAccess: true };
 
-/** The client `c1` of conversation `conv-a` owns page `t-a` and session `s-a`; `c2` of `conv-b` owns `t-b`/`s-b`. */
+/**
+ * The client `c1` of conversation `conv-a` owns page `t-a` and session `s-a`, and created `OWN_WORLD` on it; `c2` of
+ * `conv-b` owns `t-b`/`s-b`.
+ */
 function prepare(): CdpRequestContext {
     const ownership = createTargetOwnership();
     ownership.claimTarget('conv-a', 't-a');
@@ -19,7 +25,11 @@ function prepare(): CdpRequestContext {
     // A second client of conv-a (another socket) and the daemon's own session on t-a.
     ownership.claimSession({ type: 'client', clientId: 'c3' }, 's-a3', 't-a');
     ownership.claimSession({ type: 'daemon' }, 's-daemon', 't-a');
-    return { clientId: 'c1', conversationId: 'conv-a', ownership, dataRoot: DATA_ROOT };
+    const worlds = {
+        findClientWorld: (sessionId: string, contextId: number) =>
+            sessionId === 's-a' && contextId === 7 ? OWN_WORLD : undefined,
+    };
+    return { clientId: 'c1', conversationId: 'conv-a', ownership, worlds, dataRoot: DATA_ROOT };
 }
 
 function check(method: string, params?: object, sessionId?: string) {
@@ -138,6 +148,7 @@ test.each([
     ['Runtime.globalLexicalScopeNames', {}, 's-a'],
     ['Runtime.compileScript', { expression: '1', sourceURL: '', persistScript: true }, 's-a'],
     ['Runtime.runScript', { scriptId: 's' }, 's-a'],
+    ['Runtime.addBinding', { name: 'cb' }, 's-a'],
     ['Storage.clearDataForOrigin', { origin: '*', storageTypes: 'all' }, 's-a'],
     ['IO.resolveBlob', { objectId: 'x' }, 's-a'],
     ['SystemInfo.getProcessInfo', {}, undefined],
@@ -273,33 +284,58 @@ test.each([
     ['Runtime.evaluate', { expression: '1' }, 'contextId'],
     ['Runtime.callFunctionOn', { functionDeclaration: '() => 1' }, 'executionContextId'],
     ['DOM.resolveNode', { backendNodeId: 5 }, 'executionContextId'],
-] as const)('%s runs in the isolated world and may name no context', (method, params, contextParam) => {
-    expect(check(method, params, 's-a')).toEqual({
-        type: 'isolate',
-        call: { method, params, sessionId: 's-a', contextParam },
-    });
-    // Context ids are reused across renderer processes: not even one an isolated world had is trusted.
-    for (const named of [{ contextId: 7 }, { executionContextId: 7 }, { uniqueContextId: '7' }]) {
-        expect(check(method, { ...params, ...named }, 's-a')).toMatchObject({ type: 'reject' });
-    }
-});
+] as const)(
+    '%s runs in an isolated world: the daemon own, or one the client created',
+    (method, params, contextParam) => {
+        expect(check(method, params, 's-a')).toEqual({
+            type: 'isolate',
+            call: { method, params, sessionId: 's-a', contextParam },
+        });
+        // The id the client was given names its world, which is created again; the id itself never goes out.
+        expect(check(method, { ...params, [contextParam]: 7 }, 's-a')).toEqual({
+            type: 'isolate',
+            call: { method, params, sessionId: 's-a', contextParam, world: OWN_WORLD },
+        });
+        // Context ids are reused across renderer processes: any other id may name the page's own world.
+        const otherParam = contextParam === 'contextId' ? 'executionContextId' : 'contextId';
+        for (const named of [
+            { [contextParam]: 8 },
+            { [contextParam]: '7' },
+            { [otherParam]: 7 },
+            { uniqueContextId: '7' },
+        ]) {
+            expect(check(method, { ...params, ...named }, 's-a')).toMatchObject({ type: 'reject' });
+        }
+        // A world is the client's on the session it created it on.
+        expect(check(method, { ...params, [contextParam]: 7 }, 's-b')).toMatchObject({ type: 'reject' });
+    },
+);
 
 test('Runtime.callFunctionOn on an object goes out as given, but not into a named context', () => {
     expect(check('Runtime.callFunctionOn', { functionDeclaration: 'f', objectId: 'o' }, 's-a').type).toBe('forward');
-    expect(
-        check('Runtime.callFunctionOn', { functionDeclaration: 'f', objectId: 'o', executionContextId: 1 }, 's-a'),
-    ).toMatchObject({ type: 'reject' });
+    for (const executionContextId of [1, 7]) {
+        expect(
+            check('Runtime.callFunctionOn', { functionDeclaration: 'f', objectId: 'o', executionContextId }, 's-a'),
+        ).toMatchObject({ type: 'reject' });
+    }
 });
 
-test('a binding and an init script land in the isolated world', () => {
-    expect(check('Runtime.addBinding', { name: 'cb', executionContextId: 1, executionContextName: '' }, 's-a')).toEqual(
-        {
-            type: 'forward',
-            method: 'Runtime.addBinding',
-            params: { name: 'cb', executionContextName: ISOLATED_WORLD_NAME },
-            sessionId: 's-a',
-        },
-    );
+test('a client creates a named world of its own, as it asked for it', () => {
+    expect(
+        check('Page.createIsolatedWorld', { frameId: 'f', worldName: 'own', grantUniveralAccess: true }, 's-a'),
+    ).toEqual({ type: 'createWorld', world: OWN_WORLD, sessionId: 's-a' });
+    expect(check('Page.createIsolatedWorld', { frameId: 'f', worldName: 'own' }, 's-a')).toEqual({
+        type: 'createWorld',
+        world: { ...OWN_WORLD, grantUniveralAccess: false },
+        sessionId: 's-a',
+    });
+    // Chrome creates a new world for every unnamed call, so one could not be created again by name.
+    for (const params of [{ frameId: 'f' }, { frameId: 'f', worldName: '' }, { worldName: 'own' }]) {
+        expect(check('Page.createIsolatedWorld', params, 's-a')).toMatchObject({ type: 'reject' });
+    }
+});
+
+test('an init script lands in the isolated world', () => {
     for (const worldName of [undefined, '']) {
         expect(check('Page.addScriptToEvaluateOnNewDocument', { source: 'x', worldName }, 's-a')).toEqual({
             type: 'forward',

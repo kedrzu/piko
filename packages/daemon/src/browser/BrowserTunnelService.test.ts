@@ -25,6 +25,8 @@ const TOKEN = 'abcdefghijklmnopqrstuvwxyz012345';
 
 /** Pages the client serves itself through `Fetch` (`servePages`), so they never reach the network. */
 const DETECTOR_URL = 'https://detector.test/';
+/** The detector on another site, hence in another renderer process. */
+const OTHER_SITE_URL = 'https://other-site.test/';
 /** The detector with two frames: one of its own origin, and one of another origin of its site, hence its process. */
 const FRAMES_URL = 'https://detector.test/frames';
 const SAME_ORIGIN_FRAME_URL = 'https://detector.test/frame';
@@ -57,7 +59,7 @@ function detectorHtml(body: string) {
     Error.prepareStackTrace = (error, frames) => { detections.runtime++; return 'stack'; };
     setInterval(() => {
         console.debug(new Error('probe'));
-        detections.globals = ['__agentMark', '__initMark', '__loadMark', '__fnMark', '__agentBinding'].filter(
+        detections.globals = ['__agentMark', '__initMark', '__loadMark', '__fnMark', '__ownMark'].filter(
             name => name in window,
         );
         document.getElementById('detections').textContent = JSON.stringify(detections);
@@ -215,14 +217,16 @@ test('a page script sees no enabled Runtime and nothing the client runs, while t
     const client = await connect(port, 'conv-a');
     const targetId = await createTarget(client);
     const sessionId = await attach(client, targetId);
-    await servePages(client, sessionId, { [DETECTOR_URL]: DETECTOR_HTML });
+    await servePages(client, sessionId, { [DETECTOR_URL]: DETECTOR_HTML, [OTHER_SITE_URL]: DETECTOR_HTML });
 
-    // What agent-browser sends: the enables, an init script, a binding, then evaluation in every form.
+    // What agent-browser sends: the enables, init scripts, then evaluation in every form.
     await client.call('Runtime.enable', {}, sessionId);
     await client.call('Console.enable', {}, sessionId);
     await client.call('Page.addScriptToEvaluateOnNewDocument', { source: 'window.__initMark = 1;' }, sessionId);
     await client.call('Page.addScriptToEvaluateOnLoad', { scriptSource: 'window.__loadMark = 1;' }, sessionId);
-    await client.call('Runtime.addBinding', { name: '__agentBinding' }, sessionId);
+    await expect(client.call('Runtime.addBinding', { name: '__agentBinding' }, sessionId)).rejects.toThrow(
+        "page code cannot call the agent's functions",
+    );
     await navigate(client, sessionId, DETECTOR_URL);
     expect(await evaluate(client, sessionId, "window.__agentMark = 1; document.querySelector('h1').textContent")).toBe(
         'Detector',
@@ -248,27 +252,42 @@ test('a page script sees no enabled Runtime and nothing the client runs, while t
         sessionId,
     );
     expect(isPlainObject(called) && isPlainObject(called['result']) ? called['result']['value'] : null).toBe('H1');
-    // No context id is taken from the client, not even one of a world it created: ids are reused across processes.
+    // A world of the client's own, as agent-browser's a11y audit creates it, evaluated in by the id it was given.
     const frameTree = await client.call('Page.getFrameTree', {}, sessionId);
     const frame =
         isPlainObject(frameTree) && isPlainObject(frameTree['frameTree']) ? frameTree['frameTree']['frame'] : undefined;
     const world = await client.call(
         'Page.createIsolatedWorld',
-        { frameId: isPlainObject(frame) ? frame['id'] : undefined, worldName: 'own' },
+        { frameId: isPlainObject(frame) ? frame['id'] : undefined, worldName: 'own', grantUniveralAccess: true },
         sessionId,
     );
-    const ownContextId = isPlainObject(world) ? world['executionContextId'] : undefined;
-    expect(typeof ownContextId).toBe('number');
-    for (const contextId of [1, ownContextId]) {
-        await expect(client.call('Runtime.evaluate', { expression: '1', contextId }, sessionId)).rejects.toThrow(
-            'no context can be named',
-        );
+    const contextId = isPlainObject(world) ? world['executionContextId'] : undefined;
+    expect(typeof contextId).toBe('number');
+    // The detector sets `Error.prepareStackTrace` in the page's own world only.
+    const inOwnWorld =
+        "[document.querySelector('h1').textContent, typeof Error.prepareStackTrace, typeof window.__ownMark]";
+    expect(await evaluate(client, sessionId, `window.__ownMark = 1; ${inOwnWorld}`, { contextId })).toEqual([
+        'Detector',
+        'undefined',
+        'number',
+    ]);
+    // Any other id is refused: ids are reused across renderer processes, so it may name the page's own world.
+    for (const forged of [1, Number(contextId) + 1]) {
+        await expect(
+            client.call('Runtime.evaluate', { expression: '1', contextId: forged }, sessionId),
+        ).rejects.toThrow('must name one you created');
     }
 
-    // A navigation in between: the next evaluation lands in the new document's world, where the init script ran.
-    await navigate(client, sessionId, DETECTOR_URL);
+    // A cross-site navigation in between: the next evaluation lands in the new document's world, where the init script
+    // ran, and the client's id still names its own world there, not whatever context the id now belongs to.
+    await navigate(client, sessionId, OTHER_SITE_URL);
     expect(await evaluate(client, sessionId, '[window.__initMark, typeof window.__agentMark]')).toEqual([
         1,
+        'undefined',
+    ]);
+    expect(await evaluate(client, sessionId, inOwnWorld, { contextId })).toEqual([
+        'Detector',
+        'undefined',
         'undefined',
     ]);
     await Bun.sleep(300);
@@ -542,7 +561,7 @@ async function servePages(client: TestClient, sessionId: string, pages: Record<s
             sessionId,
         );
     });
-    await client.call('Fetch.enable', { patterns: [{ urlPattern: 'https://detector.test*' }] }, sessionId);
+    await client.call('Fetch.enable', { patterns: [{ urlPattern: 'https://*.test*' }] }, sessionId);
     await client.call('Page.enable', {}, sessionId);
 }
 

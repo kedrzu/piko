@@ -65,7 +65,7 @@ export function connectTunnelClient(params: ConnectTunnelClientParams): TunnelCl
     const { clientId, conversationId, socket, browser, dataRoot, uploadsFolder, logger } = params;
     const { ownership } = browser;
     const worlds = createIsolatedWorlds(browser);
-    const context = { clientId, conversationId, ownership, dataRoot };
+    const context = { clientId, conversationId, ownership, worlds, dataRoot };
 
     /** Top-level sessions this client opened, detached when it goes. */
     const sessions = new Set<string>();
@@ -143,6 +143,10 @@ export function connectTunnelClient(params: ConnectTunnelClientParams): TunnelCl
                 case 'isolate':
                     touchSession(decision.call.sessionId);
                     sendReply(id, await worlds.send(decision.call));
+                    return;
+                case 'createWorld':
+                    touchSession(decision.sessionId);
+                    sendReply(id, await worlds.createClientWorld(decision.sessionId, decision.world));
                     return;
                 case 'forward':
                     touchSession(decision.sessionId);
@@ -283,7 +287,7 @@ export function connectTunnelClient(params: ConnectTunnelClientParams): TunnelCl
         }
     }
 
-    /** Drops what `worlds` cached for a detached session; a nested session's detach comes on its parent session. */
+    /** Drops what `worlds` holds for a detached session; a nested session's detach comes on its parent session. */
     function forgetDetached(event: CdpEvent) {
         const sessionId = isPlainObject(event.params) ? event.params['sessionId'] : undefined;
         if (event.method === 'Target.detachedFromTarget' && typeof sessionId === 'string') {
