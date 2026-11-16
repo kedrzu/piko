@@ -137,7 +137,7 @@ export function connectTunnelClient(params: ConnectTunnelClientParams): TunnelCl
         }
 
         const decision = checkCdpRequest(message, context);
-        const paced: PacedCommand | undefined = decision.type === 'forward' ? decision : undefined;
+        const paced = findPacedCommand(decision);
         const sessionId = isPlainObject(message) ? message['sessionId'] : undefined;
         const key = typeof sessionId === 'string' ? sessionId : undefined;
         const before = waiting.get(key);
@@ -150,12 +150,16 @@ export function connectTunnelClient(params: ConnectTunnelClientParams): TunnelCl
         waiting.set(key, sent);
         try {
             await before;
+            // The socket closed while an earlier command waited: nothing more is sent, and no site's slot is taken.
+            if (closed) {
+                return;
+            }
             const verdict = paced == null ? undefined : await pace.gate(paced);
             if (verdict?.type === 'refuse') {
                 sendError(id, SERVER_ERROR, verdict.message);
                 return;
             }
-            // The socket closed while it waited: its sessions are detached, and nothing is sent for it any more.
+            // The socket closed while this one waited: its sessions are detached, and nothing is sent for it any more.
             if (closed) {
                 return;
             }
@@ -401,5 +405,20 @@ export function connectTunnelClient(params: ConnectTunnelClientParams): TunnelCl
         if (!closed) {
             socket.send(JSON.stringify(message));
         }
+    }
+}
+
+/**
+ * What the pace judges of a decision: a forwarded command, or an evaluation run in the isolated world, which is how
+ * agent-browser goes back and forward (`history.back()`). Anything else never loads a page.
+ */
+function findPacedCommand(decision: CdpRequestDecision): PacedCommand | undefined {
+    switch (decision.type) {
+        case 'forward':
+            return decision;
+        case 'isolate':
+            return decision.call.method === 'Runtime.evaluate' ? decision.call : undefined;
+        default:
+            return undefined;
     }
 }

@@ -70,6 +70,8 @@ const BLOCK_MEMORY_MS = HOUR_MS;
 const BLOCK_STATUSES = new Set([403, 429]);
 /** The commands that surely load a page, so take the site's slot when let through. */
 const LOADING_METHODS = new Set(['Page.navigate', 'Page.reload', 'Target.createTarget']);
+/** The expressions agent-browser goes back and forward with; like a click, they wait but take no slot. */
+const HISTORY_STEPS = new Set(['history.back()', 'history.forward()']);
 /** Why a site is paced after a block, in a refusal. */
 const AFTER_BLOCK = 'after it blocked or challenged the agent';
 
@@ -144,6 +146,11 @@ export const BrowserPace = defineService({
         /** The URL a command acts on: its target URL for a navigation, else the page of its session, if it acts at all. */
         function findTargetUrl({ method, params, sessionId }: PacedCommand) {
             switch (method) {
+                case 'Runtime.evaluate':
+                    // agent-browser v0.43.0 goes back and forward with exactly these (`handle_back`, `handle_forward`
+                    // in `cli/src/native/actions.rs`). Navigations in the agent's own scripts are counted when their
+                    // document arrives, not held (stealth-browsing D5).
+                    return HISTORY_STEPS.has(String(params['expression'])) ? findSessionUrl(sessionId) : undefined;
                 case 'Page.navigate':
                 case 'Target.createTarget':
                     return typeof params['url'] === 'string' ? params['url'] : undefined;

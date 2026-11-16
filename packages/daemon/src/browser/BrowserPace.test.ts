@@ -188,6 +188,31 @@ test('a held command is refused when its site gets blocked while it waits', asyn
     expect(await held.settled()).toMatchObject({ type: 'refuse' });
 });
 
+test("agent-browser's back and forward wait like a click and are refused on a paused site; other scripts go", async () => {
+    const { pace, clock, emit } = setup();
+    emit(pageUrl('T1', 'https://shop.pl/'));
+    emit(documentResponse('S1', 'T1', 'L1', 'https://shop.pl/', 200));
+    const back = track(pace.gate(input('Runtime.evaluate', { expression: 'history.back()' })));
+    expect(await track(pace.gate(input('Runtime.evaluate', { expression: 'document.title' }))).settled()).toEqual({
+        type: 'go',
+    });
+    clock.advance(5 * SECOND);
+    expect(await back.settled()).toEqual({ type: 'go' });
+
+    emit(documentResponse('S1', 'T1', 'L2', 'https://shop.pl/blocked', 403));
+    expect(await pace.gate(input('Runtime.evaluate', { expression: 'history.forward()' }))).toMatchObject({
+        type: 'refuse',
+    });
+});
+
+test('a trailing root dot names the same site', async () => {
+    const { pace, emit } = setup();
+    emit(pageUrl('T1', 'https://shop.pl/'));
+    emit(documentResponse('S1', 'T1', 'L1', 'https://shop.pl/', 403));
+
+    expect(await pace.gate(navigate('https://shop.pl./'))).toMatchObject({ type: 'refuse' });
+});
+
 /** A pace over a fake browser with one agent page `T1` (sessions `S1`, `S2`) and a clock moved by `advance()`. */
 function setup() {
     const { container, logs } = createTestContainer();
