@@ -80,3 +80,25 @@ person's, which informs whether to build the input layer ([D4](#d4)) and then ch
 - The current one-page probe (a text field and a button, `kedrzu/stealth-eval-page`) — no visit to score; it is
   replaced by the shop.
 - Scenarios kept on the page — the eval owns them, so the agent and both controls run identical steps.
+
+## D5
+
+Retired 2026-11-16, partly replaced: the values, the recognition of a block and how the agent is told were settled
+from the Allegro measurement; the rest holds in [D5](../DECISIONS.md#d5). The owner first asked for a slightly lower
+threshold than 8 seconds to be measured; 5 seconds passed and became the pace.
+
+**The daemon enforces a human pace on every site, and slows down when a page shows a CAPTCHA or block; the agent is
+told when it is being paced.** The pace values and back-off rules are set from the
+baseline measurement on Allegro, not guessed up front. How the daemon recognises a block is open. (2026-11-15,
+design agent proposal, owner agreed; adaptive from the first version is the owner's choice)
+
+**Why.** Blocks after N actions (30 Allegro searches in two minutes) come from volume per session and IP, which no
+fingerprint fix changes. Enforced in the daemon, the agent cannot skip it; telling the agent keeps it from treating
+the wait as a broken browser. A generic pace fits "any site" ([D1](#d1)).
+
+**Rejected.**
+
+- Per-site limits only — needs a known list of sites.
+- Pace as an instruction to the agent — a hurried agent ignores it.
+- A fixed per-site interval first, with CAPTCHA back-off added later — the owner wants the adaptive behaviour from
+  the first version (rightsize review, 2026-11-15).

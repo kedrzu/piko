@@ -184,3 +184,4 @@
 - Owner closed the design (2026-11-15). Next: `/dev:deliver`, first milestone the baseline measurement with the test
   shop and both controls.
 - Delivery: building showed tokens in the DOM cannot be read from the person's own Chrome in time (two-minute life). Owner chose assessment in the page with a restricted public key (D11 partly replaced, prior form in history).
+- Delivery (2026-11-16): Allegro after M2 passed 40 searches at 8 s and at 5 s. Owner chose: pace from measurement (asked for a lower threshold — 5 s passed), passive block recognition, short holds and worded refusals (D5 partly replaced, prior form in history).

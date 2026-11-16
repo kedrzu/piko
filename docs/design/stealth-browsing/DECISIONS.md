@@ -130,14 +130,29 @@ in any language, and anything later. Vendors document client-side JS fingerprint
 
 ## D5
 
-**The daemon enforces a human pace on every site, and slows down when a page shows a CAPTCHA or block; the agent is
-told when it is being paced.** The pace values and back-off rules are set from the
-baseline measurement on Allegro, not guessed up front. How the daemon recognises a block is open. (2026-11-15,
-design agent proposal, owner agreed; adaptive from the first version is the owner's choice)
+**The daemon enforces a human pace on every site and backs off when a page shows a CAPTCHA or block. Pace: at most one
+page load per site every 5 seconds, shared by every conversation. A block is recognised passively, from the page events
+the tunnel already relays to the client: a main document answered 403 or 429, or a request to a known challenge host.
+After a first block the site gets a 5-minute pause and a doubled interval for an hour; a second block within the hour
+refuses further actions on that site and tells the agent to ask the person. A wait of up to about 15 seconds is held
+silently; a longer one is refused with a message saying why and for how long, and the agent's instructions say such a
+message is deliberate.** (2026-11-15, design agent proposal, owner agreed; adaptive from the first version is the
+owner's choice; values, recognition and the message chosen by the owner on 2026-11-16 from the Allegro measurement)
 
-**Why.** Blocks after N actions (30 Allegro searches in two minutes) come from volume per session and IP, which no
-fingerprint fix changes. Enforced in the daemon, the agent cannot skip it; telling the agent keeps it from treating
-the wait as a broken browser. A generic pace fits "any site" ([D1](#d1)).
+**Why.** Blocks after N actions come from volume per session and IP, which no fingerprint fix changes. Enforced in the
+daemon, the agent cannot skip it; telling the agent keeps it from treating the wait as a broken browser. A generic pace
+fits "any site" ([D1](#d1)). Passive recognition sends nothing a page could observe. agent-browser gives every CDP
+command 30 seconds and shows a refusal's text to the agent, so a short hold fits inside a command and a long wait
+needs words.
+
+> **Checked 2026-11-16:** Allegro from the owner's home connection, the agent's browser after the launch flag and the
+> isolated-world rule: 40 searches at 8-second intervals and 40 at 5-second intervals, each with results in about 1.3
+> s, no CAPTCHA. The threshold was not searched for further, to spare the home IP; before the launch flag the same IP
+> was flagged after a handful of headless loads.
+
+> **Checked 2026-11-16:** agent-browser v0.43.0 waits 30 seconds for a CDP reply (`cli/src/native/cdp/client.rs:801`)
+> and prints a CDP error's text, rewritten only when it contains "timeout" or "intercept"
+> (`cli/src/native/browser.rs:237-270`).
 
 **Rejected.**
 
@@ -145,6 +160,11 @@ the wait as a broken browser. A generic pace fits "any site" ([D1](#d1)).
 - Pace as an instruction to the agent — a hurried agent ignores it.
 - A fixed per-site interval first, with CAPTCHA back-off added later — the owner wants the adaptive behaviour from
   the first version (rightsize review, 2026-11-15).
+- Reading each loaded page in an isolated world to recognise a block — more precise, but a command after every load
+  (owner, 2026-11-16).
+- Holding every wait silently — past 30 seconds the agent gets an error it cannot read (owner, 2026-11-16).
+- A further Allegro run at a faster interval to find the threshold — not needed for a pace the agent rarely
+  reaches, and it would flag the home IP again ([history](history/DECISIONS.md#d5)).
 
 ## D6
 

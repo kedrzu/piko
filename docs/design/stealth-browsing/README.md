@@ -78,10 +78,11 @@ agent inside its limits. Stealth goes there too ([layers in the daemon](DECISION
 - **How input arrives.** A click from the agent becomes a mouse movement along a curve, and text becomes key presses
   at a typing pace. This one waits for evidence: it is built only once the measurement shows sites reacting to how
   input arrives, and the same goes for making the browser call itself "Google Chrome" rather than "Chromium".
-- **How fast the agent goes.** The daemon holds every site to a human pace. When a page shows a CAPTCHA it slows down
-  further, and it tells the agent it is waiting, so the agent does not decide the browser is broken
-  ([why pace is enforced, not suggested](DECISIONS.md#d5)). A burst of thirty searches in two minutes gets blocked
-  however perfect the fingerprint is.
+- **How fast the agent goes.** The daemon holds every site to a human pace: one page load every five seconds, whatever
+  the number of conversations. It notices a CAPTCHA or block from what the page already reports, without touching it,
+  and then pauses that site and slows down for an hour; a second block makes the agent ask the person. A short wait is
+  just a slower command; a longer one comes back as a message saying why and for how long, so the agent does not decide
+  the browser is broken ([why pace is enforced, not suggested](DECISIONS.md#d5)).
 
 Because all of this happens in the daemon, anything that drives the browser gets it without extra work: the agent's
 current tool, and anything that drives the browser later, whatever language it is written in.
@@ -139,8 +140,3 @@ design of their own later, and how the agent posts on X ([what this design leave
 The eval's first measurement of the browser as it is today is what the pace values come from, and its numbers decide
 whether human-like input and the browser's name are built, in which order, and whether we will ever need our own
 Chromium build.
-
-Still open:
-
-- **Pace values and back-off rules** come from the first measurement. Still open: how the daemon recognises that a
-  page is a CAPTCHA or block, and how the agent is told it is being paced.
