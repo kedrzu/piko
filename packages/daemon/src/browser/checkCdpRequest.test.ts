@@ -4,11 +4,15 @@ import { expect, test } from 'bun:test';
 
 import { checkCdpRequest } from './checkCdpRequest.js';
 import type { CdpRequestContext } from './checkCdpRequest.js';
+import { ISOLATED_WORLD_NAME } from './createIsolatedWorlds.js';
 import { createTargetOwnership } from './createTargetOwnership.js';
 
 const DATA_ROOT = '/Users/someone/Poweragents';
 
-/** The client `c1` of conversation `conv-a` owns page `t-a` and session `s-a`; `c2` of `conv-b` owns `t-b`/`s-b`. */
+/**
+ * The client `c1` of conversation `conv-a` owns page `t-a` and session `s-a`, where its isolated world is context 7, and
+ * `s-w`, a worker's; `c2` of `conv-b` owns `t-b`/`s-b`.
+ */
 function prepare(): CdpRequestContext {
     const ownership = createTargetOwnership();
     ownership.claimTarget('conv-a', 't-a');
@@ -18,7 +22,12 @@ function prepare(): CdpRequestContext {
     // A second client of conv-a (another socket) and the daemon's own session on t-a.
     ownership.claimSession({ type: 'client', clientId: 'c3' }, 's-a3', 't-a');
     ownership.claimSession({ type: 'daemon' }, 's-daemon', 't-a');
-    return { clientId: 'c1', conversationId: 'conv-a', ownership, dataRoot: DATA_ROOT };
+    ownership.claimSession({ type: 'client', clientId: 'c1' }, 's-w', 't-a');
+    const worlds = {
+        isIsolatedContext: (sessionId: string, contextId: unknown) => sessionId === 's-a' && contextId === 7,
+        isWorker: (sessionId: string) => sessionId === 's-w',
+    };
+    return { clientId: 'c1', conversationId: 'conv-a', ownership, worlds, dataRoot: DATA_ROOT };
 }
 
 function check(method: string, params?: object, sessionId?: string) {
@@ -130,7 +139,11 @@ test.each([
     ['Browser.grantPermissions', { permissions: ['geolocation'] }, undefined],
     ['Extensions.loadUnpacked', { path: '/tmp/x' }, undefined],
     ['Tracing.start', {}, 's-a'],
-    ['Debugger.enable', {}, 's-a'],
+    ['Debugger.setBreakpointByUrl', { lineNumber: 1, url: 'https://example.com/' }, 's-a'],
+    ['Debugger.pause', {}, 's-a'],
+    ['Console.clearMessages', {}, 's-a'],
+    ['Runtime.queryObjects', { prototypeObjectId: 'x' }, 's-a'],
+    ['Runtime.globalLexicalScopeNames', {}, 's-a'],
     ['Storage.clearDataForOrigin', { origin: '*', storageTypes: 'all' }, 's-a'],
     ['IO.resolveBlob', { objectId: 'x' }, 's-a'],
     ['SystemInfo.getProcessInfo', {}, undefined],
@@ -248,4 +261,79 @@ test('malformed params or sessionId are rejected', () => {
         type: 'reject',
     });
     expect(checkCdpRequest({ method: 'Runtime.enable', sessionId: 42 }, prepare())).toMatchObject({ type: 'reject' });
+});
+
+test.each([
+    'Runtime.enable',
+    'Runtime.disable',
+    'Console.enable',
+    'Console.disable',
+    'Debugger.enable',
+    'Debugger.disable',
+])('%s is answered without reaching the browser, on a page or a worker', method => {
+    expect(check(method, {}, 's-a')).toEqual({ type: 'reply', result: {} });
+    expect(check(method, {}, 's-w')).toEqual({ type: 'reply', result: {} });
+    expect(check(method, {}, 's-b')).toMatchObject({ type: 'reject' });
+});
+
+test.each([
+    ['Runtime.evaluate', { expression: '1' }, 'contextId'],
+    ['Runtime.callFunctionOn', { functionDeclaration: '() => 1' }, 'executionContextId'],
+    ['DOM.resolveNode', { backendNodeId: 5 }, 'executionContextId'],
+] as const)(
+    '%s with no context runs in the isolated world, or only in a context of one',
+    (method, params, contextParam) => {
+        expect(check(method, params, 's-a')).toEqual({
+            type: 'isolate',
+            call: { method, params, sessionId: 's-a', contextParam },
+        });
+        expect(check(method, { ...params, [contextParam]: 7 }, 's-a')).toEqual({
+            type: 'forward',
+            method,
+            params: { ...params, [contextParam]: 7 },
+            sessionId: 's-a',
+        });
+        // The page's own context (1), one of another session, and a unique id never come from an isolated world.
+        expect(check(method, { ...params, [contextParam]: 1 }, 's-a')).toMatchObject({ type: 'reject' });
+        expect(check(method, { ...params, [contextParam]: 7 }, 's-w')).toMatchObject({ type: 'reject' });
+        expect(check(method, { ...params, uniqueContextId: '7' }, 's-a')).toMatchObject({ type: 'reject' });
+        expect(check(method, params, 's-w')).toMatchObject({ type: 'reject' });
+    },
+);
+
+test('Runtime.callFunctionOn on an object goes out as given', () => {
+    expect(check('Runtime.callFunctionOn', { functionDeclaration: 'f', objectId: 'o' }, 's-a').type).toBe('forward');
+    expect(
+        check('Runtime.callFunctionOn', { functionDeclaration: 'f', objectId: 'o', executionContextId: 1 }, 's-a'),
+    ).toMatchObject({ type: 'reject' });
+});
+
+test.each(['Runtime.compileScript', 'Runtime.runScript'])('%s goes out only into an isolated context', method => {
+    expect(check(method, { expression: '1', scriptId: 's', executionContextId: 7 }, 's-a').type).toBe('forward');
+    expect(check(method, { expression: '1', scriptId: 's', executionContextId: 1 }, 's-a')).toMatchObject({
+        type: 'reject',
+    });
+    expect(check(method, { expression: '1', scriptId: 's' }, 's-a')).toMatchObject({ type: 'reject' });
+});
+
+test('a binding and an init script land in the isolated world', () => {
+    expect(check('Runtime.addBinding', { name: 'cb', executionContextId: 1, executionContextName: '' }, 's-a')).toEqual(
+        {
+            type: 'forward',
+            method: 'Runtime.addBinding',
+            params: { name: 'cb', executionContextName: ISOLATED_WORLD_NAME },
+            sessionId: 's-a',
+        },
+    );
+    for (const worldName of [undefined, '']) {
+        expect(check('Page.addScriptToEvaluateOnNewDocument', { source: 'x', worldName }, 's-a')).toEqual({
+            type: 'forward',
+            method: 'Page.addScriptToEvaluateOnNewDocument',
+            params: { source: 'x', worldName: ISOLATED_WORLD_NAME },
+            sessionId: 's-a',
+        });
+    }
+    expect(check('Page.addScriptToEvaluateOnNewDocument', { source: 'x', worldName: 'own' }, 's-a')).toMatchObject({
+        params: { source: 'x', worldName: 'own' },
+    });
 });

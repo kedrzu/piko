@@ -6,6 +6,7 @@ import { CdpError } from './CdpTypes.js';
 import type { CdpEvent } from './CdpTypes.js';
 import { checkCdpRequest } from './checkCdpRequest.js';
 import type { CdpParams } from './checkCdpRequest.js';
+import { createIsolatedWorlds } from './createIsolatedWorlds.js';
 import { readTargetInfo } from './readTargetInfo.js';
 import { stageUpload } from './stageUpload.js';
 
@@ -63,7 +64,8 @@ const TARGET_EVENTS = new Set([
 export function connectTunnelClient(params: ConnectTunnelClientParams): TunnelClient {
     const { clientId, conversationId, socket, browser, dataRoot, uploadsFolder, logger } = params;
     const { ownership } = browser;
-    const context = { clientId, conversationId, ownership, dataRoot };
+    const worlds = createIsolatedWorlds(browser);
+    const context = { clientId, conversationId, ownership, worlds, dataRoot };
 
     /** Top-level sessions this client opened, detached when it goes. */
     const sessions = new Set<string>();
@@ -138,6 +140,10 @@ export function connectTunnelClient(params: ConnectTunnelClientParams): TunnelCl
                     touchSession(decision.sessionId);
                     sendReply(id, await upload(decision.files, decision.params, decision.sessionId));
                     return;
+                case 'isolate':
+                    touchSession(decision.call.sessionId);
+                    sendReply(id, await worlds.send(decision.call));
+                    return;
                 case 'forward':
                     touchSession(decision.sessionId);
                     sendReply(id, await forward(decision.method, decision.params, decision.sessionId));
@@ -171,6 +177,8 @@ export function connectTunnelClient(params: ConnectTunnelClientParams): TunnelCl
                 return createTarget(forwardParams);
             case 'Target.attachToTarget':
                 return attachToTarget(forwardParams);
+            case 'Page.createIsolatedWorld':
+                return createIsolatedWorld(forwardParams, sessionId);
             default:
                 return browser.send(method, forwardParams, sessionId);
         }
@@ -248,10 +256,19 @@ export function connectTunnelClient(params: ConnectTunnelClientParams): TunnelCl
         return reply;
     }
 
+    async function createIsolatedWorld(worldParams: CdpParams, sessionId: string | undefined) {
+        const reply = await browser.send('Page.createIsolatedWorld', worldParams, sessionId);
+        if (sessionId != null) {
+            worlds.recordWorld(sessionId, reply);
+        }
+        return reply;
+    }
+
     function onEvent(event: CdpEvent) {
         if (closed) {
             return;
         }
+        observeWorlds(event);
         if (event.sessionId != null) {
             if (isOwnSession(event.sessionId)) {
                 sendEvent(event);
@@ -273,6 +290,20 @@ export function connectTunnelClient(params: ConnectTunnelClientParams): TunnelCl
         }
         if (TARGET_EVENTS.has(event.method)) {
             onTargetEvent(event, eventParams);
+        }
+    }
+
+    /** Feeds `worlds` the sessions of this client: auto-attached ones carry their parent's `sessionId`. */
+    function observeWorlds(event: CdpEvent) {
+        const eventParams = isPlainObject(event.params) ? event.params : {};
+        const sessionId = eventParams['sessionId'];
+        if (typeof sessionId !== 'string') {
+            return;
+        }
+        if (event.method === 'Target.attachedToTarget' && isOwnSession(sessionId)) {
+            worlds.observeAttached(eventParams);
+        } else if (event.method === 'Target.detachedFromTarget') {
+            worlds.forget(sessionId);
         }
     }
 

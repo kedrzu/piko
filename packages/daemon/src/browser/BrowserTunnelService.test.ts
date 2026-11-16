@@ -23,6 +23,37 @@ const HEADLESS_ARGS = ['--headless=new', '--no-sandbox'];
 const TIMEOUT_MS = 20_000;
 const TOKEN = 'abcdefghijklmnopqrstuvwxyz012345';
 
+/** A page the client serves itself through `Fetch`, so it never reaches the network. */
+const DETECTOR_URL = 'https://detector.test/';
+/**
+ * The page's own detector, after rebrowser's bot-detector: an Error logged with `console.debug` is serialised only
+ * while Runtime is enabled, which formats its stack through `Error.prepareStackTrace`. (Its `name` is read either
+ * way, by Chrome's own console logging, so a getter on it detects nothing.) It also
+ * looks for the globals the client's code sets and counts main-world `querySelector` calls, and writes what it saw to
+ * the DOM, where the client reads it.
+ */
+const DETECTOR_HTML = `<!doctype html><html><body><h1>Detector</h1><pre id="detections"></pre><script>
+    const detections = { runtime: 0, globals: [], querySelector: 0 };
+    const querySelector = Document.prototype.querySelector;
+    Document.prototype.querySelector = function (...args) { detections.querySelector++; return querySelector.apply(this, args); };
+    Error.prepareStackTrace = (error, frames) => { detections.runtime++; return 'stack'; };
+    setInterval(() => {
+        console.debug(new Error('probe'));
+        detections.globals = ['__agentMark', '__initMark', '__fnMark', '__agentBinding'].filter(name => name in window);
+        document.getElementById('detections').textContent = JSON.stringify(detections);
+    }, 50);
+</script></body></html>`;
+
+/** What `DETECTOR_HTML` writes to its page. */
+interface DetectorFindings {
+    /** How often a logged Error's stack was formatted: above 0 only while Runtime is enabled. */
+    runtime: number;
+    /** The client's globals the page can see. */
+    globals: string[];
+    /** Main-world `document.querySelector` calls. */
+    querySelector: number;
+}
+
 const cleanups: (() => Promise<void> | void)[] = [];
 
 afterEach(async () => {
@@ -156,6 +187,67 @@ test('a client drives its page; the daemon own sessions and browser-level events
         false,
     );
     await expect(client.call('Browser.close')).rejects.toThrow('not allowed');
+}, 30_000);
+
+test('a page script sees no enabled Runtime and nothing the client runs, while the client reads the page', async () => {
+    const { port, browser } = await startTunnel();
+    const client = await connect(port, 'conv-a');
+    const targetId = await createTarget(client);
+    const sessionId = await attach(client, targetId);
+    serveDetectorPage(client, sessionId);
+    await client.call('Fetch.enable', { patterns: [{ urlPattern: `${DETECTOR_URL}*` }] }, sessionId);
+    await client.call('Page.enable', {}, sessionId);
+
+    // What agent-browser sends: the enables, an init script, a binding, then evaluation in every form.
+    await client.call('Runtime.enable', {}, sessionId);
+    await client.call('Console.enable', {}, sessionId);
+    await client.call('Page.addScriptToEvaluateOnNewDocument', { source: 'window.__initMark = 1;' }, sessionId);
+    await client.call('Runtime.addBinding', { name: '__agentBinding' }, sessionId);
+    await navigate(client, sessionId, DETECTOR_URL);
+    expect(await evaluate(client, sessionId, "window.__agentMark = 1; document.querySelector('h1').textContent")).toBe(
+        'Detector',
+    );
+    expect(await evaluate(client, sessionId, 'window.__initMark')).toBe(1);
+    const tree = await client.call('DOM.getDocument', {}, sessionId);
+    const root = isPlainObject(tree) && isPlainObject(tree['root']) ? tree['root']['nodeId'] : undefined;
+    const found = await client.call('DOM.querySelector', { nodeId: root, selector: 'h1' }, sessionId);
+    const resolved = await client.call(
+        'DOM.resolveNode',
+        { nodeId: isPlainObject(found) ? found['nodeId'] : undefined },
+        sessionId,
+    );
+    const objectId =
+        isPlainObject(resolved) && isPlainObject(resolved['object']) ? resolved['object']['objectId'] : null;
+    const called = await client.call(
+        'Runtime.callFunctionOn',
+        {
+            objectId,
+            functionDeclaration: 'function () { window.__fnMark = 1; return this.tagName; }',
+            returnByValue: true,
+        },
+        sessionId,
+    );
+    expect(isPlainObject(called) && isPlainObject(called['result']) ? called['result']['value'] : null).toBe('H1');
+    await expect(client.call('Runtime.evaluate', { expression: '1', contextId: 1 }, sessionId)).rejects.toThrow(
+        'isolated world',
+    );
+
+    // A navigation in between: the next evaluation lands in the new document's world, where the init script ran.
+    await navigate(client, sessionId, DETECTOR_URL);
+    expect(await evaluate(client, sessionId, '[window.__initMark, typeof window.__agentMark]')).toEqual([
+        1,
+        'undefined',
+    ]);
+    await Bun.sleep(300);
+    const clean: DetectorFindings = { runtime: 0, globals: [], querySelector: 0 };
+    expect(await readDetections(client, sessionId)).toEqual(clean);
+
+    // The control: the detector does catch an enabled Runtime, here enabled by the daemon past the tunnel.
+    const reply = await browser.send('Target.attachToTarget', { targetId, flatten: true });
+    await browser.send('Runtime.enable', {}, isPlainObject(reply) ? String(reply['sessionId']) : undefined);
+    await waitUntil(async () => isDetected(await readDetections(client, sessionId)), {
+        timeoutMs: TIMEOUT_MS,
+    });
 }, 30_000);
 
 test('a closed socket detaches its sessions and leaves its pages', async () => {
@@ -319,6 +411,54 @@ async function evaluate(client: TestClient, sessionId: string, expression: strin
     const reply = await client.call('Runtime.evaluate', { expression, returnByValue: true, ...extra }, sessionId);
     const result = isPlainObject(reply) ? reply['result'] : undefined;
     return isPlainObject(result) ? result['value'] : undefined;
+}
+
+/** Answers every request the page makes on `sessionId` from `DETECTOR_HTML`, the document itself, a 404 the rest. */
+function serveDetectorPage(client: TestClient, sessionId: string) {
+    client.socket.addEventListener('message', event => {
+        const message: unknown = JSON.parse(String(event.data));
+        if (
+            !isPlainObject(message) ||
+            message['method'] !== 'Fetch.requestPaused' ||
+            !isPlainObject(message['params'])
+        ) {
+            return;
+        }
+        const { requestId, request } = message['params'];
+        const isDocument = isPlainObject(request) && request['url'] === DETECTOR_URL;
+        void client.call(
+            'Fetch.fulfillRequest',
+            {
+                requestId,
+                responseCode: isDocument ? 200 : 404,
+                responseHeaders: [{ name: 'Content-Type', value: 'text/html' }],
+                body: Buffer.from(isDocument ? DETECTOR_HTML : '').toString('base64'),
+            },
+            sessionId,
+        );
+    });
+}
+
+async function navigate(client: TestClient, sessionId: string, url: string) {
+    const loads = client.messages.filter(m => m['method'] === 'Page.loadEventFired').length;
+    await client.call('Page.navigate', { url }, sessionId);
+    await waitUntil(() => client.messages.filter(m => m['method'] === 'Page.loadEventFired').length > loads, {
+        timeoutMs: TIMEOUT_MS,
+    });
+}
+
+/** What the detector page last wrote; `null` before it wrote anything. */
+async function readDetections(client: TestClient, sessionId: string) {
+    const text = await evaluate(client, sessionId, "document.getElementById('detections').textContent");
+    if (typeof text !== 'string' || text === '') {
+        return null;
+    }
+    const findings: unknown = JSON.parse(text);
+    return findings;
+}
+
+function isDetected(findings: unknown) {
+    return isPlainObject(findings) && typeof findings['runtime'] === 'number' && findings['runtime'] > 0;
 }
 
 function targetIdsOf(reply: unknown) {

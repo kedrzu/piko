@@ -1,5 +1,8 @@
+import { assert } from '@nzyme/utils/assert.js';
 import { isPlainObject } from '@nzyme/utils/isPlainObject.js';
 
+import { ISOLATED_WORLD_NAME } from './createIsolatedWorlds.js';
+import type { IsolatedCall, IsolatedWorlds } from './createIsolatedWorlds.js';
 import type { TargetOwnership } from './createTargetOwnership.js';
 import { isAllowedUrl } from './isAllowedUrl.js';
 import { toHostUploadPath } from './toHostUploadPath.js';
@@ -11,6 +14,8 @@ export interface CdpRequestContext {
     /** The conversation the socket belongs to; it owns the pages the client may touch. */
     conversationId: string;
     ownership: Pick<TargetOwnership, 'getTargetOwner' | 'getSessionOriginator'>;
+    /** The client's isolated contexts and worker sessions. */
+    worlds: Pick<IsolatedWorlds, 'isIsolatedContext' | 'isWorker'>;
     /** The profile's data root on this computer, for upload paths. */
     dataRoot: string;
 }
@@ -27,6 +32,8 @@ export type CdpRequestDecision =
      * `sessionId` with `params` plus `files` set to the copies' paths.
      */
     | { type: 'upload'; files: string[]; params: CdpParams; sessionId: string }
+    /** Run it in the daemon's isolated world of the session's main frame (`IsolatedWorlds.send`). */
+    | { type: 'isolate'; call: IsolatedCall }
     /** Answer the client with `result` without touching the browser. */
     | { type: 'reply'; result: CdpParams }
     /** Answer the client with a CDP error carrying `message`. */
@@ -36,24 +43,32 @@ export type CdpRequestDecision =
  * What a tunnel client may call, by domain: `'*'` for the whole domain, or a list of method names. The browser runs on
  * this computer, so this table is where the agent's limits live (D27). Every domain here is reached only through a
  * session the client itself opened on its own conversation's page (`BROWSER_LEVEL_METHODS` aside), so a whole domain is
- * listed when everything in it acts on that one page: what the page renders, runs and requests (Page, Runtime, DOM,
- * DOMSnapshot, CSS, Input, Emulation, Accessibility, Overlay, Log), its traffic (Network, Fetch — the proxy still
- * guards the network itself), certificate handling (Security) and WebMCP. Cookies stay open on purpose (Network's and
- * Storage's cookie methods): the agent shares the profile's logins by design; the rest of Storage (quota, origin data,
- * shared storage, interest groups) is not needed. IO is limited to reading and closing streams the page's own commands
- * returned. Browser offers only `getVersion`; the rest of it (download behaviour, permissions, windows, closing) is the
- * daemon's. Target offers what the agent's CLI uses to find, open, attach to and close its pages; the methods that name
- * a target or session are checked against ownership in `checkCdpRequest`. Left out on purpose: Extensions, PWA,
- * FileSystem, Tracing, SystemInfo, Memory, HeapProfiler, Profiler, Debugger, Cast, BackgroundService, DeviceAccess,
- * Autofill, ServiceWorker, Tethering, and every domain not named here. The list follows what agent-browser sends: adding
- * a method it needs is one entry, re-checked against this reasoning when agent-browser or Chrome is upgraded.
+ * listed when everything in it acts on that one page: what the page renders and requests (Page, DOM, DOMSnapshot, CSS,
+ * Input, Emulation, Accessibility, Overlay, Log), its traffic (Network, Fetch — the proxy still guards the network
+ * itself), certificate handling (Security) and WebMCP. Runtime is listed by method, and Console and Debugger offer only
+ * their enable and disable, because page scripts must never observe our code (stealth-browsing D8): an enabled
+ * Runtime, Console or Debugger domain is measurable from the page, so the daemon answers those itself and never enables
+ * them; every evaluation, resolved node, init script and binding goes to an isolated world (`ISOLATED_WORLD_NAME`),
+ * never the page's own. Runtime keeps what agent-browser calls and what works on objects it got back (properties,
+ * releasing, awaiting); `compileScript` and `runScript` pass only into an isolated context. Cookies stay open on
+ * purpose (Network's and Storage's cookie methods): the agent shares the profile's logins by design; the rest of
+ * Storage (quota, origin data, shared storage, interest groups) is not needed. IO is limited to reading and closing
+ * streams the page's own commands returned. Browser offers only `getVersion`; the rest of it (download behaviour,
+ * permissions, windows, closing) is the daemon's. Target offers what the agent's CLI uses to find, open, attach to and
+ * close its pages; the methods that name a target or session are checked against ownership in `checkCdpRequest`. Left
+ * out on purpose: Extensions, PWA, FileSystem, Tracing, SystemInfo, Memory, HeapProfiler, Profiler, Cast,
+ * BackgroundService, DeviceAccess, Autofill, ServiceWorker, Tethering, and every domain not named here. The list follows
+ * what agent-browser sends: adding a method it needs is one entry, re-checked against this reasoning when agent-browser
+ * or Chrome is upgraded.
  */
 const ALLOWED_METHODS: Record<string, '*' | readonly string[]> = {
     Accessibility: '*',
     Browser: ['getVersion'],
     CSS: '*',
+    Console: ['enable', 'disable'],
     DOM: '*',
     DOMSnapshot: '*',
+    Debugger: ['enable', 'disable'],
     Emulation: '*',
     Fetch: '*',
     IO: ['read', 'close'],
@@ -62,7 +77,20 @@ const ALLOWED_METHODS: Record<string, '*' | readonly string[]> = {
     Network: '*',
     Overlay: '*',
     Page: '*',
-    Runtime: '*',
+    Runtime: [
+        'enable',
+        'disable',
+        'evaluate',
+        'callFunctionOn',
+        'getProperties',
+        'awaitPromise',
+        'releaseObject',
+        'releaseObjectGroup',
+        'runIfWaitingForDebugger',
+        'addBinding',
+        'compileScript',
+        'runScript',
+    ],
     Security: '*',
     Storage: ['getCookies', 'setCookies', 'clearCookies'],
     Target: [
@@ -100,8 +128,9 @@ const BROWSER_LEVEL_METHODS = new Set([
  * Judges one message a tunnel client sent before it may reach the shared browser: the method must be allowed
  * (`ALLOWED_METHODS`), sent on a session this client opened unless it is browser-level (`BROWSER_LEVEL_METHODS`), name
  * only its own conversation's targets and sessions, navigate only where `isAllowedUrl` permits, and upload only files of
- * the data root. Some methods are rewritten or answered here: a new page always opens minimized in the background, and
- * nothing the agent sends may bring the browser to the front. Pure: the caller does the IO the decision asks for.
+ * the data root. Some methods are rewritten or answered here: a new page always opens minimized in the background,
+ * nothing the agent sends may bring the browser to the front, and no code of the agent's runs in the page's own world.
+ * Pure: the caller does the IO the decision asks for.
  * @__NO_SIDE_EFFECTS__
  */
 export function checkCdpRequest(message: unknown, context: CdpRequestContext): CdpRequestDecision {
@@ -190,6 +219,40 @@ function checkMethod(request: CheckedRequest, context: CdpRequestContext): CdpRe
             return isNoFiles(isPlainObject(params['data']) ? params['data']['files'] : undefined)
                 ? forward(request)
                 : reject(`${method}: dropping files is not allowed, use DOM.setFileInputFiles`);
+        case 'Runtime.enable':
+        case 'Runtime.disable':
+        case 'Console.enable':
+        case 'Console.disable':
+        case 'Debugger.enable':
+        case 'Debugger.disable':
+            return { type: 'reply', result: {} };
+        case 'Runtime.evaluate':
+            return checkIsolated(request, 'contextId', context);
+        case 'Runtime.callFunctionOn':
+            // An object came from an isolated world: nothing else hands out objects.
+            return params['objectId'] != null &&
+                params['executionContextId'] == null &&
+                params['uniqueContextId'] == null
+                ? forward(request)
+                : checkIsolated(request, 'executionContextId', context);
+        case 'DOM.resolveNode':
+            return checkIsolated(request, 'executionContextId', context);
+        case 'Runtime.compileScript':
+        case 'Runtime.runScript':
+            return isIsolatedContext(request, params['executionContextId'], context)
+                ? forward(request)
+                : reject(`${method}: name the executionContextId of an isolated world`);
+        case 'Runtime.addBinding':
+            // A binding is a global of the world it lands in; never the page's.
+            return forward(request, { name: params['name'], executionContextName: ISOLATED_WORLD_NAME });
+        case 'Page.addScriptToEvaluateOnNewDocument':
+            return forward(request, {
+                ...params,
+                worldName:
+                    typeof params['worldName'] === 'string' && params['worldName'] !== ''
+                        ? params['worldName']
+                        : ISOLATED_WORLD_NAME,
+            });
         default:
             return forward(request);
     }
@@ -240,6 +303,36 @@ function checkFileInput(request: CheckedRequest, context: CdpRequestContext): Cd
         files.push(hostPath);
     }
     return { type: 'upload', files, params, sessionId };
+}
+
+/**
+ * A call that runs code or creates an object in an execution context: it may name only a context of an isolated world
+ * (a `uniqueContextId` never comes from one, since `Page.createIsolatedWorld` replies with the plain id); with none, it
+ * is run in the daemon's world. A worker has no isolated world, so code never runs in one.
+ */
+function checkIsolated(
+    request: CheckedRequest,
+    contextParam: IsolatedCall['contextParam'],
+    context: CdpRequestContext,
+): CdpRequestDecision {
+    const { method, params, sessionId } = request;
+    assert(sessionId != null, 'Only a session-level call needs an isolated world');
+    if (params['uniqueContextId'] != null) {
+        return reject(`${method}: name the ${contextParam} of an isolated world, not a uniqueContextId`);
+    }
+    if (params[contextParam] != null) {
+        return isIsolatedContext(request, params[contextParam], context)
+            ? forward(request)
+            : reject(`${method}: only the ${contextParam} of an isolated world can be used`);
+    }
+    if (context.worlds.isWorker(sessionId)) {
+        return reject(`${method}: code cannot run in a worker of the agent's browser`);
+    }
+    return { type: 'isolate', call: { method, params, sessionId, contextParam } };
+}
+
+function isIsolatedContext(request: CheckedRequest, contextId: unknown, context: CdpRequestContext) {
+    return request.sessionId != null && context.worlds.isIsolatedContext(request.sessionId, contextId);
 }
 
 function isAllowedMethod(method: string) {
