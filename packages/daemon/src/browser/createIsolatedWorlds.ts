@@ -1,3 +1,4 @@
+import { assert } from '@nzyme/utils/assert.js';
 import { isPlainObject } from '@nzyme/utils/isPlainObject.js';
 
 import type { BrowserServiceShape } from './BrowserService.js';
@@ -73,18 +74,15 @@ interface Resolution {
  * Creates the isolated-world access of one tunnel client. Context ids are never cached, nor forwarded from the client:
  * Chrome reuses them across renderer processes, so after a cross-site navigation a remembered id can name the page's
  * own world. Each call asks `Page.createIsolatedWorld` again, which returns the existing world for the current
- * document; an id the client got for its own world only looks up which world to ask for. Only the main frame's id is
- * cached, per session.
+ * document; an id the client got for its own world only looks up which world to ask for.
  * @__NO_SIDE_EFFECTS__
  */
 export function createIsolatedWorlds(browser: Pick<BrowserServiceShape, 'send'>): IsolatedWorlds {
-    const mainFrames = new Map<string, string>();
     /** The worlds clients created, by session, then by the context id the client was given. */
     const clientWorlds = new Map<string, Map<number, ClientWorld>>();
 
     return {
         forget: sessionId => {
-            mainFrames.delete(sessionId);
             clientWorlds.delete(sessionId);
         },
         send,
@@ -110,7 +108,6 @@ export function createIsolatedWorlds(browser: Pick<BrowserServiceShape, 'send'>)
             if (!(error instanceof CdpError) || !GONE_ERRORS.some(message => error.message.includes(message))) {
                 throw error;
             }
-            mainFrames.delete(call.sessionId);
             return sendOnce(call);
         }
     }
@@ -119,8 +116,12 @@ export function createIsolatedWorlds(browser: Pick<BrowserServiceShape, 'send'>)
         if (call.world != null) {
             return sendInWorld(call, call.world);
         }
-        const mainFrame = await readMainFrame(call.sessionId);
-        return call.method === 'DOM.resolveNode' ? resolveNode(call, mainFrame) : sendInFrame(call, mainFrame);
+        const frames = await readFrames(call.sessionId);
+        const [mainFrame] = frames;
+        if (mainFrame == null) {
+            throw new TypeError('Page.getFrameTree gave no main frame');
+        }
+        return call.method === 'DOM.resolveNode' ? resolveNode(call, frames) : sendInFrame(call, mainFrame);
     }
 
     /**
@@ -129,16 +130,15 @@ export function createIsolatedWorlds(browser: Pick<BrowserServiceShape, 'send'>)
      * frame's world is tried first, then every other frame's, until one owns the node. With none, the first object
      * resolved is kept.
      */
-    async function resolveNode(call: IsolatedCall, mainFrame: string) {
+    async function resolveNode(call: IsolatedCall, frames: string[]) {
+        const [mainFrame, ...otherFrames] = frames;
+        assert(mainFrame != null);
         const main = await resolveInFrame(call, mainFrame);
         if (main.isOwn) {
             return main.reply;
         }
         let kept = main;
-        for (const frameId of await readFrames(call.sessionId)) {
-            if (frameId === mainFrame) {
-                continue;
-            }
+        for (const frameId of otherFrames) {
             let next: Resolution;
             try {
                 next = await resolveInFrame(call, frameId);
@@ -196,19 +196,6 @@ export function createIsolatedWorlds(browser: Pick<BrowserServiceShape, 'send'>)
         if (objectId != null) {
             await browser.send('Runtime.releaseObject', { objectId }, sessionId);
         }
-    }
-
-    async function readMainFrame(sessionId: string) {
-        const cached = mainFrames.get(sessionId);
-        if (cached != null) {
-            return cached;
-        }
-        const [frameId] = await readFrames(sessionId);
-        if (frameId == null) {
-            throw new TypeError('Page.getFrameTree gave no main frame');
-        }
-        mainFrames.set(sessionId, frameId);
-        return frameId;
     }
 
     /** The ids of the session's frames, the main frame first. */
