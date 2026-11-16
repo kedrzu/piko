@@ -3,6 +3,8 @@ import { Logger } from '@nzyme/logging/Logger.js';
 import { isPlainObject } from '@nzyme/utils/isPlainObject.js';
 
 import { Clock } from '../utils/Clock.js';
+import { isHostOf } from '../utils/isHostOf.js';
+import { toSite } from '../utils/toSite.js';
 import { BrowserService } from './BrowserService.js';
 import type { CdpEvent } from './CdpTypes.js';
 import type { CdpParams } from './checkCdpRequest.js';
@@ -291,15 +293,6 @@ export const BrowserPace = defineService({
     },
 });
 
-/** The site of an http(s) URL: its hostname without a leading `www.`; `null` for any other URL. */
-function toSite(url: string) {
-    const parsed = URL.parse(url);
-    if (parsed == null || (parsed.protocol !== 'http:' && parsed.protocol !== 'https:')) {
-        return null;
-    }
-    return parsed.hostname.replace(/^www\./, '');
-}
-
 /**
  * The vendor whose challenge a request loads; `null` for an ordinary request. Markers from the sites the stealth
  * eval's panel decided (`stealthEval/panel.ts`). reCAPTCHA and Turnstile are not markers: ordinary forms use them.
@@ -324,10 +317,6 @@ function findChallengeVendor(url: string) {
         return 'HUMAN';
     }
     return null;
-}
-
-function isHostOf(hostname: string, domain: string) {
-    return hostname === domain || hostname.endsWith(`.${domain}`);
 }
 
 /** A refusal naming the site, why it is paced and when it can be acted on again. */
