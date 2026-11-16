@@ -12,6 +12,7 @@ import { isPlainObject } from '@nzyme/utils/isPlainObject.js';
 import { waitUntil } from '@nzyme/utils/waitUntil.js';
 
 import { BrowserNetworkGuard } from './BrowserNetworkGuard.js';
+import { BrowserPace } from './BrowserPace.js';
 import { BrowserLaunch, BrowserService } from './BrowserService.js';
 import { BrowserTunnelService } from './BrowserTunnelService.js';
 import { ChromiumInstall } from './ChromiumInstall.js';
@@ -32,6 +33,9 @@ const FRAMES_URL = 'https://detector.test/frames';
 const SAME_ORIGIN_FRAME_URL = 'https://detector.test/frame';
 const CROSS_ORIGIN_FRAME_URL = 'https://detector.test:8443/frame';
 const WORKER_URL = 'https://detector.test/worker';
+/** A site the pace tests load: an ordinary page, and one answered 403, a block. */
+const SHOP_URL = 'https://shop.test/';
+const SHOP_BLOCKED_URL = 'https://www.shop.test/blocked';
 /**
  * The page's own detector, after rebrowser's bot-detector: an Error logged with `console.debug` is serialised only
  * while Runtime is enabled, which formats its stack through `Error.prepareStackTrace`. (Its `name` is read either
@@ -397,9 +401,44 @@ test('a browser exit closes every socket', async () => {
     expect((await b.closed).reason).toBe('The browser exited');
 }, 30_000);
 
+test('a held command keeps its session order, and after a block the site is refused with the reason', async () => {
+    const { port } = await startTunnel({ pace: true });
+    const client = await connect(port, 'conv-a');
+    const targetId = await createTarget(client);
+    const sessionId = await attach(client, targetId);
+    await servePages(
+        client,
+        sessionId,
+        { [SHOP_URL]: DETECTOR_HTML, [SHOP_BLOCKED_URL]: DETECTOR_HTML },
+        { [SHOP_BLOCKED_URL]: 403 },
+    );
+    await client.call('Network.enable', {}, sessionId);
+    await navigate(client, sessionId, SHOP_URL);
+
+    const startedAt = Date.now();
+    const replies: string[] = [];
+    const loads = client.messages.filter(m => m['method'] === 'Page.loadEventFired').length;
+    const held = client
+        .call('Page.navigate', { url: SHOP_BLOCKED_URL }, sessionId)
+        .then(() => replies.push('navigate'));
+    const after = evaluate(client, sessionId, '1').then(() => replies.push('evaluate'));
+    await Promise.all([held, after]);
+    expect(replies).toEqual(['navigate', 'evaluate']);
+    expect(Date.now() - startedAt).toBeGreaterThan(4000);
+    await waitUntil(() => client.messages.filter(m => m['method'] === 'Page.loadEventFired').length > loads, {
+        timeoutMs: TIMEOUT_MS,
+    });
+
+    await expect(client.call('Page.navigate', { url: SHOP_URL }, sessionId)).rejects.toThrow(
+        'poweragents is pacing shop.test after it blocked or challenged the agent: the next action on it is possible in 5 min.',
+    );
+}, 30_000);
+
 /** Options of `startTunnel`. */
 interface StartTunnelOptions {
     executable?: string | null;
+    /** Holds sites to the real pace; without it every command goes at once, so tests load pages back to back. */
+    pace?: boolean;
 }
 
 async function startTunnel(options: StartTunnelOptions = {}) {
@@ -428,6 +467,9 @@ async function startTunnel(options: StartTunnelOptions = {}) {
     });
     container.set(FocusKeeper, { start: mock(() => {}), restore: mock(() => {}) });
     container.set(BrowserLaunch, { proxyPort: proxy.port, extraArgs: HEADLESS_ARGS });
+    if (!options.pace) {
+        container.set(BrowserPace, { gate: () => Promise.resolve({ type: 'go' }) });
+    }
 
     const browser = container.resolve(BrowserService);
     const tunnel = container.resolve(BrowserTunnelService).listen(0);
@@ -536,10 +578,15 @@ async function evaluate(client: TestClient, sessionId: string, expression: strin
 }
 
 /**
- * Intercepts the page's requests on `sessionId` with `Fetch` and answers each from `pages` by URL, a 404 the rest;
- * enables Page for its load events.
+ * Intercepts the page's requests on `sessionId` with `Fetch` and answers each from `pages` by URL, with its status
+ * from `statuses` (200 by default), a 404 the rest; enables Page for its load events.
  */
-async function servePages(client: TestClient, sessionId: string, pages: Record<string, string>) {
+async function servePages(
+    client: TestClient,
+    sessionId: string,
+    pages: Record<string, string>,
+    statuses: Record<string, number> = {},
+) {
     client.socket.addEventListener('message', event => {
         const message: unknown = JSON.parse(String(event.data));
         if (
@@ -552,11 +599,12 @@ async function servePages(client: TestClient, sessionId: string, pages: Record<s
         const { requestId, request } = message['params'];
         const url = isPlainObject(request) ? request['url'] : undefined;
         const html = typeof url === 'string' && Object.hasOwn(pages, url) ? pages[url] : undefined;
+        const status = typeof url === 'string' ? statuses[url] : undefined;
         void client.call(
             'Fetch.fulfillRequest',
             {
                 requestId,
-                responseCode: html == null ? 404 : 200,
+                responseCode: html == null ? 404 : (status ?? 200),
                 responseHeaders: [{ name: 'Content-Type', value: 'text/html' }],
                 body: Buffer.from(html ?? '').toString('base64'),
             },

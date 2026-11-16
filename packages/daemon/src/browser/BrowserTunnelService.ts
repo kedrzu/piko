@@ -6,6 +6,7 @@ import { Logger } from '@nzyme/logging/Logger.js';
 
 import { BROWSER_TUNNEL_PORT, POWERAGENTS_DATA_ROOT, POWERAGENTS_LIMA_HOME } from '../env.js';
 import { SandboxTokenCheckCommand } from '../sandbox/SandboxTokenCheckCommand.js';
+import { BrowserPace } from './BrowserPace.js';
 import { BrowserService } from './BrowserService.js';
 import { ChromiumInstall } from './ChromiumInstall.js';
 import { connectTunnelClient } from './connectTunnelClient.js';
@@ -45,12 +46,13 @@ export const BrowserTunnelService = defineService({
     deps: {
         logger: Logger,
         browser: BrowserService,
+        pace: BrowserPace,
         install: ChromiumInstall,
         limaHome: POWERAGENTS_LIMA_HOME,
         dataRoot: POWERAGENTS_DATA_ROOT,
         checkToken: SandboxTokenCheckCommand,
     },
-    setup({ logger, browser, install, limaHome, dataRoot, checkToken }): BrowserTunnelServiceShape {
+    setup({ logger, browser, pace, install, limaHome, dataRoot, checkToken }): BrowserTunnelServiceShape {
         const uploadsFolder = path.join(path.dirname(limaHome), 'browser-uploads');
 
         return { listen };
@@ -77,6 +79,7 @@ export const BrowserTunnelService = defineService({
                             conversationId: socket.data.conversationId,
                             socket,
                             browser,
+                            pace,
                             dataRoot,
                             uploadsFolder,
                             logger,

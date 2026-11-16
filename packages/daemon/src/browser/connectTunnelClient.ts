@@ -1,11 +1,12 @@
 import type { Logger } from '@nzyme/logging/Logger.js';
 import { isPlainObject } from '@nzyme/utils/isPlainObject.js';
 
+import type { BrowserPaceShape, PacedCommand } from './BrowserPace.js';
 import type { BrowserServiceShape } from './BrowserService.js';
 import { CdpError } from './CdpTypes.js';
 import type { CdpEvent } from './CdpTypes.js';
 import { checkCdpRequest } from './checkCdpRequest.js';
-import type { CdpParams } from './checkCdpRequest.js';
+import type { CdpParams, CdpRequestDecision } from './checkCdpRequest.js';
 import { createIsolatedWorlds } from './createIsolatedWorlds.js';
 import { readTargetInfo } from './readTargetInfo.js';
 import { stageUpload } from './stageUpload.js';
@@ -24,6 +25,8 @@ export interface ConnectTunnelClientParams {
     conversationId: string;
     socket: TunnelSocket;
     browser: BrowserServiceShape;
+    /** The human pace every site is held to; shared by every client. */
+    pace: BrowserPaceShape;
     /** The profile's data root on this computer, where uploads are taken from. */
     dataRoot: string;
     /** The daemon's own folder uploads are staged in (`stageUpload`'s `folder`). */
@@ -59,10 +62,11 @@ const TARGET_EVENTS = new Set([
  * and passes back only what belongs to the client. Events of a session go to the socket that opened it; target events
  * only for its conversation's pages, and only once it discovers targets; everything else is dropped. Replies carry the
  * client's own ids. A page the client creates is claimed for its conversation, and announced to it, since the
- * browser's own `Target.targetCreated` comes before the claim and is filtered out.
+ * browser's own `Target.targetCreated` comes before the claim and is filtered out. Commands that act on a site wait
+ * for its pace, and later commands of the same session wait behind them.
  */
 export function connectTunnelClient(params: ConnectTunnelClientParams): TunnelClient {
-    const { clientId, conversationId, socket, browser, dataRoot, uploadsFolder, logger } = params;
+    const { clientId, conversationId, socket, browser, pace, dataRoot, uploadsFolder, logger } = params;
     const { ownership } = browser;
     const worlds = createIsolatedWorlds(browser);
     const context = { clientId, conversationId, ownership, worlds, dataRoot };
@@ -73,6 +77,11 @@ export function connectTunnelClient(params: ConnectTunnelClientParams): TunnelCl
     const shownTargets = new Set<string>();
     /** `Target.targetCreated` of unowned targets while a `Target.createTarget` of this client is in flight, by target. */
     const createdWhileCreating = new Map<string, unknown>();
+    /**
+     * Per session (`undefined`: the browser itself), the moment the last command still waiting there is sent: a command
+     * the pace holds keeps every later command of its session behind it, so none overtakes it on the wire.
+     */
+    const waiting = new Map<string | undefined, Promise<void>>();
     let creating = 0;
     let discovering = false;
     let closed = false;
@@ -128,6 +137,37 @@ export function connectTunnelClient(params: ConnectTunnelClientParams): TunnelCl
         }
 
         const decision = checkCdpRequest(message, context);
+        const paced: PacedCommand | undefined = decision.type === 'forward' ? decision : undefined;
+        const sessionId = isPlainObject(message) ? message['sessionId'] : undefined;
+        const key = typeof sessionId === 'string' ? sessionId : undefined;
+        const before = waiting.get(key);
+        if (before == null && paced == null) {
+            await execute(id, decision);
+            return;
+        }
+
+        const { promise: sent, resolve: markSent } = Promise.withResolvers<void>();
+        waiting.set(key, sent);
+        try {
+            await before;
+            const verdict = paced == null ? undefined : await pace.gate(paced);
+            if (verdict?.type === 'refuse') {
+                sendError(id, SERVER_ERROR, verdict.message);
+                return;
+            }
+            // Runs up to the browser call before the next command of the session is let go.
+            const executed = execute(id, decision);
+            markSent();
+            await executed;
+        } finally {
+            markSent();
+            if (waiting.get(key) === sent) {
+                waiting.delete(key);
+            }
+        }
+    }
+
+    async function execute(id: number, decision: CdpRequestDecision) {
         try {
             switch (decision.type) {
                 case 'reply':
