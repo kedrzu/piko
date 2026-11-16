@@ -1002,7 +1002,8 @@ iCloud and Google Drive treat a dangling symlink is unchecked; it returns with c
 
 **A project with a setup has two descriptions of it, one per reader. `PROJECT.md`, in the project's folder, is for the
 person: in plain words and their language, what the project can do, what was installed for it and why. It is not
-loaded into the agent's conversations. `.poweragents/AGENTS.md` is for the agent: what the setup holds and how to use
+loaded into the agent's conversations; the app may show it to the person wherever it explains a project or what is
+installed. `.poweragents/AGENTS.md` is for the agent: what the setup holds and how to use
 it — which skills and scripts exist, how to run them (`uv run --project .poweragents …`) — with details in references
 beside it and in the setup's own files. It is loaded into every conversation of the project. The agent keeps both
 current whenever it changes the setup.** (2026-11-16, owner; the file name and place of the agent's text are the design
@@ -1032,3 +1033,21 @@ instructions.
   it only through a screen we would have to build (owner, 2026-11-16).
 - The agent's `AGENTS.md` in the project's folder, where OpenCode finds it unaided — a second file in the person's view
   that is not written for them.
+
+## D48
+
+**`poweragents check`, run in the sandbox, tells the agent whether a project is consistent. The agent's instructions
+have it run the check after every change to a project's setup or schedules. It checks only what needs no reading of
+prose: every schedule's command exists (`/<plugin>:<skill>` of a plugin installed and visible in that project, or
+`/:<skill>` of its setup); the declarations install (lockfiles match `package.json` and `pyproject.toml`, the programs
+file parses); every skill file has a valid header and name.** (2026-11-16, owner's idea, scope proposed by the design
+agent and agreed)
+
+**Why.** The agent changes setups and schedules on its own, and a schedule calling a skill it renamed fails only at the
+next run, possibly at night. A check it can run catches that while the conversation is still open. Checks that judge
+prose would guess.
+
+**Rejected.**
+
+- Checking that skills refer to scripts that exist, or that `PROJECT.md` and `AGENTS.md` describe the setup as it is —
+  needs reading prose; the check would guess.

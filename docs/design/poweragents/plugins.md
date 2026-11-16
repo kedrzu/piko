@@ -61,6 +61,16 @@ project's script uses only the libraries its own setup names, never one a plugin
 plugin name, `/:sort`, and the daemon stops a conversation whose project has no such skill, as it does for a missing
 plugin ([commands of the project's setup](DECISIONS.md#d45)).
 
+Inside `.poweragents/` the files are the ones the agent knows from any software project — `package.json`,
+`pyproject.toml` and their lockfiles — and it installs libraries itself with `bun add` or `uv add`; the installed
+packages sit in the sandbox, reached through two links, and the daemon rebuilds them from the files whenever the sandbox
+is rebuilt. System programs are listed in a small file the daemon applies on request
+([how a setup declares what it needs](DECISIONS.md#d46)). A project with a setup carries two descriptions of it: a
+`PROJECT.md` in its folder, for the person, saying what the project can do and what was installed for it, and an
+`AGENTS.md` inside `.poweragents/`, for the agent, loaded into every conversation there
+([one text per reader](DECISIONS.md#d47)). After changing a setup or a schedule, the agent runs a check that every
+schedule's command exists and every declaration installs ([what the check covers](DECISIONS.md#d48)).
+
 ## Installing without asking
 
 The agent installs plugins on its own and says so in the conversation, with a card linking to the plugin's page. There
@@ -106,6 +116,4 @@ distribution's packages or as a pinned download — waits for the first plugin t
 The person's own plugins are a later design. Once a project's own setup — its skills, scripts and the packages they
 need — is wanted in several projects, the agent will turn it into a plugin of the person's, kept in the profile and
 installed into those projects. Moving a skill into a plugin changes its command's name, so the agent then has to repoint
-whatever called it, schedules first. A check the agent can run after any change it makes would catch what it missed:
-whether the project's setup is consistent, whether every schedule's command exists, whether what it declares is
-installed.
+whatever called it, schedules first; the check the agent already runs after its changes catches a command it missed.

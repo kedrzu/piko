@@ -242,3 +242,5 @@ Append-only. One line per turn that settled something, was rejected, or got an a
 - 2026-11-16 — Owner: `PROJECT.md` is for the person only; the agent's guidance belongs in AGENTS.md and references.
   D47 rewritten (old form to history): agent text at `.poweragents/AGENTS.md` (design agent's proposal), loaded via
   `instructions`. Asked owner what "techniczny plik używany w różnych sytuacjach" means for PROJECT.md.
+- 2026-11-16 — Owner confirmed: PROJECT.md may be shown by the app where it explains a project (D47 sharpened); the
+  check's scope agreed, recorded as D48. Blocking questions closed; next: rightsize before proposing to close.
