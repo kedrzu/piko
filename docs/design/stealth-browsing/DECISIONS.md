@@ -247,6 +247,15 @@ never on. It extends the daemon's existing allow-list (`packages/daemon/src/brow
 > own (Playwright `crPage.ts:823-828`); `--user-agent` leaves Sec-CH-UA brands unchanged
 > (`components/embedder_support/user_agent_utils.cc`).
 
+> **Checked 2026-11-16:** real Google Chrome 157 and CfT 157 on the owner's Mac differ only in `brands` and
+> `fullVersionList` (and the `Sec-CH-UA` headers built from them) — on the page, in frames, dedicated, shared and
+> service workers; the UA string is the same reduced `Chrome/157.0.0.0`. Chrome's brand order and GREASE brand follow
+> from the major version (`GenerateBrandVersionList`, `user_agent_utils.cc` at 157.0.8103.78); a port reproduces real
+> Chrome 157 exactly. An emulation override lives as long as the session that set it, and a target held by
+> `waitForDebuggerOnStart` from several sessions starts only after all resume — so the daemon's own session holds each
+> target until its brand is set. After the brand, the public test pages report no leak; indeed.com and kohls.com
+> still block.
+
 **Consequences.** The agent loses agent-browser's `console`, `errors` and `expose`, and cannot read the page's JS
 globals (isolated worlds share the DOM, not globals). Site helpers work through the DOM; calling a site's internal API
 with its own client code (X's per-request header) is out.
