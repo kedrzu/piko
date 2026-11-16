@@ -226,3 +226,12 @@ Append-only. One line per turn that settled something, was rejected, or got an a
   old forms to history; D25 sharpened. Checks (Bun resolution, NODE_PATH, Bun/uv caches, OpenCode skill ids) recorded
   in D44/D45; leading `:` in permission matching still to try live. Folded into plugins.md. Code still implements the
   agent's own plugins (`packages/daemon/src/env.ts`, `PluginService`) — divergence for the build.
+- 2026-11-16 — Declarations and how scripts find libraries: tested on macOS (Bun 1.4.4, uv 0.13.0) that `bun add` in
+  `.poweragents/` with `node_modules` a symlink to another folder installs there and a script resolves through it from
+  any cwd; `uv add` with `.venv` a symlink does the same, `uv run` finds the project from a script's folder but not from
+  the project root (needs `--project .poweragents`). Proposed to owner: native files + lockfiles in `.poweragents/`,
+  install folders symlinked to the sandbox volume per project id, agent uses `bun add`/`uv add` itself, programs via a
+  small file and a daemon apply. Not recorded as a decision yet.
+- 2026-11-16 — Owner: the agent installs libraries itself; system programs through a file and `poweragents apply`.
+  Recorded D46 (one pyproject per project is the design agent's, flagged unconfirmed). Next offered: the human
+  description of a project's setup, and the check the agent runs after its changes.

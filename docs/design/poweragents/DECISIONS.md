@@ -963,3 +963,37 @@ the project, and the daemon can still decide deterministically that a skill is m
 - No prefix (`/sort`) — the daemon cannot tell a removed skill from one that never existed.
 - A word as prefix (`/project:sort`) — owner preferred a special character.
 - `/.sort` (reads as "here", but follows no existing form) and `/~sort` (`~` means home).
+
+## D46
+
+**A project's setup declares its libraries in the files the agent already knows, inside `.poweragents/`:
+`package.json` with `bun.lock`, and one `pyproject.toml` with `uv.lock` for the whole project. The installed packages
+live in the sandbox's volume, one folder per project id; `.poweragents/node_modules` and `.poweragents/.venv` are
+symlinks to it. The agent installs libraries itself, with `bun add` / `uv add` in `.poweragents/`, which changes the
+declaration and installs in one step; the daemon only rebuilds from the files — when the sandbox is rebuilt or a
+project arrives from elsewhere — and recreates the symlinks. System programs are listed in a small file in
+`.poweragents/`, and the agent asks the daemon to apply it with `poweragents apply`.** (2026-11-16, owner; one
+`pyproject.toml` per project rather than per-script headers is the design agent's proposal, not yet confirmed)
+
+**Why.** The agent is fluent in these tools, and the files remain the only source the environment is rebuilt from
+([D25](#d25)), so a daemon in between would protect nothing. Lockfiles here are the source, not a record of the result:
+the agent writes them ([D26](#d26)). Folders named by project id survive renaming the project. One Python file per
+project keeps "what this project needs" in one place and matches JS. System programs need the whole sandbox rebuilt
+from declarations, which only the daemon does.
+
+> **Checked 2026-11-16 (macOS, Bun 1.4.4, uv 0.13.0):** with `.poweragents/node_modules` a symlink to another folder,
+> `bun add is-odd@3.0.1` installed there and `bun <abs>/.poweragents/scripts/t.ts` resolved it from any working
+> directory. With `.poweragents/.venv` a symlink, `uv add six==1.16.0` installed there; `uv run t.py` from
+> `.poweragents/scripts/` found the project, but from the project's root it needs `uv run --project .poweragents`, which
+> the agent's instructions say. Not yet repeated in the Linux sandbox on its volume.
+
+**Open.** The format of the programs file waits for how a system program is installed ([D26](#d26), deferred). How
+iCloud and Google Drive treat a dangling symlink is unchecked; it returns with cloud drives ([D22](#d22)).
+
+**Rejected.**
+
+- The agent edits the files and asks the daemon to install, as with plugins — a go-between with no protection behind
+  it.
+- Dependencies declared in each Python script's header (PEP 723, `uv run` builds an environment per script) — no single
+  place showing what the project needs, and unlike JS.
+- `UV_PROJECT_ENVIRONMENT` pointing at the volume — one value for the whole shell, while every project needs its own.
