@@ -117,6 +117,8 @@ const STDERR_TAIL_LENGTH = 2000;
 const THUMBNAIL_QUALITY = 60;
 /** How long a thumbnail may take before the handoff goes without one. */
 const THUMBNAIL_TIMEOUT_MS = 10_000;
+/** How long reading the browser's own identity at launch may take before the launch fails and is retried. */
+const BRAND_START_TIMEOUT_MS = 15_000;
 /** A download guid as the browser makes it; anything else never becomes part of a path. */
 const DOWNLOAD_GUID = /^[\w-]+$/;
 
@@ -266,7 +268,15 @@ export const BrowserService = defineService({
                     eventsEnabled: true,
                 });
                 await call(current, 'Target.setDiscoverTargets', { discover: true });
-                await current.brand.start();
+                // A page that never answers would leave every later start waiting on this launch; failing kills the
+                // browser, and the next start launches a new one.
+                await withTimeout({
+                    operation: current.brand.start(),
+                    timeoutMs: BRAND_START_TIMEOUT_MS,
+                    onTimeout: () => {
+                        throw new Error("The browser's identity could not be read in time");
+                    },
+                });
             } catch (error) {
                 logger.error('The browser could not be configured', { error });
                 current.child.kill('SIGKILL');
