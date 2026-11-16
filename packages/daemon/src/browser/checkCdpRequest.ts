@@ -51,8 +51,10 @@ export type CdpRequestDecision =
  * their enable and disable, because page scripts must never observe our code (stealth-browsing D8): an enabled
  * Runtime, Console or Debugger domain is measurable from the page, so the daemon answers those itself and never enables
  * them; every evaluation, resolved node and init script goes to an isolated world (`ISOLATED_WORLD_NAME`, or one the
- * client created itself), never the page's own. Runtime keeps what agent-browser calls and what works on objects it got
- * back (properties, releasing, awaiting); `compileScript` and `runScript` are left out, as they need a context id.
+ * client created itself), never the page's own. The user agent is the daemon's (`createBrandOverride`): Emulation's and
+ * Network's `setUserAgentOverride` are refused, as a client's override would replace the brand while its session
+ * lives. Runtime keeps what agent-browser calls and what works on objects it got back (properties, releasing,
+ * awaiting); `compileScript` and `runScript` are left out, as they need a context id.
  * Cookies stay open on purpose (Network's and Storage's cookie methods): the agent shares the profile's logins by
  * design; the rest of Storage (quota, origin data, shared storage, interest groups) is not needed. IO is limited to
  * reading and closing streams the page's own commands returned. Browser offers only `getVersion`; the rest of it
@@ -187,6 +189,9 @@ function checkMethod(request: CheckedRequest, context: CdpRequestContext): CdpRe
             return checkCreateTarget(request);
         case 'Page.setDownloadBehavior':
             return reject(`${method}: downloads are set up by poweragents`);
+        case 'Emulation.setUserAgentOverride':
+        case 'Network.setUserAgentOverride':
+            return reject(`${method}: the browser's identity is set by poweragents and cannot be changed`);
         case 'Page.bringToFront':
         case 'Target.activateTarget':
             return checkActivate(request, context);

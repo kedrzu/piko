@@ -21,6 +21,8 @@ import { buildChromiumArgs } from './buildChromiumArgs.js';
 import { CdpError } from './CdpTypes.js';
 import type { CdpErrorReply, CdpEvent } from './CdpTypes.js';
 import { ChromiumInstall } from './ChromiumInstall.js';
+import { createBrandOverride } from './createBrandOverride.js';
+import type { BrandOverride } from './createBrandOverride.js';
 import { createTargetOwnership } from './createTargetOwnership.js';
 import type { TargetOwnership } from './createTargetOwnership.js';
 import { FocusKeeper } from './FocusKeeper.js';
@@ -32,7 +34,8 @@ import { splitPipeFrames } from './splitPipeFrames.js';
  * The agent's one browser (ADR `docs/decisions/agent-browser-over-one-pipe.md`): a Chrome for Testing the daemon
  * launches with no window and drives over `--remote-debugging-pipe`, so no other local process can reach it. Every
  * client of the tunnel and the daemon itself share this one connection; `ownership` says which pages and sessions are
- * whose. Popups are minimized at once, and downloads land in the data root's Downloads folder.
+ * whose. Popups are minimized at once, downloads land in the data root's Downloads folder, and every page and worker
+ * names itself Google Chrome (`createBrandOverride`).
  */
 export interface BrowserServiceShape {
     /**
@@ -93,6 +96,7 @@ interface BrowserRun {
     pending: Map<number, PendingCall>;
     /** Suggested file names of downloads in progress, by guid. */
     downloads: Map<string, string>;
+    brand: BrandOverride;
     ready: boolean;
     /** The end of the browser's stderr, logged when it exits. */
     stderrTail: string;
@@ -271,6 +275,7 @@ export const BrowserService = defineService({
                     eventsEnabled: true,
                 });
                 await call(current, 'Target.setDiscoverTargets', { discover: true });
+                await current.brand.start();
             } catch (error) {
                 logger.error('The browser could not be configured', { error });
                 current.child.kill('SIGKILL');
@@ -305,6 +310,11 @@ export const BrowserService = defineService({
                 pipe,
                 pending: new Map(),
                 downloads: new Map(),
+                brand: createBrandOverride({
+                    send: (method, params, sessionId) => call(current, method, params, sessionId),
+                    ownership,
+                    logger,
+                }),
                 ready: false,
                 stderrTail: '',
             };
@@ -367,6 +377,7 @@ export const BrowserService = defineService({
 
         function dispatchEvent(current: BrowserRun, event: CdpEvent) {
             ownership.observe(event);
+            current.brand.observe(event);
             switch (event.method) {
                 case 'Target.targetCreated': {
                     const info = readTargetInfo(event.params);

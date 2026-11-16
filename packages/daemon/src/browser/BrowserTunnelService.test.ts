@@ -33,6 +33,12 @@ const FRAMES_URL = 'https://detector.test/frames';
 const SAME_ORIGIN_FRAME_URL = 'https://detector.test/frame';
 const CROSS_ORIGIN_FRAME_URL = 'https://detector.test:8443/frame';
 const WORKER_URL = 'https://detector.test/worker';
+/** A page that has its own frame, a worker and a service worker report the identity each reads at its first script. */
+const BRAND_URL = 'https://brand.test/';
+/** The same page, which also registers a service worker. */
+const BRAND_SERVICE_WORKER_PAGE_URL = 'https://brand.test/?service-worker';
+const BRAND_FRAME_URL = 'https://brand.test/frame';
+const BRAND_SERVICE_WORKER_URL = 'https://brand.test/service-worker.js';
 /** A site the pace tests load: an ordinary page, and one answered 403, a block. */
 const SHOP_URL = 'https://shop.test/';
 const SHOP_BLOCKED_URL = 'https://www.shop.test/blocked';
@@ -53,6 +59,24 @@ const WORKER_HTML = `<!doctype html><html><body><script>
     const worker = new Worker(URL.createObjectURL(new Blob(["postMessage('alive'); self.reach = () => postMessage('reached');"])));
     worker.onmessage = event => { document.body.dataset.worker = event.data; };
 </script></body></html>`;
+
+/** What a page, its frame and its workers read first: their `navigator.userAgentData.brands` and user agent. */
+const IDENTIFY =
+    'const identity = { brands: navigator.userAgentData.brands.map(({ brand, version }) => ({ brand, version })), userAgent: navigator.userAgent };';
+/** Writes every identity it gathers to `#identities`: of the page, its `frame`, `worker` and `serviceWorker`. */
+const BRAND_HTML = `<!doctype html><html><body><pre id="identities"></pre><script>
+    ${IDENTIFY}
+    window.identities = { page: identity };
+    window.show = () => { document.getElementById('identities').textContent = JSON.stringify(window.identities); };
+    const worker = new Worker(URL.createObjectURL(new Blob([${JSON.stringify(`${IDENTIFY} postMessage(identity);`)}])));
+    worker.onmessage = event => { window.identities.worker = event.data; show(); };
+    navigator.serviceWorker.onmessage = event => { window.identities.serviceWorker = event.data; show(); };
+    if (location.search === '?service-worker') navigator.serviceWorker.register('/service-worker.js').then(() => navigator.serviceWorker.ready).then(registration => registration.active.postMessage('identify'));
+</script><iframe src="/frame"></iframe></body></html>`;
+const BRAND_FRAME_HTML = `<!doctype html><html><body><script>${IDENTIFY} parent.identities.frame = identity; parent.show();</script></body></html>`;
+const BRAND_SERVICE_WORKER = `${IDENTIFY}
+self.addEventListener('install', () => self.skipWaiting());
+self.addEventListener('message', event => event.source.postMessage(identity));`;
 
 /** The detector page, with `body` after it. */
 function detectorHtml(body: string) {
@@ -434,6 +458,64 @@ test('a held command keeps its session order, and after a block the site is refu
     );
 }, 30_000);
 
+test('a page, its frame, its worker and its service worker all name Google Chrome from their first script', async () => {
+    const { port } = await startTunnel();
+    const client = await connect(port, 'conv-a');
+    const version = await client.call('Browser.getVersion');
+    const product = isPlainObject(version) ? String(version['product']) : '';
+    const major = product.replace(/^\w+\//, '').split('.')[0] ?? '';
+    const targetId = await createTarget(client);
+    const sessionId = await attach(client, targetId);
+    await servePages(client, sessionId, {
+        [BRAND_URL]: BRAND_HTML,
+        [BRAND_SERVICE_WORKER_PAGE_URL]: BRAND_HTML,
+        [BRAND_FRAME_URL]: BRAND_FRAME_HTML,
+        [BRAND_SERVICE_WORKER_URL]: BRAND_SERVICE_WORKER,
+    });
+
+    for (const method of ['Emulation.setUserAgentOverride', 'Network.setUserAgentOverride']) {
+        await expect(client.call(method, { userAgent: 'Agent/1.0' }, sessionId)).rejects.toThrow(
+            "the browser's identity is set by poweragents",
+        );
+    }
+    // No hold of the client's own here: only the daemon's keeps the page from running ahead of the brand.
+    await navigate(client, sessionId, BRAND_URL);
+    const { page, frame, worker } = await readIdentities(
+        client,
+        sessionId,
+        ids => ids['frame'] != null && ids['worker'] != null,
+    );
+    const brands = isPlainObject(page) ? page['brands'] : undefined;
+    expect(brands).toContainEqual({ brand: 'Google Chrome', version: major });
+    expect(brands).toContainEqual({ brand: 'Chromium', version: major });
+    expect({ frame, worker }).toEqual({ frame: page, worker: page });
+
+    // As agent-browser does: hold every child target and let it go once set up. The service worker's script is served
+    // on its own session, which the page's interception does not cover.
+    client.socket.addEventListener('message', event => {
+        const message: unknown = JSON.parse(String(event.data));
+        if (!isPlainObject(message) || message['method'] !== 'Target.attachedToTarget') {
+            return;
+        }
+        const params = isPlainObject(message['params']) ? message['params'] : {};
+        const child = String(params['sessionId']);
+        const type = isPlainObject(params['targetInfo']) ? params['targetInfo']['type'] : undefined;
+        const setUp =
+            type === 'service_worker'
+                ? client.call('Fetch.enable', { patterns: [{ urlPattern: 'https://*.test*' }] }, child)
+                : Promise.resolve();
+        // A short-lived child can be gone before its commands arrive.
+        setUp.then(() => client.call('Runtime.runIfWaitingForDebugger', {}, child)).catch(() => {});
+    });
+    await client.call(
+        'Target.setAutoAttach',
+        { autoAttach: true, waitForDebuggerOnStart: true, flatten: true },
+        sessionId,
+    );
+    await navigate(client, sessionId, BRAND_SERVICE_WORKER_PAGE_URL);
+    const { serviceWorker } = await readIdentities(client, sessionId, ids => ids['serviceWorker'] != null);
+    expect(serviceWorker).toEqual(page);
+}, 30_000);
 /** Options of `startTunnel`. */
 interface StartTunnelOptions {
     executable?: string | null;
@@ -597,6 +679,7 @@ async function servePages(
             return;
         }
         const { requestId, request } = message['params'];
+        const pausedOn = typeof message['sessionId'] === 'string' ? message['sessionId'] : sessionId;
         const url = isPlainObject(request) ? request['url'] : undefined;
         const html = typeof url === 'string' && Object.hasOwn(pages, url) ? pages[url] : undefined;
         const status = typeof url === 'string' ? statuses[url] : undefined;
@@ -605,10 +688,15 @@ async function servePages(
             {
                 requestId,
                 responseCode: html == null ? 404 : (status ?? 200),
-                responseHeaders: [{ name: 'Content-Type', value: 'text/html' }],
+                responseHeaders: [
+                    {
+                        name: 'Content-Type',
+                        value: typeof url === 'string' && url.endsWith('.js') ? 'text/javascript' : 'text/html',
+                    },
+                ],
                 body: Buffer.from(html ?? '').toString('base64'),
             },
-            sessionId,
+            pausedOn,
         );
     });
     await client.call('Fetch.enable', { patterns: [{ urlPattern: 'https://*.test*' }] }, sessionId);
@@ -673,6 +761,25 @@ async function navigate(client: TestClient, sessionId: string, url: string) {
     await waitUntil(() => client.messages.filter(m => m['method'] === 'Page.loadEventFired').length > loads, {
         timeoutMs: TIMEOUT_MS,
     });
+}
+
+/** What `BRAND_HTML` wrote to its page, once `isComplete` says it holds everything the test waits for. */
+async function readIdentities(
+    client: TestClient,
+    sessionId: string,
+    isComplete: (identities: Record<string, unknown>) => boolean,
+) {
+    let identities: Record<string, unknown> = {};
+    await waitUntil(
+        async () => {
+            const text = await evaluate(client, sessionId, "document.getElementById('identities').textContent");
+            const parsed: unknown = typeof text === 'string' && text !== '' ? JSON.parse(text) : {};
+            identities = isPlainObject(parsed) ? parsed : {};
+            return isComplete(identities);
+        },
+        { timeoutMs: TIMEOUT_MS },
+    );
+    return identities;
 }
 
 /** What the detector page last wrote; `null` before it wrote anything. */
