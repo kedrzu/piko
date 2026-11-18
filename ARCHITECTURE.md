@@ -100,7 +100,7 @@ The Vue packages are not emitted: `ui` exports its sources and is type-checked b
   `~/.poweragents/chromium` (sha256-checked; the installer carries no browser). It launches on first use over
   `--remote-debugging-pipe` with minimized windows and its profile in `~/.poweragents/browser-profile`. The sandbox
   reaches it only through the daemon's tunnel on host port 47612, guarded by a bearer token from
-  `~/.poweragents/browser-token` (a firewall opening, beside the sandbox API's), which enforces the agent's limits (`checkCdpRequest`).
+  `~/.poweragents/browser-token` (a firewall opening, beside the sandbox API's), which enforces the agent's limits (`checkProductRequest`).
   Downloads go to a daemon-owned staging folder, then into the data root's `downloads/`. Decision:
   `docs/decisions/agent-browser-over-one-pipe.md`.
 - Every request the browser makes goes through the daemon's proxy on port 47613, which refuses non-public addresses

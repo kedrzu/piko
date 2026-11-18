@@ -1,4 +1,4 @@
-import { findChallengeVendor } from '../utils/findChallengeVendor.js';
+import { findChallengeVendor } from '@nzyme/stealth-browser';
 
 import { asArray, asNumber, asObject, asOneOf, asString, asStringArray } from './jsonShape.js';
 import type { EvalDriver, PanelOutcome, PanelSiteResult, PanelVendor } from './StealthEvalTypes.js';
