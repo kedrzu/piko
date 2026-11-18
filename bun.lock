@@ -168,6 +168,24 @@
         "oxfmt": "0.77.0",
       },
     },
+    "nzyme/packages/discord-cli": {
+      "name": "@nzyme/discord-cli",
+      "version": "0.15.1",
+      "dependencies": {
+        "@nzyme/cli-core": "workspace:*",
+        "@nzyme/openapi-cli": "workspace:*",
+        "@nzyme/utils": "workspace:*",
+      },
+      "devDependencies": {
+        "@nzyme/ioc": "workspace:*",
+        "@nzyme/tsconfig": "workspace:*",
+        "@types/bun": "^1.4.3",
+        "@types/node": "26.6.6",
+        "@typescript/native-preview": "^7.0.0-dev.20260707.2",
+        "clipanion": "^4.0.0-rc.4",
+        "oxfmt": "0.77.0",
+      },
+    },
     "nzyme/packages/dom-utils": {
       "name": "@nzyme/dom-utils",
       "version": "0.15.1",
@@ -344,15 +362,18 @@
         "@nzyme/cli-core": "workspace:*",
         "@nzyme/github-cli": "workspace:*",
         "@nzyme/logging": "workspace:*",
+        "@nzyme/utils": "workspace:*",
         "chalk": "6.0.1",
         "enquirer": "2.4.1",
+        "graphql": "17.1.0",
         "open": "11.0.4",
       },
       "devDependencies": {
+        "@nzyme/ioc": "workspace:*",
         "@nzyme/tsconfig": "workspace:*",
         "@types/bun": "^1.4.4",
         "@typescript/native-preview": "^7.0.0-dev.20260707.2",
-        "graphql": "17.1.0",
+        "clipanion": "^4.0.0-rc.4",
         "oxfmt": "0.77.0",
       },
     },
@@ -468,6 +489,23 @@
         "oxfmt": "0.77.0",
       },
     },
+    "nzyme/packages/openapi-cli": {
+      "name": "@nzyme/openapi-cli",
+      "version": "0.15.1",
+      "dependencies": {
+        "@nzyme/cli-core": "workspace:*",
+        "@nzyme/utils": "workspace:*",
+      },
+      "devDependencies": {
+        "@nzyme/ioc": "workspace:*",
+        "@nzyme/tsconfig": "workspace:*",
+        "@types/bun": "^1.4.3",
+        "@types/node": "26.6.6",
+        "@typescript/native-preview": "^7.0.0-dev.20260707.2",
+        "clipanion": "^4.0.0-rc.4",
+        "oxfmt": "0.77.0",
+      },
+    },
     "nzyme/packages/oxlint": {
       "name": "@nzyme/oxlint",
       "version": "0.15.1",
@@ -500,6 +538,7 @@
       "version": "0.15.1",
       "dependencies": {
         "@manypkg/find-root": "^3.1.0",
+        "@nzyme/logging": "workspace:*",
         "@nzyme/utils": "workspace:*",
         "chalk": "^6.0.1",
         "dotenv": "^18.0.8",
@@ -675,6 +714,25 @@
         "@nzyme/tsconfig": "workspace:*",
         "@typescript/native-preview": "^7.0.0-dev.20260707.2",
         "oxfmt": "0.77.0",
+      },
+    },
+    "nzyme/packages/stealth-browser": {
+      "name": "@nzyme/stealth-browser",
+      "version": "0.15.1",
+      "bin": {
+        "stealth-browser": "bin/stealth-browser.js",
+      },
+      "dependencies": {
+        "@nzyme/ioc": "workspace:*",
+        "@nzyme/logging": "workspace:*",
+        "@nzyme/utils": "workspace:*",
+      },
+      "devDependencies": {
+        "@nzyme/tsconfig": "workspace:*",
+        "@types/node": "26.6.6",
+        "@typescript/native-preview": "^7.0.0-dev.20260707.2",
+        "oxfmt": "0.77.0",
+        "playwright": "^1.64.1",
       },
     },
     "nzyme/packages/tsconfig": {
@@ -1002,6 +1060,7 @@
         "@nzyme/ioc": "workspace:*",
         "@nzyme/logging": "workspace:*",
         "@nzyme/rpc": "workspace:*",
+        "@nzyme/stealth-browser": "workspace:*",
         "@nzyme/utils": "workspace:*",
         "@openuidev/lang-core": "1.1.1",
         "@poweragents/common": "workspace:*",
@@ -1765,6 +1824,8 @@
 
     "@nzyme/crypto": ["@nzyme/crypto@workspace:nzyme/packages/crypto"],
 
+    "@nzyme/discord-cli": ["@nzyme/discord-cli@workspace:nzyme/packages/discord-cli"],
+
     "@nzyme/dom-utils": ["@nzyme/dom-utils@workspace:nzyme/packages/dom-utils"],
 
     "@nzyme/eslint": ["@nzyme/eslint@workspace:nzyme/packages/eslint"],
@@ -1801,6 +1862,8 @@
 
     "@nzyme/openapi": ["@nzyme/openapi@workspace:nzyme/packages/openapi"],
 
+    "@nzyme/openapi-cli": ["@nzyme/openapi-cli@workspace:nzyme/packages/openapi-cli"],
+
     "@nzyme/oxlint": ["@nzyme/oxlint@workspace:nzyme/packages/oxlint"],
 
     "@nzyme/pen": ["@nzyme/pen@workspace:nzyme/packages/pen"],
@@ -1818,6 +1881,8 @@
     "@nzyme/sentry-cli": ["@nzyme/sentry-cli@workspace:nzyme/packages/sentry-cli"],
 
     "@nzyme/slack": ["@nzyme/slack@workspace:nzyme/packages/slack"],
+
+    "@nzyme/stealth-browser": ["@nzyme/stealth-browser@workspace:nzyme/packages/stealth-browser"],
 
     "@nzyme/tsconfig": ["@nzyme/tsconfig@workspace:nzyme/packages/tsconfig"],
 
