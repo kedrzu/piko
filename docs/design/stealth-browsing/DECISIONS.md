@@ -343,7 +343,7 @@ contact form (text, select, checkbox, date, validation, submit); and a cookie-co
 the page requests a token named after that action, assesses it at once itself with a public API key restricted to the
 reCAPTCHA API and the page's domain, and appends the score to a list in the DOM. It also records how input
 arrived — mouse movements before each click, whether text came as key events, the timing between them — into the
-DOM. Scenarios ("search, open two products, read a description, submit the form") live in the eval in this repo, and
+DOM. Scenarios ("search, open two products, read a description, submit the form") live in the eval, which now lives in flaneur (`https://github.com/kedrzu/flaneur`, `packages/eval`), and
 the agent, the headless control and the person run the same ones.** (2026-11-15, owner asked for content that
 reproduces reading, submits and component interactions; shape and input recording are the design agent's proposal,
 owner agreed; assessment in the page chosen by the owner on 2026-11-15, when building showed the person's run could not

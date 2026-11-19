@@ -59,8 +59,8 @@ RUN case "$TARGETARCH" in \
 
 # agent-browser drives the agent's own browser, which runs on the host, through the daemon's tunnel. The wrapper points it
 # at the conversation's page set: the tunnel path carries OpenCode's session id, so each conversation gets its own pages.
-# The stealth eval pins the same release for macOS (`packages/daemon/src/stealthEval/installAgentBrowser.ts`); bump both,
-# darwin sha256s included, or the eval measures another agent-browser than the agent runs.
+# The stealth eval (kedrzu/flaneur, `packages/eval`) pins the same release for macOS; bump both, darwin sha256s
+# included, or the eval measures another agent-browser than the agent runs.
 RUN case "$TARGETARCH" in \
         arm64) target=arm64 sha=34be55c2b92d8d199fb9d1d62a905ee5b6ac5b1f3e8c24e5b20597f370d905e5 ;; \
         amd64) target=x64 sha=8e69c9fb662514c9cf36e4911e94e913742ba066e55102486350e049dd847612 ;; \
