@@ -29,6 +29,7 @@ and its reason, is in `docs/design/poweragents/`.
 |`@poweragents/app`|`packages/app`|The Nuxt app: screens by feature, routes, the IoC container and the services that talk to the daemon.|
 |`@poweragents/desktop`|`packages/desktop`|The Tauri shell around the app's build and its native commands.|
 |`@poweragents/e2e`|`packages/e2e`|Playwright tests of the built app, and the screen harnesses.|
+|`@poweragents/cli`|`packages/cli`|The repo's developer CLI, `bun poweragents …`: the `secrets` commands over the declared secrets (`src/secrets.ts`) and the `pen` commands. Bun runs it from source.|
 
 ## Builds
 
@@ -128,9 +129,9 @@ The Vue packages are not emitted: `ui` exports its sources and is type-checked b
   the nzyme packages it uses, or by the app's env files.
 - **Lint and format:** oxlint (type-aware) and oxfmt for code; ESLint for Vue rules, `package.json` and Markdown. They
   cover this repo, never `nzyme/` (`lint:nzyme` runs nzyme's own config). `lint` and `lint:check` also run
-  `bun nzyme pen check` on the design file.
-- **Design file:** `poweragents.pen` merges node by node through `bun nzyme pen merge`, the git merge driver
-  `setup.sh` registers; `bun nzyme pen diff` shows what changed. Design rounds run the repo's pinned `pen` CLI, which
+  `bun poweragents pen check` on the design file.
+- **Design file:** `poweragents.pen` merges node by node through `bun poweragents pen merge`, the git merge driver
+  `setup.sh` registers; `bun poweragents pen diff` shows what changed. Design rounds run the repo's pinned `pen` CLI, which
   needs `bunx pen login` once per machine and no key.
 - **Ignores:** each `.gitignore` lists only what the repo produces. The root one holds what any directory can produce;
   output owned by one directory is ignored in that directory's own `.gitignore` (`packages/app`, `packages/ui`,
