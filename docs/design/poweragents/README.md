@@ -102,8 +102,9 @@ in the profile's Downloads folder, which the agent can see.
 
 Everything the agent can do beyond the basics comes as a plugin: access to the person's mail, a workflow that sorts it
 every morning, Blender for 3D work. In the first version they all ship inside the app, browsed on a screen that looks
-like a store. The agent installs them itself when the work calls for one, and writes small plugins of its own when
-nothing fits; the only thing that needs the person is signing in to an account
+like a store. The agent installs them itself when the work calls for one; the only thing that needs the person is
+signing in to an account. When nothing fits, the agent builds what is missing — a skill, a script, a program it needs —
+into the project's own setup, a hidden folder of that project, rather than a plugin
 ([how plugins are built and installed](plugins.md)).
 
 ## What the person sees

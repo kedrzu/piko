@@ -2,8 +2,8 @@
 
 A plugin is how the agent gains a capability it doesn't ship with: reading the person's mail, sorting it every morning,
 modelling in Blender. People install capabilities, not tools — "email sorting", not "a Gmail server" — and most of them
-will never build a plugin by hand. Yet a few weeks in, many will have one of their own without noticing, because the
-agent builds them when asked for something new.
+will never build a plugin by hand. What the agent builds for them when asked for something new is not a plugin: it
+stays in the project where it was asked for.
 
 ## What a plugin is made of
 
@@ -46,13 +46,30 @@ In the first version every plugin in the marketplace ships inside the app and is
 download from, and no plugin has a version of its own. The Plugins screen still looks like a store — a list, search,
 tags — because that is where this is heading ([plugins ship with the app](DECISIONS.md#d36)).
 
-The other source is the agent. Asked to cut a video, it may need `ffmpeg`; it never installs anything loose, because
-the environment is rebuilt from the list of installed plugins and a loose install would vanish
-([why the environment is declared](DECISIONS.md#d25)). Instead it writes a small plugin of its own: a folder in the profile, which is installed by being there, always for the
-whole profile. These plugins live with the person's data, survive a rebuilt environment, and appear in the
-same list as the bundled ones, marked as the person's own — "Twój plugin" — since they asked for it
-([plugins the agent writes](DECISIONS.md#d40)). When the agent improves the skill of such a plugin, the next
-conversation already uses it.
+The agent never installs anything loose, because the environment is rebuilt from what is declared and a loose install
+would vanish ([why the environment is declared](DECISIONS.md#d25)). Asked to cut a video, it may need `ffmpeg`, a
+script and a skill; it does not write a plugin for that, but adds them to the project's own setup, a hidden
+`.poweragents/` folder in the project. Plugins are what one installs; a project's setup is what one makes, by talking
+to the agent there ([what the agent builds lives in the project](DECISIONS.md#d43)). The folder holds only what the
+agent wrote — skills, scripts, which libraries and programs they need — and the sandbox installs from it, so a project
+moves as a handful of text files.
+
+Programs such as Blender or `ffmpeg` are installed once for the whole sandbox, as long as some plugin or some project
+needs them. Plugins share one set of libraries, since we build them all and resolve any clash before release; a
+project's setup has its own, and its scripts use only those, never one a plugin happened to bring
+([programs shared, libraries per project](DECISIONS.md#d44)). A skill of the project's setup is called by its plain
+name, `/sort`: every plugin command carries its plugin's name before a colon, so one without it can only mean this
+project's setup, and the daemon stops a conversation whose project has no such skill, as it does for a missing plugin
+([commands of the project's setup](DECISIONS.md#d45)).
+
+Inside `.poweragents/` the agent works as in any software project. JS libraries go in a `package.json` with its
+lockfile, installed with `bun add` into the sandbox through a link; a Python script names its own dependencies in its
+header and runs with `uv run`. When a setup is not installed yet — a project brought from another machine — the agent
+installs it; the daemon reinstalls every setup only when it rebuilds the sandbox. System programs are listed in a small
+file the daemon applies on request ([how a setup declares what it needs](DECISIONS.md#d46)). The agent learns what a
+setup holds from an `AGENTS.md` inside `.poweragents/`, loaded into every conversation there; asked what a project can
+do, it explains from that file ([the agent's description of a setup](DECISIONS.md#d47)). After changing a setup or a
+schedule, the agent runs a check that every schedule's command exists ([what the check covers](DECISIONS.md#d48)).
 
 ## Installing without asking
 
@@ -95,3 +112,8 @@ Whether a schedule the agent creates on its own needs the person's confirmation 
 ([#35](https://github.com/kedrzu/poweragents/issues/35)). How a plugin installs a Linux system program — from the
 distribution's packages or as a pinned download — waits for the first plugin that needs one
 ([deferred](DECISIONS.md#d26)).
+
+The person's own plugins are a later design. Once a project's own setup — its skills, scripts and the packages they
+need — is wanted in several projects, the agent will turn it into a plugin of the person's, kept in the profile and
+installed into those projects. Moving a skill into a plugin changes its command's name, so the agent then has to repoint
+whatever called it, schedules first; the check the agent already runs after its changes catches a command it missed.

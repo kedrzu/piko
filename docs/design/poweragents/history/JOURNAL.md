@@ -208,3 +208,49 @@ Append-only. One line per turn that settled something, was rejected, or got an a
   history.
 - 2026-11-14 — Owner closed the plugins design (#25). Open: #35 (schedule and tunnel confirmations), apt vs pinned archive (D26). Unchecked for the first build task: OpenCode skill-as-command (D42), denied tools hidden from claude-agent.
 - 2026-11-14 — Toasts and app update design round from .context/app-updates-brief.md: `molecules/Toast` with tone, lifetime and action variants, `molecules/Toaster`, the update toast (ready, restarting, install failed), a busy Primary button, screens 67–69; log in history/app-updates.md.
+- 2026-11-15 — Project-scoped setup round opened (owner's idea): what the agent builds with the person lives in the
+  project's hidden `.poweragents/` (skills, scripts, Python/JS deps, declared apt packages), not as an agent-written
+  profile plugin (would retire D40's own plugins, revisit D25/D26). Plugins stay "things you install". Owner chose:
+  the project folder holds only text; installed packages live in the sandbox, per project, rebuilt from declarations;
+  every install draws from shared caches (Bun, uv). No profile tier for own things: reuse across projects is copying,
+  until the person wants it in several places — then the agent extracts the project's setup into their own plugin,
+  kept in the profile and installed into projects. Project-level plugins matter more now: they carry dependencies the
+  project takes on. Not yet folded into DECISIONS/plugins.md.
+- 2026-11-15 — Owner: building the person's own plugins (extracting a project's setup) is out of scope for now; noted
+  in plugins.md "Still open" with the schedule-repointing consequence and the owner's idea of a check the agent runs
+  after its changes (schedules point at existing commands, declarations installed). Open in this round: programs
+  global vs libraries per code location; how a project's own skill is named as a command.
+- 2026-11-15 — Owner agreed: programs (system packages, plugin CLIs) shared on one PATH, libraries installed per place
+  that holds code, from one shared cache, no borrowing a plugin's library (D44); project-setup commands are `/:<skill>`
+  (D45). Recorded D43 (project's setup in `.poweragents/`, text only, agent writes no plugins); D40 and D26 rewritten,
+  old forms to history; D25 sharpened. Checks (Bun resolution, NODE_PATH, Bun/uv caches, OpenCode skill ids) recorded
+  in D44/D45; leading `:` in permission matching still to try live. Folded into plugins.md. Code still implements the
+  agent's own plugins (`packages/daemon/src/env.ts`, `PluginService`) — divergence for the build.
+- 2026-11-16 — Declarations and how scripts find libraries: tested on macOS (Bun 1.4.4, uv 0.13.0) that `bun add` in
+  `.poweragents/` with `node_modules` a symlink to another folder installs there and a script resolves through it from
+  any cwd; `uv add` with `.venv` a symlink does the same, `uv run` finds the project from a script's folder but not from
+  the project root (needs `--project .poweragents`). Proposed to owner: native files + lockfiles in `.poweragents/`,
+  install folders symlinked to the sandbox volume per project id, agent uses `bun add`/`uv add` itself, programs via a
+  small file and a daemon apply. Not recorded as a decision yet.
+- 2026-11-16 — Owner: the agent installs libraries itself; system programs through a file and `poweragents apply`.
+  Recorded D46 (one pyproject per project is the design agent's, flagged unconfirmed). Next offered: the human
+  description of a project's setup, and the check the agent runs after its changes.
+- 2026-11-16 — Owner chose a visible description file, named `PROJECT.md` (D47); OpenCode `instructions` lookup
+  checked on `dev`, not on 2.2.7; host edits may reach a running session late (watcher). Check after the agent's
+  changes (`poweragents check`: schedule commands exist, declarations install, skill files parse) proposed, awaiting
+  owner.
+- 2026-11-16 — Owner: `PROJECT.md` is for the person only; the agent's guidance belongs in AGENTS.md and references.
+  D47 rewritten (old form to history): agent text at `.poweragents/AGENTS.md` (design agent's proposal), loaded via
+  `instructions`. Asked owner what "techniczny plik używany w różnych sytuacjach" means for PROJECT.md.
+- 2026-11-16 — Owner confirmed: PROJECT.md may be shown by the app where it explains a project (D47 sharpened); the
+  check's scope agreed, recorded as D48. Blocking questions closed; next: rightsize before proposing to close.
+- 2026-11-16 — Rightsize (three passes) put to the owner, who took every recommendation and dropped PROJECT.md:
+  plugins keep one shared library environment, only setups get their own (D44); plain `/<skill>` for setup skills,
+  copies need the project id (D45); Python per-script PEP 723 headers, agent installs a missing setup, daemon only at
+  sandbox rebuild (D46); only `.poweragents/AGENTS.md`, no PROJECT.md (D47); check covers schedule commands only
+  (D48). Old forms to history; plugins.md updated. Kept without asking (owner already chose): programs declared per
+  project, shared caches, an agent-facing AGENTS.md. Ready to propose closing.
+- 2026-11-16 — Owner closed the project-setup round (PR #61). To confirm live before building: `node_modules` symlink
+  on the sandbox volume (and dangling), `.poweragents/AGENTS.md` via `instructions` on OpenCode 2.2.7, how setup skill
+  copies avoid colliding across projects (D45). Deferred: programs file format (D26), the person's own plugins. Code
+  still implements agent-written plugins (D40 divergence).
