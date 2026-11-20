@@ -34,7 +34,7 @@ export const Stack: Story = {
                 Znajdziesz go w pasku bocznym.
             </Toast>
             <Toast
-                title="Nowa wersja poweragents jest gotowa"
+                title="Nowa wersja piko jest gotowa"
                 tone="accent"
                 icon={CircleArrowDown}
             >

@@ -92,7 +92,7 @@ test('accepts a data root that is itself reached through a link', async () => {
 async function prepare() {
     const work = await mkdtemp(path.join(os.tmpdir(), 'stage-upload-'));
     works.push(work);
-    const dataRoot = path.join(work, 'Poweragents');
+    const dataRoot = path.join(work, 'Piko');
     const folder = path.join(work, 'state', 'browser-uploads');
     const secret = path.join(work, 'secret.txt');
     await mkdir(dataRoot);

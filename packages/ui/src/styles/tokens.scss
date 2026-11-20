@@ -2,7 +2,7 @@
 // block of the repo's packages (`viteShared.ts`), so it must never emit CSS — a rule here would be copied
 // into every component. Tokens are named by role, not by look; text colours note their contrast.
 //
-// The values follow the variables of `poweragents.pen` (`$ink` there is `$color-ink` here). Contrast
+// The values follow the variables of `piko.pen` (`$ink` there is `$color-ink` here). Contrast
 // ratios are WCAG 2.x, measured against the surface named; text needs 4.5:1, icons and other graphics
 // 3:1.
 
@@ -110,7 +110,7 @@ $project-colors: (
     }
 }
 
-// Palettes. `poweragents.pen` has three candidates (its `palette` theme) until one is chosen. Each colour
+// Palettes. `piko.pen` has three candidates (its `palette` theme) until one is chosen. Each colour
 // that differs between them is a CSS custom property, emitted once by `main.scss` for `<html>`:
 // Meadow by default, another palette with `data-palette` on it. Components read them through the
 // `$color-…` tokens below, never the custom properties directly.
@@ -174,7 +174,7 @@ $spacing-48: 48px;
 $spacing-56: 56px;
 $spacing-120: 120px;
 
-// Off-scale spacing. `poweragents.pen` has no spacing variables, so each of these mirrors a value one Pen component
+// Off-scale spacing. `piko.pen` has no spacing variables, so each of these mirrors a value one Pen component
 // draws by hand; named by the role it plays there.
 $spacing-icon-gap: 7px; // icon to its text in Button and in Code field's note
 $spacing-badge-y: 3px; // vertical padding of Provider card's "Soon" badge

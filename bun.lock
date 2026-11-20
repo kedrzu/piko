@@ -3,13 +3,13 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "poweragents",
+      "name": "piko",
       "devDependencies": {
         "@nzyme/cli": "workspace:*",
         "@nzyme/eslint": "workspace:*",
         "@nzyme/tsconfig": "workspace:*",
         "@pen.dev/cli": "0.3.15",
-        "@poweragents/cli": "workspace:*",
+        "@piko/cli": "workspace:*",
         "@types/bun": "1.4.4",
         "@types/node": "^26.6.6",
         "@typescript/native-preview": "^7.0.0-dev.20260707.2",
@@ -1002,7 +1002,7 @@
       },
     },
     "packages/app": {
-      "name": "@poweragents/app",
+      "name": "@piko/app",
       "dependencies": {
         "@lucide/vue": "1.72.0",
         "@nzyme/fetch-utils": "workspace:*",
@@ -1017,8 +1017,8 @@
         "@nzyme/vue-i18n": "workspace:*",
         "@nzyme/vue-ioc": "workspace:*",
         "@nzyme/vue-utils": "workspace:*",
-        "@poweragents/common": "workspace:*",
-        "@poweragents/ui": "workspace:*",
+        "@piko/common": "workspace:*",
+        "@piko/ui": "workspace:*",
         "@tauri-apps/api": "2.12.4",
         "@tauri-apps/plugin-opener": "2.7.3",
         "nuxt": "4.4.8",
@@ -1036,24 +1036,24 @@
       },
     },
     "packages/cli": {
-      "name": "@poweragents/cli",
+      "name": "@piko/cli",
       "version": "0.0.0",
       "bin": {
-        "poweragents": "src/cli.ts",
+        "piko": "src/cli.ts",
       },
       "dependencies": {
         "@nzyme/cli-core": "workspace:*",
         "@nzyme/ioc": "workspace:*",
         "@nzyme/pen": "workspace:*",
         "@nzyme/secrets": "workspace:*",
-        "@poweragents/secrets": "workspace:*",
+        "@piko/secrets": "workspace:*",
       },
       "devDependencies": {
         "@nzyme/tsconfig": "workspace:*",
       },
     },
     "packages/common": {
-      "name": "@poweragents/common",
+      "name": "@piko/common",
       "dependencies": {
         "@nzyme/i18n": "workspace:*",
         "@nzyme/rpc": "workspace:*",
@@ -1066,7 +1066,7 @@
       },
     },
     "packages/daemon": {
-      "name": "@poweragents/daemon",
+      "name": "@piko/daemon",
       "version": "0.0.0",
       "dependencies": {
         "@nzyme/fetch-utils": "workspace:*",
@@ -1076,8 +1076,8 @@
         "@nzyme/stealth-browser": "workspace:*",
         "@nzyme/utils": "workspace:*",
         "@openuidev/lang-core": "1.1.1",
-        "@poweragents/common": "workspace:*",
-        "@poweragents/opencode": "workspace:*",
+        "@piko/common": "workspace:*",
+        "@piko/opencode": "workspace:*",
         "rrule-temporal": "2.2.9",
       },
       "devDependencies": {
@@ -1087,24 +1087,24 @@
       },
     },
     "packages/desktop": {
-      "name": "@poweragents/desktop",
+      "name": "@piko/desktop",
       "devDependencies": {
         "@tauri-apps/cli": "2.12.4",
       },
     },
     "packages/e2e": {
-      "name": "@poweragents/e2e",
+      "name": "@piko/e2e",
       "dependencies": {
         "@playwright/test": "1.64.1",
-        "@poweragents/common": "workspace:*",
-        "@poweragents/ui": "workspace:*",
+        "@piko/common": "workspace:*",
+        "@piko/ui": "workspace:*",
       },
       "devDependencies": {
         "@nzyme/tsconfig": "workspace:*",
       },
     },
     "packages/opencode": {
-      "name": "@poweragents/opencode",
+      "name": "@piko/opencode",
       "version": "0.0.0",
       "dependencies": {
         "@nzyme/ioc": "workspace:*",
@@ -1119,7 +1119,7 @@
       },
     },
     "packages/secrets": {
-      "name": "@poweragents/secrets",
+      "name": "@piko/secrets",
       "version": "0.0.0",
       "dependencies": {
         "@nzyme/bitwarden": "workspace:*",
@@ -1133,7 +1133,7 @@
       },
     },
     "packages/ui": {
-      "name": "@poweragents/ui",
+      "name": "@piko/ui",
       "dependencies": {
         "@fontsource-variable/bricolage-grotesque": "5.3.0",
         "@fontsource-variable/instrument-sans": "5.3.0",
@@ -1150,7 +1150,7 @@
         "@nzyme/vue-transitions": "workspace:*",
         "@nzyme/vue-utils": "workspace:*",
         "@openuidev/lang-core": "1.1.1",
-        "@poweragents/common": "workspace:*",
+        "@piko/common": "workspace:*",
         "@tiptap/core": "3.34.0",
         "@tiptap/extension-code": "3.34.0",
         "@tiptap/extension-list": "3.34.0",
@@ -2311,23 +2311,23 @@
 
     "@poppinss/exception": ["@poppinss/exception@1.2.3", "", {}, "sha512-dCED+QRChTVatE9ibtoaxc+WkdzOSjYTKi/+uacHWIsfodVfpsueo3+DKpgU5Px8qXjgmXkSvhXvSCz3fnP9lw=="],
 
-    "@poweragents/app": ["@poweragents/app@workspace:packages/app"],
+    "@piko/app": ["@piko/app@workspace:packages/app"],
 
-    "@poweragents/cli": ["@poweragents/cli@workspace:packages/cli"],
+    "@piko/cli": ["@piko/cli@workspace:packages/cli"],
 
-    "@poweragents/common": ["@poweragents/common@workspace:packages/common"],
+    "@piko/common": ["@piko/common@workspace:packages/common"],
 
-    "@poweragents/daemon": ["@poweragents/daemon@workspace:packages/daemon"],
+    "@piko/daemon": ["@piko/daemon@workspace:packages/daemon"],
 
-    "@poweragents/desktop": ["@poweragents/desktop@workspace:packages/desktop"],
+    "@piko/desktop": ["@piko/desktop@workspace:packages/desktop"],
 
-    "@poweragents/e2e": ["@poweragents/e2e@workspace:packages/e2e"],
+    "@piko/e2e": ["@piko/e2e@workspace:packages/e2e"],
 
-    "@poweragents/opencode": ["@poweragents/opencode@workspace:packages/opencode"],
+    "@piko/opencode": ["@piko/opencode@workspace:packages/opencode"],
 
-    "@poweragents/secrets": ["@poweragents/secrets@workspace:packages/secrets"],
+    "@piko/secrets": ["@piko/secrets@workspace:packages/secrets"],
 
-    "@poweragents/ui": ["@poweragents/ui@workspace:packages/ui"],
+    "@piko/ui": ["@piko/ui@workspace:packages/ui"],
 
     "@primeicons/core": ["@primeicons/core@8.0.2", "", { "dependencies": { "@primeuix/utils": "^0.8.0" } }, "sha512-VySryvfIQH2xzNVXISIQg357gAt4oFYX2vKy27tWMB7UvEHu/gjRpeilBty3LBln7oVuAdFLPYOWr/FtTH8eJw=="],
 
@@ -5061,9 +5061,9 @@
 
     "@poppinss/dumper/supports-color": ["supports-color@10.2.2", "", {}, "sha512-SS+jx45GF1QjgEXQx4NJZV9ImqmO2NPz5FNsIHrsDjh2YsHnawpan7SNQ1o8NuhrbHZy9AZhIoCUiCeaW/C80g=="],
 
-    "@poweragents/app/@lucide/vue": ["@lucide/vue@1.72.0", "", { "peerDependencies": { "vue": ">=3.0.1" } }, "sha512-BPcYejGErv+kg4ilXyPU7j6YdA0kQaMiBnlcCElTsoLdQgD+6aoquA/0I4amN5yzkJrZgpULvpDonXui94ez8A=="],
+    "@piko/app/@lucide/vue": ["@lucide/vue@1.72.0", "", { "peerDependencies": { "vue": ">=3.0.1" } }, "sha512-BPcYejGErv+kg4ilXyPU7j6YdA0kQaMiBnlcCElTsoLdQgD+6aoquA/0I4amN5yzkJrZgpULvpDonXui94ez8A=="],
 
-    "@poweragents/ui/@lucide/vue": ["@lucide/vue@1.72.0", "", { "peerDependencies": { "vue": ">=3.0.1" } }, "sha512-BPcYejGErv+kg4ilXyPU7j6YdA0kQaMiBnlcCElTsoLdQgD+6aoquA/0I4amN5yzkJrZgpULvpDonXui94ez8A=="],
+    "@piko/ui/@lucide/vue": ["@lucide/vue@1.72.0", "", { "peerDependencies": { "vue": ">=3.0.1" } }, "sha512-BPcYejGErv+kg4ilXyPU7j6YdA0kQaMiBnlcCElTsoLdQgD+6aoquA/0I4amN5yzkJrZgpULvpDonXui94ez8A=="],
 
     "@primeuix/forms/@primeuix/utils": ["@primeuix/utils@0.6.4", "", {}, "sha512-pZ5f+vj7wSzRhC7KoEQRU5fvYAe+RP9+m39CTscZ3UywCD1Y2o6Fe1rRgklMPSkzUcty2jzkA0zMYkiJBD1hgg=="],
 

@@ -1,7 +1,7 @@
 {
-    "name": "@poweragents/app",
+    "name": "@piko/app",
     "private": true,
-    "description": "The poweragents app (Nuxt SPA, built to static files and shown by the desktop shell)",
+    "description": "The piko app (Nuxt SPA, built to static files and shown by the desktop shell)",
     "type": "module",
     "exports": {
         "./package.json": "./package.json",
@@ -28,8 +28,8 @@
         "@nzyme/vue-i18n": "workspace:*",
         "@nzyme/vue-ioc": "workspace:*",
         "@nzyme/vue-utils": "workspace:*",
-        "@poweragents/common": "workspace:*",
-        "@poweragents/ui": "workspace:*",
+        "@piko/common": "workspace:*",
+        "@piko/ui": "workspace:*",
         "@tauri-apps/api": "2.12.4",
         "@tauri-apps/plugin-opener": "2.7.3",
         "nuxt": "4.4.8",

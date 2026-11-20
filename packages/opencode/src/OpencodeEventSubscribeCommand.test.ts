@@ -20,7 +20,7 @@ const frames: string[] = [
         data: {
             sessionID: 'ses_1',
             projectID: 'prj_1',
-            location: { directory: '/Poweragents/Test' },
+            location: { directory: '/Piko/Test' },
             slug: 'cosmic-planet',
             version: '2.2.7',
         },
@@ -155,7 +155,7 @@ test('maps the modelled events, names tool calls and skips the rest without endi
 
     const expected: OpencodeEvent[] = [
         { type: 'streamOpened' },
-        { type: 'sessionCreated', sessionId: 'ses_1', directory: '/Poweragents/Test' },
+        { type: 'sessionCreated', sessionId: 'ses_1', directory: '/Piko/Test' },
         { type: 'runStarted', sessionId: 'ses_1' },
         { type: 'sessionRenamed', sessionId: 'ses_1', title: 'Plik powitalny' },
         {

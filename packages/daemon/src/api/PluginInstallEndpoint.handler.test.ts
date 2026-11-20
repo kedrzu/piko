@@ -8,19 +8,19 @@ import { createTestContainer } from '@nzyme/ioc-testing/createTestContainer.js';
 import type { HttpRequest } from '@nzyme/rpc/types/HttpRequest.js';
 import { createEventEmitter } from '@nzyme/utils/createEventEmitter.js';
 
-import type { ClaudeStatus } from '@poweragents/common/api/ClaudeTypes.js';
-import type { PluginInstall, PluginInstallInput, PluginInstallOutcome } from '@poweragents/common/api/PluginTypes.js';
-import { OpencodeSessionActiveListCommand } from '@poweragents/opencode/OpencodeSessionActiveListCommand.js';
-import { OpencodeSessionCreateCommand } from '@poweragents/opencode/OpencodeSessionCreateCommand.js';
-import type { OpencodeSessionCreateCommandParams } from '@poweragents/opencode/OpencodeSessionCreateCommand.js';
-import { OpencodeSessionGetCommand } from '@poweragents/opencode/OpencodeSessionGetCommand.js';
-import { OpencodeSessionListCommand } from '@poweragents/opencode/OpencodeSessionListCommand.js';
-import { OpencodeSessionRenameCommand } from '@poweragents/opencode/OpencodeSessionRenameCommand.js';
-import type { OpencodeSessionRenameCommandParams } from '@poweragents/opencode/OpencodeSessionRenameCommand.js';
-import { OpencodeSessionSyntheticCommand } from '@poweragents/opencode/OpencodeSessionSyntheticCommand.js';
-import type { OpencodeSessionSyntheticCommandParams } from '@poweragents/opencode/OpencodeSessionSyntheticCommand.js';
-import { OpencodeSessionUpdateCommand } from '@poweragents/opencode/OpencodeSessionUpdateCommand.js';
-import type { OpencodeSession } from '@poweragents/opencode/OpencodeTypes.js';
+import type { ClaudeStatus } from '@piko/common/api/ClaudeTypes.js';
+import type { PluginInstall, PluginInstallInput, PluginInstallOutcome } from '@piko/common/api/PluginTypes.js';
+import { OpencodeSessionActiveListCommand } from '@piko/opencode/OpencodeSessionActiveListCommand.js';
+import { OpencodeSessionCreateCommand } from '@piko/opencode/OpencodeSessionCreateCommand.js';
+import type { OpencodeSessionCreateCommandParams } from '@piko/opencode/OpencodeSessionCreateCommand.js';
+import { OpencodeSessionGetCommand } from '@piko/opencode/OpencodeSessionGetCommand.js';
+import { OpencodeSessionListCommand } from '@piko/opencode/OpencodeSessionListCommand.js';
+import { OpencodeSessionRenameCommand } from '@piko/opencode/OpencodeSessionRenameCommand.js';
+import type { OpencodeSessionRenameCommandParams } from '@piko/opencode/OpencodeSessionRenameCommand.js';
+import { OpencodeSessionSyntheticCommand } from '@piko/opencode/OpencodeSessionSyntheticCommand.js';
+import type { OpencodeSessionSyntheticCommandParams } from '@piko/opencode/OpencodeSessionSyntheticCommand.js';
+import { OpencodeSessionUpdateCommand } from '@piko/opencode/OpencodeSessionUpdateCommand.js';
+import type { OpencodeSession } from '@piko/opencode/OpencodeTypes.js';
 
 import { ChatgptSignInService } from '../chatgpt/ChatgptSignInService.js';
 import { ClaudeSignInService } from '../claude/ClaudeSignInService.js';
@@ -49,7 +49,7 @@ test('installing a profile plugin starts its onboarding in the given project, hi
     };
     expect(first).toEqual(expectedFirst);
     expect(await fixture.installsOf('gmail')).toEqual([{ profile: true }]);
-    expect(fixture.createSession.mock.calls[0]?.[0].directory).toBe('/Poweragents/projects/Praca');
+    expect(fixture.createSession.mock.calls[0]?.[0].directory).toBe('/Piko/projects/Praca');
     const renamed: OpencodeSessionRenameCommandParams = { sessionId: 'ses_1', title: 'Gmail' };
     expect(fixture.rename).toHaveBeenCalledWith(renamed);
     const opening = fixture.synthetic.mock.calls[0]?.[0];
@@ -75,7 +75,7 @@ test('installing a project plugin installs it in the project and starts its onbo
 
     expect(result.conversation).toEqual({ projectId, conversationId: 'ses_1' });
     expect(await fixture.installsOf('email-sorting')).toEqual([{ projectId }]);
-    expect(fixture.createSession.mock.calls[0]?.[0].directory).toBe('/Poweragents/projects/Poczta');
+    expect(fixture.createSession.mock.calls[0]?.[0].directory).toBe('/Piko/projects/Poczta');
     expect(fixture.synthetic.mock.calls[0]?.[0].text).toContain('Load the skill email-sorting:setup');
 });
 
@@ -137,14 +137,14 @@ interface SetupOptions {
 }
 
 async function setup(options: SetupOptions = {}) {
-    const tmp = await mkdtemp(path.join(os.tmpdir(), 'poweragents-plugin-install-'));
+    const tmp = await mkdtemp(path.join(os.tmpdir(), 'piko-plugin-install-'));
     const dataRoot = path.join(tmp, 'root');
     await cp(path.join(FIXTURES, 'own'), path.join(dataRoot, 'plugins'), { recursive: true });
     const { container } = createTestContainer();
     container.set(EnvVariables, {
-        POWERAGENTS_DATA_ROOT: dataRoot,
-        POWERAGENTS_LIMA_HOME: path.join(tmp, 'home', 'lima'),
-        POWERAGENTS_PLUGINS_DIR: path.join(FIXTURES, 'bundled'),
+        PIKO_DATA_ROOT: dataRoot,
+        PIKO_LIMA_HOME: path.join(tmp, 'home', 'lima'),
+        PIKO_PLUGINS_DIR: path.join(FIXTURES, 'bundled'),
     });
     const state: SandboxState =
         options.ready === false

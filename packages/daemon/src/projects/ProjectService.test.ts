@@ -6,7 +6,7 @@ import path from 'node:path';
 import { EnvVariables } from '@nzyme/ioc/helpers/EnvVariables.js';
 import { createTestContainer } from '@nzyme/ioc-testing/createTestContainer.js';
 
-import type { ProjectCreateResult } from '@poweragents/common/api/ProjectTypes.js';
+import type { ProjectCreateResult } from '@piko/common/api/ProjectTypes.js';
 
 import { ProjectService } from './ProjectService.js';
 import type { LocalProject } from './ProjectService.js';
@@ -237,10 +237,10 @@ test('skips a project folder that is a link, and never rewrites the marker it le
 });
 
 async function setup() {
-    const tmp = await mkdtemp(path.join(os.tmpdir(), 'poweragents-projects-'));
+    const tmp = await mkdtemp(path.join(os.tmpdir(), 'piko-projects-'));
     const root = path.join(tmp, 'root', 'projects');
     const { container, logs } = createTestContainer();
-    container.set(EnvVariables, { POWERAGENTS_DATA_ROOT: path.dirname(root) });
+    container.set(EnvVariables, { PIKO_DATA_ROOT: path.dirname(root) });
     const projects = container.resolve(ProjectService);
     return { projects, root, tmp, logs };
 }

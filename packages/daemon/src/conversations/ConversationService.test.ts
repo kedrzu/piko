@@ -7,43 +7,43 @@ import { EnvVariables } from '@nzyme/ioc/helpers/EnvVariables.js';
 import { createTestContainer } from '@nzyme/ioc-testing/createTestContainer.js';
 import { createEventEmitter } from '@nzyme/utils/createEventEmitter.js';
 
-import type { ChatgptStatus } from '@poweragents/common/api/ChatgptTypes.js';
-import type { ClaudeStatus } from '@poweragents/common/api/ClaudeTypes.js';
+import type { ChatgptStatus } from '@piko/common/api/ChatgptTypes.js';
+import type { ClaudeStatus } from '@piko/common/api/ClaudeTypes.js';
 import type {
     Conversation,
     ConversationMessagePage,
     ConversationSendResult,
     ConversationStopResult,
-} from '@poweragents/common/api/ConversationTypes.js';
-import type { Project, ProjectCreateResult } from '@poweragents/common/api/ProjectTypes.js';
-import { OpencodeMessageListCommand } from '@poweragents/opencode/OpencodeMessageListCommand.js';
+} from '@piko/common/api/ConversationTypes.js';
+import type { Project, ProjectCreateResult } from '@piko/common/api/ProjectTypes.js';
+import { OpencodeMessageListCommand } from '@piko/opencode/OpencodeMessageListCommand.js';
 import type {
     OpencodeMessageListCommandParams,
     OpencodeMessagePage,
-} from '@poweragents/opencode/OpencodeMessageListCommand.js';
-import { OpencodeSessionActiveListCommand } from '@poweragents/opencode/OpencodeSessionActiveListCommand.js';
-import { OpencodeSessionCreateCommand } from '@poweragents/opencode/OpencodeSessionCreateCommand.js';
-import type { OpencodeSessionCreateCommandParams } from '@poweragents/opencode/OpencodeSessionCreateCommand.js';
-import { OpencodeSessionGetCommand } from '@poweragents/opencode/OpencodeSessionGetCommand.js';
-import { OpencodeSessionInboxClearCommand } from '@poweragents/opencode/OpencodeSessionInboxClearCommand.js';
+} from '@piko/opencode/OpencodeMessageListCommand.js';
+import { OpencodeSessionActiveListCommand } from '@piko/opencode/OpencodeSessionActiveListCommand.js';
+import { OpencodeSessionCreateCommand } from '@piko/opencode/OpencodeSessionCreateCommand.js';
+import type { OpencodeSessionCreateCommandParams } from '@piko/opencode/OpencodeSessionCreateCommand.js';
+import { OpencodeSessionGetCommand } from '@piko/opencode/OpencodeSessionGetCommand.js';
+import { OpencodeSessionInboxClearCommand } from '@piko/opencode/OpencodeSessionInboxClearCommand.js';
 import type {
     OpencodeInboxPrompt,
     OpencodeSessionInboxClearOptions,
-} from '@poweragents/opencode/OpencodeSessionInboxClearCommand.js';
-import { OpencodeSessionInboxListCommand } from '@poweragents/opencode/OpencodeSessionInboxListCommand.js';
-import type { OpencodeInboxItem } from '@poweragents/opencode/OpencodeSessionInboxListCommand.js';
-import { OpencodeSessionInterruptCommand } from '@poweragents/opencode/OpencodeSessionInterruptCommand.js';
-import { OpencodeSessionListCommand } from '@poweragents/opencode/OpencodeSessionListCommand.js';
-import { OpencodeSessionPromptCommand } from '@poweragents/opencode/OpencodeSessionPromptCommand.js';
+} from '@piko/opencode/OpencodeSessionInboxClearCommand.js';
+import { OpencodeSessionInboxListCommand } from '@piko/opencode/OpencodeSessionInboxListCommand.js';
+import type { OpencodeInboxItem } from '@piko/opencode/OpencodeSessionInboxListCommand.js';
+import { OpencodeSessionInterruptCommand } from '@piko/opencode/OpencodeSessionInterruptCommand.js';
+import { OpencodeSessionListCommand } from '@piko/opencode/OpencodeSessionListCommand.js';
+import { OpencodeSessionPromptCommand } from '@piko/opencode/OpencodeSessionPromptCommand.js';
 import type {
     OpencodePromptReceipt,
     OpencodeSessionPromptCommandParams,
-} from '@poweragents/opencode/OpencodeSessionPromptCommand.js';
-import { OpencodeSessionSyntheticCommand } from '@poweragents/opencode/OpencodeSessionSyntheticCommand.js';
-import type { OpencodeSessionSyntheticCommandParams } from '@poweragents/opencode/OpencodeSessionSyntheticCommand.js';
-import { OpencodeSessionUpdateCommand } from '@poweragents/opencode/OpencodeSessionUpdateCommand.js';
-import type { OpencodeSessionUpdateCommandParams } from '@poweragents/opencode/OpencodeSessionUpdateCommand.js';
-import type { OpencodePermissionRule, OpencodeSession } from '@poweragents/opencode/OpencodeTypes.js';
+} from '@piko/opencode/OpencodeSessionPromptCommand.js';
+import { OpencodeSessionSyntheticCommand } from '@piko/opencode/OpencodeSessionSyntheticCommand.js';
+import type { OpencodeSessionSyntheticCommandParams } from '@piko/opencode/OpencodeSessionSyntheticCommand.js';
+import { OpencodeSessionUpdateCommand } from '@piko/opencode/OpencodeSessionUpdateCommand.js';
+import type { OpencodeSessionUpdateCommandParams } from '@piko/opencode/OpencodeSessionUpdateCommand.js';
+import type { OpencodePermissionRule, OpencodeSession } from '@piko/opencode/OpencodeTypes.js';
 
 import { ActiveProviderStore } from '../ai/ActiveProviderStore.js';
 import { ChatgptSignInService } from '../chatgpt/ChatgptSignInService.js';
@@ -236,7 +236,7 @@ test("creating a conversation syncs the plugins first, so an own plugin's edited
 
     await fixture.conversations.create(fixture.projectA.id);
 
-    const copy = path.join(fixture.dataRoot, '.poweragents', 'skills', 'my-notes:take-note', 'SKILL.md');
+    const copy = path.join(fixture.dataRoot, '.piko', 'skills', 'my-notes:take-note', 'SKILL.md');
     expect(await readFile(copy, 'utf8')).toBe('# Edited\n');
 });
 
@@ -244,7 +244,7 @@ test('a failed plugin sync does not block creating a conversation', async () => 
     const fixture = await setup();
     await fixture.plugins.install({ name: 'email-sorting', projectId: fixture.projectA.id });
     // The daemon's skills folder replaced by a file: the sync refuses to write through it.
-    const skillsDir = path.join(fixture.dataRoot, '.poweragents', 'skills');
+    const skillsDir = path.join(fixture.dataRoot, '.piko', 'skills');
     await rm(skillsDir, { recursive: true });
     await writeFile(skillsDir, 'not a folder');
 
@@ -301,7 +301,7 @@ test.each([
         };
         expect(fixture.prompt.mock.calls.map(call => call[0])).toEqual([prompted]);
         const note = fixture.synthetic.mock.calls[0]?.[0];
-        expect(note).toMatchObject({ resume: false, metadata: { poweragents: 'pluginMissing', plugin } });
+        expect(note).toMatchObject({ resume: false, metadata: { piko: 'pluginMissing', plugin } });
         expect(note?.text).toContain(`The command ${text} was not run`);
 
         const page = await fixture.conversations.listMessages(ref);
@@ -574,13 +574,13 @@ test('maps a page of messages: steps by tool kind with targets within the projec
 
 async function setup() {
     const { container, logs } = createTestContainer();
-    const tmp = await mkdtemp(path.join(os.tmpdir(), 'poweragents-conversations-'));
+    const tmp = await mkdtemp(path.join(os.tmpdir(), 'piko-conversations-'));
     const dataRoot = path.join(tmp, 'root');
     await cp(path.join(PLUGIN_FIXTURES, 'own'), path.join(dataRoot, 'plugins'), { recursive: true });
     container.set(EnvVariables, {
-        POWERAGENTS_DATA_ROOT: dataRoot,
-        POWERAGENTS_LIMA_HOME: path.join(tmp, 'home', 'lima'),
-        POWERAGENTS_PLUGINS_DIR: path.join(PLUGIN_FIXTURES, 'bundled'),
+        PIKO_DATA_ROOT: dataRoot,
+        PIKO_LIMA_HOME: path.join(tmp, 'home', 'lima'),
+        PIKO_PLUGINS_DIR: path.join(PLUGIN_FIXTURES, 'bundled'),
     });
     const state: SandboxState = {
         status: 'ready',
@@ -692,8 +692,8 @@ async function setup() {
         projectB,
         localA: localA!,
         localB: localB!,
-        dirA: '/Poweragents/projects/Alfa',
-        dirB: '/Poweragents/projects/Beta',
+        dirA: '/Piko/projects/Alfa',
+        dirB: '/Piko/projects/Beta',
     };
 
     /** What OpenCode's clear does: takes the prompts back, and the synthetic input whose metadata matches. */

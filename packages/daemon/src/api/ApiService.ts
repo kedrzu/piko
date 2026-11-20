@@ -4,9 +4,9 @@ import { Logger } from '@nzyme/logging/Logger.js';
 import { createRouter } from '@nzyme/rpc/createRouter.js';
 import type { HttpResponse } from '@nzyme/rpc/types/HttpResponse.js';
 
-import { DAEMON_EVENTS_PATH } from '@poweragents/common/api/DaemonEventTypes.js';
-import type { DaemonEvent } from '@poweragents/common/api/DaemonEventTypes.js';
-import { DAEMON_API_PATH, DEV_SERVER_PORT } from '@poweragents/common/daemonAddress.js';
+import { DAEMON_EVENTS_PATH } from '@piko/common/api/DaemonEventTypes.js';
+import type { DaemonEvent } from '@piko/common/api/DaemonEventTypes.js';
+import { DAEMON_API_PATH, DEV_SERVER_PORT } from '@piko/common/daemonAddress.js';
 
 import { ConversationEventService } from '../conversations/ConversationEventService.js';
 import { DataRootWatchService } from '../dataRoot/DataRootWatchService.js';

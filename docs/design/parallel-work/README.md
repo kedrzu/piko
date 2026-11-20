@@ -1,6 +1,6 @@
-# Building poweragents with several agents at once
+# Building piko with several agents at once
 
-poweragents is a large app with many features, and so far it has been built one agent at a time: one
+piko is a large app with many features, and so far it has been built one agent at a time: one
 conversation, one task, one pull request, then the next. This design is about building it with
 several agents working at the same time, each on its own task in its own Paseo worktree, and about
 the one skill that keeps that work planned.

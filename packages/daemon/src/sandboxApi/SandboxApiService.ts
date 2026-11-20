@@ -7,15 +7,15 @@ import { assert } from '@nzyme/utils/assert.js';
 import { createEventEmitter } from '@nzyme/utils/createEventEmitter.js';
 import type { EventEmitter } from '@nzyme/utils/createEventEmitter.js';
 
-import type { PluginInstalledEvent } from '@poweragents/common/api/DaemonEventTypes.js';
+import type { PluginInstalledEvent } from '@piko/common/api/DaemonEventTypes.js';
 import type {
     PluginEnvironmentError,
     PluginError,
     PluginInfo,
     PluginLevel,
     PluginSource,
-} from '@poweragents/common/api/PluginTypes.js';
-import { OpencodeSessionGetCommand } from '@poweragents/opencode/OpencodeSessionGetCommand.js';
+} from '@piko/common/api/PluginTypes.js';
+import { OpencodeSessionGetCommand } from '@piko/opencode/OpencodeSessionGetCommand.js';
 
 import { toAgentDir } from '../conversations/utils/toAgentDir.js';
 import { PLUGINS_FOLDER, SANDBOX_API_PORT } from '../env.js';
@@ -28,8 +28,8 @@ import { AGENT_DATA_ROOT } from '../sandbox/buildAgentRunArgs.js';
 import { SandboxTokenCheckCommand } from '../sandbox/SandboxTokenCheckCommand.js';
 
 /**
- * The daemon's HTTP API for the agent's container, which the `poweragents` command in the image calls
- * (`POWERAGENTS_DAEMON_URL`). Every request carries the sandbox's bearer token, checked before anything else: a request
+ * The daemon's HTTP API for the agent's container, which the `piko` command in the image calls
+ * (`PIKO_DAEMON_URL`). Every request carries the sandbox's bearer token, checked before anything else: a request
  * without it gets 401 whatever it asks for. The conversation is the OpenCode session in the
  * `X-Opencode-Session` header, and its project is the project whose folder is the session's directory; a session outside
  * the projects is refused. Routes, with JSON bodies:

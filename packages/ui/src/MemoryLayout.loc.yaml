@@ -11,8 +11,8 @@ reveal:
   pl: Pokaż w Finderze
 
 revealUnsupported:
-  en[auto]: This computer can't show the folder from the app yet. You'll find it in your Poweragents folder, under memory.
-  pl: Na tym komputerze aplikacja nie umie jeszcze pokazać folderu. Znajdziesz go w folderze Poweragents, w podfolderze memory.
+  en[auto]: This computer can't show the folder from the app yet. You'll find it in your Piko folder, under memory.
+  pl: Na tym komputerze aplikacja nie umie jeszcze pokazać folderu. Znajdziesz go w folderze Piko, w podfolderze memory.
 
 revealFailed:
   en[auto]: Couldn't open Finder. Try again in a moment.

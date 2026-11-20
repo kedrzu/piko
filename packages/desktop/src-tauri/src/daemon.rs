@@ -1,24 +1,24 @@
 //! Starting the daemon, which ships inside the app as a sidecar (`bundle.externalBin` in `tauri.conf.json`, built by
-//! `bun nx run @poweragents/daemon:sidecar`).
+//! `bun nx run @piko/daemon:sidecar`).
 
 use tauri::AppHandle;
 
-/// The sidecar's name: `binaries/poweragents-daemon-<target triple>` in the bundle.
+/// The sidecar's name: `binaries/piko-daemon-<target triple>` in the bundle.
 #[cfg(not(debug_assertions))]
-const SIDECAR: &str = "poweragents-daemon";
+const SIDECAR: &str = "piko-daemon";
 
 /// Lima as bundled in the app's resources (`bundle.resources` in `tauri.macos.conf.json`): `bin/limactl` and the
-/// `share/lima` it finds beside it. The daemon runs the sandbox from there (`POWERAGENTS_LIMA_DIR`).
+/// `share/lima` it finds beside it. The daemon runs the sandbox from there (`PIKO_LIMA_DIR`).
 #[cfg(all(not(debug_assertions), target_os = "macos"))]
 const LIMA_RESOURCE: &str = "lima";
 
 /// The plugins that ship with the app, bundled in its resources (`bundle.resources` in `tauri.conf.json`) from
-/// `packages/daemon/plugins`. The daemon reads them from there (`POWERAGENTS_PLUGINS_DIR`).
+/// `packages/daemon/plugins`. The daemon reads them from there (`PIKO_PLUGINS_DIR`).
 #[cfg(not(debug_assertions))]
 const PLUGINS_RESOURCE: &str = "plugins";
 
 /// The port the daemon listens on: `DAEMON_PORT` in `packages/common/src/daemonAddress.ts`, which the daemon overrides
-/// with `POWERAGENTS_DAEMON_PORT`.
+/// with `PIKO_DAEMON_PORT`.
 #[cfg(all(not(debug_assertions), target_os = "macos"))]
 const DEFAULT_PORT: u16 = 47_610;
 
@@ -64,7 +64,7 @@ pub fn start(app: &AppHandle) {
 
 #[cfg(all(not(debug_assertions), target_os = "macos"))]
 fn hand_over(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
-    let port = std::env::var("POWERAGENTS_DAEMON_PORT")
+    let port = std::env::var("PIKO_DAEMON_PORT")
         .ok()
         .and_then(|port| port.parse().ok())
         .unwrap_or(DEFAULT_PORT);
@@ -221,13 +221,10 @@ fn spawn(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
         .shell()
         .sidecar(SIDECAR)?
         // The daemon reports it on `/status`, which is how the next launch of the app knows it is outdated.
-        .env(
-            "POWERAGENTS_VERSION",
-            app.package_info().version.to_string(),
-        )
-        .env("POWERAGENTS_PLUGINS_DIR", resources.join(PLUGINS_RESOURCE));
+        .env("PIKO_VERSION", app.package_info().version.to_string())
+        .env("PIKO_PLUGINS_DIR", resources.join(PLUGINS_RESOURCE));
     #[cfg(target_os = "macos")]
-    let command = command.env("POWERAGENTS_LIMA_DIR", resources.join(LIMA_RESOURCE));
+    let command = command.env("PIKO_LIMA_DIR", resources.join(LIMA_RESOURCE));
     // Nobody reads the daemon's output, and a pipe would break once the app quits while the daemon goes on: it gets
     // none, and writes its log to a file (`DaemonLoggerTransport`).
     let mut command = std::process::Command::from(command);

@@ -1,6 +1,6 @@
 import { expect, test } from 'bun:test';
 
-import type { ConversationError } from '@poweragents/common/api/ConversationTypes.js';
+import type { ConversationError } from '@piko/common/api/ConversationTypes.js';
 
 import { toConversationError } from './toConversationError.js';
 

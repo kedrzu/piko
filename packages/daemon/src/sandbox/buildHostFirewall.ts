@@ -47,9 +47,9 @@ export function buildHostFirewall(params: BuildHostFirewallParams): string {
 
     return [
         // Declaring the table before deleting it makes the delete succeed when the table does not exist yet.
-        'table inet poweragents',
-        'delete table inet poweragents',
-        'table inet poweragents {',
+        'table inet piko',
+        'delete table inet piko',
+        'table inet piko {',
         '    chain output {',
         '        type filter hook output priority filter; policy accept;',
         // Replies to connections the host opens into the VM (Lima's SSH and port forwards).

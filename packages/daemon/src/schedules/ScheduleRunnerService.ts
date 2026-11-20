@@ -2,11 +2,11 @@ import { HttpError } from '@nzyme/fetch-utils/HttpError.js';
 import { defineService } from '@nzyme/ioc/Service.js';
 import { Logger } from '@nzyme/logging/Logger.js';
 
-import type { ConversationSendResult } from '@poweragents/common/api/ConversationTypes.js';
-import type { ScheduleRun } from '@poweragents/common/api/ScheduleTypes.js';
-import { OpencodeSessionActiveListCommand } from '@poweragents/opencode/OpencodeSessionActiveListCommand.js';
-import { OpencodeSessionFormListCommand } from '@poweragents/opencode/OpencodeSessionFormListCommand.js';
-import { OpencodeSessionRenameCommand } from '@poweragents/opencode/OpencodeSessionRenameCommand.js';
+import type { ConversationSendResult } from '@piko/common/api/ConversationTypes.js';
+import type { ScheduleRun } from '@piko/common/api/ScheduleTypes.js';
+import { OpencodeSessionActiveListCommand } from '@piko/opencode/OpencodeSessionActiveListCommand.js';
+import { OpencodeSessionFormListCommand } from '@piko/opencode/OpencodeSessionFormListCommand.js';
+import { OpencodeSessionRenameCommand } from '@piko/opencode/OpencodeSessionRenameCommand.js';
 
 import { ConversationService } from '../conversations/ConversationService.js';
 import { ProjectService } from '../projects/ProjectService.js';

@@ -4,12 +4,12 @@ import type {
     ConversationAgentPart,
     ConversationMessage,
     ConversationStepStatus,
-} from '@poweragents/common/api/ConversationTypes.js';
+} from '@piko/common/api/ConversationTypes.js';
 import type {
     OpencodeMessage,
     OpencodeReplyPart,
     OpencodeToolCallStatus,
-} from '@poweragents/opencode/OpencodeMessageListCommand.js';
+} from '@piko/opencode/OpencodeMessageListCommand.js';
 
 import { readPluginMissingNote } from './readPluginMissingNote.js';
 import { toConversationError } from './toConversationError.js';

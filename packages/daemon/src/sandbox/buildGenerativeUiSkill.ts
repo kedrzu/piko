@@ -1,4 +1,4 @@
-import { GenerativeUiLibrary, GenerativeUiRoot } from '@poweragents/common/generativeUi/generativeUiLibrary.js';
+import { GenerativeUiLibrary, GenerativeUiRoot } from '@piko/common/generativeUi/generativeUiLibrary.js';
 
 /**
  * The `generative-ui` skill: when the agent shows choices or a small form, and the subset of OpenUI Lang it may write.

@@ -7,8 +7,8 @@ import { useService } from '@nzyme/vue-ioc/useService.js';
 import { useRouter } from 'nuxt/app';
 import { computed, ref } from 'vue';
 
-import type { AiProvider } from '@poweragents/common/api/AiTypes.js';
-import ProviderCard from '@poweragents/ui/ProviderCard.vue';
+import type { AiProvider } from '@piko/common/api/AiTypes.js';
+import ProviderCard from '@piko/ui/ProviderCard.vue';
 
 import { openExternalUrl } from '@/utils/openExternalUrl.js';
 

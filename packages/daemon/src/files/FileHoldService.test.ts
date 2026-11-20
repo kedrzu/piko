@@ -10,15 +10,15 @@ import { assert } from '@nzyme/utils/assert.js';
 import { createEventEmitter } from '@nzyme/utils/createEventEmitter.js';
 import { waitUntil } from '@nzyme/utils/waitUntil.js';
 
-import type { FileAgentChangedEvent } from '@poweragents/common/api/DaemonEventTypes.js';
-import { OpencodeEventSubscribeCommand } from '@poweragents/opencode/OpencodeEventSubscribeCommand.js';
-import type { OpencodeEvent } from '@poweragents/opencode/OpencodeEventSubscribeCommand.js';
-import { OpencodePermissionListCommand } from '@poweragents/opencode/OpencodePermissionListCommand.js';
-import type { OpencodePermissionRequest } from '@poweragents/opencode/OpencodePermissionListCommand.js';
-import { OpencodePermissionReplyCommand } from '@poweragents/opencode/OpencodePermissionReplyCommand.js';
-import type { OpencodePermissionReplyCommandParams } from '@poweragents/opencode/OpencodePermissionReplyCommand.js';
-import { OpencodeSessionGetCommand } from '@poweragents/opencode/OpencodeSessionGetCommand.js';
-import type { OpencodeSession } from '@poweragents/opencode/OpencodeTypes.js';
+import type { FileAgentChangedEvent } from '@piko/common/api/DaemonEventTypes.js';
+import { OpencodeEventSubscribeCommand } from '@piko/opencode/OpencodeEventSubscribeCommand.js';
+import type { OpencodeEvent } from '@piko/opencode/OpencodeEventSubscribeCommand.js';
+import { OpencodePermissionListCommand } from '@piko/opencode/OpencodePermissionListCommand.js';
+import type { OpencodePermissionRequest } from '@piko/opencode/OpencodePermissionListCommand.js';
+import { OpencodePermissionReplyCommand } from '@piko/opencode/OpencodePermissionReplyCommand.js';
+import type { OpencodePermissionReplyCommandParams } from '@piko/opencode/OpencodePermissionReplyCommand.js';
+import { OpencodeSessionGetCommand } from '@piko/opencode/OpencodeSessionGetCommand.js';
+import type { OpencodeSession } from '@piko/opencode/OpencodeTypes.js';
 
 import { ConversationEventService } from '../conversations/ConversationEventService.js';
 import { ProjectFileService } from '../projects/ProjectFileService.js';
@@ -79,7 +79,7 @@ test('a save more than a minute ago holds nothing', async () => {
     await save(container, projectId, 'hello.md');
 
     clock.advance(HOLD_MS);
-    await container.resolve(FileHoldService).permissionAsked(edit('per_1', ['/Poweragents/projects/Próba/hello.md']));
+    await container.resolve(FileHoldService).permissionAsked(edit('per_1', ['/Piko/projects/Próba/hello.md']));
 
     expect(replies).toEqual([once('per_1')]);
 });
@@ -161,8 +161,8 @@ test('each time the feed opens, answers the requests pending in every project fo
     await createFile(container, 'Próba', 'hello.md');
     await save(container, projectId, 'hello.md');
     const pending: Record<string, OpencodePermissionRequest[]> = {
-        '/Poweragents/projects/Próba': [edit('per_1', ['hello.md']), edit('per_2', ['other.md'])],
-        '/Poweragents/projects/Alfa': [edit('per_3', ['/Poweragents/projects/Alfa/a.md'], 'ses_alfa')],
+        '/Piko/projects/Próba': [edit('per_1', ['hello.md']), edit('per_2', ['other.md'])],
+        '/Piko/projects/Alfa': [edit('per_3', ['/Piko/projects/Alfa/a.md'], 'ses_alfa')],
     };
     list.mockImplementation(directory => Promise.resolve(pending[directory] ?? []));
     // Open, drop, open again: the held request is still pending both times.
@@ -173,10 +173,10 @@ test('each time the feed opens, answers the requests pending in every project fo
     await waitUntil(() => list.mock.calls.length === 4, { timeoutMs: 2_000 });
     const listed = list.mock.calls.map(([directory]) => directory).toSorted();
     expect(listed).toEqual([
-        '/Poweragents/projects/Alfa',
-        '/Poweragents/projects/Alfa',
-        '/Poweragents/projects/Próba',
-        '/Poweragents/projects/Próba',
+        '/Piko/projects/Alfa',
+        '/Piko/projects/Alfa',
+        '/Piko/projects/Próba',
+        '/Piko/projects/Próba',
     ]);
     // Each open answers the free ones (again the second time: OpenCode says if one is gone); `per_1` stays held.
     await waitUntil(() => replies.length === 4, { timeoutMs: 2_000 });
@@ -210,8 +210,8 @@ interface FakeTimer {
  */
 async function setup() {
     const { container, logs } = createTestContainer();
-    const tmp = await mkdtemp(path.join(os.tmpdir(), 'poweragents-file-holds-'));
-    container.set(EnvVariables, { POWERAGENTS_DATA_ROOT: path.join(tmp, 'root') });
+    const tmp = await mkdtemp(path.join(os.tmpdir(), 'piko-file-holds-'));
+    container.set(EnvVariables, { PIKO_DATA_ROOT: path.join(tmp, 'root') });
     const clock = createFakeClock();
     container.set(Clock, clock);
     const state: SandboxState = {
@@ -247,7 +247,7 @@ async function setup() {
                 ? null
                 : {
                       id,
-                      directory: id === 'ses_alfa' ? '/Poweragents/projects/Alfa' : '/Poweragents/projects/Próba',
+                      directory: id === 'ses_alfa' ? '/Piko/projects/Alfa' : '/Piko/projects/Próba',
                       createdAt: 0,
                       updatedAt: 0,
                   },

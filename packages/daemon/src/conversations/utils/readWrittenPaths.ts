@@ -1,5 +1,5 @@
-import type { ConversationStepKind } from '@poweragents/common/api/ConversationTypes.js';
-import { readString } from '@poweragents/common/utils/readString.js';
+import type { ConversationStepKind } from '@piko/common/api/ConversationTypes.js';
+import { readString } from '@piko/common/utils/readString.js';
 
 /** The names a tool may give the file it writes: OpenCode's own, then Claude Code's. */
 const PATH_KEYS = ['path', 'filePath', 'file_path'];

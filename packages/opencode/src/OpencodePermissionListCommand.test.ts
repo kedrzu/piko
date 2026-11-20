@@ -14,7 +14,7 @@ const server = Bun.serve({
     routes: {
         '/api/permission/request': request => {
             const directory = new URL(request.url).searchParams.get('location[directory]');
-            if (directory !== '/Poweragents/projects/Próba') {
+            if (directory !== '/Piko/projects/Próba') {
                 return Response.json({ _tag: 'LocationNotFoundError' }, { status: 404 });
             }
             return Response.json({
@@ -37,6 +37,6 @@ test("lists the folder's pending requests, and none for a folder OpenCode does n
     const expected: OpencodePermissionRequest[] = [
         { sessionId: 'ses_1', permissionId: 'per_1', action: 'edit', resources: ['hello.md'] },
     ];
-    expect(await list('/Poweragents/projects/Próba')).toEqual(expected);
-    expect(await list('/Poweragents/projects/Inny')).toEqual([]);
+    expect(await list('/Piko/projects/Próba')).toEqual(expected);
+    expect(await list('/Piko/projects/Inny')).toEqual([]);
 });

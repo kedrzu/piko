@@ -1,6 +1,6 @@
 fn main() {
     // The commit a CI build is made from, compiled in by `updater.rs`; a local build has none.
-    println!("cargo:rerun-if-env-changed=POWERAGENTS_COMMIT");
+    println!("cargo:rerun-if-env-changed=PIKO_COMMIT");
 
     // The app's own commands. Listing them makes Tauri check them against the capabilities, so a window can only call
     // the ones `capabilities/default.json` allows (`allow-<command>`).

@@ -1,7 +1,7 @@
 import { defineEndpointHandler } from '@nzyme/rpc/defineEndpointHandler.js';
 
-import { MemoryRevealEndpoint } from '@poweragents/common/api/MemoryRevealEndpoint.js';
-import type { MemoryRevealResult } from '@poweragents/common/api/MemoryTypes.js';
+import { MemoryRevealEndpoint } from '@piko/common/api/MemoryRevealEndpoint.js';
+import type { MemoryRevealResult } from '@piko/common/api/MemoryTypes.js';
 
 import { RevealInFileManagerCommand } from '../host/RevealInFileManagerCommand.js';
 import { MemoryService } from '../memory/MemoryService.js';

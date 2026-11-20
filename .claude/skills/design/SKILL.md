@@ -1,20 +1,20 @@
 ---
 name: design
 description: >-
-    Designing poweragents' screens in Pen — the poweragents.pen file, its frames, screen names, palettes and design
-    briefs. Use before changing poweragents.pen, writing a design brief or building a screen from the design.
+    Designing piko's screens in Pen — the piko.pen file, its frames, screen names, palettes and design
+    briefs. Use before changing piko.pen, writing a design brief or building a screen from the design.
 ---
 
 # Design
 
 ## The design file
 
-- `poweragents.pen` at the repo root, the one design file.
+- `piko.pen` at the repo root, the one design file.
 - Top-level frames: `Atoms`, `Molecules`, `Organisms`, `Templates` (the design system, reusable nodes named by level,
   e.g. `templates/App shell`, `molecules/Schedule row`), then per walk a components frame (`Daily work · components`)
   and its screens.
 - Screens are numbered `NN Area · state` (`01 Waiting for you`, `05 Conversation · agent working`), following the walks
-  in `docs/design/poweragents/ui/`.
+  in `docs/design/piko/ui/`.
 
 ## Visual direction
 
@@ -25,10 +25,10 @@ description: >-
 
 ## Where things are recorded
 
-- What the product is and why: `docs/design/poweragents/` (`README.md`, `DECISIONS.md`); design rounds go to
-  `docs/design/poweragents/history/JOURNAL.md`.
+- What the product is and why: `docs/design/piko/` (`README.md`, `DECISIONS.md`); design rounds go to
+  `docs/design/piko/history/JOURNAL.md`.
 - Anything interactive inside a conversation (choices, forms, approvals, a browser handoff) follows
-  `docs/design/poweragents/ui/conversation-elements.md`; a new element is built from its parts and, when it adds a
+  `docs/design/piko/ui/conversation-elements.md`; a new element is built from its parts and, when it adds a
   pattern, described there.
 
 If the practice document isn't inlined below, read `nzyme/docs/practice/design.md` before changing the design.

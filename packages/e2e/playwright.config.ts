@@ -22,7 +22,7 @@ export default defineConfig({
     webServer: {
         // Always this worktree's build, through Nx (a cache hit is safe: `references/nx.md`). A reused
         // server may be another worktree's, or a stale build.
-        command: `bun nx run @poweragents/app:build && PORT=${PORT} bun src/serveApp.ts`,
+        command: `bun nx run @piko/app:build && PORT=${PORT} bun src/serveApp.ts`,
         url: `http://localhost:${PORT}`,
         reuseExistingServer: false,
         timeout: 180_000,

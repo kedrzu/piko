@@ -1,5 +1,5 @@
 //! Guards the asset protocol's config in `tauri.conf.json`: the page reads local files through it (image and PDF
-//! previews), so it must serve only the data root, `$HOME/Poweragents`, never a file a link inside it points out to.
+//! previews), so it must serve only the data root, `$HOME/Piko`, never a file a link inside it points out to.
 
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -9,7 +9,7 @@ use tauri::scope::fs::Scope;
 use tauri::utils::config::FsScope;
 
 const CONFIG: &str = include_str!("../tauri.conf.json");
-const DATA_ROOT: &str = "$HOME/Poweragents";
+const DATA_ROOT: &str = "$HOME/Piko";
 
 #[test]
 fn enables_the_asset_protocol_for_the_data_root_only() {
@@ -18,7 +18,7 @@ fn enables_the_asset_protocol_for_the_data_root_only() {
     assert_eq!(security["assetProtocol"]["enable"], Value::Bool(true));
     assert_eq!(
         security["assetProtocol"]["scope"],
-        serde_json::json!(["$HOME/Poweragents/**"])
+        serde_json::json!(["$HOME/Piko/**"])
     );
 }
 
@@ -103,12 +103,10 @@ struct TempDirs {
 
 impl TempDirs {
     fn new(name: &str) -> Self {
-        let base = std::env::temp_dir().join(format!(
-            "poweragents-asset-scope-{name}-{}",
-            std::process::id()
-        ));
+        let base =
+            std::env::temp_dir().join(format!("piko-asset-scope-{name}-{}", std::process::id()));
         let _ = fs::remove_dir_all(&base);
-        let root = base.join("Poweragents");
+        let root = base.join("Piko");
         let outside = base.join("outside");
         fs::create_dir_all(&root).unwrap();
         fs::create_dir_all(&outside).unwrap();

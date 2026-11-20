@@ -6,11 +6,11 @@ import { defineService } from '@nzyme/ioc/Service.js';
 import { Logger } from '@nzyme/logging/Logger.js';
 import { assert } from '@nzyme/utils/assert.js';
 
-import { PROJECT_NAME_MAX_LENGTH } from '@poweragents/common/api/ProjectTypes.js';
-import type { Project, ProjectCreateResult, ProjectRole } from '@poweragents/common/api/ProjectTypes.js';
-import { compareProjectsByName } from '@poweragents/common/utils/compareProjectsByName.js';
+import { PROJECT_NAME_MAX_LENGTH } from '@piko/common/api/ProjectTypes.js';
+import type { Project, ProjectCreateResult, ProjectRole } from '@piko/common/api/ProjectTypes.js';
+import { compareProjectsByName } from '@piko/common/utils/compareProjectsByName.js';
 
-import { POWERAGENTS_DATA_ROOT, PROJECTS_FOLDER } from '../env.js';
+import { PIKO_DATA_ROOT, PROJECTS_FOLDER } from '../env.js';
 import { isErrorCode } from '../utils/isErrorCode.js';
 import { isRealFolder } from '../utils/isRealFolder.js';
 import { replaceFile } from '../utils/replaceFile.js';
@@ -55,10 +55,10 @@ const MARKER_FILE = '.project.json';
 /** Removed from a name to make its folder's name: path separators, the drive and stream separator, control characters. */
 const FOLDER_NAME_FORBIDDEN = /[/\\:\p{Cc}]/gu;
 
-/** The person's projects, kept as folders in the profile's data root (`POWERAGENTS_DATA_ROOT`), under `PROJECTS_FOLDER`. */
+/** The person's projects, kept as folders in the profile's data root (`PIKO_DATA_ROOT`), under `PROJECTS_FOLDER`. */
 export const ProjectService = defineService({
     name: 'ProjectService',
-    deps: { logger: Logger, dataRoot: POWERAGENTS_DATA_ROOT },
+    deps: { logger: Logger, dataRoot: PIKO_DATA_ROOT },
     setup({ logger, dataRoot }): ProjectServiceShape {
         const root = path.resolve(dataRoot, PROJECTS_FOLDER);
         /**

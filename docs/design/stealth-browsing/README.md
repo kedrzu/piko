@@ -1,6 +1,6 @@
 # Stealth browsing
 
-poweragents gives a person an AI agent with its own browser. This design is about making that browser usable on the
+piko gives a person an AI agent with its own browser. This design is about making that browser usable on the
 real web: sites must not be able to tell that an agent, not the person, is driving it. It is a general mechanism, for
 every site the agent visits.
 

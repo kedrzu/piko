@@ -3,16 +3,16 @@ import { assertNever } from '@nzyme/utils/assertNever.js';
 import { computed, reactive, ref, watch } from 'vue';
 import type { RouteLocationNormalizedLoaded, RouteLocationRaw } from 'vue-router';
 
-import { ProjectFileLocateEndpoint } from '@poweragents/common/api/ProjectFileLocateEndpoint.js';
-import type { Conversation } from '@poweragents/common/api/ConversationTypes.js';
-import type { Project } from '@poweragents/common/api/ProjectTypes.js';
+import { ProjectFileLocateEndpoint } from '@piko/common/api/ProjectFileLocateEndpoint.js';
+import type { Conversation } from '@piko/common/api/ConversationTypes.js';
+import type { Project } from '@piko/common/api/ProjectTypes.js';
 
 import { ConversationStore } from '@/conversations/ConversationStore.js';
 import { DaemonClient } from '@/daemon/DaemonClient.js';
 import { ProjectStore } from '@/projects/ProjectStore.js';
 
 /** Where the open tabs are kept, so they come back after a restart. */
-const TABS_KEY = 'poweragents.tabs';
+const TABS_KEY = 'piko.tabs';
 
 /** What a tab opens. One tab per target: its kind with its project and conversation or file. */
 export type Tab =

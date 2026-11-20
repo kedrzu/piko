@@ -5,9 +5,9 @@ import path from 'node:path';
 import { defineService } from '@nzyme/ioc/Service.js';
 import { Logger } from '@nzyme/logging/Logger.js';
 
-import type { PluginError, PluginInfo, PluginSource } from '@poweragents/common/api/PluginTypes.js';
+import type { PluginError, PluginInfo, PluginSource } from '@piko/common/api/PluginTypes.js';
 
-import { PLUGINS_FOLDER, POWERAGENTS_DATA_ROOT, POWERAGENTS_PLUGINS_DIR } from '../env.js';
+import { PLUGINS_FOLDER, PIKO_DATA_ROOT, PIKO_PLUGINS_DIR } from '../env.js';
 import { isErrorCode } from '../utils/isErrorCode.js';
 import { isRealFolder } from '../utils/isRealFolder.js';
 import { parsePluginManifest, PLUGIN_NAME_PATTERN } from './parsePluginManifest.js';
@@ -22,7 +22,7 @@ export interface LocalPlugin extends PluginInfo {
 }
 
 /**
- * The plugins of both sources: bundled ones in `POWERAGENTS_PLUGINS_DIR`, own ones in the data root's `PLUGINS_FOLDER`,
+ * The plugins of both sources: bundled ones in `PIKO_PLUGINS_DIR`, own ones in the data root's `PLUGINS_FOLDER`,
  * one folder each. Both are read on every call: a few small files, and an own plugin changes whenever the person or the
  * agent edits it. Anything under the data root may be the agent's, so an own plugin is untrusted input: whatever is wrong
  * with it is reported in its `errors`, never thrown, and no folder or file is read through a link.
@@ -46,7 +46,7 @@ const MANIFEST_MAX_BYTES = 64 * 1024;
 /** The plugins the agent can install or has, from the app and from the person's data root. */
 export const PluginCatalog = defineService({
     name: 'PluginCatalog',
-    deps: { logger: Logger, bundledDir: POWERAGENTS_PLUGINS_DIR, dataRoot: POWERAGENTS_DATA_ROOT },
+    deps: { logger: Logger, bundledDir: PIKO_PLUGINS_DIR, dataRoot: PIKO_DATA_ROOT },
     setup({ logger, bundledDir, dataRoot }): PluginCatalogShape {
         const ownDir = path.resolve(dataRoot, PLUGINS_FOLDER);
 

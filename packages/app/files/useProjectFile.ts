@@ -9,17 +9,17 @@ import { reactive } from '@nzyme/vue-utils/reactivity/reactive.js';
 import { computed, onScopeDispose, ref, shallowRef, watch } from 'vue';
 import type { MaybeRefOrGetter } from 'vue';
 
-import type { DaemonEvent } from '@poweragents/common/api/DaemonEventTypes.js';
-import { ProjectFileReadEndpoint } from '@poweragents/common/api/ProjectFileReadEndpoint.js';
+import type { DaemonEvent } from '@piko/common/api/DaemonEventTypes.js';
+import { ProjectFileReadEndpoint } from '@piko/common/api/ProjectFileReadEndpoint.js';
 import type {
     ProjectFileReadResult,
     ProjectFileWriteResult,
     ProjectTextFile,
-} from '@poweragents/common/api/ProjectFileTypes.js';
-import { ProjectFileWriteEndpoint } from '@poweragents/common/api/ProjectFileWriteEndpoint.js';
-import { fileExtension } from '@poweragents/common/utils/fileExtension.js';
-import { mergeMarkdown } from '@poweragents/ui/utils/mergeMarkdown.js';
-import { mergeText } from '@poweragents/ui/utils/mergeText.js';
+} from '@piko/common/api/ProjectFileTypes.js';
+import { ProjectFileWriteEndpoint } from '@piko/common/api/ProjectFileWriteEndpoint.js';
+import { fileExtension } from '@piko/common/utils/fileExtension.js';
+import { mergeMarkdown } from '@piko/ui/utils/mergeMarkdown.js';
+import { mergeText } from '@piko/ui/utils/mergeText.js';
 
 import { DaemonClient } from '@/daemon/DaemonClient.js';
 import type { DaemonClientShape } from '@/daemon/DaemonClient.js';

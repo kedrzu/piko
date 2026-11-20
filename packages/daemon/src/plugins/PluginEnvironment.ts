@@ -3,7 +3,7 @@ import path from 'node:path';
 import { defineService } from '@nzyme/ioc/Service.js';
 import { Logger } from '@nzyme/logging/Logger.js';
 
-import type { PluginEnvironmentError, PluginEnvironmentPart } from '@poweragents/common/api/PluginTypes.js';
+import type { PluginEnvironmentError, PluginEnvironmentPart } from '@piko/common/api/PluginTypes.js';
 
 import { AGENT_ENV_DIR } from '../sandbox/buildAgentRunArgs.js';
 import { Sandbox } from '../sandbox/Sandbox.js';

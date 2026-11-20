@@ -1,7 +1,7 @@
 ---
 name: translations
 description: >-
-    User-facing text in poweragents — .loc.yaml files in Polish and English, useTranslate, Translator. Use before adding
+    User-facing text in piko — .loc.yaml files in Polish and English, useTranslate, Translator. Use before adding
     or changing any text a person sees, in packages/ui, packages/app or the daemon.
 ---
 

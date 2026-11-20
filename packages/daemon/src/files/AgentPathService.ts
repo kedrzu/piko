@@ -3,7 +3,7 @@ import path from 'node:path';
 import { defineService } from '@nzyme/ioc/Service.js';
 import { Logger } from '@nzyme/logging/Logger.js';
 
-import { OpencodeSessionGetCommand } from '@poweragents/opencode/OpencodeSessionGetCommand.js';
+import { OpencodeSessionGetCommand } from '@piko/opencode/OpencodeSessionGetCommand.js';
 
 import { ProjectService } from '../projects/ProjectService.js';
 import { AGENT_PROJECTS_DIR } from '../sandbox/buildAgentRunArgs.js';

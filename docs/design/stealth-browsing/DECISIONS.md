@@ -87,8 +87,8 @@ flag turns it back off without giving up the pipe. Keeping up with Chrome stable
   and looks like Edge, but it would mean two engines and two control stacks for a gain on Windows only.
 - CEF — one major behind stable and only the Chromium brand; nothing over CfT.
 - Driving the person's own Chrome through an extension, as Claude in Chrome does — it is the same CDP, reached
-  through `chrome.debugger`; what differs is the person's real profile, which poweragents rejected for the agent
-  ([poweragents D27](../poweragents/DECISIONS.md#d27)).
+  through `chrome.debugger`; what differs is the person's real profile, which piko rejected for the agent
+  ([piko D27](../piko/DECISIONS.md#d27)).
 
   > **Checked 2026-11-15:** Claude in Chrome's control permission is `debugger` — "allows Claude to actually control
   > your browser" ([support](https://support.claude.com/en/articles/12012173-getting-started-with-claude-in-chrome));
@@ -288,8 +288,8 @@ The test page must be public, because the daemon's proxy refuses loopback (`buil
 > [FAQ](https://docs.cloud.google.com/recaptcha/docs/faq). Billing: owner chose to enable it for finer
 > scores (still free within the quota).
 
-> **Checked 2026-11-15:** Google Cloud project `poweragents-stealth-eval` on the owner's personal account, separate
-> from `poweragents-desktop` (the app's Google sign-in); `recaptchaenterprise.googleapis.com` enabled without billing;
+> **Checked 2026-11-15:** Google Cloud project `piko-stealth-eval` on the owner's personal account, separate
+> from `piko-desktop` (the app's Google sign-in); `recaptchaenterprise.googleapis.com` enabled without billing;
 > score-based web key `6LeHciEuAAAAAJSL9I_rLsgkmxdwe5IL27QfR_dv` (site keys are public), allowed domain
 > `kedrzu.github.io`. No billing account exists on that Google account yet.
 
@@ -300,7 +300,7 @@ The test page must be public, because the daemon's proxy refuses loopback (`buil
 > scored 0.9 with no reasons — one run, no billing (four levels), so not conclusive; reCAPTCHA alone may not separate
 > automated from human here, which is why it is one reading among the panel ([D6](#d6)).
 
-> **Checked 2026-11-15:** billing is attached to `poweragents-stealth-eval` (gcloud `billingEnabled: True`), so scores
+> **Checked 2026-11-15:** billing is attached to `piko-stealth-eval` (gcloud `billingEnabled: True`), so scores
 > are no longer limited to four levels. The one-page probe above is replaced by the test shop, which assesses each
 > token in the page ([D11](#d11)); the eval reads the scores from it. First runs: the agent's browser averaged 0.68
 > and the plain headless Chromium 0.08 over the same visit.
@@ -357,7 +357,7 @@ person's, which informs whether to build the input layer ([D4](#d4)) and then ch
 
 > **Checked 2026-11-15:** `recaptchaenterprise.googleapis.com` answers a browser `POST …/assessments?key=` from
 > `https://kedrzu.github.io` (CORS preflight allows the origin and POST). API key "stealth eval page" in
-> `poweragents-stealth-eval`, restricted to that API and referrer `https://kedrzu.github.io/*`;
+> `piko-stealth-eval`, restricted to that API and referrer `https://kedrzu.github.io/*`;
 > `CreateAssessmentRequests` capped at 300 a day. A Playwright-driven headed Chrome on the live shop got per-action
 > scores 0.5–1.0.
 

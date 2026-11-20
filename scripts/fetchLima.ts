@@ -2,7 +2,7 @@ import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 // Downloads the pinned Lima release into `packages/daemon/vendor/lima` for development: the daemon runs `limactl` from
-// there (`POWERAGENTS_LIMA_DIR` overrides it). A release build bundles Lima into the app instead. Lima runs the sandbox
+// there (`PIKO_LIMA_DIR` overrides it). A release build bundles Lima into the app instead. Lima runs the sandbox
 // only on macOS, so elsewhere this is a no-op; CI (Linux) never fetches it.
 
 const LIMA_VERSION = '2.3.0';

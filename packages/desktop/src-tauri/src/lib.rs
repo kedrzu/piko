@@ -1,4 +1,4 @@
-//! The poweragents desktop app: the app's static build (`packages/app`) in one native window. It is a thin
+//! The piko desktop app: the app's static build (`packages/app`) in one native window. It is a thin
 //! client of the daemon (`packages/daemon`), which it reaches over the loopback port.
 
 #[cfg(test)]

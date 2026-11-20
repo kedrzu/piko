@@ -1,9 +1,9 @@
 # Architecture
 
-poweragents is a desktop app (macOS and Windows) that gives people who don't program an AI agent set up the way
+piko is a desktop app (macOS and Windows) that gives people who don't program an AI agent set up the way
 developers set up their own: it works in their projects, browses in its own browser, runs on schedules and keeps a
 memory of them in plain files. A background daemon does the work; the desktop app is a thin client of it. The
-product design is in `docs/design/poweragents/`.
+product design is in `docs/design/piko/`.
 
 It is a Bun monorepo orchestrated by Nx, with packages under `packages/*`. The runtime is Bun, not
 Node. The `@nzyme/*` framework is built from source from the `nzyme/` git submodule; the gitlink is

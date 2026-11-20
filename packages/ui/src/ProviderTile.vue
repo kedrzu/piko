@@ -3,7 +3,7 @@
 <script lang="ts">
 import type { PropType } from 'vue';
 
-import type { AiProvider } from '@poweragents/common/api/AiTypes.js';
+import type { AiProvider } from '@piko/common/api/AiTypes.js';
 
 export const ProviderTileProps = {
   provider: { type: String as PropType<AiProvider>, required: true },

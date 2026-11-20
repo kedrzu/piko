@@ -1,7 +1,7 @@
 import { defineService } from '@nzyme/ioc/Service.js';
 import { assertNever } from '@nzyme/utils/assertNever.js';
 
-import type { AiProvider, AiStatus } from '@poweragents/common/api/AiTypes.js';
+import type { AiProvider, AiStatus } from '@piko/common/api/AiTypes.js';
 
 import { ChatgptSignInService } from '../chatgpt/ChatgptSignInService.js';
 import { ClaudeSignInService } from '../claude/ClaudeSignInService.js';

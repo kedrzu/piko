@@ -1,5 +1,5 @@
 {
-    "name": "@poweragents/common",
+    "name": "@piko/common",
     "private": true,
     "description": "Contracts shared by the daemon and its clients: the daemon's address, the shapes it serves, the languages the product ships",
     "type": "module",

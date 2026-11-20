@@ -9,17 +9,13 @@ import { useDataSource } from '@nzyme/vue-utils/useDataSource.js';
 import { useRoute, useRouter } from 'nuxt/app';
 import { computed, onScopeDispose, ref, watch } from 'vue';
 
-import { MemoryFileGetEndpoint } from '@poweragents/common/api/MemoryFileGetEndpoint.js';
-import { MemoryRevealEndpoint } from '@poweragents/common/api/MemoryRevealEndpoint.js';
-import Button from '@poweragents/ui/Button.vue';
-import ErrorDetails from '@poweragents/ui/ErrorDetails.vue';
-import MemoryEmptyState from '@poweragents/ui/MemoryEmptyState.vue';
-import MemoryLayout from '@poweragents/ui/MemoryLayout.vue';
-import type {
-  MemoryLayoutFile,
-  MemoryLayoutPreview,
-  MemoryLayoutRevealProblem,
-} from '@poweragents/ui/MemoryLayout.vue';
+import { MemoryFileGetEndpoint } from '@piko/common/api/MemoryFileGetEndpoint.js';
+import { MemoryRevealEndpoint } from '@piko/common/api/MemoryRevealEndpoint.js';
+import Button from '@piko/ui/Button.vue';
+import ErrorDetails from '@piko/ui/ErrorDetails.vue';
+import MemoryEmptyState from '@piko/ui/MemoryEmptyState.vue';
+import MemoryLayout from '@piko/ui/MemoryLayout.vue';
+import type { MemoryLayoutFile, MemoryLayoutPreview, MemoryLayoutRevealProblem } from '@piko/ui/MemoryLayout.vue';
 
 import { DaemonClient } from '@/daemon/DaemonClient.js';
 

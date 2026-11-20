@@ -3,7 +3,7 @@ import { expect, test } from 'bun:test';
 import AGENT_CONTAINERFILE from '../../sandbox/agent.Containerfile' with { type: 'text' };
 import { AGENT_SKILLS_DIR, buildAgentRunArgs } from './buildAgentRunArgs.js';
 
-const IMAGE = 'poweragents-agent:abc';
+const IMAGE = 'piko-agent:abc';
 const { args: ARGS } = buildAgentRunArgs(IMAGE);
 
 test('publishes the agent on the loopback only', () => {
@@ -18,11 +18,11 @@ test("mounts the data root, the daemon's folder read-only over it and the three 
 
     // The read-only mount comes after the data root's, so it shadows the writable one at exactly the same path.
     expect(volumes).toEqual([
-        '/Poweragents:/Poweragents',
-        '/Poweragents/.poweragents:/Poweragents/.poweragents:ro',
-        'poweragents-claude:/root/.claude',
-        'poweragents-opencode:/root/.local/share/opencode',
-        'poweragents-env:/opt/poweragents/env',
+        '/Piko:/Piko',
+        '/Piko/.piko:/Piko/.piko:ro',
+        'piko-claude:/root/.claude',
+        'piko-opencode:/root/.local/share/opencode',
+        'piko-env:/opt/piko/env',
     ]);
     expect(ARGS.some(arg => arg.startsWith('--volume=') || arg.startsWith('--mount'))).toBe(false);
 });
@@ -44,21 +44,21 @@ test('runs OpenCode in the mode that keeps the password out of its children, wit
 test('tells the agent where the browser tunnel is, without its token', () => {
     const envs = ARGS.flatMap((arg, index) => (arg === '--env' ? [ARGS[index + 1]] : []));
 
-    expect(envs).toContain('POWERAGENTS_BROWSER_URL=ws://192.168.5.2:47612');
-    expect(ARGS.some(arg => arg.includes('POWERAGENTS_BROWSER_TOKEN'))).toBe(false);
+    expect(envs).toContain('PIKO_BROWSER_URL=ws://192.168.5.2:47612');
+    expect(ARGS.some(arg => arg.includes('PIKO_BROWSER_TOKEN'))).toBe(false);
 });
 
 test("tells the agent where the daemon's sandbox API is", () => {
     const envs = ARGS.flatMap((arg, index) => (arg === '--env' ? [ARGS[index + 1]] : []));
 
-    expect(envs).toContain('POWERAGENTS_DAEMON_URL=http://192.168.5.2:47614');
+    expect(envs).toContain('PIKO_DAEMON_URL=http://192.168.5.2:47614');
 });
 
 test('labels the container with a spec that changes with the image', () => {
     const run = buildAgentRunArgs(IMAGE);
-    const other = buildAgentRunArgs('poweragents-agent:def');
+    const other = buildAgentRunArgs('piko-agent:def');
 
-    expect(run.args.slice(0, 3)).toEqual(['run', '--label', `poweragents.spec=${run.spec}`]);
+    expect(run.args.slice(0, 3)).toEqual(['run', '--label', `piko.spec=${run.spec}`]);
     expect(buildAgentRunArgs(IMAGE).spec).toBe(run.spec);
     expect(other.spec).not.toBe(run.spec);
 });

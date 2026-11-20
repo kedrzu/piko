@@ -4,9 +4,9 @@ import { assert } from '@nzyme/utils/assert.js';
 import { assertNever } from '@nzyme/utils/assertNever.js';
 import { computed, reactive, ref } from 'vue';
 
-import type { DaemonEvent } from '@poweragents/common/api/DaemonEventTypes.js';
-import { ProjectFileListEndpoint } from '@poweragents/common/api/ProjectFileListEndpoint.js';
-import type { ProjectFileEntry } from '@poweragents/common/api/ProjectFileTypes.js';
+import type { DaemonEvent } from '@piko/common/api/DaemonEventTypes.js';
+import { ProjectFileListEndpoint } from '@piko/common/api/ProjectFileListEndpoint.js';
+import type { ProjectFileEntry } from '@piko/common/api/ProjectFileTypes.js';
 
 import { DaemonClient } from '@/daemon/DaemonClient.js';
 import { DaemonEventStream } from '@/daemon/DaemonEventStream.js';

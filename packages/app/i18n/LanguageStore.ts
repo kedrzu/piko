@@ -1,8 +1,8 @@
 import { defineService } from '@nzyme/ioc/Service.js';
 import { ref } from 'vue';
 
-import { pickAppLanguage } from '@poweragents/common/appLanguages.js';
-import type { AppLanguage } from '@poweragents/common/appLanguages.js';
+import { pickAppLanguage } from '@piko/common/appLanguages.js';
+import type { AppLanguage } from '@piko/common/appLanguages.js';
 
 /**
  * The language the app speaks: the first shipped one among the system's preferred languages, until the person picks

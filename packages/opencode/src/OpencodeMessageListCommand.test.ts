@@ -52,9 +52,7 @@ const vendorMessages: VendorMessage[] = [
                 state: {
                     status: 'completed',
                     input: {},
-                    content: [
-                        { type: 'file', uri: 'file:///Poweragents/Test/hello.md', mime: 'text/markdown', name: null },
-                    ],
+                    content: [{ type: 'file', uri: 'file:///Piko/Test/hello.md', mime: 'text/markdown', name: null }],
                 },
             },
             {
@@ -129,7 +127,7 @@ test('maps a page oldest first: prompts, replies with their tool calls in every 
                     name: 'write',
                     status: 'completed',
                     input: {},
-                    output: [{ type: 'file', uri: 'file:///Poweragents/Test/hello.md', mimeType: 'text/markdown' }],
+                    output: [{ type: 'file', uri: 'file:///Piko/Test/hello.md', mimeType: 'text/markdown' }],
                 },
                 {
                     type: 'tool',

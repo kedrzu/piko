@@ -97,9 +97,9 @@ jobs:
         run: mkdir -p ../../app/.output/public
 
       # `tauri-build` requires the daemon sidecar (`bundle.externalBin`) to exist; the checks only compile the shell,
-      # so an empty file stands in for the binary `bun nx run @poweragents/daemon:sidecar` builds.
+      # so an empty file stands in for the binary `bun nx run @piko/daemon:sidecar` builds.
       - name: The daemon sidecar placeholder
-        run: mkdir -p binaries && touch binaries/poweragents-daemon-x86_64-unknown-linux-gnu
+        run: mkdir -p binaries && touch binaries/piko-daemon-x86_64-unknown-linux-gnu
 
       - name: Format
         run: cargo fmt --check

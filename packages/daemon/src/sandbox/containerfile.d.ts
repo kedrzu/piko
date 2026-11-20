@@ -10,9 +10,9 @@ declare module '*.gen.md' {
     export default content;
 }
 
-// The `poweragents` command imported as text the same way (`sandbox/poweragents.js`): it runs inside the agent's image,
+// The `piko` command imported as text the same way (`sandbox/piko.js`): it runs inside the agent's image,
 // never in the daemon. `sandbox/tsconfig.json` type-checks it.
-declare module '*/poweragents.js' {
+declare module '*/piko.js' {
     const content: string;
     export default content;
 }

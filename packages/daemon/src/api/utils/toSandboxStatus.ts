@@ -1,4 +1,4 @@
-import type { SandboxStatus } from '@poweragents/common/api/SandboxTypes.js';
+import type { SandboxStatus } from '@piko/common/api/SandboxTypes.js';
 
 import type { SandboxState } from '../../sandbox/Sandbox.js';
 

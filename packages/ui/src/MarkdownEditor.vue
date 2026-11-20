@@ -37,7 +37,7 @@ import { EditorContent, useEditor } from '@tiptap/vue-3';
 import { ToolbarButton, ToolbarRoot } from 'reka-ui';
 import { ref, useCssModule, watch } from 'vue';
 
-import { isExternalLinkUrl } from '@poweragents/common/utils/isExternalLinkUrl.js';
+import { isExternalLinkUrl } from '@piko/common/utils/isExternalLinkUrl.js';
 
 import Button from './Button.vue';
 import Dialog from './Dialog.vue';

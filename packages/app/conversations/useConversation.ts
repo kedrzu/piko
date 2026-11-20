@@ -8,9 +8,9 @@ import { reactive } from '@nzyme/vue-utils/reactivity/reactive.js';
 import { computed, onScopeDispose, ref, watch } from 'vue';
 import type { MaybeRefOrGetter } from 'vue';
 
-import { ConversationMessageListEndpoint } from '@poweragents/common/api/ConversationMessageListEndpoint.js';
-import { ConversationSendEndpoint } from '@poweragents/common/api/ConversationSendEndpoint.js';
-import { ConversationStopEndpoint } from '@poweragents/common/api/ConversationStopEndpoint.js';
+import { ConversationMessageListEndpoint } from '@piko/common/api/ConversationMessageListEndpoint.js';
+import { ConversationSendEndpoint } from '@piko/common/api/ConversationSendEndpoint.js';
+import { ConversationStopEndpoint } from '@piko/common/api/ConversationStopEndpoint.js';
 import type {
     ConversationAgentMessage,
     ConversationAgentPart,
@@ -19,8 +19,8 @@ import type {
     ConversationMessagePage,
     ConversationStep,
     ConversationStepPart,
-} from '@poweragents/common/api/ConversationTypes.js';
-import type { DaemonEvent } from '@poweragents/common/api/DaemonEventTypes.js';
+} from '@piko/common/api/ConversationTypes.js';
+import type { DaemonEvent } from '@piko/common/api/DaemonEventTypes.js';
 
 import { DaemonClient } from '@/daemon/DaemonClient.js';
 import { DaemonEventStream } from '@/daemon/DaemonEventStream.js';

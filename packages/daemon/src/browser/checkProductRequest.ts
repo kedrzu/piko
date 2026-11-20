@@ -125,10 +125,10 @@ export async function checkProductRequest(
         case 'Target.createTarget':
             return checkCreateTarget(request);
         case 'Page.setDownloadBehavior':
-            return { reject: `${method}: downloads are set up by poweragents` };
+            return { reject: `${method}: downloads are set up by piko` };
         case 'Emulation.setUserAgentOverride':
         case 'Network.setUserAgentOverride':
-            return { reject: `${method}: the browser's identity is set by poweragents and cannot be changed` };
+            return { reject: `${method}: the browser's identity is set by piko and cannot be changed` };
         case 'Page.bringToFront':
         case 'Target.activateTarget':
             // Activating raises the window over the person's work; the daemon alone does that, for a handoff. The package
@@ -163,8 +163,8 @@ function checkCreateTarget(request: CdpRequest): CdpPolicyResult {
 }
 
 /**
- * Maps each path the agent names (`/Poweragents/…`) to the data root, stages a copy of each (`stageUpload`), and passes
- * the command on with the copies' paths; any path outside `/Poweragents`, or a file `stageUpload` refuses, refuses it.
+ * Maps each path the agent names (`/Piko/…`) to the data root, stages a copy of each (`stageUpload`), and passes
+ * the command on with the copies' paths; any path outside `/Piko`, or a file `stageUpload` refuses, refuses it.
  */
 async function stageFileInput(request: CdpRequest, data: ProductClientData): Promise<CdpPolicyResult> {
     const { method } = request;
@@ -177,7 +177,7 @@ async function stageFileInput(request: CdpRequest, data: ProductClientData): Pro
     for (const agentPath of list) {
         const hostPath = toHostUploadPath(agentPath, data.dataRoot);
         if (hostPath == null) {
-            return { reject: `${method}: only files inside /Poweragents can be uploaded, not ${String(agentPath)}` };
+            return { reject: `${method}: only files inside /Piko can be uploaded, not ${String(agentPath)}` };
         }
         sources.push(hostPath);
     }

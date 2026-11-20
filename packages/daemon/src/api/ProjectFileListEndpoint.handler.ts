@@ -1,6 +1,6 @@
 import { defineEndpointHandler } from '@nzyme/rpc/defineEndpointHandler.js';
 
-import { ProjectFileListEndpoint } from '@poweragents/common/api/ProjectFileListEndpoint.js';
+import { ProjectFileListEndpoint } from '@piko/common/api/ProjectFileListEndpoint.js';
 
 import { ProjectFileService } from '../projects/ProjectFileService.js';
 

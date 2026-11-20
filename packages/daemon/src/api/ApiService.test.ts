@@ -12,15 +12,15 @@ import type { RpcErrorData } from '@nzyme/rpc/types/RpcError.js';
 import { assert } from '@nzyme/utils/assert.js';
 import { createEventEmitter } from '@nzyme/utils/createEventEmitter.js';
 
-import type { DaemonEvent } from '@poweragents/common/api/DaemonEventTypes.js';
-import type { PluginInfo } from '@poweragents/common/api/PluginTypes.js';
-import type { ProjectFileContentResult } from '@poweragents/common/api/ProjectFileTypes.js';
-import type { SandboxStatus } from '@poweragents/common/api/SandboxTypes.js';
-import { OpencodeEventSubscribeCommand } from '@poweragents/opencode/OpencodeEventSubscribeCommand.js';
-import type { OpencodeEvent } from '@poweragents/opencode/OpencodeEventSubscribeCommand.js';
-import { OpencodeSessionGetCommand } from '@poweragents/opencode/OpencodeSessionGetCommand.js';
-import type { OpencodeSession } from '@poweragents/opencode/OpencodeTypes.js';
-import { readSseData } from '@poweragents/opencode/utils/readSseData.js';
+import type { DaemonEvent } from '@piko/common/api/DaemonEventTypes.js';
+import type { PluginInfo } from '@piko/common/api/PluginTypes.js';
+import type { ProjectFileContentResult } from '@piko/common/api/ProjectFileTypes.js';
+import type { SandboxStatus } from '@piko/common/api/SandboxTypes.js';
+import { OpencodeEventSubscribeCommand } from '@piko/opencode/OpencodeEventSubscribeCommand.js';
+import type { OpencodeEvent } from '@piko/opencode/OpencodeEventSubscribeCommand.js';
+import { OpencodeSessionGetCommand } from '@piko/opencode/OpencodeSessionGetCommand.js';
+import type { OpencodeSession } from '@piko/opencode/OpencodeTypes.js';
+import { readSseData } from '@piko/opencode/utils/readSseData.js';
 
 import { toAgentDir } from '../conversations/utils/toAgentDir.js';
 import { PluginService } from '../plugins/PluginService.js';
@@ -293,14 +293,14 @@ test.each([
 function setup(agentEvents: OpencodeEvent[] = [], getVerifiedState?: () => Promise<SandboxState>) {
     const { container, logs } = createTestContainer();
     // The event stream watches the data root: a fresh one, never the person's.
-    const dataRoot = mkdtempSync(path.join(os.tmpdir(), 'poweragents-api-'));
+    const dataRoot = mkdtempSync(path.join(os.tmpdir(), 'piko-api-'));
     // The sandbox's token beside Lima's home, as `LimaSandbox` keeps it.
-    const stateFolder = mkdtempSync(path.join(os.tmpdir(), 'poweragents-api-state-'));
+    const stateFolder = mkdtempSync(path.join(os.tmpdir(), 'piko-api-state-'));
     writeFileSync(path.join(stateFolder, 'browser-token'), SANDBOX_TOKEN);
     container.set(EnvVariables, {
-        POWERAGENTS_DATA_ROOT: dataRoot,
-        POWERAGENTS_PLUGINS_DIR: path.join(import.meta.dirname, '../plugins/fixtures/bundled'),
-        POWERAGENTS_LIMA_HOME: path.join(stateFolder, 'lima'),
+        PIKO_DATA_ROOT: dataRoot,
+        PIKO_PLUGINS_DIR: path.join(import.meta.dirname, '../plugins/fixtures/bundled'),
+        PIKO_LIMA_HOME: path.join(stateFolder, 'lima'),
     });
     const state: SandboxState = {
         status: 'ready',

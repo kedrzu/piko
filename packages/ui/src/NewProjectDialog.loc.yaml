@@ -15,8 +15,8 @@ namePlaceholder:
   pl: np. Szukanie pracy
 
 where:
-  en: The files will be in the Poweragents folder in your home folder.
-  pl: Pliki będą w folderze Poweragents w Twoim katalogu domowym.
+  en: The files will be in the Piko folder in your home folder.
+  pl: Pliki będą w folderze Piko w Twoim katalogu domowym.
 
 cancel:
   en: Cancel

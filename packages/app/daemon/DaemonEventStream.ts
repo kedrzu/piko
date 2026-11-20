@@ -3,8 +3,8 @@ import { Logger } from '@nzyme/logging/Logger.js';
 import { createEventEmitter } from '@nzyme/utils/createEventEmitter.js';
 import type { EventEmitter } from '@nzyme/utils/createEventEmitter.js';
 
-import { DAEMON_EVENTS_PATH } from '@poweragents/common/api/DaemonEventTypes.js';
-import type { DaemonEvent } from '@poweragents/common/api/DaemonEventTypes.js';
+import { DAEMON_EVENTS_PATH } from '@piko/common/api/DaemonEventTypes.js';
+import type { DaemonEvent } from '@piko/common/api/DaemonEventTypes.js';
 
 import { DaemonUrl } from './DaemonUrl.js';
 import { parseDaemonEvent } from './parseDaemonEvent.js';

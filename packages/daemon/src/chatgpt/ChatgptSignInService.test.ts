@@ -6,19 +6,19 @@ import { createTestContainer } from '@nzyme/ioc-testing/createTestContainer.js';
 import { createEventEmitter } from '@nzyme/utils/createEventEmitter.js';
 import { waitUntil } from '@nzyme/utils/waitUntil.js';
 
-import type { AiProvider } from '@poweragents/common/api/AiTypes.js';
-import type { ChatgptLoginState, ChatgptStatus } from '@poweragents/common/api/ChatgptTypes.js';
-import { OpencodeIntegrationGetCommand } from '@poweragents/opencode/OpencodeIntegrationGetCommand.js';
-import type { OpencodeIntegration } from '@poweragents/opencode/OpencodeIntegrationGetCommand.js';
-import { OpencodeIntegrationOauthCancelCommand } from '@poweragents/opencode/OpencodeIntegrationOauthCancelCommand.js';
-import type { OpencodeIntegrationOauthCancelCommandParams } from '@poweragents/opencode/OpencodeIntegrationOauthCancelCommand.js';
-import { OpencodeIntegrationOauthStartCommand } from '@poweragents/opencode/OpencodeIntegrationOauthStartCommand.js';
+import type { AiProvider } from '@piko/common/api/AiTypes.js';
+import type { ChatgptLoginState, ChatgptStatus } from '@piko/common/api/ChatgptTypes.js';
+import { OpencodeIntegrationGetCommand } from '@piko/opencode/OpencodeIntegrationGetCommand.js';
+import type { OpencodeIntegration } from '@piko/opencode/OpencodeIntegrationGetCommand.js';
+import { OpencodeIntegrationOauthCancelCommand } from '@piko/opencode/OpencodeIntegrationOauthCancelCommand.js';
+import type { OpencodeIntegrationOauthCancelCommandParams } from '@piko/opencode/OpencodeIntegrationOauthCancelCommand.js';
+import { OpencodeIntegrationOauthStartCommand } from '@piko/opencode/OpencodeIntegrationOauthStartCommand.js';
 import type {
     OpencodeIntegrationOauthStartCommandParams,
     OpencodeIntegrationOauthStartCommandResult,
-} from '@poweragents/opencode/OpencodeIntegrationOauthStartCommand.js';
-import { OpencodeIntegrationOauthStatusCommand } from '@poweragents/opencode/OpencodeIntegrationOauthStatusCommand.js';
-import type { OpencodeIntegrationOauthStatus } from '@poweragents/opencode/OpencodeIntegrationOauthStatusCommand.js';
+} from '@piko/opencode/OpencodeIntegrationOauthStartCommand.js';
+import { OpencodeIntegrationOauthStatusCommand } from '@piko/opencode/OpencodeIntegrationOauthStatusCommand.js';
+import type { OpencodeIntegrationOauthStatus } from '@piko/opencode/OpencodeIntegrationOauthStatusCommand.js';
 
 import { ActiveProviderStore } from '../ai/ActiveProviderStore.js';
 import { Sandbox } from '../sandbox/Sandbox.js';
@@ -262,7 +262,7 @@ async function setup(options: SetupOptions = {}) {
     const getIntegration = mock((_id: string): Promise<OpencodeIntegration | undefined> =>
         Promise.resolve({ id: 'openai', name: 'OpenAI', connected: false }),
     );
-    // The real store writes into the user's `~/.poweragents`; the record is asserted through this fake.
+    // The real store writes into the user's `~/.piko`; the record is asserted through this fake.
     const setActiveProvider = mock((_provider: AiProvider) => Promise.resolve());
 
     container.set(Sandbox, {

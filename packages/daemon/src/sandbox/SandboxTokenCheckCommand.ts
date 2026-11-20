@@ -5,11 +5,11 @@ import path from 'node:path';
 import { defineCommand } from '@nzyme/ioc/Command.js';
 import { Logger } from '@nzyme/logging/Logger.js';
 
-import { POWERAGENTS_LIMA_HOME } from '../env.js';
+import { PIKO_LIMA_HOME } from '../env.js';
 
 /**
  * Whether an `Authorization` header carries the sandbox's bearer token: the one secret the agent's container holds
- * (`POWERAGENTS_BROWSER_TOKEN`), which every daemon port the sandbox reaches requires. Compared in constant time.
+ * (`PIKO_BROWSER_TOKEN`), which every daemon port the sandbox reaches requires. Compared in constant time.
  */
 export interface SandboxTokenCheckCommandShape {
     (authorization: string | null): Promise<boolean>;
@@ -22,7 +22,7 @@ const BEARER_PREFIX = 'Bearer ';
 /** Checks a request's bearer token against the token file `LimaSandbox` hands to the agent's container. */
 export const SandboxTokenCheckCommand = defineCommand({
     name: 'SandboxTokenCheckCommand',
-    deps: { logger: Logger, limaHome: POWERAGENTS_LIMA_HOME },
+    deps: { logger: Logger, limaHome: PIKO_LIMA_HOME },
     setup({ logger, limaHome }): SandboxTokenCheckCommandShape {
         // Created by the sandbox, which hands the same token to the agent; only read here.
         const tokenFile = path.join(path.dirname(limaHome), 'browser-token');

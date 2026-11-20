@@ -84,7 +84,7 @@ test('a Downloads folder swapped for a link after the check is detected', async 
 });
 
 async function prepare() {
-    const work = await mkdtemp(path.join(os.tmpdir(), 'poweragents-download-'));
+    const work = await mkdtemp(path.join(os.tmpdir(), 'piko-download-'));
     const folder = path.join(work, 'downloads');
     await mkdir(folder);
     await mkdir(path.join(work, 'browser'));

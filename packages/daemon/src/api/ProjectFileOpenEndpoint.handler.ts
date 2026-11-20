@@ -2,9 +2,9 @@ import path from 'node:path';
 
 import { defineEndpointHandler } from '@nzyme/rpc/defineEndpointHandler.js';
 
-import { ProjectFileOpenEndpoint } from '@poweragents/common/api/ProjectFileOpenEndpoint.js';
-import type { ProjectFileOpenResult } from '@poweragents/common/api/ProjectFileTypes.js';
-import { isOpenableFile } from '@poweragents/common/utils/isOpenableFile.js';
+import { ProjectFileOpenEndpoint } from '@piko/common/api/ProjectFileOpenEndpoint.js';
+import type { ProjectFileOpenResult } from '@piko/common/api/ProjectFileTypes.js';
+import { isOpenableFile } from '@piko/common/utils/isOpenableFile.js';
 
 import { OpenWithDefaultAppCommand } from '../host/OpenWithDefaultAppCommand.js';
 import { ProjectFileService } from '../projects/ProjectFileService.js';

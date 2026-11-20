@@ -38,7 +38,7 @@ import {
   GenerativeUiLibrary,
   GenerativeUiRoot,
   GenerativeUiSchema,
-} from '@poweragents/common/generativeUi/generativeUiLibrary.js';
+} from '@piko/common/generativeUi/generativeUiLibrary.js';
 
 import Button from './Button.vue';
 import GenerativeUiForm from './GenerativeUiForm.vue';

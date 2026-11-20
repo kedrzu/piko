@@ -1,7 +1,7 @@
 import { expect, test } from 'bun:test';
 
-import type { PluginInfo, PluginInstall, PluginLevel } from '@poweragents/common/api/PluginTypes.js';
-import type { OpencodePermissionRule } from '@poweragents/opencode/OpencodeTypes.js';
+import type { PluginInfo, PluginInstall, PluginLevel } from '@piko/common/api/PluginTypes.js';
+import type { OpencodePermissionRule } from '@piko/opencode/OpencodeTypes.js';
 
 import { buildSkillDenyRules } from './buildSkillDenyRules.js';
 

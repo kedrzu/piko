@@ -1,6 +1,6 @@
 import { defineEndpointHandler } from '@nzyme/rpc/defineEndpointHandler.js';
 
-import { AppSetupStartEndpoint } from '@poweragents/common/api/AppSetupStartEndpoint.js';
+import { AppSetupStartEndpoint } from '@piko/common/api/AppSetupStartEndpoint.js';
 
 import { AppSetupService } from '../appSetup/AppSetupService.js';
 

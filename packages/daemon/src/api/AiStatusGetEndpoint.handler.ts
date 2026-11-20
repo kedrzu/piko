@@ -1,6 +1,6 @@
 import { defineEndpointHandler } from '@nzyme/rpc/defineEndpointHandler.js';
 
-import { AiStatusGetEndpoint } from '@poweragents/common/api/AiStatusGetEndpoint.js';
+import { AiStatusGetEndpoint } from '@piko/common/api/AiStatusGetEndpoint.js';
 
 import { AiProviderService } from '../ai/AiProviderService.js';
 

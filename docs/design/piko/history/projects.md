@@ -25,7 +25,7 @@ Molecules and Daily work · components right made room for the new components; n
   the slot holds "Nie masz jeszcze projektów."
 - [x] Organisms › Row 2: new `organisms/New project dialog` (`H2wuJ`), 440 px, styled like screen 17's dialog: title
   *Nowy projekt*, a hidden error box (`$attention-soft`), the name field (*Nazwa projektu*, "np. Szukanie pracy"), the
-  quiet line "Pliki będą w folderze Poweragents w Twoim katalogu domowym." with a folder icon, *Anuluj* and *Utwórz*.
+  quiet line "Pliki będą w folderze Piko w Twoim katalogu domowym." with a folder icon, *Anuluj* and *Utwórz*.
 - [x] Daily work · components (`C1PeFe`): moved x 1700 → 2020, room for the wider Organisms frame.
 - [ ] 51 Main · no projects yet (`MgYAZ`): new; `Sidebar/Projects only` empty, no tab bar; the main card centres three
   example project rows under *Na przykład* (Szukanie pracy, Zdrowie, Posty na Instagram), "Zacznij od pierwszego
@@ -45,7 +45,7 @@ Molecules and Daily work · components right made room for the new components; n
 ## Round 2 · implementation
 
 Forced by building the components (`packages/ui`): the story tests' contrast check and the brief's rule against dead
-controls. `poweragents.pen` was open in the owner's Pen app, so none of these is drawn yet.
+controls. `piko.pen` was open in the owner's Pen app, so none of these is drawn yet.
 
 - [ ] `organisms/Sidebar/Projects only` (`PxUyk`): the *Projekty* header `$ink-faint` → `$ink-body`. `$ink-faint` is
   2.2–2.5:1 on the sidebar's background, below the 4.5:1 text needs; `$ink-body` is 5.6–6.4:1 there in every
@@ -61,7 +61,7 @@ Forced by review: the app needed a state the design did not draw, and screen 55'
 cannot know.
 
 - [ ] New screen, next free code, *Main · projects could not be loaded*: in place of the route's screen, the title
-  "Nie udało się wczytać projektów", "To nie Twój błąd, a Twoje pliki są bezpieczne w folderze Poweragents…",
+  "Nie udało się wczytać projektów", "To nie Twój błąd, a Twoje pliki są bezpieczne w folderze Piko…",
   `ErrorDetails` collapsed with *Spróbuj ponownie* (built as `ProjectsLoadFailed` in the app).
 - [ ] 55 Main · project could not be created (`f6bwM`): the error box's text "no space on the disk, free some and try
   again" → "Nie udało się utworzyć projektu. Spróbuj ponownie; jeśli to się powtórzy, sprawdź, czy na dysku jest wolne

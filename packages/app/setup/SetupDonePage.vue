@@ -7,8 +7,8 @@ import { useService } from '@nzyme/vue-ioc/useService.js';
 import { useRouter } from 'nuxt/app';
 import { computed } from 'vue';
 
-import AccountCard from '@poweragents/ui/AccountCard.vue';
-import Button from '@poweragents/ui/Button.vue';
+import AccountCard from '@piko/ui/AccountCard.vue';
+import Button from '@piko/ui/Button.vue';
 
 import * as l from './SetupDonePage.loc.js';
 import { SetupStore } from './SetupStore.js';

@@ -17,20 +17,20 @@ import { useLogger } from '@nzyme/vue-ioc/useLogger.js';
 import { useService } from '@nzyme/vue-ioc/useService.js';
 import { computed, onScopeDispose, ref } from 'vue';
 
-import { ConversationStopEndpoint } from '@poweragents/common/api/ConversationStopEndpoint.js';
-import { ProjectFileOpenEndpoint } from '@poweragents/common/api/ProjectFileOpenEndpoint.js';
-import { isOpenableFile } from '@poweragents/common/utils/isOpenableFile.js';
-import Button from '@poweragents/ui/Button.vue';
-import CsvPreview from '@poweragents/ui/CsvPreview.vue';
-import FileElsewhere from '@poweragents/ui/FileElsewhere.vue';
-import FileLayout from '@poweragents/ui/FileLayout.vue';
-import ImagePreview from '@poweragents/ui/ImagePreview.vue';
-import MarkdownEditor from '@poweragents/ui/MarkdownEditor.vue';
-import PdfPreview from '@poweragents/ui/PdfPreview.vue';
-import Spinner from '@poweragents/ui/Spinner.vue';
-import StatusBanner from '@poweragents/ui/StatusBanner.vue';
-import TextPreview from '@poweragents/ui/TextPreview.vue';
-import { formatChangedAt } from '@poweragents/ui/utils/formatChangedAt.js';
+import { ConversationStopEndpoint } from '@piko/common/api/ConversationStopEndpoint.js';
+import { ProjectFileOpenEndpoint } from '@piko/common/api/ProjectFileOpenEndpoint.js';
+import { isOpenableFile } from '@piko/common/utils/isOpenableFile.js';
+import Button from '@piko/ui/Button.vue';
+import CsvPreview from '@piko/ui/CsvPreview.vue';
+import FileElsewhere from '@piko/ui/FileElsewhere.vue';
+import FileLayout from '@piko/ui/FileLayout.vue';
+import ImagePreview from '@piko/ui/ImagePreview.vue';
+import MarkdownEditor from '@piko/ui/MarkdownEditor.vue';
+import PdfPreview from '@piko/ui/PdfPreview.vue';
+import Spinner from '@piko/ui/Spinner.vue';
+import StatusBanner from '@piko/ui/StatusBanner.vue';
+import TextPreview from '@piko/ui/TextPreview.vue';
+import { formatChangedAt } from '@piko/ui/utils/formatChangedAt.js';
 
 import { DaemonClient } from '@/daemon/DaemonClient.js';
 

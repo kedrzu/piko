@@ -2,7 +2,7 @@ import { expect, test } from 'bun:test';
 
 import { createTestContainer } from '@nzyme/ioc-testing/createTestContainer.js';
 
-import type { FileAgentChangedEvent, FileAgentState } from '@poweragents/common/api/DaemonEventTypes.js';
+import type { FileAgentChangedEvent, FileAgentState } from '@piko/common/api/DaemonEventTypes.js';
 
 import { FileAgentStateService } from './FileAgentStateService.js';
 import type { ProjectFileRef } from './FileAgentStateService.js';

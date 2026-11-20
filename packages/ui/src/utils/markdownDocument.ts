@@ -28,7 +28,7 @@ import { frontmatter } from 'micromark-extension-frontmatter';
 import { gfm } from 'micromark-extension-gfm';
 
 import { assert } from '@nzyme/utils/assert.js';
-import { isExternalLinkUrl } from '@poweragents/common/utils/isExternalLinkUrl.js';
+import { isExternalLinkUrl } from '@piko/common/utils/isExternalLinkUrl.js';
 
 import { MarkdownRaw, MarkdownRawInline } from './markdownRawNodes.js';
 

@@ -1,12 +1,12 @@
 import { expect, test } from 'bun:test';
 
-import type { ConversationPluginMissingMessage } from '@poweragents/common/api/ConversationTypes.js';
-import type { OpencodeSyntheticMessage } from '@poweragents/opencode/OpencodeMessageListCommand.js';
+import type { ConversationPluginMissingMessage } from '@piko/common/api/ConversationTypes.js';
+import type { OpencodeSyntheticMessage } from '@piko/opencode/OpencodeMessageListCommand.js';
 
 import { toConversationMessage } from './toConversationMessage.js';
 
 test("keeps the delivered note that a plugin's command was not run in the thread, hiding other synthetic input", () => {
-    const note = synthetic({ poweragents: 'pluginMissing', plugin: 'gmail' });
+    const note = synthetic({ piko: 'pluginMissing', plugin: 'gmail' });
 
     const expected: ConversationPluginMissingMessage = {
         type: 'pluginMissing',
@@ -17,7 +17,7 @@ test("keeps the delivered note that a plugin's command was not run in the thread
     expect(toConversationMessage(note)).toEqual(expected);
     expect(toConversationMessage(synthetic(undefined))).toBeUndefined();
     expect(toConversationMessage(synthetic({ plugin: 'gmail' }))).toBeUndefined();
-    expect(toConversationMessage(synthetic({ poweragents: 'onboarding', plugin: 'gmail' }))).toBeUndefined();
+    expect(toConversationMessage(synthetic({ piko: 'onboarding', plugin: 'gmail' }))).toBeUndefined();
 });
 
 function synthetic(metadata: Record<string, unknown> | undefined): OpencodeSyntheticMessage {

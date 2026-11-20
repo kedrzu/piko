@@ -20,7 +20,7 @@ import { gfm } from 'micromark-extension-gfm';
 import { computed, h, useCssModule } from 'vue';
 import type { VNodeArrayChildren, VNodeChild } from 'vue';
 
-import { isExternalLinkUrl } from '@poweragents/common/utils/isExternalLinkUrl.js';
+import { isExternalLinkUrl } from '@piko/common/utils/isExternalLinkUrl.js';
 
 const props = defineProps(RichTextProps);
 

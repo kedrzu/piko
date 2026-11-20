@@ -1,7 +1,7 @@
 ---
 name: logging
 description: >-
-    Logging in poweragents with @nzyme/logging — the Logger, levels, structured fields, caught errors. Use before
+    Logging in piko with @nzyme/logging — the Logger, levels, structured fields, caught errors. Use before
     adding a log line or handling a caught error in the daemon or the app.
 ---
 

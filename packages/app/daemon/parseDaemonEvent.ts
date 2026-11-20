@@ -1,8 +1,8 @@
-import { STEP_KINDS } from '@poweragents/common/api/ConversationTypes.js';
-import type { ConversationStep, ConversationStepKind } from '@poweragents/common/api/ConversationTypes.js';
-import type { AiProvider } from '@poweragents/common/api/AiTypes.js';
-import type { DaemonEvent } from '@poweragents/common/api/DaemonEventTypes.js';
-import { readString } from '@poweragents/common/utils/readString.js';
+import { STEP_KINDS } from '@piko/common/api/ConversationTypes.js';
+import type { ConversationStep, ConversationStepKind } from '@piko/common/api/ConversationTypes.js';
+import type { AiProvider } from '@piko/common/api/AiTypes.js';
+import type { DaemonEvent } from '@piko/common/api/DaemonEventTypes.js';
+import { readString } from '@piko/common/utils/readString.js';
 
 /**
  * One event of the daemon's stream (an SSE message's `data`), or `null` when it is not one this app knows: a newer

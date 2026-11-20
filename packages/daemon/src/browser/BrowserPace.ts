@@ -22,9 +22,9 @@ export const BrowserPace = defineService({
             logger,
             messages: {
                 paused: (site, waitMs, afterBlock, intervalMs) =>
-                    `poweragents is pacing ${site} ${afterBlock ? 'after it blocked or challenged the agent' : `at one page load every ${intervalMs / SECOND_MS} s`}: the next action on it is possible in ${formatWait(waitMs)}. Work on something else meanwhile, or ask the person for help.`,
+                    `piko is pacing ${site} ${afterBlock ? 'after it blocked or challenged the agent' : `at one page load every ${intervalMs / SECOND_MS} s`}: the next action on it is possible in ${formatWait(waitMs)}. Work on something else meanwhile, or ask the person for help.`,
                 stopped: site =>
-                    `${site} blocked or challenged the agent twice within an hour, so poweragents has stopped acting on it for now. Ask the person to step in.`,
+                    `${site} blocked or challenged the agent twice within an hour, so piko has stopped acting on it for now. Ask the person to step in.`,
             },
         });
     },

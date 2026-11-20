@@ -1,6 +1,6 @@
 import { defineNuxtPlugin } from 'nuxt/app';
 
-import { isExternalLinkUrl } from '@poweragents/common/utils/isExternalLinkUrl.js';
+import { isExternalLinkUrl } from '@piko/common/utils/isExternalLinkUrl.js';
 
 import { openExternalUrl } from '@/utils/openExternalUrl.js';
 

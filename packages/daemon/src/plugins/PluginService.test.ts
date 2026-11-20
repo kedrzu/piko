@@ -9,8 +9,8 @@ import { createTestContainer } from '@nzyme/ioc-testing/createTestContainer.js';
 import { createEventEmitter } from '@nzyme/utils/createEventEmitter.js';
 import { waitUntil } from '@nzyme/utils/waitUntil.js';
 
-import type { PluginsChangedEvent } from '@poweragents/common/api/DaemonEventTypes.js';
-import type { PluginInstall } from '@poweragents/common/api/PluginTypes.js';
+import type { PluginsChangedEvent } from '@piko/common/api/DaemonEventTypes.js';
+import type { PluginInstall } from '@piko/common/api/PluginTypes.js';
 
 import { ProjectService } from '../projects/ProjectService.js';
 import type { ProjectServiceShape } from '../projects/ProjectService.js';
@@ -184,7 +184,7 @@ test('leaves out an own skill too large to copy, with a warning', async () => {
     ]);
 });
 
-test.each([['.poweragents'], ['.poweragents/skills'], ['.poweragents/plugins']])(
+test.each([['.piko'], ['.piko/skills'], ['.piko/plugins']])(
     'refuses to change anything when %s is a link, writing nothing where it points',
     async folder => {
         const { plugins, dataRoot, tmp, events } = await setup();
@@ -304,7 +304,7 @@ test("installing applies the bundled plugin's environment from its copy, and rem
     expect(sandbox.packageJsons.at(-1)).toEqual({
         private: true,
         dependencies: {
-            '@poweragents-plugins/email-sorting': 'file:/Poweragents/.poweragents/plugins/email-sorting/cli',
+            '@piko-plugins/email-sorting': 'file:/Piko/.piko/plugins/email-sorting/cli',
             'left-pad': '1.3.0',
         },
     });
@@ -313,7 +313,7 @@ test("installing applies the bundled plugin's environment from its copy, and rem
     await plugins.remove({ name: 'email-sorting', projectId });
 
     expect(sandbox.packageJsons.at(-1)).toEqual({ private: true, dependencies: {} });
-    expect(sandbox.commands.at(-1)?.slice(0, 3)).toEqual(['rm', '-rf', '/opt/poweragents/env/python']);
+    expect(sandbox.commands.at(-1)?.slice(0, 3)).toEqual(['rm', '-rf', '/opt/piko/env/python']);
 });
 
 test('installing an own plugin applies its environment from its folder', async () => {
@@ -325,7 +325,7 @@ test('installing an own plugin applies its environment from its folder', async (
     expect(result.environmentError).toBeNull();
     expect(sandbox.packageJsons.at(-1)).toEqual({
         private: true,
-        dependencies: { '@poweragents-plugins/my-notes': 'file:/Poweragents/plugins/my-notes/tools/cli' },
+        dependencies: { '@piko-plugins/my-notes': 'file:/Piko/plugins/my-notes/tools/cli' },
     });
 });
 
@@ -347,7 +347,7 @@ test("sync applies the environment again only when the own plugins' environments
     expect(sandbox.packageJsons).toEqual([
         {
             private: true,
-            dependencies: { '@poweragents-plugins/my-notes': 'file:/Poweragents/plugins/my-notes/tools/cli' },
+            dependencies: { '@piko-plugins/my-notes': 'file:/Piko/plugins/my-notes/tools/cli' },
         },
         { private: true, dependencies: {} },
     ]);
@@ -397,13 +397,13 @@ interface SetupOptions {
 }
 
 async function setup(options: SetupOptions = {}) {
-    const tmp = await mkdtemp(path.join(os.tmpdir(), 'poweragents-plugin-service-'));
+    const tmp = await mkdtemp(path.join(os.tmpdir(), 'piko-plugin-service-'));
     const dataRoot = path.join(tmp, 'root');
     await cp(path.join(FIXTURES, 'own'), path.join(dataRoot, 'plugins'), { recursive: true });
     const { container, logs } = createTestContainer();
     container.set(EnvVariables, {
-        POWERAGENTS_DATA_ROOT: dataRoot,
-        POWERAGENTS_PLUGINS_DIR: path.join(FIXTURES, 'bundled'),
+        PIKO_DATA_ROOT: dataRoot,
+        PIKO_PLUGINS_DIR: path.join(FIXTURES, 'bundled'),
     });
     const sandbox: FakeSandbox = { notified: 0, commands: [], packageJsons: [], requirements: [], failing: new Set() };
     const state: SandboxState = options.ready
@@ -451,7 +451,7 @@ async function setup(options: SetupOptions = {}) {
     return {
         plugins,
         projects: container.resolve(ProjectService),
-        daemonDir: path.join(dataRoot, '.poweragents'),
+        daemonDir: path.join(dataRoot, '.piko'),
         dataRoot,
         tmp,
         logs,

@@ -3,7 +3,7 @@ import { defineService } from '@nzyme/ioc/Service.js';
 import { Logger } from '@nzyme/logging/Logger.js';
 import { assertNever } from '@nzyme/utils/assertNever.js';
 
-import type { AiProvider } from '@poweragents/common/api/AiTypes.js';
+import type { AiProvider } from '@piko/common/api/AiTypes.js';
 import type {
     Conversation,
     ConversationMessage,
@@ -13,21 +13,21 @@ import type {
     ConversationSendInput,
     ConversationSendResult,
     ConversationStopResult,
-} from '@poweragents/common/api/ConversationTypes.js';
-import type { PluginInfo } from '@poweragents/common/api/PluginTypes.js';
-import { OpencodeMessageListCommand } from '@poweragents/opencode/OpencodeMessageListCommand.js';
-import { OpencodeSessionActiveListCommand } from '@poweragents/opencode/OpencodeSessionActiveListCommand.js';
-import { OpencodeSessionCreateCommand } from '@poweragents/opencode/OpencodeSessionCreateCommand.js';
-import { OpencodeSessionGetCommand } from '@poweragents/opencode/OpencodeSessionGetCommand.js';
-import { OpencodeSessionInboxClearCommand } from '@poweragents/opencode/OpencodeSessionInboxClearCommand.js';
-import { OpencodeSessionInboxListCommand } from '@poweragents/opencode/OpencodeSessionInboxListCommand.js';
-import type { OpencodeInboxItem } from '@poweragents/opencode/OpencodeSessionInboxListCommand.js';
-import { OpencodeSessionInterruptCommand } from '@poweragents/opencode/OpencodeSessionInterruptCommand.js';
-import { OpencodeSessionListCommand } from '@poweragents/opencode/OpencodeSessionListCommand.js';
-import { OpencodeSessionPromptCommand } from '@poweragents/opencode/OpencodeSessionPromptCommand.js';
-import { OpencodeSessionSyntheticCommand } from '@poweragents/opencode/OpencodeSessionSyntheticCommand.js';
-import { OpencodeSessionUpdateCommand } from '@poweragents/opencode/OpencodeSessionUpdateCommand.js';
-import type { OpencodeSession } from '@poweragents/opencode/OpencodeTypes.js';
+} from '@piko/common/api/ConversationTypes.js';
+import type { PluginInfo } from '@piko/common/api/PluginTypes.js';
+import { OpencodeMessageListCommand } from '@piko/opencode/OpencodeMessageListCommand.js';
+import { OpencodeSessionActiveListCommand } from '@piko/opencode/OpencodeSessionActiveListCommand.js';
+import { OpencodeSessionCreateCommand } from '@piko/opencode/OpencodeSessionCreateCommand.js';
+import { OpencodeSessionGetCommand } from '@piko/opencode/OpencodeSessionGetCommand.js';
+import { OpencodeSessionInboxClearCommand } from '@piko/opencode/OpencodeSessionInboxClearCommand.js';
+import { OpencodeSessionInboxListCommand } from '@piko/opencode/OpencodeSessionInboxListCommand.js';
+import type { OpencodeInboxItem } from '@piko/opencode/OpencodeSessionInboxListCommand.js';
+import { OpencodeSessionInterruptCommand } from '@piko/opencode/OpencodeSessionInterruptCommand.js';
+import { OpencodeSessionListCommand } from '@piko/opencode/OpencodeSessionListCommand.js';
+import { OpencodeSessionPromptCommand } from '@piko/opencode/OpencodeSessionPromptCommand.js';
+import { OpencodeSessionSyntheticCommand } from '@piko/opencode/OpencodeSessionSyntheticCommand.js';
+import { OpencodeSessionUpdateCommand } from '@piko/opencode/OpencodeSessionUpdateCommand.js';
+import type { OpencodeSession } from '@piko/opencode/OpencodeTypes.js';
 
 import { AiProviderService } from '../ai/AiProviderService.js';
 import { toAiProvider } from '../ai/utils/toAiProvider.js';

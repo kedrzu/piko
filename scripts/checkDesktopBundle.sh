@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Checks a built macOS desktop bundle before it ships: usage
-# `scripts/checkDesktopBundle.sh <path/to/poweragents.app> <expected version> [--notarized]`.
+# `scripts/checkDesktopBundle.sh <path/to/piko.app> <expected version> [--notarized]`.
 #
 # Fails (non-zero, `::error::` lines for GitHub Actions) unless the signature is valid, every Mach-O has the hardened
 # runtime, `limactl` kept its virtualization entitlement, and the daemon sidecar, started from the bundle, reports the
@@ -17,7 +17,7 @@ fail() {
     failed=1
 }
 
-daemon="$app/Contents/MacOS/poweragents-daemon"
+daemon="$app/Contents/MacOS/piko-daemon"
 limactl="$app/Contents/Resources/lima/bin/limactl"
 
 [[ -d "$app" ]] || { echo "::error::$app is not a bundle"; exit 1; }
@@ -45,7 +45,7 @@ grep -q 'com.apple.security.virtualization' <<<"$entitlements" ||
 "$limactl" --version >/dev/null || fail "limactl --version does not run from the bundle"
 
 # The sidecar answers `/status` with the version it was started for. Everything it writes goes under a temp folder
-# (`HOME`, the data root, Lima's home). The daemon starts the sandbox on its own, so `POWERAGENTS_LIMA_DIR` points at a
+# (`HOME`, the data root, Lima's home). The daemon starts the sandbox on its own, so `PIKO_LIMA_DIR` points at a
 # stub `limactl` that fails at once: no VM is created or downloaded on this machine, and the daemon keeps serving.
 work="$(mktemp -d /tmp/pacheck.XXXXXX)"
 daemon_pid=""
@@ -61,11 +61,11 @@ chmod +x "$work/stub/bin/limactl"
 
 port="$(python3 -c 'import socket; s = socket.socket(); s.bind(("127.0.0.1", 0)); print(s.getsockname()[1])')"
 HOME="$work/home" \
-    POWERAGENTS_DAEMON_PORT="$port" \
-    POWERAGENTS_VERSION="$version" \
-    POWERAGENTS_LIMA_DIR="$work/stub" \
-    POWERAGENTS_DATA_ROOT="$work/home/Poweragents" \
-    POWERAGENTS_LIMA_HOME="$work/home/.poweragents/lima" \
+    PIKO_DAEMON_PORT="$port" \
+    PIKO_VERSION="$version" \
+    PIKO_LIMA_DIR="$work/stub" \
+    PIKO_DATA_ROOT="$work/home/Piko" \
+    PIKO_LIMA_HOME="$work/home/.piko/lima" \
     "$daemon" >"$work/daemon.out" 2>&1 &
 daemon_pid=$!
 

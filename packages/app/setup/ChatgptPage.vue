@@ -10,9 +10,9 @@ import { useService } from '@nzyme/vue-ioc/useService.js';
 import { useRouter } from 'nuxt/app';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 
-import Button from '@poweragents/ui/Button.vue';
-import ErrorNotice from '@poweragents/ui/ErrorNotice.vue';
-import Spinner from '@poweragents/ui/Spinner.vue';
+import Button from '@piko/ui/Button.vue';
+import ErrorNotice from '@piko/ui/ErrorNotice.vue';
+import Spinner from '@piko/ui/Spinner.vue';
 
 import { openExternalUrl } from '@/utils/openExternalUrl.js';
 

@@ -1,5 +1,5 @@
 {
-    "name": "@poweragents/e2e",
+    "name": "@piko/e2e",
     "private": true,
     "description": "Playwright end-to-end tests of the built app",
     "type": "module",
@@ -9,9 +9,9 @@
         "report": "playwright show-report"
     },
     "dependencies": {
-        "@playwright/test": "1.64.1",
-        "@poweragents/common": "workspace:*",
-        "@poweragents/ui": "workspace:*"
+        "@piko/common": "workspace:*",
+        "@piko/ui": "workspace:*",
+        "@playwright/test": "1.64.1"
     },
     "devDependencies": {
         "@nzyme/tsconfig": "workspace:*"

@@ -70,7 +70,7 @@ keep their codes and their step content, now in the split shell's step pane.
 Built the tokens, the three palettes and the components of rounds 1 and 2 in `packages/ui` (screens 44 and 38 are
 composed in the shell's stories; the screens themselves are not built yet). Forced by: the story tests' axe check
 (WCAG 2.2 AA) in each palette. Text, or a white icon, on `$brand-1` reached 3.9:1 in Meadow, 3.2:1 in Sunset and
-2.5:1 in Lemonade, and the progress fill against its track 2.9:1 and 2.3:1 in Sunset and Lemonade. `poweragents.pen`
+2.5:1 in Lemonade, and the progress fill against its track 2.9:1 and 2.3:1 in Sunset and Lemonade. `piko.pen`
 is not changed in this round; the entries wait for it.
 
 - [x] Variables: new `brand-1-strong` in the `palette` theme, `$brand-1` darkened to 4.5:1 with white both ways:
@@ -132,7 +132,7 @@ above: the drawing now matches them.
 
 Forced by: ChatGPT's sign-in (#24) has no code to paste and reports neither the account's email nor its plan — "Sign in
 with ChatGPT" in OpenCode 2.2.7 returns only `sub` (checked 2026-11-14 with the owner's account). Built in
-`packages/app/setup/` without a drawing beyond `molecules/Provider card`; `poweragents.pen` is not changed in this round.
+`packages/app/setup/` without a drawing beyond `molecules/Provider card`; `piko.pen` is not changed in this round.
 
 - [ ] 45 First run · connect your AI (`ZUVSg`): the ChatGPT card is `molecules/Provider card` as for Claude, primary
   *Połącz z ChatGPT*; `/Soon` (`Rk7mi`) is no longer used.

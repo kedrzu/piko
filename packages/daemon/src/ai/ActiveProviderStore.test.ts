@@ -39,10 +39,10 @@ test('a corrupt file or an unknown provider reads as no record, and the next rec
     expect((await stat(filePath)).mode & 0o777).toBe(0o600);
 });
 
-/** A store under a scratch `POWERAGENTS_LIMA_HOME`, so the real `~/.poweragents` is never touched. */
+/** A store under a scratch `PIKO_LIMA_HOME`, so the real `~/.piko` is never touched. */
 async function setup() {
     const { container } = createTestContainer();
-    const home = await mkdtemp(path.join(os.tmpdir(), 'poweragents-provider-'));
-    container.set(EnvVariables, { POWERAGENTS_LIMA_HOME: path.join(home, 'lima') });
+    const home = await mkdtemp(path.join(os.tmpdir(), 'piko-provider-'));
+    container.set(EnvVariables, { PIKO_LIMA_HOME: path.join(home, 'lima') });
     return { store: container.resolve(ActiveProviderStore), filePath: path.join(home, 'ai-provider.json') };
 }

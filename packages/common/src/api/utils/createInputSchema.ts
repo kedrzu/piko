@@ -13,7 +13,7 @@ export function createInputSchema<T>(
     return {
         '~standard': {
             version: 1,
-            vendor: 'poweragents',
+            vendor: 'piko',
             validate(value) {
                 const input = typeof value === 'object' && value !== null ? parse(value) : undefined;
                 return input === undefined ? { issues: [{ message: `Expected ${expected}` }] } : { value: input };

@@ -5,24 +5,20 @@ import { setTimeout as sleep } from 'node:timers/promises';
 
 import type { Page } from '@playwright/test';
 
-import type { AiProvider, AiStatus } from '@poweragents/common/api/AiTypes.js';
-import type { AppSetupStartResult } from '@poweragents/common/api/AppSetupTypes.js';
-import type { ChatgptLoginState, ChatgptStatus } from '@poweragents/common/api/ChatgptTypes.js';
-import type { ClaudeLoginResult, ClaudeStatus } from '@poweragents/common/api/ClaudeTypes.js';
+import type { AiProvider, AiStatus } from '@piko/common/api/AiTypes.js';
+import type { AppSetupStartResult } from '@piko/common/api/AppSetupTypes.js';
+import type { ChatgptLoginState, ChatgptStatus } from '@piko/common/api/ChatgptTypes.js';
+import type { ClaudeLoginResult, ClaudeStatus } from '@piko/common/api/ClaudeTypes.js';
 import type {
     Conversation,
     ConversationMessage,
     ConversationSendResult,
     ConversationStopResult,
     ConversationWithdrawnMessage,
-} from '@poweragents/common/api/ConversationTypes.js';
-import { DAEMON_EVENTS_PATH } from '@poweragents/common/api/DaemonEventTypes.js';
-import type { DaemonEvent } from '@poweragents/common/api/DaemonEventTypes.js';
-import type {
-    MemoryFileContent,
-    MemoryFileGetResult,
-    MemoryRevealResult,
-} from '@poweragents/common/api/MemoryTypes.js';
+} from '@piko/common/api/ConversationTypes.js';
+import { DAEMON_EVENTS_PATH } from '@piko/common/api/DaemonEventTypes.js';
+import type { DaemonEvent } from '@piko/common/api/DaemonEventTypes.js';
+import type { MemoryFileContent, MemoryFileGetResult, MemoryRevealResult } from '@piko/common/api/MemoryTypes.js';
 import type {
     ProjectFileContentResult,
     ProjectFileEntry,
@@ -31,12 +27,12 @@ import type {
     ProjectFileOpenResult,
     ProjectFileReadResult,
     ProjectFileWriteResult,
-} from '@poweragents/common/api/ProjectFileTypes.js';
-import { PROJECT_NAME_MAX_LENGTH } from '@poweragents/common/api/ProjectTypes.js';
-import type { Project, ProjectCreateResult } from '@poweragents/common/api/ProjectTypes.js';
-import type { SandboxStatus } from '@poweragents/common/api/SandboxTypes.js';
-import { DAEMON_API_PATH, DAEMON_PORT } from '@poweragents/common/daemonAddress.js';
-import { isOpenableFile } from '@poweragents/common/utils/isOpenableFile.js';
+} from '@piko/common/api/ProjectFileTypes.js';
+import { PROJECT_NAME_MAX_LENGTH } from '@piko/common/api/ProjectTypes.js';
+import type { Project, ProjectCreateResult } from '@piko/common/api/ProjectTypes.js';
+import type { SandboxStatus } from '@piko/common/api/SandboxTypes.js';
+import { DAEMON_API_PATH, DAEMON_PORT } from '@piko/common/daemonAddress.js';
+import { isOpenableFile } from '@piko/common/utils/isOpenableFile.js';
 
 /** The code `StubDaemon` takes as a Claude account with an allowed plan; any other code is rejected. */
 export const GOOD_CODE = 'good-code#state';
@@ -426,7 +422,7 @@ export class StubDaemon {
     private locateProjectFile(projectId: string, path: string): ProjectFileLocateResult {
         return this.projectFileBytes(projectId, path) === null
             ? { notFound: true }
-            : { path: `/Users/ania/Poweragents/Projects/${projectId}/${path}` };
+            : { path: `/Users/ania/Piko/Projects/${projectId}/${path}` };
     }
 
     /** Like the daemon: an existing text file only, unless it changed since the given version; never creates one. */

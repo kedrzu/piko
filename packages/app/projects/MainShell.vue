@@ -9,16 +9,12 @@ import { useService } from '@nzyme/vue-ioc/useService.js';
 import { useRoute, useRouter } from 'nuxt/app';
 import { computed, watch } from 'vue';
 
-import AppShell from '@poweragents/ui/AppShell.vue';
-import type { ProjectColor } from '@poweragents/ui/ProjectColor.js';
-import ProjectSidebar from '@poweragents/ui/ProjectSidebar.vue';
-import type {
-  ProjectSidebarConversation,
-  ProjectSidebarFile,
-  ProjectSidebarItem,
-} from '@poweragents/ui/ProjectSidebar.vue';
-import TabBar from '@poweragents/ui/TabBar.vue';
-import type { TabBarItem } from '@poweragents/ui/TabBar.vue';
+import AppShell from '@piko/ui/AppShell.vue';
+import type { ProjectColor } from '@piko/ui/ProjectColor.js';
+import ProjectSidebar from '@piko/ui/ProjectSidebar.vue';
+import type { ProjectSidebarConversation, ProjectSidebarFile, ProjectSidebarItem } from '@piko/ui/ProjectSidebar.vue';
+import TabBar from '@piko/ui/TabBar.vue';
+import type { TabBarItem } from '@piko/ui/TabBar.vue';
 
 import * as lc from '@/conversations/Conversations.loc.js';
 import { ConversationStore } from '@/conversations/ConversationStore.js';

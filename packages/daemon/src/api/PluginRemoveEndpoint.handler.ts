@@ -1,6 +1,6 @@
 import { defineEndpointHandler } from '@nzyme/rpc/defineEndpointHandler.js';
 
-import { PluginRemoveEndpoint } from '@poweragents/common/api/PluginRemoveEndpoint.js';
+import { PluginRemoveEndpoint } from '@piko/common/api/PluginRemoveEndpoint.js';
 
 import { PluginService } from '../plugins/PluginService.js';
 

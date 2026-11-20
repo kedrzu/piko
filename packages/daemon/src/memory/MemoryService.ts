@@ -5,9 +5,9 @@ import { defineService } from '@nzyme/ioc/Service.js';
 import { Logger } from '@nzyme/logging/Logger.js';
 import { assertNever } from '@nzyme/utils/assertNever.js';
 
-import type { MemoryFile, MemoryFileGetResult } from '@poweragents/common/api/MemoryTypes.js';
+import type { MemoryFile, MemoryFileGetResult } from '@piko/common/api/MemoryTypes.js';
 
-import { MEMORY_FOLDER, POWERAGENTS_DATA_ROOT } from '../env.js';
+import { MEMORY_FOLDER, PIKO_DATA_ROOT } from '../env.js';
 import { openRealFile } from '../files/openRealFile.js';
 import type { OpenedRealFile } from '../files/openRealFile.js';
 import { readPrefix } from '../files/readPrefix.js';
@@ -52,7 +52,7 @@ const TITLE_PREFIX_BYTES = 4096;
 /** The person's Memory folder. */
 export const MemoryService = defineService({
     name: 'MemoryService',
-    deps: { logger: Logger, dataRoot: POWERAGENTS_DATA_ROOT },
+    deps: { logger: Logger, dataRoot: PIKO_DATA_ROOT },
     setup({ logger, dataRoot }): MemoryServiceShape {
         const root = path.resolve(dataRoot, MEMORY_FOLDER);
 

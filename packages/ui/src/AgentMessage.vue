@@ -4,7 +4,7 @@
 import { defineProp } from '@nzyme/vue-utils/defineProp.js';
 import type { PropType } from 'vue';
 
-import type { ConversationAgentPart } from '@poweragents/common/api/ConversationTypes.js';
+import type { ConversationAgentPart } from '@piko/common/api/ConversationTypes.js';
 
 export const AgentMessageProps = {
   /** The reply's text and steps, in the order the agent produced them. */
@@ -37,7 +37,7 @@ import { useTranslate } from '@nzyme/vue-i18n/useTranslate.js';
 import { useEmitAsync } from '@nzyme/vue-utils/useEmitAsync.js';
 import { computed } from 'vue';
 
-import type { ConversationStepPart } from '@poweragents/common/api/ConversationTypes.js';
+import type { ConversationStepPart } from '@piko/common/api/ConversationTypes.js';
 
 import * as l from './AgentMessage.loc.js';
 import AgentMark from './AgentMark.vue';

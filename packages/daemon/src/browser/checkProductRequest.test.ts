@@ -9,7 +9,7 @@ import type { ProductClientData } from './checkProductRequest.js';
 const CLIENT: CdpPolicyClient<ProductClientData> = {
     id: 'client-1',
     group: 'conv-a',
-    data: { dataRoot: '/Users/someone/Poweragents', uploadsFolder: '/Users/someone/state/browser-uploads' },
+    data: { dataRoot: '/Users/someone/Piko', uploadsFolder: '/Users/someone/state/browser-uploads' },
     sessionTarget: () => 't-a',
 };
 
@@ -69,23 +69,23 @@ test('Target.createTarget is rebuilt to open minimized in the background, with o
 
 test.each([
     [['/etc/passwd']],
-    [['/Poweragents/../.ssh/id_rsa']],
-    [['/Poweragents/ok.txt', '/Users/someone/.ssh/id_rsa']],
+    [['/Piko/../.ssh/id_rsa']],
+    [['/Piko/ok.txt', '/Users/someone/.ssh/id_rsa']],
     [[42]],
-    ['/Poweragents/a.pdf'],
+    ['/Piko/a.pdf'],
     [undefined],
 ])('an upload of %p is refused before anything is staged', async files => {
     expect(await check('DOM.setFileInputFiles', { files, nodeId: 5 }, 's-a')).toHaveProperty('reject');
 });
 
 test('an upload of a file that cannot be staged is refused with the reason', async () => {
-    expect(await check('DOM.setFileInputFiles', { files: ['/Poweragents/missing.pdf'], nodeId: 5 }, 's-a')).toEqual({
+    expect(await check('DOM.setFileInputFiles', { files: ['/Piko/missing.pdf'], nodeId: 5 }, 's-a')).toEqual({
         reject: 'DOM.setFileInputFiles: No such file',
     });
 });
 
 test('a drag carrying files is refused, a drag without files goes out', async () => {
-    for (const files of [['/Poweragents/a.txt'], ['/etc/passwd'], '/etc/passwd']) {
+    for (const files of [['/Piko/a.txt'], ['/etc/passwd'], '/etc/passwd']) {
         expect(
             await check('Input.dispatchDragEvent', { type: 'drop', x: 1, y: 1, data: { items: [], files } }, 's-a'),
         ).toHaveProperty('reject');

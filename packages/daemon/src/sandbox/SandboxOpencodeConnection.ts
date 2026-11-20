@@ -1,6 +1,6 @@
 import { defineService } from '@nzyme/ioc/Service.js';
 import { ApplicationError } from '@nzyme/logging/ApplicationError.js';
-import { OpencodeConnection } from '@poweragents/opencode/OpencodeConnection.js';
+import { OpencodeConnection } from '@piko/opencode/OpencodeConnection.js';
 
 import { Sandbox } from './Sandbox.js';
 

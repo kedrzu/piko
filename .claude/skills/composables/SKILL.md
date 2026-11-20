@@ -1,7 +1,7 @@
 ---
 name: composables
 description: >-
-    Vue composables in poweragents — use[Feature] functions, reactive returns, useService, data loading and events. Use
+    Vue composables in piko — use[Feature] functions, reactive returns, useService, data loading and events. Use
     before writing or changing a composable or component-scoped reactive logic in packages/ui or packages/app.
 ---
 

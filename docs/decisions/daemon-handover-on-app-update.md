@@ -18,7 +18,7 @@ from a worktree in development shares the port and must never be touched by an i
 
 ## Options Considered
 
-- **Version on `/status`, compared at launch.** The shell passes its version to the sidecar (`POWERAGENTS_VERSION`);
+- **Version on `/status`, compared at launch.** The shell passes its version to the sidecar (`PIKO_VERSION`);
   the daemon reports it. At launch the app signals the process listening on the port (pid from `lsof`, never from the
   answer) when it reports a different version, waits up to 10 s for the port, then starts its own. Trade-off: a daemon
   from a build before versions were reported is kept and stopped once by hand.

@@ -143,7 +143,7 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
           # The commit the app says it was built from (`build.rs`, `updater.rs`).
-          POWERAGENTS_COMMIT: ${{ inputs.ref }}
+          PIKO_COMMIT: ${{ inputs.ref }}
         with:
           projectPath: packages/desktop
           # The CLI `packages/desktop` pins, already installed by `setup.build.sh` from the lockfile. This is the runner
@@ -164,7 +164,7 @@ jobs:
             notarized=(--notarized)
           fi
           scripts/checkDesktopBundle.sh \
-            packages/desktop/src-tauri/target/aarch64-apple-darwin/release/bundle/macos/poweragents.app \
+            packages/desktop/src-tauri/target/aarch64-apple-darwin/release/bundle/macos/piko.app \
             "$VERSION" ${notarized[@]+"${notarized[@]}"}
         env:
           VERSION: ${{ inputs.version }}

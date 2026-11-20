@@ -6,7 +6,7 @@ import path from 'node:path';
 import { EnvVariables } from '@nzyme/ioc/helpers/EnvVariables.js';
 import { createTestContainer } from '@nzyme/ioc-testing/createTestContainer.js';
 
-import type { PluginError, PluginInfo, PluginSource } from '@poweragents/common/api/PluginTypes.js';
+import type { PluginError, PluginInfo, PluginSource } from '@piko/common/api/PluginTypes.js';
 
 import { PluginCatalog } from './PluginCatalog.js';
 import type { LocalPlugin } from './PluginCatalog.js';
@@ -184,7 +184,7 @@ test('reports skills that are not real folders with a SKILL.md file, and a missi
 });
 
 test('lists nothing when neither source folder exists', async () => {
-    const { catalog } = await setup({ bundledDir: path.join(os.tmpdir(), 'poweragents-no-such-folder'), own: false });
+    const { catalog } = await setup({ bundledDir: path.join(os.tmpdir(), 'piko-no-such-folder'), own: false });
 
     expect(await catalog.list()).toEqual([]);
 });
@@ -202,14 +202,14 @@ interface SetupOptions {
 }
 
 async function setup({ bundledDir = path.join(FIXTURES, 'bundled'), own = true }: SetupOptions = {}) {
-    const tmp = await mkdtemp(path.join(os.tmpdir(), 'poweragents-plugins-'));
+    const tmp = await mkdtemp(path.join(os.tmpdir(), 'piko-plugins-'));
     const dataRoot = path.join(tmp, 'root');
     const ownDir = path.join(dataRoot, 'plugins');
     if (own) {
         await cp(path.join(FIXTURES, 'own'), ownDir, { recursive: true });
     }
     const { container, logs } = createTestContainer();
-    container.set(EnvVariables, { POWERAGENTS_DATA_ROOT: dataRoot, POWERAGENTS_PLUGINS_DIR: bundledDir });
+    container.set(EnvVariables, { PIKO_DATA_ROOT: dataRoot, PIKO_PLUGINS_DIR: bundledDir });
     const catalog = container.resolve(PluginCatalog);
     return { catalog, ownDir, tmp, logs };
 }

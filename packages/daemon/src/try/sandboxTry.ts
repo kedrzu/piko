@@ -7,21 +7,18 @@ import { ApplicationError } from '@nzyme/logging/ApplicationError.js';
 import { consoleLog, LoggerTransport } from '@nzyme/logging/LoggerTransport.js';
 import { waitUntil } from '@nzyme/utils/waitUntil.js';
 
-import { OpencodeEventSubscribeCommand } from '@poweragents/opencode/OpencodeEventSubscribeCommand.js';
-import type {
-    OpencodeRunFinishedEvent,
-    OpencodeSessionEvent,
-} from '@poweragents/opencode/OpencodeEventSubscribeCommand.js';
-import { OpencodeModelListCommand } from '@poweragents/opencode/OpencodeModelListCommand.js';
-import type { OpencodeModel } from '@poweragents/opencode/OpencodeModelListCommand.js';
-import { OpencodePermissionReplyCommand } from '@poweragents/opencode/OpencodePermissionReplyCommand.js';
-import { OpencodeSessionCreateCommand } from '@poweragents/opencode/OpencodeSessionCreateCommand.js';
-import { OpencodeSessionPromptCommand } from '@poweragents/opencode/OpencodeSessionPromptCommand.js';
-import type { OpencodeReportedError } from '@poweragents/opencode/OpencodeTypes.js';
+import { OpencodeEventSubscribeCommand } from '@piko/opencode/OpencodeEventSubscribeCommand.js';
+import type { OpencodeRunFinishedEvent, OpencodeSessionEvent } from '@piko/opencode/OpencodeEventSubscribeCommand.js';
+import { OpencodeModelListCommand } from '@piko/opencode/OpencodeModelListCommand.js';
+import type { OpencodeModel } from '@piko/opencode/OpencodeModelListCommand.js';
+import { OpencodePermissionReplyCommand } from '@piko/opencode/OpencodePermissionReplyCommand.js';
+import { OpencodeSessionCreateCommand } from '@piko/opencode/OpencodeSessionCreateCommand.js';
+import { OpencodeSessionPromptCommand } from '@piko/opencode/OpencodeSessionPromptCommand.js';
+import type { OpencodeReportedError } from '@piko/opencode/OpencodeTypes.js';
 
 import { ClaudeSignInService } from '../claude/ClaudeSignInService.js';
 import { toAgentDir } from '../conversations/utils/toAgentDir.js';
-import { POWERAGENTS_DATA_ROOT, PROJECTS_FOLDER } from '../env.js';
+import { PIKO_DATA_ROOT, PROJECTS_FOLDER } from '../env.js';
 import { LimaSandbox } from '../sandbox/LimaSandbox.js';
 import { Sandbox } from '../sandbox/Sandbox.js';
 import { SandboxOpencodeConnection } from '../sandbox/SandboxOpencodeConnection.js';
@@ -47,7 +44,7 @@ container.set(LoggerTransport, (logger, level, message, obj) => {
 container.register(LimaSandbox);
 container.register(SandboxOpencodeConnection);
 const sandbox = container.resolve(Sandbox);
-const hostProjectDir = path.join(container.resolve(POWERAGENTS_DATA_ROOT), PROJECTS_FOLDER, PROJECT);
+const hostProjectDir = path.join(container.resolve(PIKO_DATA_ROOT), PROJECTS_FOLDER, PROJECT);
 const claude = container.resolve(ClaudeSignInService);
 const opencode = {
     listModels: container.resolve(OpencodeModelListCommand),

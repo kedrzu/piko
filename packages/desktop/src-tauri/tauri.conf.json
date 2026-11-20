@@ -1,18 +1,18 @@
 {
     "$schema": "https://schema.tauri.app/config/2",
-    "productName": "poweragents",
+    "productName": "piko",
     "version": "0.1.0",
-    "identifier": "com.poweragents.desktop",
+    "identifier": "com.piko.desktop",
     "build": {
         "devUrl": "http://localhost:4100",
         "frontendDist": "../../app/.output/public",
         "beforeDevCommand": {
-            "script": "bun nx run-many -t dev -p @poweragents/app,@poweragents/daemon --outputStyle=stream",
+            "script": "bun nx run-many -t dev -p @piko/app,@piko/daemon --outputStyle=stream",
             "cwd": "../../..",
             "wait": false
         },
         "beforeBuildCommand": {
-            "script": "bun nx run @poweragents/daemon:fetch-lima && bun nx run-many -t build,sidecar -p @poweragents/app,@poweragents/daemon --outputStyle=stream",
+            "script": "bun nx run @piko/daemon:fetch-lima && bun nx run-many -t build,sidecar -p @piko/app,@piko/daemon --outputStyle=stream",
             "cwd": "../../.."
         }
     },
@@ -20,7 +20,7 @@
         "windows": [
             {
                 "label": "main",
-                "title": "poweragents",
+                "title": "piko",
                 "width": 1280,
                 "height": 800,
                 "minWidth": 900,
@@ -38,7 +38,7 @@
             },
             "assetProtocol": {
                 "enable": true,
-                "scope": ["$HOME/Poweragents/**"]
+                "scope": ["$HOME/Piko/**"]
             }
         }
     },
@@ -46,7 +46,7 @@
         "active": true,
         "targets": "all",
         "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"],
-        "externalBin": ["binaries/poweragents-daemon"],
+        "externalBin": ["binaries/piko-daemon"],
         "resources": {
             "../../daemon/plugins/": "plugins/"
         },
@@ -57,7 +57,7 @@
     },
     "plugins": {
         "updater": {
-            "endpoints": ["https://github.com/kedrzu/poweragents/releases/download/development/latest.json"],
+            "endpoints": ["https://github.com/kedrzu/piko/releases/download/development/latest.json"],
             "pubkey": "REPLACE_WITH_UPDATER_PUBLIC_KEY"
         }
     }

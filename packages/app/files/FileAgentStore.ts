@@ -3,8 +3,8 @@ import { Logger } from '@nzyme/logging/Logger.js';
 import { assertNever } from '@nzyme/utils/assertNever.js';
 import { ref } from 'vue';
 
-import type { DaemonEvent, FileAgentState } from '@poweragents/common/api/DaemonEventTypes.js';
-import { ProjectFileReleaseEndpoint } from '@poweragents/common/api/ProjectFileReleaseEndpoint.js';
+import type { DaemonEvent, FileAgentState } from '@piko/common/api/DaemonEventTypes.js';
+import { ProjectFileReleaseEndpoint } from '@piko/common/api/ProjectFileReleaseEndpoint.js';
 
 import { DaemonClient } from '@/daemon/DaemonClient.js';
 import { DaemonEventStream } from '@/daemon/DaemonEventStream.js';

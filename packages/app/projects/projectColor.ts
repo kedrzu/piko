@@ -1,5 +1,5 @@
-import { PROJECT_COLORS } from '@poweragents/ui/ProjectColor.js';
-import type { ProjectColor } from '@poweragents/ui/ProjectColor.js';
+import { PROJECT_COLORS } from '@piko/ui/ProjectColor.js';
+import type { ProjectColor } from '@piko/ui/ProjectColor.js';
 
 /**
  * The colour a project is drawn in. Projects do not store one yet, so it follows from the project's stable id: the same
