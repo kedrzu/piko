@@ -8,14 +8,13 @@
     },
     "type": "module",
     "dependencies": {
-        "@nzyme/bitwarden": "workspace:*",
         "@nzyme/cli-core": "workspace:*",
         "@nzyme/ioc": "workspace:*",
         "@nzyme/pen": "workspace:*",
-        "@nzyme/secrets": "workspace:*"
+        "@nzyme/secrets": "workspace:*",
+        "@poweragents/secrets": "workspace:*"
     },
     "devDependencies": {
-        "@nzyme/ioc-testing": "workspace:*",
         "@nzyme/tsconfig": "workspace:*"
     }
 }
