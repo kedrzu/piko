@@ -2,15 +2,16 @@ import { expect, test } from 'bun:test';
 
 import { EnvVariables } from '@nzyme/ioc/helpers/EnvVariables.js';
 import { createTestContainer } from '@nzyme/ioc-testing/createTestContainer.js';
+import { getSecretDefinitions } from '@nzyme/secrets/getSecretDefinitions.js';
 import { isSecretEnabled } from '@nzyme/secrets/defineSecret.js';
 
-import { PoweragentsSecrets } from './PoweragentsSecrets.js';
+import { PoweragentsSecretStore } from './PoweragentsSecretStore.js';
+import * as secrets from './secrets.js';
 
 function storeIdFor(env: Record<string, string>): string {
     const { container } = createTestContainer();
     container.set(EnvVariables, env);
-    const [store] = container.resolve(PoweragentsSecrets).stores;
-    return store?.id ?? '';
+    return container.resolve(PoweragentsSecretStore).id;
 }
 
 test('reads the dev prefix by default, so that bun run dev never reaches the signing keys', () => {
@@ -23,10 +24,9 @@ test('reads the prod prefix in prod', () => {
 });
 
 test('declares the signing secrets for prod only', () => {
-    const { container } = createTestContainer();
-    const { secrets = [] } = container.resolve(PoweragentsSecrets);
-    expect(secrets.map(secret => secret.name)).toContain('TAURI_SIGNING_PRIVATE_KEY');
-    expect(secrets.every(secret => isSecretEnabled(secret, { POWERAGENTS_ENV: 'prod' }))).toBe(true);
-    expect(secrets.some(secret => isSecretEnabled(secret, {}))).toBe(false);
-    expect(secrets.some(secret => isSecretEnabled(secret, { POWERAGENTS_ENV: 'dev' }))).toBe(false);
+    const definitions = getSecretDefinitions(secrets);
+    expect(definitions.map(secret => secret.name)).toContain('TAURI_SIGNING_PRIVATE_KEY');
+    expect(definitions.every(secret => isSecretEnabled(secret, { POWERAGENTS_ENV: 'prod' }))).toBe(true);
+    expect(definitions.some(secret => isSecretEnabled(secret, {}))).toBe(false);
+    expect(definitions.some(secret => isSecretEnabled(secret, { POWERAGENTS_ENV: 'dev' }))).toBe(false);
 });

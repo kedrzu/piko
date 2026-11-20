@@ -29,7 +29,8 @@ and its reason, is in `docs/design/poweragents/`.
 |`@poweragents/app`|`packages/app`|The Nuxt app: screens by feature, routes, the IoC container and the services that talk to the daemon.|
 |`@poweragents/desktop`|`packages/desktop`|The Tauri shell around the app's build and its native commands.|
 |`@poweragents/e2e`|`packages/e2e`|Playwright tests of the built app, and the screen harnesses.|
-|`@poweragents/cli`|`packages/cli`|The repo's developer CLI, `bun poweragents …`: the `secrets` commands over the declared secrets (`src/secrets.ts`) and the `pen` commands. Bun runs it from source.|
+|`@poweragents/cli`|`packages/cli`|The repo's developer CLI, `bun poweragents …`: the `secrets` commands (the provider over `@poweragents/secrets`) and the `pen` commands. Bun runs it from source.|
+|`@poweragents/secrets`|`packages/secrets`|The secret declarations (`src/secrets.ts`, declarations only), the Bitwarden store keyed by `POWERAGENTS_ENV`, and `loadPoweragentsConfig(container)`, which installs the secrets into the container's config so runtime code resolves them with `container.resolve(SECRET)`. Today only external tools (Tauri, `codesign`, `gh`, CI) read them, through `bun secrets run` or job `env`.|
 
 ## Builds
 

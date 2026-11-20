@@ -74,7 +74,7 @@ updates, but a downloaded `.dmg` opens only after `xattr -dr com.apple.quarantin
 
 ## Secrets
 
-Every secret lives in the secret store (`bun secrets`, declared in `packages/cli/src/secrets.ts`), under the prefix
+Every secret lives in the secret store (`bun secrets`, declared in `packages/secrets/src/secrets.ts`), under the prefix
 `POWERAGENTS_PROD_`, read only with `POWERAGENTS_ENV=prod`, so `bun run dev` never holds them. The store is the only
 readable copy: GitHub secrets can't be read back. The workflows read the repository secrets of the same names, copied
 from the store. Log in once per machine with `bun secrets login`.
