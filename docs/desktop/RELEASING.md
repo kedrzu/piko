@@ -74,10 +74,10 @@ updates, but a downloaded `.dmg` opens only after `xattr -dr com.apple.quarantin
 
 ## Secrets
 
-Every secret lives in the secret store (`bun poweragents secrets`, declared in `packages/cli/src/secrets.ts`), under the prefix
+Every secret lives in the secret store (`bun secrets`, declared in `packages/cli/src/secrets.ts`), under the prefix
 `POWERAGENTS_PROD_`, read only with `POWERAGENTS_ENV=prod`, so `bun run dev` never holds them. The store is the only
 readable copy: GitHub secrets can't be read back. The workflows read the repository secrets of the same names, copied
-from the store. Log in once per machine with `bun poweragents secrets login`.
+from the store. Log in once per machine with `bun secrets login`.
 
 ### Updater key
 
@@ -90,8 +90,8 @@ Made once, in the owner's own terminal, so neither value passes through an agent
 ```sh
 KEYDIR=$(mktemp -d)
 bun --cwd packages/desktop tauri signer generate -w "$KEYDIR/updater.key"   # asks for the key's password
-POWERAGENTS_ENV=prod bun poweragents secrets set TAURI_SIGNING_PRIVATE_KEY < "$KEYDIR/updater.key"
-POWERAGENTS_ENV=prod bun poweragents secrets set TAURI_SIGNING_PRIVATE_KEY_PASSWORD --prompt="The updater key's password"
+POWERAGENTS_ENV=prod bun secrets set TAURI_SIGNING_PRIVATE_KEY < "$KEYDIR/updater.key"
+POWERAGENTS_ENV=prod bun secrets set TAURI_SIGNING_PRIVATE_KEY_PASSWORD --prompt="The updater key's password"
 cat "$KEYDIR/updater.key.pub"   # goes into plugins.updater.pubkey
 rm -rf "$KEYDIR"
 ```
@@ -99,7 +99,7 @@ rm -rf "$KEYDIR"
 Then the repository secrets, from the store (also to replace them):
 
 ```sh
-POWERAGENTS_ENV=prod bun poweragents secrets run TAURI_SIGNING_PRIVATE_KEY TAURI_SIGNING_PRIVATE_KEY_PASSWORD -- sh -c '
+POWERAGENTS_ENV=prod bun secrets run TAURI_SIGNING_PRIVATE_KEY TAURI_SIGNING_PRIVATE_KEY_PASSWORD -- sh -c '
   printf %s "$TAURI_SIGNING_PRIVATE_KEY" | gh secret set TAURI_SIGNING_PRIVATE_KEY
   printf %s "$TAURI_SIGNING_PRIVATE_KEY_PASSWORD" | gh secret set TAURI_SIGNING_PRIVATE_KEY_PASSWORD'
 ```
@@ -117,18 +117,18 @@ guide: [macOS code signing](https://v2.tauri.app/distribute/sign/macos/).
 3. Put everything in the store:
 
    ```sh
-   base64 -i certificate.p12 | POWERAGENTS_ENV=prod bun poweragents secrets set APPLE_CERTIFICATE
-   POWERAGENTS_ENV=prod bun poweragents secrets set APPLE_CERTIFICATE_PASSWORD --prompt="The .p12's export password"
-   POWERAGENTS_ENV=prod bun poweragents secrets set APPLE_SIGNING_IDENTITY --prompt="Developer ID Application: Name (TEAMID)"
-   POWERAGENTS_ENV=prod bun poweragents secrets set APPLE_ID --prompt="The Apple Account's email"
-   POWERAGENTS_ENV=prod bun poweragents secrets set APPLE_PASSWORD --prompt="An app-specific password from account.apple.com"
-   POWERAGENTS_ENV=prod bun poweragents secrets set APPLE_TEAM_ID --prompt="The team ID, developer.apple.com → Membership"
+   base64 -i certificate.p12 | POWERAGENTS_ENV=prod bun secrets set APPLE_CERTIFICATE
+   POWERAGENTS_ENV=prod bun secrets set APPLE_CERTIFICATE_PASSWORD --prompt="The .p12's export password"
+   POWERAGENTS_ENV=prod bun secrets set APPLE_SIGNING_IDENTITY --prompt="Developer ID Application: Name (TEAMID)"
+   POWERAGENTS_ENV=prod bun secrets set APPLE_ID --prompt="The Apple Account's email"
+   POWERAGENTS_ENV=prod bun secrets set APPLE_PASSWORD --prompt="An app-specific password from account.apple.com"
+   POWERAGENTS_ENV=prod bun secrets set APPLE_TEAM_ID --prompt="The team ID, developer.apple.com → Membership"
    ```
 
 4. Copy them to the repository secrets:
 
    ```sh
-   POWERAGENTS_ENV=prod bun poweragents secrets run APPLE_CERTIFICATE APPLE_CERTIFICATE_PASSWORD APPLE_SIGNING_IDENTITY \
+   POWERAGENTS_ENV=prod bun secrets run APPLE_CERTIFICATE APPLE_CERTIFICATE_PASSWORD APPLE_SIGNING_IDENTITY \
      APPLE_ID APPLE_PASSWORD APPLE_TEAM_ID -- sh -c '
      printf %s "$APPLE_CERTIFICATE" | gh secret set APPLE_CERTIFICATE
      printf %s "$APPLE_CERTIFICATE_PASSWORD" | gh secret set APPLE_CERTIFICATE_PASSWORD
