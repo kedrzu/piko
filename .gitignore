@@ -37,6 +37,3 @@ CLAUDE.local.md
 
 # Agent scratch: specs, plans, research, command logs
 .context/
-
-# Page snapshots of the Playwright MCP agents use (the `playwright` plugin)
-.playwright-mcp/

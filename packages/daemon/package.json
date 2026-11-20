@@ -26,6 +26,7 @@
         "@nzyme/ioc": "workspace:*",
         "@nzyme/logging": "workspace:*",
         "@nzyme/rpc": "workspace:*",
+        "@nzyme/stealth-browser": "workspace:*",
         "@nzyme/utils": "workspace:*",
         "@openuidev/lang-core": "1.1.1",
         "@poweragents/common": "workspace:*",

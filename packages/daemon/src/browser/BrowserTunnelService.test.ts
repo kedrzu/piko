@@ -8,10 +8,12 @@ import { chromium } from 'playwright';
 import { EnvVariables } from '@nzyme/ioc/helpers/EnvVariables.js';
 import type { Resolved } from '@nzyme/ioc/Injectable.js';
 import { createTestContainer } from '@nzyme/ioc-testing/createTestContainer.js';
+import { createSitePace } from '@nzyme/stealth-browser';
 import { isPlainObject } from '@nzyme/utils/isPlainObject.js';
 import { waitUntil } from '@nzyme/utils/waitUntil.js';
 
 import { BrowserNetworkGuard } from './BrowserNetworkGuard.js';
+import { BrowserPace } from './BrowserPace.js';
 import { BrowserLaunch, BrowserService } from './BrowserService.js';
 import { BrowserTunnelService } from './BrowserTunnelService.js';
 import { ChromiumInstall } from './ChromiumInstall.js';
@@ -22,6 +24,18 @@ const EXECUTABLE = chromium.executablePath();
 const HEADLESS_ARGS = ['--headless=new', '--no-sandbox'];
 const TIMEOUT_MS = 20_000;
 const TOKEN = 'abcdefghijklmnopqrstuvwxyz012345';
+
+/** A site the pace test loads: a page answered 403, a block, and an ordinary page of the same site. */
+const SHOP_URL = 'https://shop.test/';
+const SHOP_BLOCKED_URL = 'https://www.shop.test/blocked';
+/** A plain page the tests serve themselves (`servePages`). */
+const PLAIN_HTML = '<!doctype html><html><body><h1>Shop</h1></body></html>';
+/** A page that writes the identity it reads at its first script to `#identity`. */
+const BRAND_URL = 'https://brand.test/';
+const BRAND_HTML = `<!doctype html><html><body><pre id="identity"></pre><script>
+    const brands = navigator.userAgentData.brands.map(({ brand, version }) => ({ brand, version }));
+    document.getElementById('identity').textContent = JSON.stringify(brands);
+</script></body></html>`;
 
 const cleanups: (() => Promise<void> | void)[] = [];
 
@@ -139,7 +153,7 @@ test('a client drives its page; the daemon own sessions and browser-level events
     expect(client.messages.find(m => m['method'] === 'Page.loadEventFired')?.['sessionId']).toBe(sessionId);
 
     await browser.thumbnail('conv-a');
-    const downloaded = waitForBrowserEvent(browser, 'Browser.downloadProgress');
+    const downloaded = waitForDownload(browser);
     await evaluate(
         client,
         sessionId,
@@ -158,20 +172,7 @@ test('a client drives its page; the daemon own sessions and browser-level events
     await expect(client.call('Browser.close')).rejects.toThrow('not allowed');
 }, 30_000);
 
-test('a closed socket detaches its sessions and leaves its pages', async () => {
-    const { port, browser } = await startTunnel();
-    const client = await connect(port, 'conv-a');
-    const targetId = await createTarget(client);
-    const sessionId = await attach(client, targetId);
-    expect(browser.ownership.getSessionOriginator(sessionId)?.type).toBe('client');
-
-    client.socket.close();
-
-    await waitUntil(() => browser.ownership.getSessionOriginator(sessionId) == null, { timeoutMs: TIMEOUT_MS });
-    expect(browser.ownership.getTargets('conv-a')).toEqual([targetId]);
-}, 30_000);
-
-test('a browser exit closes every socket', async () => {
+test('a browser exit closes every socket with 1011', async () => {
     const { port, stateFolder } = await startTunnel();
     const a = await connect(port, 'conv-a');
     const b = await connect(port, 'conv-b');
@@ -179,13 +180,152 @@ test('a browser exit closes every socket', async () => {
 
     process.kill(await readPid(stateFolder), 'SIGKILL');
 
-    expect((await a.closed).reason).toBe('The browser exited');
-    expect((await b.closed).reason).toBe('The browser exited');
+    expect(await a.closed).toMatchObject({ code: 1011, reason: 'The browser exited' });
+    expect(await b.closed).toMatchObject({ code: 1011, reason: 'The browser exited' });
+}, 30_000);
+
+test('a browser that fails to start closes the socket with 1011', async () => {
+    const { port } = await startTunnel({ executable: '/nonexistent/chrome' });
+
+    const client = await connect(port, 'conv-a');
+
+    expect(await client.closed).toMatchObject({ code: 1011, reason: 'The browser could not start' });
+}, 30_000);
+
+test('what a socket sends while the browser starts is answered once it runs, in order', async () => {
+    const { port, browser } = await startTunnel();
+    const client = await connect(port, 'conv-a');
+    expect(browser.isRunning()).toBe(false);
+
+    const replies: string[] = [];
+    const version = client.call('Browser.getVersion').then(() => replies.push('version'));
+    const created = createTarget(client).then(targetId => {
+        replies.push('created');
+        return targetId;
+    });
+    const targets = client.call('Target.getTargets').then(reply => {
+        replies.push('targets');
+        return targetIdsOf(reply);
+    });
+    await version;
+
+    expect(await targets).toEqual([await created]);
+    expect(replies).toEqual(['version', 'created', 'targets']);
+}, 30_000);
+
+test('an upload takes files of /Poweragents only, staged in the order the agent sent them', async () => {
+    const { port, dataRoot } = await startTunnel();
+    await mkdir(path.join(dataRoot, 'projects'), { recursive: true });
+    await writeFile(path.join(dataRoot, 'projects', 'first.txt'), 'first');
+    await writeFile(path.join(dataRoot, 'projects', 'second.txt'), 'second');
+    const client = await connect(port, 'conv-a');
+    const sessionId = await attach(client, await createTarget(client));
+    await evaluate(client, sessionId, "document.body.innerHTML = '<input type=file id=upload>'; 1");
+    const document = await client.call('DOM.getDocument', {}, sessionId);
+    const rootId = isPlainObject(document) && isPlainObject(document['root']) ? document['root']['nodeId'] : undefined;
+    const found = await client.call('DOM.querySelector', { nodeId: rootId, selector: '#upload' }, sessionId);
+    const nodeId = isPlainObject(found) ? found['nodeId'] : undefined;
+
+    await expect(client.call('DOM.setFileInputFiles', { files: ['/etc/passwd'], nodeId }, sessionId)).rejects.toThrow(
+        'only files inside /Poweragents can be uploaded',
+    );
+    await Promise.all([
+        client.call('DOM.setFileInputFiles', { files: ['/Poweragents/projects/first.txt'], nodeId }, sessionId),
+        client.call('DOM.setFileInputFiles', { files: ['/Poweragents/projects/second.txt'], nodeId }, sessionId),
+    ]);
+
+    expect(
+        await evaluate(client, sessionId, "document.getElementById('upload').files[0].text()", { awaitPromise: true }),
+    ).toBe('second');
+}, 30_000);
+
+test('the pace refuses a site that blocked the agent, in poweragents words, also after the browser relaunched', async () => {
+    const { port, stateFolder } = await startTunnel({ pace: true });
+    const message =
+        'poweragents is pacing shop.test after it blocked or challenged the agent: the next action on it is possible in 5 min.';
+    const client = await connect(port, 'conv-a');
+    const sessionId = await attach(client, await createTarget(client));
+    await servePages(client, sessionId, { [SHOP_BLOCKED_URL]: PLAIN_HTML }, { [SHOP_BLOCKED_URL]: 403 });
+    await client.call('Network.enable', {}, sessionId);
+    await navigate(client, sessionId, SHOP_BLOCKED_URL);
+
+    await expect(client.call('Page.navigate', { url: SHOP_URL }, sessionId)).rejects.toThrow(message);
+
+    process.kill(await readPid(stateFolder), 'SIGKILL');
+    await client.closed;
+    const next = await connect(port, 'conv-a');
+    await expect(next.call('Target.createTarget', { url: SHOP_URL })).rejects.toThrow(message);
+}, 30_000);
+
+test('a page names itself Google Chrome, and a client cannot change the identity', async () => {
+    const { port } = await startTunnel();
+    const client = await connect(port, 'conv-a');
+    const version = await client.call('Browser.getVersion');
+    const product = isPlainObject(version) ? String(version['product']) : '';
+    const major = product.replace(/^\w+\//, '').split('.')[0] ?? '';
+    const sessionId = await attach(client, await createTarget(client));
+    await servePages(client, sessionId, { [BRAND_URL]: BRAND_HTML });
+
+    for (const method of ['Emulation.setUserAgentOverride', 'Network.setUserAgentOverride']) {
+        await expect(client.call(method, { userAgent: 'Agent/1.0' }, sessionId)).rejects.toThrow(
+            "the browser's identity is set by poweragents",
+        );
+    }
+    await navigate(client, sessionId, BRAND_URL);
+
+    const brands: unknown = JSON.parse(
+        String(await evaluate(client, sessionId, "document.getElementById('identity').textContent")),
+    );
+    expect(brands).toContainEqual({ brand: 'Google Chrome', version: major });
+}, 30_000);
+
+test('bringToFront and the thumbnail take the conversation last-used page, a fresh popup included', async () => {
+    const { port, browser, focusKeeper } = await startTunnel();
+    const a = await connect(port, 'conv-a');
+    const b = await connect(port, 'conv-b');
+    const first = await createTarget(a);
+    const firstSession = await attach(a, first);
+    const second = await createTarget(a);
+    const secondSession = await attach(a, second);
+    const other = await createTarget(b);
+    await evaluate(a, secondSession, "document.body.style.background = 'blue'; 1");
+    await evaluate(a, firstSession, "document.body.style.background = 'red'; 1");
+
+    const firstThumbnail = await browser.thumbnail('conv-a');
+    expect(await browser.bringToFront('conv-a')).toBe(true);
+    expect(await getWindowState(browser, first)).toBe('normal');
+    expect(await getWindowState(browser, second)).toBe('minimized');
+    expect(await getWindowState(browser, other)).toBe('minimized');
+    await browser.putBack('conv-a');
+    expect(await getWindowState(browser, first)).toBe('minimized');
+    expect(focusKeeper.restore).toHaveBeenCalled();
+
+    await evaluate(a, secondSession, '1');
+    const secondThumbnail = await browser.thumbnail('conv-a');
+    expect(firstThumbnail?.slice(0, 3)).toEqual(new Uint8Array([0xff, 0xd8, 0xff]));
+    expect(secondThumbnail?.slice(0, 3)).toEqual(new Uint8Array([0xff, 0xd8, 0xff]));
+    expect(Buffer.from(firstThumbnail ?? []).equals(Buffer.from(secondThumbnail ?? []))).toBe(false);
+
+    const run = await browser.start();
+    const restores = focusKeeper.restore.mock.calls.length;
+    await evaluate(a, firstSession, "window.open('about:blank', '_blank', 'popup'); 1", { userGesture: true });
+    await waitUntil(() => run.groups.targets('conv-a').length === 3, { timeoutMs: TIMEOUT_MS });
+    const popup = run.groups.targets('conv-a').find(targetId => targetId !== first && targetId !== second) ?? '';
+    await waitUntil(() => focusKeeper.restore.mock.calls.length > restores, { timeoutMs: TIMEOUT_MS });
+    expect(await getWindowState(browser, popup)).toBe('minimized');
+
+    expect(await browser.bringToFront('conv-a')).toBe(true);
+    expect(await getWindowState(browser, popup)).toBe('normal');
+    expect(await getWindowState(browser, first)).toBe('minimized');
+    expect(await browser.bringToFront('nobody')).toBe(false);
+    expect(await browser.thumbnail('nobody')).toBeNull();
 }, 30_000);
 
 /** Options of `startTunnel`. */
 interface StartTunnelOptions {
     executable?: string | null;
+    /** Holds sites to the real pace; without it every command goes at once, so tests load pages back to back. */
+    pace?: boolean;
 }
 
 async function startTunnel(options: StartTunnelOptions = {}) {
@@ -212,14 +352,26 @@ async function startTunnel(options: StartTunnelOptions = {}) {
         },
         getExecutable: () => executable,
     });
-    container.set(FocusKeeper, { start: mock(() => {}), restore: mock(() => {}) });
+    const focusKeeper = { start: mock(() => {}), restore: mock(() => {}) };
+    container.set(FocusKeeper, focusKeeper);
     container.set(BrowserLaunch, { proxyPort: proxy.port, extraArgs: HEADLESS_ARGS });
+    if (!options.pace) {
+        container.set(BrowserPace, createSitePace({ intervalMs: 0 }));
+    }
 
     const browser = container.resolve(BrowserService);
     const tunnel = container.resolve(BrowserTunnelService).listen(0);
     cleanups.push(() => killBrowser(stateFolder));
     cleanups.push(() => tunnel.close());
-    return { port: tunnel.port, browser, stateFolder, tokenFile, ensureCalls: () => ensured };
+    return {
+        port: tunnel.port,
+        browser,
+        focusKeeper,
+        stateFolder,
+        dataRoot: path.join(work, 'data'),
+        tokenFile,
+        ensureCalls: () => ensured,
+    };
 }
 
 /** A tunnel client as agent-browser is one: a WebSocket with the bearer token and no Origin. */
@@ -321,6 +473,58 @@ async function evaluate(client: TestClient, sessionId: string, expression: strin
     return isPlainObject(result) ? result['value'] : undefined;
 }
 
+/**
+ * Intercepts the page's requests on `sessionId` with `Fetch` and answers each from `pages` by URL, with its status
+ * from `statuses` (200 by default), a 404 the rest; enables Page for its load events.
+ */
+async function servePages(
+    client: TestClient,
+    sessionId: string,
+    pages: Record<string, string>,
+    statuses: Record<string, number> = {},
+) {
+    client.socket.addEventListener('message', event => {
+        const message: unknown = JSON.parse(String(event.data));
+        if (
+            !isPlainObject(message) ||
+            message['method'] !== 'Fetch.requestPaused' ||
+            !isPlainObject(message['params'])
+        ) {
+            return;
+        }
+        const { requestId, request } = message['params'];
+        const pausedOn = typeof message['sessionId'] === 'string' ? message['sessionId'] : sessionId;
+        const url = isPlainObject(request) ? request['url'] : undefined;
+        const html = typeof url === 'string' && Object.hasOwn(pages, url) ? pages[url] : undefined;
+        const status = typeof url === 'string' ? statuses[url] : undefined;
+        void client.call(
+            'Fetch.fulfillRequest',
+            {
+                requestId,
+                responseCode: html == null ? 404 : (status ?? 200),
+                responseHeaders: [
+                    {
+                        name: 'Content-Type',
+                        value: typeof url === 'string' && url.endsWith('.js') ? 'text/javascript' : 'text/html',
+                    },
+                ],
+                body: Buffer.from(html ?? '').toString('base64'),
+            },
+            pausedOn,
+        );
+    });
+    await client.call('Fetch.enable', { patterns: [{ urlPattern: 'https://*.test*' }] }, sessionId);
+    await client.call('Page.enable', {}, sessionId);
+}
+
+async function navigate(client: TestClient, sessionId: string, url: string) {
+    const loads = client.messages.filter(m => m['method'] === 'Page.loadEventFired').length;
+    await client.call('Page.navigate', { url }, sessionId);
+    await waitUntil(() => client.messages.filter(m => m['method'] === 'Page.loadEventFired').length > loads, {
+        timeoutMs: TIMEOUT_MS,
+    });
+}
+
 function targetIdsOf(reply: unknown) {
     const infos = isPlainObject(reply) && Array.isArray(reply['targetInfos']) ? reply['targetInfos'] : [];
     return infos.map((info: unknown) => (isPlainObject(info) ? info['targetId'] : undefined));
@@ -342,13 +546,25 @@ function mentions(client: TestClient, id: string) {
     return client.messages.some(m => m['method'] != null && JSON.stringify(m).includes(id));
 }
 
-function waitForBrowserEvent(browser: Resolved<typeof BrowserService>, method: string) {
+async function getWindowState(browser: Resolved<typeof BrowserService>, targetId: string) {
+    const reply = await browser.send('Browser.getWindowForTarget', { targetId });
+    const bounds = isPlainObject(reply) ? reply['bounds'] : undefined;
+    return isPlainObject(bounds) ? bounds['windowState'] : undefined;
+}
+
+/** Resolves once a download of the running browser completed. */
+async function waitForDownload(browser: Resolved<typeof BrowserService>) {
+    const run = await browser.start();
     return new Promise<void>((resolve, reject) => {
-        const timer = setTimeout(() => reject(new Error(`No ${method}`)), TIMEOUT_MS);
-        browser.event.on(function listener(event) {
-            if (event.method === method && isPlainObject(event.params) && event.params['state'] === 'completed') {
+        const timer = setTimeout(() => reject(new Error('No completed download')), TIMEOUT_MS);
+        const unsubscribe = run.onEvent(event => {
+            if (
+                event.method === 'Browser.downloadProgress' &&
+                isPlainObject(event.params) &&
+                event.params['state'] === 'completed'
+            ) {
                 clearTimeout(timer);
-                browser.event.off(listener);
+                unsubscribe();
                 resolve();
             }
         });

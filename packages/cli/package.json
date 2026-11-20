@@ -1,0 +1,20 @@
+{
+    "name": "@poweragents/cli",
+    "version": "0.0.0",
+    "private": true,
+    "description": "The repo's developer CLI, run as `bun poweragents …`: the secrets and the pen design file commands",
+    "bin": {
+        "poweragents": "src/cli.ts"
+    },
+    "type": "module",
+    "dependencies": {
+        "@nzyme/cli-core": "workspace:*",
+        "@nzyme/ioc": "workspace:*",
+        "@nzyme/pen": "workspace:*",
+        "@nzyme/secrets": "workspace:*",
+        "@poweragents/secrets": "workspace:*"
+    },
+    "devDependencies": {
+        "@nzyme/tsconfig": "workspace:*"
+    }
+}

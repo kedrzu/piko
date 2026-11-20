@@ -1,21 +1,23 @@
-import { randomUUID } from 'node:crypto';
 import path from 'node:path';
+
+import type { ServerWebSocket } from 'bun';
 
 import { defineService } from '@nzyme/ioc/Service.js';
 import { Logger } from '@nzyme/logging/Logger.js';
+import type { CdpClient } from '@nzyme/stealth-browser';
 
 import { BROWSER_TUNNEL_PORT, POWERAGENTS_DATA_ROOT, POWERAGENTS_LIMA_HOME } from '../env.js';
 import { SandboxTokenCheckCommand } from '../sandbox/SandboxTokenCheckCommand.js';
 import { BrowserService } from './BrowserService.js';
+import type { AgentBrowser } from './BrowserService.js';
 import { ChromiumInstall } from './ChromiumInstall.js';
-import { connectTunnelClient } from './connectTunnelClient.js';
-import type { TunnelClient } from './connectTunnelClient.js';
 
 /**
  * The WebSocket endpoint the agent's CLI inside the sandbox drives the browser through (ADR
  * `docs/decisions/agent-browser-over-one-pipe.md`): `ws://<gateway>/session/<conversation id>` with the sandbox's
- * bearer token. Every socket is multiplexed over the browser's one pipe and sees only its conversation's pages and the
- * sessions it opened itself.
+ * bearer token. Every socket is a client of the browser's run with its conversation as the group, so it sees only its
+ * conversation's pages and the sessions it opened itself. The first socket starts the browser; what a socket sends
+ * meanwhile waits for the start, and a socket whose browser fails to start or exits is closed with 1011.
  */
 export interface BrowserTunnelServiceShape {
     /** Starts the tunnel on loopback; `port` defaults to `BROWSER_TUNNEL_PORT` (tests pass `0` for a free one). */
@@ -32,10 +34,15 @@ export interface BrowserTunnelServer {
 
 /** What an accepted socket carries from its upgrade. */
 interface TunnelSocketData {
-    clientId: string;
     conversationId: string;
-    client?: TunnelClient;
+    /** Messages that came before the browser started, in order; handed to the client once it is connected. */
+    buffered: string[];
+    client?: CdpClient;
+    closed: boolean;
 }
+
+/** WebSocket close code: the server met a condition it cannot go on from. */
+const CLOSE_SERVER_ERROR = 1011;
 
 /** The only path a socket may open: an OpenCode session id (`ses_…`) names the conversation. */
 const SESSION_PATH = /^\/session\/([\w-]{1,128})$/;
@@ -64,7 +71,7 @@ export const BrowserTunnelService = defineService({
                     if (checked instanceof Response) {
                         return checked;
                     }
-                    const data: TunnelSocketData = { clientId: randomUUID(), conversationId: checked };
+                    const data: TunnelSocketData = { conversationId: checked, buffered: [], closed: false };
                     if (self.upgrade(request, { data })) {
                         return undefined;
                     }
@@ -72,24 +79,19 @@ export const BrowserTunnelService = defineService({
                 },
                 websocket: {
                     open(socket) {
-                        socket.data.client = connectTunnelClient({
-                            clientId: socket.data.clientId,
-                            conversationId: socket.data.conversationId,
-                            socket,
-                            browser,
-                            dataRoot,
-                            uploadsFolder,
-                            logger,
-                        });
+                        void connectClient(socket);
                     },
                     message(socket, message) {
-                        if (typeof message === 'string') {
-                            socket.data.client?.receive(message);
-                        } else {
+                        if (typeof message !== 'string') {
                             socket.close(1003, 'CDP messages are text');
+                        } else if (socket.data.client) {
+                            socket.data.client.receive(message);
+                        } else {
+                            socket.data.buffered.push(message);
                         }
                     },
                     close(socket) {
+                        socket.data.closed = true;
                         socket.data.client?.close();
                     },
                 },
@@ -101,6 +103,29 @@ export const BrowserTunnelService = defineService({
             }
             logger.info('The browser tunnel is listening', { port: boundPort });
             return { port: boundPort, close: () => server.stop(true) };
+        }
+
+        /** Starts the browser, then connects the socket to it and hands over what it sent meanwhile. */
+        async function connectClient(socket: ServerWebSocket<TunnelSocketData>) {
+            let run: AgentBrowser;
+            try {
+                run = await browser.start();
+            } catch (error) {
+                logger.warn('The browser could not start for a tunnel client', { error });
+                socket.close(CLOSE_SERVER_ERROR, 'The browser could not start');
+                return;
+            }
+            if (socket.data.closed) {
+                return;
+            }
+            const client = run.connect(socket, {
+                group: socket.data.conversationId,
+                data: { dataRoot, uploadsFolder },
+            });
+            socket.data.client = client;
+            for (const text of socket.data.buffered.splice(0)) {
+                client.receive(text);
+            }
         }
 
         /** The conversation id of an upgrade that may go ahead, or the response refusing it. */

@@ -1,12 +1,11 @@
-import { spawn } from 'node:child_process';
-import type { ChildProcess } from 'node:child_process';
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
-import { Readable, Writable } from 'node:stream';
 
 import { defineInterface } from '@nzyme/ioc/Interface.js';
 import { defineService } from '@nzyme/ioc/Service.js';
 import { Logger } from '@nzyme/logging/Logger.js';
+import { launchStealthBrowser } from '@nzyme/stealth-browser';
+import type { CdpEvent, StealthBrowser } from '@nzyme/stealth-browser';
 import { createEventEmitter } from '@nzyme/utils/createEventEmitter.js';
 import type { EventEmitter } from '@nzyme/utils/createEventEmitter.js';
 import { createSingleRunner } from '@nzyme/utils/createSingleRunner.js';
@@ -17,48 +16,46 @@ import { withTimeout } from '@nzyme/utils/withTimeout.js';
 import { BROWSER_PROXY_PORT, DOWNLOADS_FOLDER, POWERAGENTS_DATA_ROOT, POWERAGENTS_LIMA_HOME } from '../env.js';
 import { isErrorCode } from '../utils/isErrorCode.js';
 import { isRealFolder } from '../utils/isRealFolder.js';
+import { BrowserPace } from './BrowserPace.js';
 import { buildChromiumArgs } from './buildChromiumArgs.js';
-import { CdpError } from './CdpTypes.js';
-import type { CdpErrorReply, CdpEvent } from './CdpTypes.js';
+import { checkProductRequest } from './checkProductRequest.js';
+import type { ProductClientData } from './checkProductRequest.js';
 import { ChromiumInstall } from './ChromiumInstall.js';
-import { createTargetOwnership } from './createTargetOwnership.js';
-import type { TargetOwnership } from './createTargetOwnership.js';
 import { FocusKeeper } from './FocusKeeper.js';
 import { moveDownload } from './moveDownload.js';
-import { readTargetInfo } from './readTargetInfo.js';
-import { splitPipeFrames } from './splitPipeFrames.js';
+
+/** One run of the agent's browser, which tunnel clients connect to with their conversation as the group. */
+export type AgentBrowser = StealthBrowser<ProductClientData>;
 
 /**
- * The agent's one browser (ADR `docs/decisions/agent-browser-over-one-pipe.md`): a Chrome for Testing the daemon
- * launches with no window and drives over `--remote-debugging-pipe`, so no other local process can reach it. Every
- * client of the tunnel and the daemon itself share this one connection; `ownership` says which pages and sessions are
- * whose. Popups are minimized at once, and downloads land in the data root's Downloads folder.
+ * The agent's one browser (ADR `docs/decisions/agent-browser-over-one-pipe.md`): a Chrome for Testing launched with no
+ * window by `@nzyme/stealth-browser`, which drives it over `--remote-debugging-pipe`, so no other local process can
+ * reach it, keeps each conversation to its own pages and names every page and worker Google Chrome. Each run judges
+ * every client command with `checkProductRequest` and holds every site to the one `BrowserPace`. Popups are minimized
+ * at once, and downloads land in the data root's Downloads folder.
  */
 export interface BrowserServiceShape {
     /**
-     * Launches the browser unless it runs, and resolves once downloads are pinned and targets are discovered, so nothing
-     * reaches the browser before it is configured. Calls made meanwhile join the launch. Rejects while the browser is
-     * not installed, or when the launch fails; the next call tries again.
+     * Launches the browser unless it runs, and resolves with the run once downloads are pinned, so nothing reaches the
+     * browser before it is configured. Calls made meanwhile join the launch. Rejects while the browser is not
+     * installed, or when the launch fails; the next call tries again.
      */
-    start(): Promise<void>;
+    start(): Promise<AgentBrowser>;
     /** Whether a started browser is up; `false` again once it exits. */
     isRunning(): boolean;
     /**
-     * Sends a CDP command, to a session when `sessionId` is given, and resolves with its unchecked `result`. Rejects
-     * with `CdpError` when the browser answers with an error, and with a plain `Error` while the browser is not running
-     * or when it exits before answering.
+     * Sends a CDP command on the daemon's own channel, which no client sees, to a session when `sessionId` is given;
+     * resolves with its unchecked `result`. Rejects with `CdpError` when the browser answers with an error, and with a
+     * plain `Error` while the browser is not running or when it exits before answering.
      */
     send(method: string, params?: object, sessionId?: string): Promise<unknown>;
-    /** Every CDP event, after `ownership` has seen it. */
-    event: EventEmitter<[event: CdpEvent]>;
-    /** The browser exited: pending calls were rejected and ownership cleared. */
+    /** The browser exited: pending calls were rejected and every client's socket closed. */
     exited: EventEmitter<[]>;
-    /** Which conversation owns each page and which originator each session; reset when the browser exits. */
-    ownership: TargetOwnership;
     /**
-     * Brings the conversation's last-used page (its most recently created one when nothing was used yet) to the front:
-     * its window is restored from minimized and the browser activated, for when the person must step in. Never touches
-     * another conversation's window. Resolves `false`, doing nothing, when the conversation has no page.
+     * Brings the conversation's last-used page (a popup it just opened, or its newest page when nothing was used yet) to
+     * the front: its window is restored from minimized and the browser activated, for when the person must step in.
+     * Never touches another conversation's window. Resolves `false`, doing nothing, when the conversation has no page or
+     * the browser is not running.
      */
     bringToFront(conversationId: string): Promise<boolean>;
     /** Minimizes the conversation's last-used page's window again and gives focus back to the person's app. */
@@ -86,28 +83,8 @@ export const BrowserLaunch = defineInterface<BrowserLaunchOptions>({
     default: () => ({ proxyPort: BROWSER_PROXY_PORT, extraArgs: [] }),
 });
 
-/** One launched browser and what belongs to it alone. */
-interface BrowserRun {
-    child: ChildProcess;
-    pipe: Writable;
-    pending: Map<number, PendingCall>;
-    /** Suggested file names of downloads in progress, by guid. */
-    downloads: Map<string, string>;
-    ready: boolean;
-    /** The end of the browser's stderr, logged when it exits. */
-    stderrTail: string;
-}
-
-/** A call waiting for its reply. */
-interface PendingCall {
-    resolve(result: unknown): void;
-    reject(error: Error): void;
-}
-
 /** How long a stale browser gets to exit after each signal. */
 const STALE_EXIT_TIMEOUT_MS = 5000;
-/** How much of the browser's stderr is kept for the exit log. */
-const STDERR_TAIL_LENGTH = 2000;
 /** JPEG quality of a thumbnail: small enough to ship often, sharp enough to recognise the page. */
 const THUMBNAIL_QUALITY = 60;
 /** How long a thumbnail may take before the handoff goes without one. */
@@ -121,31 +98,29 @@ export const BrowserService = defineService({
         logger: Logger,
         install: ChromiumInstall,
         focusKeeper: FocusKeeper,
+        pace: BrowserPace,
         launchOptions: BrowserLaunch,
         limaHome: POWERAGENTS_LIMA_HOME,
         dataRoot: POWERAGENTS_DATA_ROOT,
     },
-    setup({ logger, install, focusKeeper, launchOptions, limaHome, dataRoot }): BrowserServiceShape {
+    setup({ logger, install, focusKeeper, pace, launchOptions, limaHome, dataRoot }): BrowserServiceShape {
         const stateFolder = path.dirname(limaHome);
         const profileFolder = path.join(stateFolder, 'browser-profile');
         const browserDownloadsFolder = path.join(stateFolder, 'browser-downloads');
         const pidFile = path.join(stateFolder, 'browser.pid');
         const downloadsFolder = path.join(dataRoot, DOWNLOADS_FOLDER);
 
-        const ownership = createTargetOwnership();
-        const eventEmitter = createEventEmitter<[event: CdpEvent]>();
         const exitedEmitter = createEventEmitter();
         const launchRunner = createSingleRunner({ handler: launch });
-        let run: BrowserRun | null = null;
-        let lastId = 0;
+        /** Suggested file names of downloads in progress, by guid. */
+        const downloads = new Map<string, string>();
+        let run: AgentBrowser | null = null;
 
         return {
             start: () => launchRunner.execute(),
-            isRunning: () => run?.ready === true,
+            isRunning: () => run != null,
             send,
-            event: eventEmitter.event,
             exited: exitedEmitter.event,
-            ownership,
             bringToFront,
             putBack,
             thumbnail,
@@ -153,33 +128,36 @@ export const BrowserService = defineService({
         };
 
         async function bringToFront(conversationId: string) {
-            const targetId = ownership.lastUsed(conversationId);
-            if (targetId == null) {
+            const current = run;
+            const targetId = current?.groups.lastUsed(conversationId);
+            if (current == null || targetId == null) {
                 return false;
             }
-            await setWindowState(targetId, 'normal');
-            await withDaemonSession(targetId, sessionId => send('Page.bringToFront', {}, sessionId));
+            await setWindowState(current, targetId, 'normal');
+            await withOwnSession(current, targetId, sessionId => current.send('Page.bringToFront', {}, sessionId));
             return true;
         }
 
         async function putBack(conversationId: string) {
-            const targetId = ownership.lastUsed(conversationId);
-            if (targetId != null) {
-                await setWindowState(targetId, 'minimized');
+            const current = run;
+            const targetId = current?.groups.lastUsed(conversationId);
+            if (current != null && targetId != null) {
+                await setWindowState(current, targetId, 'minimized');
             }
             focusKeeper.restore();
         }
 
         async function thumbnail(conversationId: string) {
-            const targetId = ownership.lastUsed(conversationId);
-            if (targetId == null || !run?.ready) {
+            const current = run;
+            const targetId = current?.groups.lastUsed(conversationId);
+            if (current == null || targetId == null) {
                 return null;
             }
             // A page that renders no frame (the browser has nothing to paint it with) would leave the call waiting for
             // good; the handoff UI shows no thumbnail instead.
             const reply = await withTimeout({
-                operation: withDaemonSession(targetId, sessionId =>
-                    send('Page.captureScreenshot', { format: 'jpeg', quality: THUMBNAIL_QUALITY }, sessionId),
+                operation: withOwnSession(current, targetId, sessionId =>
+                    current.send('Page.captureScreenshot', { format: 'jpeg', quality: THUMBNAIL_QUALITY }, sessionId),
                 ),
                 timeoutMs: THUMBNAIL_TIMEOUT_MS,
                 onTimeout: () => {
@@ -204,51 +182,44 @@ export const BrowserService = defineService({
             }
         }
 
-        async function setWindowState(targetId: string, windowState: 'normal' | 'minimized') {
-            const window = await send('Browser.getWindowForTarget', { targetId });
+        async function setWindowState(current: AgentBrowser, targetId: string, windowState: 'normal' | 'minimized') {
+            const window = await current.send('Browser.getWindowForTarget', { targetId });
             const windowId = isPlainObject(window) ? window['windowId'] : undefined;
             if (typeof windowId !== 'number') {
                 throw new TypeError('Browser.getWindowForTarget gave no window id');
             }
-            await send('Browser.setWindowBounds', { windowId, bounds: { windowState } });
+            await current.send('Browser.setWindowBounds', { windowId, bounds: { windowState } });
         }
 
         /** Runs `action` on a session of the daemon's own, so its events never reach a client; detaches afterwards. */
-        async function withDaemonSession<T>(targetId: string, action: (sessionId: string) => Promise<T>) {
-            const release = ownership.expectAttach({ type: 'daemon' }, targetId);
-            let reply: unknown;
-            try {
-                reply = await send('Target.attachToTarget', { targetId, flatten: true });
-            } finally {
-                release();
-            }
-            const sessionId = isPlainObject(reply) ? reply['sessionId'] : undefined;
-            if (typeof sessionId !== 'string') {
-                throw new TypeError('Target.attachToTarget gave no session id');
-            }
-            ownership.claimSession({ type: 'daemon' }, sessionId, targetId);
+        async function withOwnSession<T>(
+            current: AgentBrowser,
+            targetId: string,
+            action: (sessionId: string) => Promise<T>,
+        ) {
+            const sessionId = await current.attach(targetId);
             try {
                 return await action(sessionId);
             } finally {
-                await send('Target.detachFromTarget', { sessionId }).catch((error: unknown) =>
-                    logger.debug('A daemon session could not be detached', { error }),
-                );
+                await current
+                    .send('Target.detachFromTarget', { sessionId })
+                    .catch((error: unknown) => logger.debug('A daemon session could not be detached', { error }));
             }
         }
 
         function send(method: string, params?: object, sessionId?: string) {
-            if (!run?.ready) {
+            if (run == null) {
                 return Promise.reject(new Error('The browser is not running'));
             }
-            return call(run, method, params, sessionId);
+            return run.send(method, params, sessionId);
         }
 
         async function launch() {
             if (run) {
-                return;
+                return run;
             }
-            const executable = install.getExecutable();
-            if (!executable) {
+            const executablePath = install.getExecutable();
+            if (!executablePath) {
                 throw new Error('The browser is not installed yet');
             }
 
@@ -258,163 +229,77 @@ export const BrowserService = defineService({
             await mkdir(profileFolder, { recursive: true });
             await mkdir(browserDownloadsFolder, { recursive: true });
 
-            const current = await spawnBrowser(executable);
-            run = current;
-            if (current.child.pid != null) {
-                await writeFile(pidFile, String(current.child.pid));
-            }
+            const current = await launchStealthBrowser<ProductClientData>({
+                executablePath,
+                userDataDir: profileFolder,
+                args: buildChromiumArgs({ proxyPort: launchOptions.proxyPort, extraArgs: launchOptions.extraArgs }),
+                policy: checkProductRequest,
+                pace,
+                logger,
+            });
+            current.onEvent(event => onEvent(current, event));
+            void current.exited.then(() => onExit(current));
+            await writeFile(pidFile, String(current.pid));
 
             try {
-                await call(current, 'Browser.setDownloadBehavior', {
+                await current.send('Browser.setDownloadBehavior', {
                     behavior: 'allowAndName',
                     downloadPath: browserDownloadsFolder,
                     eventsEnabled: true,
                 });
-                await call(current, 'Target.setDiscoverTargets', { discover: true });
             } catch (error) {
                 logger.error('The browser could not be configured', { error });
-                current.child.kill('SIGKILL');
+                await current.close();
                 throw error;
             }
-            current.ready = true;
-            logger.info('The browser started', { pid: current.child.pid });
-        }
-
-        async function spawnBrowser(executable: string): Promise<BrowserRun> {
-            const args = buildChromiumArgs({
-                userDataDir: profileFolder,
-                proxyPort: launchOptions.proxyPort,
-                extraArgs: launchOptions.extraArgs,
-            });
-            // fd 3 is what the browser reads commands from, fd 4 where it writes replies and events.
-            const child = spawn(executable, args, { stdio: ['ignore', 'ignore', 'pipe', 'pipe', 'pipe'] });
-            await new Promise<void>((resolve, reject) => {
-                child.once('spawn', resolve);
-                child.once('error', reject);
-            });
-            child.on('error', error => logger.error('The browser process failed', { error }));
-
-            const [, , stderr, pipe, input] = child.stdio;
-            if (!(pipe instanceof Writable) || !(input instanceof Readable) || !(stderr instanceof Readable)) {
-                child.kill('SIGKILL');
-                throw new Error('The browser was spawned without its pipes');
-            }
-
-            const current: BrowserRun = {
-                child,
-                pipe,
-                pending: new Map(),
-                downloads: new Map(),
-                ready: false,
-                stderrTail: '',
-            };
-            pipe.on('error', error => logger.debug('The pipe to the browser failed', { error }));
-            stderr.on('data', (chunk: Buffer) => {
-                current.stderrTail = (current.stderrTail + chunk.toString()).slice(-STDERR_TAIL_LENGTH);
-            });
-            let rest = Buffer.alloc(0);
-            input.on('data', (chunk: Buffer) => {
-                const split = splitPipeFrames(rest.length > 0 ? Buffer.concat([rest, chunk]) : chunk);
-                rest = Buffer.from(split.rest);
-                for (const frame of split.frames) {
-                    handleFrame(current, frame);
-                }
-            });
-            child.once('exit', (code, signal) => onExit(current, code, signal));
+            run = current;
             return current;
         }
 
-        function call(current: BrowserRun, method: string, params?: object, sessionId?: string) {
-            const id = ++lastId;
-            return new Promise<unknown>((resolve, reject) => {
-                current.pending.set(id, { resolve, reject });
-                current.pipe.write(`${JSON.stringify({ id, method, params: params ?? {}, sessionId })}\0`);
-            });
-        }
-
-        function handleFrame(current: BrowserRun, frame: string) {
-            let message: unknown;
-            try {
-                message = JSON.parse(frame);
-            } catch (error) {
-                logger.warn('The browser sent a malformed message', { error });
-                return;
-            }
-            if (!isPlainObject(message)) {
-                return;
-            }
-
-            const { id, method, sessionId } = message;
-            if (typeof id === 'number') {
-                const pending = current.pending.get(id);
-                current.pending.delete(id);
-                const error = readErrorReply(message['error']);
-                if (error) {
-                    pending?.reject(new CdpError(error));
-                } else {
-                    pending?.resolve(message['result']);
-                }
-                return;
-            }
-            if (typeof method === 'string') {
-                dispatchEvent(current, {
-                    method,
-                    params: message['params'],
-                    sessionId: typeof sessionId === 'string' ? sessionId : undefined,
-                });
-            }
-        }
-
-        function dispatchEvent(current: BrowserRun, event: CdpEvent) {
-            ownership.observe(event);
+        function onEvent(current: AgentBrowser, event: CdpEvent) {
             switch (event.method) {
                 case 'Target.targetCreated': {
-                    const info = readTargetInfo(event.params);
-                    if (info?.type === 'page' && info.openerId != null) {
-                        void minimizePopup(current, info.targetId);
+                    const targetInfo = isPlainObject(event.params) ? event.params['targetInfo'] : undefined;
+                    if (
+                        isPlainObject(targetInfo) &&
+                        targetInfo['type'] === 'page' &&
+                        typeof targetInfo['openerId'] === 'string' &&
+                        typeof targetInfo['targetId'] === 'string'
+                    ) {
+                        void minimizePopup(current, targetInfo['targetId']);
                     }
                     break;
                 }
                 case 'Browser.downloadWillBegin':
-                    onDownloadBegin(current, event.params);
+                    onDownloadBegin(event.params);
                     break;
                 case 'Browser.downloadProgress':
-                    onDownloadProgress(current, event.params);
+                    onDownloadProgress(event.params);
                     break;
-            }
-            try {
-                eventEmitter.emit(event);
-            } catch (error) {
-                logger.error('A browser event listener failed', { error, method: event.method });
             }
         }
 
         /** A popup opens a normal window and activates the browser: minimize it and give focus back at once. */
-        async function minimizePopup(current: BrowserRun, targetId: string) {
+        async function minimizePopup(current: AgentBrowser, targetId: string) {
             try {
-                const window = await call(current, 'Browser.getWindowForTarget', { targetId });
-                const windowId = isPlainObject(window) ? window['windowId'] : undefined;
-                if (typeof windowId !== 'number') {
-                    throw new TypeError('Browser.getWindowForTarget gave no window id');
-                }
-                await call(current, 'Browser.setWindowBounds', { windowId, bounds: { windowState: 'minimized' } });
+                await setWindowState(current, targetId, 'minimized');
             } catch (error) {
                 logger.warn('A popup could not be minimized', { error });
             }
             focusKeeper.restore();
         }
 
-        function onDownloadBegin(current: BrowserRun, params: unknown) {
+        function onDownloadBegin(params: unknown) {
             if (!isPlainObject(params)) {
                 return;
             }
             const { guid, suggestedFilename } = params;
             if (typeof guid === 'string' && DOWNLOAD_GUID.test(guid)) {
-                current.downloads.set(guid, typeof suggestedFilename === 'string' ? suggestedFilename : '');
+                downloads.set(guid, typeof suggestedFilename === 'string' ? suggestedFilename : '');
             }
         }
 
-        function onDownloadProgress(current: BrowserRun, params: unknown) {
+        function onDownloadProgress(params: unknown) {
             if (!isPlainObject(params)) {
                 return;
             }
@@ -426,8 +311,8 @@ export const BrowserService = defineService({
             ) {
                 return;
             }
-            const suggestedName = current.downloads.get(guid) ?? '';
-            current.downloads.delete(guid);
+            const suggestedName = downloads.get(guid) ?? '';
+            downloads.delete(guid);
             const source = path.join(browserDownloadsFolder, guid);
             if (state === 'completed') {
                 void saveDownload(source, suggestedName);
@@ -451,17 +336,12 @@ export const BrowserService = defineService({
             }
         }
 
-        function onExit(current: BrowserRun, code: number | null, signal: NodeJS.Signals | null) {
+        function onExit(current: AgentBrowser) {
             if (run !== current) {
                 return;
             }
             run = null;
-            for (const pending of current.pending.values()) {
-                pending.reject(new Error('The browser exited'));
-            }
-            current.pending.clear();
-            ownership.clear();
-            logger.warn('The browser exited', { code, signal, stderr: current.stderrTail.trim() });
+            downloads.clear();
             exitedEmitter.emit();
         }
 
@@ -517,18 +397,6 @@ export const BrowserService = defineService({
         }
     },
 });
-
-function readErrorReply(error: unknown): CdpErrorReply | null {
-    if (!isPlainObject(error)) {
-        return null;
-    }
-    const { code, message, data } = error;
-    return {
-        code: typeof code === 'number' ? code : 0,
-        message: typeof message === 'string' ? message : 'The browser answered with an error',
-        data: typeof data === 'string' ? data : undefined,
-    };
-}
 
 function isAlive(pid: number) {
     try {

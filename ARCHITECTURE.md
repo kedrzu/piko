@@ -29,6 +29,8 @@ and its reason, is in `docs/design/poweragents/`.
 |`@poweragents/app`|`packages/app`|The Nuxt app: screens by feature, routes, the IoC container and the services that talk to the daemon.|
 |`@poweragents/desktop`|`packages/desktop`|The Tauri shell around the app's build and its native commands.|
 |`@poweragents/e2e`|`packages/e2e`|Playwright tests of the built app, and the screen harnesses.|
+|`@poweragents/cli`|`packages/cli`|The repo's developer CLI, `bun poweragents …`: the `secrets` commands (the provider over `@poweragents/secrets`) and the `pen` commands. Bun runs it from source.|
+|`@poweragents/secrets`|`packages/secrets`|The secret declarations (`src/secrets.ts`, declarations only), and the Bitwarden store keyed by `POWERAGENTS_ENV`. No TypeScript reads a secret at runtime yet; when one does, it calls `loadSecretsConfig(container, [container.resolve(PoweragentsSecretStore)])` from `@nzyme/secrets`. Today only external tools (Tauri, `codesign`, `gh`, CI) read them, through `bun secrets run` or job `env`.|
 
 ## Builds
 
@@ -100,7 +102,7 @@ The Vue packages are not emitted: `ui` exports its sources and is type-checked b
   `~/.poweragents/chromium` (sha256-checked; the installer carries no browser). It launches on first use over
   `--remote-debugging-pipe` with minimized windows and its profile in `~/.poweragents/browser-profile`. The sandbox
   reaches it only through the daemon's tunnel on host port 47612, guarded by a bearer token from
-  `~/.poweragents/browser-token` (a firewall opening, beside the sandbox API's), which enforces the agent's limits (`checkCdpRequest`).
+  `~/.poweragents/browser-token` (a firewall opening, beside the sandbox API's), which enforces the agent's limits (`checkProductRequest`).
   Downloads go to a daemon-owned staging folder, then into the data root's `downloads/`. Decision:
   `docs/decisions/agent-browser-over-one-pipe.md`.
 - Every request the browser makes goes through the daemon's proxy on port 47613, which refuses non-public addresses
@@ -128,9 +130,9 @@ The Vue packages are not emitted: `ui` exports its sources and is type-checked b
   the nzyme packages it uses, or by the app's env files.
 - **Lint and format:** oxlint (type-aware) and oxfmt for code; ESLint for Vue rules, `package.json` and Markdown. They
   cover this repo, never `nzyme/` (`lint:nzyme` runs nzyme's own config). `lint` and `lint:check` also run
-  `bun nzyme pen check` on the design file.
-- **Design file:** `poweragents.pen` merges node by node through `bun nzyme pen merge`, the git merge driver
-  `setup.sh` registers; `bun nzyme pen diff` shows what changed. Design rounds run the repo's pinned `pen` CLI, which
+  `bun pen check` on the design file.
+- **Design file:** `poweragents.pen` merges node by node through `bun pen merge`, the git merge driver
+  `setup.sh` registers; `bun pen diff` shows what changed. Design rounds run the repo's pinned `pen` CLI, which
   needs `bunx pen login` once per machine and no key.
 - **Ignores:** each `.gitignore` lists only what the repo produces. The root one holds what any directory can produce;
   output owned by one directory is ignored in that directory's own `.gitignore` (`packages/app`, `packages/ui`,
