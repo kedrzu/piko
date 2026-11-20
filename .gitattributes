@@ -8,6 +8,6 @@
 # Vendor API specs, fetched by a package's `schema` script
 packages/opencode/src/openapi.json linguist-generated
 
-# Pen design files: merged node by node by `bun nzyme pen merge` (registered in setup.sh); `bun nzyme pen diff`
+# Pen design files: merged node by node by `bun poweragents pen merge` (registered in setup.sh); `bun poweragents pen diff`
 # replaces a text diff.
 *.pen merge=pen -diff linguist-generated

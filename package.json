@@ -18,8 +18,8 @@
         "dev": "nx run-many -t dev,watch:localise --exclude='@nzyme/*' --parallel=100",
         "sandbox:try": "bun packages/daemon/src/try/sandboxTry.ts",
         "desktop": "bun nx run @poweragents/daemon:sidecar && bun --cwd packages/desktop tauri dev",
-        "lint": "oxlint --type-aware --quiet --disable-nested-config --fix . && eslint --fix . && bun nzyme pen check",
-        "lint:check": "oxlint --type-aware --quiet --disable-nested-config . && eslint . && bun nzyme pen check",
+        "lint": "oxlint --type-aware --quiet --disable-nested-config --fix . && eslint --fix . && bun poweragents pen check",
+        "lint:check": "oxlint --type-aware --quiet --disable-nested-config . && eslint . && bun poweragents pen check",
         "lint:warnings": "oxlint --type-aware --disable-nested-config .",
         "lint:nzyme": "bun run --cwd nzyme lint:check && bun run --cwd nzyme format:check",
         "format": "oxfmt --disable-nested-config . > /dev/null && bun run format:md",
@@ -36,16 +36,11 @@
         "reinstall": "bun run clean && bun run clean:npm && bun install"
     },
     "devDependencies": {
-        "@nzyme/bitwarden": "workspace:*",
         "@nzyme/cli": "workspace:*",
-        "@nzyme/cli-core": "workspace:*",
         "@nzyme/eslint": "workspace:*",
-        "@nzyme/ioc": "workspace:*",
-        "@nzyme/ioc-testing": "workspace:*",
-        "@nzyme/pen": "workspace:*",
-        "@nzyme/secrets": "workspace:*",
         "@nzyme/tsconfig": "workspace:*",
         "@pen.dev/cli": "0.3.15",
+        "@poweragents/cli": "workspace:*",
         "@types/bun": "1.4.4",
         "@types/node": "^26.6.6",
         "@typescript/native-preview": "^7.0.0-dev.20260707.2",
@@ -69,12 +64,6 @@
     "packageManager": "bun@1.4.4",
     "nx": {
         "includedScripts": []
-    },
-    "nzyme": {
-        "plugins": [
-            "./scripts/pen.ts",
-            "./scripts/secrets.ts"
-        ]
     },
     "patchedDependencies": {
         "bun-types@1.4.4": "patches/bun-types@1.4.4.patch"
