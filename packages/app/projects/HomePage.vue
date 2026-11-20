@@ -6,7 +6,7 @@ import { useService } from '@nzyme/vue-ioc/useService.js';
 import { useRouter } from 'nuxt/app';
 import { ref } from 'vue';
 
-import NoProjectsState from '@poweragents/ui/NoProjectsState.vue';
+import NoProjectsState from '@piko/ui/NoProjectsState.vue';
 
 import { MainShellContext } from './MainShellContext.js';
 import { ProjectStore } from './ProjectStore.js';

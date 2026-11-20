@@ -14,7 +14,7 @@ import type {
     ProjectFileListResult,
     ProjectFileReadResult,
     ProjectFileWriteResult,
-} from '@poweragents/common/api/ProjectFileTypes.js';
+} from '@piko/common/api/ProjectFileTypes.js';
 
 import { ProjectFileService } from './ProjectFileService.js';
 import { ProjectService } from './ProjectService.js';
@@ -275,12 +275,12 @@ test('leaves the file as it was and no temporary file behind when the write fail
 });
 
 async function setup() {
-    const tmp = await mkdtemp(path.join(os.tmpdir(), 'poweragents-project-files-'));
+    const tmp = await mkdtemp(path.join(os.tmpdir(), 'piko-project-files-'));
     const root = path.join(tmp, 'root');
     await mkdir(root);
     await writeFile(path.join(tmp, 'secret.md'), '# Secret');
     const { container } = createTestContainer();
-    container.set(EnvVariables, { POWERAGENTS_DATA_ROOT: root });
+    container.set(EnvVariables, { PIKO_DATA_ROOT: root });
     const created = await container.resolve(ProjectService).create('Projekt');
     assert('created' in created);
     const dir = path.join(root, 'projects', 'Projekt');

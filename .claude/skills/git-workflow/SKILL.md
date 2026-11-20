@@ -1,14 +1,14 @@
 ---
 name: git-workflow
 description: >-
-    How a change moves in poweragents — one task, one Paseo worktree, one branch, one PR; kept up to
+    How a change moves in piko — one task, one Paseo worktree, one branch, one PR; kept up to
     date with main by merging, squash-merged on the owner's word; Conventional Commits; GitHub Issues as
     the tracker, stacked PRs through GitHub's native stacks — all through git and `gh`. The dev pipeline
     (/dev:*) relies on it; reach for it whenever you open a branch, commit, push, catch up with main,
     resolve a merge conflict, open or describe a PR, comment on an issue, build a PR stack or merge.
 ---
 
-# git-workflow — poweragents
+# git-workflow — piko
 
 Fulfils the `git-workflow` contract of the `dev` plugin (`skills/pipeline/references/contracts.md`).
 
@@ -16,7 +16,7 @@ Several tasks may run at once, each in its own Paseo worktree on its own branch 
 
 Facts this rests on (checked 2026-11-08):
 
-- Remote `origin` = `https://github.com/kedrzu/poweragents.git` (private), main line `main`; `gh` is
+- Remote `origin` = `https://github.com/kedrzu/piko.git` (private), main line `main`; `gh` is
   logged in as `kedrzu`.
 - Repository settings: squash merge only (merge commits and rebase merges are off), the squash commit
   takes the PR title and body, and a PR's branch is deleted on merge.
@@ -66,14 +66,14 @@ pinned nzyme and built the workspace.
 2. Rename the Paseo workspace too: `mcp__paseo__list_workspaces` (match `cwd` with the working
    directory) shows its title; `mcp__paseo__rename_workspace` without `workspaceId` renames the current
    one. A few Polish words the owner recognises the task by („Lista sesji”). Rename a generated name
-   (`somber-rabbit`, `null`, `poweragents`); leave a meaningful one. No Paseo tools → skip.
+   (`somber-rabbit`, `null`, `piko`); leave a meaningful one. No Paseo tools → skip.
 3. No draft PR at start: the PR opens at the first push (Publish).
 
 Not in a fresh worktree: `git fetch origin main` and
 `git switch -c <type>/<N>-<slug> origin/main --no-track` (otherwise the branch tracks `origin/main`
 until its first push).
 
-- In the main checkout `~/Dev/poweragents`, other sessions may share the directory, so ask once before
+- In the main checkout `~/Dev/piko`, other sessions may share the directory, so ask once before
   switching branches there.
 - In the same worktree, when the owner asks for a new PR there after the last one merged: once on the
   new branch, `git branch -D <old branch>`. The squash makes it look unmerged, so `-d` refuses.
@@ -126,9 +126,9 @@ git push -u origin HEAD     # Paseo creates branches without upstream; later jus
   `git commit`. Repeat per group.
 - **Push what is already committed:** `git push` (no commit), then confirm as above.
 - **Push rejected** (the remote branch moved): `git pull --no-rebase`, then push again. Never `--force`.
-- **Submodule (`nzyme`) moved:** the nzyme commit must be on `kedrzu/nzyme` before the poweragents
+- **Submodule (`nzyme`) moved:** the nzyme commit must be on `kedrzu/nzyme` before the piko
   commit that pins it is pushed — push the nzyme branch first (`git -C nzyme push -u origin HEAD`) and
-  open its PR there (its own conventions: `nzyme/.claude/skills/git-workflow`). A poweragents PR may not
+  open its PR there (its own conventions: `nzyme/.claude/skills/git-workflow`). A piko PR may not
   land while its pin is reachable only from an nzyme feature branch: it must be on nzyme `main`
   (`nzyme/docs/consumers.md`).
 
@@ -167,7 +167,7 @@ the task branch; node `k` is `<branch>-<k>` (`feat/30-session-list-2`).
 
 - **Read the chain** (stack number, then nodes bottom to top):
   ```bash
-  gh api "repos/kedrzu/poweragents/stacks?pull_request=<any node>" \
+  gh api "repos/kedrzu/piko/stacks?pull_request=<any node>" \
     --jq 'if length == 0 then "not stacked" else .[0] | .number, (.pull_requests[] | "\(.number) \(.head.ref) \(.state)") end'
   ```
 - **Add a node** on top of node `k`, which must be committed and pushed:
@@ -179,8 +179,8 @@ the task branch; node `k` is `<branch>-<k>` (`feat/30-session-list-2`).
   Part <k+1> of <n>; previous: #<PR of node k>. Closes #<N> only in the last part.
   EOF
   # the first extra node creates the stack, bottom first; later ones append:
-  echo '{"pull_requests":[<pr 1>,<pr 2>]}' | gh api -X POST repos/kedrzu/poweragents/stacks --input -
-  echo '{"pull_requests":[<new pr>]}' | gh api -X POST repos/kedrzu/poweragents/stacks/<stack>/add --input -
+  echo '{"pull_requests":[<pr 1>,<pr 2>]}' | gh api -X POST repos/kedrzu/piko/stacks --input -
+  echo '{"pull_requests":[<new pr>]}' | gh api -X POST repos/kedrzu/piko/stacks/<stack>/add --input -
   ```
 - **Check out the tip / node `k`:** `git switch <branch of that node> && git pull --no-rebase`. A branch
   another worktree holds cannot be switched to here: work on it in that worktree.
@@ -205,7 +205,7 @@ Only on the owner's word („mergujemy”, „merge it”) — it is irreversibl
    merging, list unresolved review threads and act on each one or bring it to the owner — never resolve
    one just to clear the way:
    ```bash
-   gh api graphql -f query='{repository(owner:"kedrzu",name:"poweragents"){pullRequest(number:<PR>){reviewThreads(first:100){nodes{isResolved path line comments(first:1){nodes{body}}}}}}}' \
+   gh api graphql -f query='{repository(owner:"kedrzu",name:"piko"){pullRequest(number:<PR>){reviewThreads(first:100){nodes{isResolved path line comments(first:1){nodes{body}}}}}}}' \
      --jq '.data.repository.pullRequest.reviewThreads.nodes[] | select(.isResolved | not)'
    ```
 3. Merge:
@@ -216,8 +216,8 @@ Only on the owner's word („mergujemy”, „merge it”) — it is irreversibl
      defaults to a merge commit):
      ```bash
      uuid=$(echo '{"merge_method":"squash"}' \
-       | gh api -X PUT repos/kedrzu/poweragents/pulls/<top PR>/merge-async --input - --jq .uuid)
-     gh api repos/kedrzu/poweragents/pulls/<top PR>/merge-async/$uuid --jq .status   # poll until not pending
+       | gh api -X PUT repos/kedrzu/piko/pulls/<top PR>/merge-async --input - --jq .uuid)
+     gh api repos/kedrzu/piko/pulls/<top PR>/merge-async/$uuid --jq .status   # poll until not pending
      ```
 4. `gh pr view <PR> --json state,mergeCommit` confirms `MERGED`. A merged PR with `Closes #<N>` closes
    its issue.

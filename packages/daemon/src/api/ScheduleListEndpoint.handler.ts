@@ -1,6 +1,6 @@
 import { defineEndpointHandler } from '@nzyme/rpc/defineEndpointHandler.js';
 
-import { ScheduleListEndpoint } from '@poweragents/common/api/ScheduleListEndpoint.js';
+import { ScheduleListEndpoint } from '@piko/common/api/ScheduleListEndpoint.js';
 
 import { ScheduleService } from '../schedules/ScheduleService.js';
 

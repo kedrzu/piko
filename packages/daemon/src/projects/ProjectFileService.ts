@@ -18,9 +18,9 @@ import type {
     ProjectFileReadResult,
     ProjectFileWriteInput,
     ProjectFileWriteResult,
-} from '@poweragents/common/api/ProjectFileTypes.js';
+} from '@piko/common/api/ProjectFileTypes.js';
 
-import { POWERAGENTS_DATA_ROOT, PROJECTS_FOLDER } from '../env.js';
+import { PIKO_DATA_ROOT, PROJECTS_FOLDER } from '../env.js';
 import { areRealFolders } from '../files/areRealFolders.js';
 import { FileTypingService } from '../files/FileTypingService.js';
 import { openRealFile } from '../files/openRealFile.js';
@@ -68,7 +68,7 @@ const PERMISSION_BITS = 0o777;
 /** The files of the person's projects, under the data root's `PROJECTS_FOLDER`. */
 export const ProjectFileService = defineService({
     name: 'ProjectFileService',
-    deps: { logger: Logger, dataRoot: POWERAGENTS_DATA_ROOT, projects: ProjectService, typing: FileTypingService },
+    deps: { logger: Logger, dataRoot: PIKO_DATA_ROOT, projects: ProjectService, typing: FileTypingService },
     setup({ logger, dataRoot, projects, typing }): ProjectFileServiceShape {
         // Every path is checked from here: the projects' folder, the project's folder and each folder below must be
         // real folders.

@@ -12,9 +12,9 @@ import { useService } from '@nzyme/vue-ioc/useService.js';
 import { useRouter } from 'nuxt/app';
 import { computed, ref, watch } from 'vue';
 
-import Button from '@poweragents/ui/Button.vue';
-import CodeField from '@poweragents/ui/CodeField.vue';
-import InstructionSteps from '@poweragents/ui/InstructionSteps.vue';
+import Button from '@piko/ui/Button.vue';
+import CodeField from '@piko/ui/CodeField.vue';
+import InstructionSteps from '@piko/ui/InstructionSteps.vue';
 
 import { openExternalUrl } from '@/utils/openExternalUrl.js';
 

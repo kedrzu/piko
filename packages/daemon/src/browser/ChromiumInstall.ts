@@ -4,7 +4,7 @@ import { defineService } from '@nzyme/ioc/Service.js';
 import { Logger } from '@nzyme/logging/Logger.js';
 import { findChromeForTesting, installChromeForTesting } from '@nzyme/stealth-browser';
 
-import { POWERAGENTS_LIMA_HOME } from '../env.js';
+import { PIKO_LIMA_HOME } from '../env.js';
 import { removeOtherVersions } from './removeOtherVersions.js';
 
 /**
@@ -25,7 +25,7 @@ export interface ChromiumInstallShape {
 
 export const ChromiumInstall = defineService({
     name: 'ChromiumInstall',
-    deps: { logger: Logger, limaHome: POWERAGENTS_LIMA_HOME },
+    deps: { logger: Logger, limaHome: PIKO_LIMA_HOME },
     setup({ logger, limaHome }): ChromiumInstallShape {
         const cacheDir = path.join(path.dirname(limaHome), 'chromium');
 

@@ -1,6 +1,6 @@
 import { defineEndpointHandler } from '@nzyme/rpc/defineEndpointHandler.js';
 
-import { SandboxStartEndpoint } from '@poweragents/common/api/SandboxStartEndpoint.js';
+import { SandboxStartEndpoint } from '@piko/common/api/SandboxStartEndpoint.js';
 
 import { Sandbox } from '../sandbox/Sandbox.js';
 import { toSandboxStatus } from './utils/toSandboxStatus.js';

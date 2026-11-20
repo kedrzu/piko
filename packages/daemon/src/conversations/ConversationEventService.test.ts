@@ -9,11 +9,11 @@ import { createTestContainer } from '@nzyme/ioc-testing/createTestContainer.js';
 import { assert } from '@nzyme/utils/assert.js';
 import { createEventEmitter } from '@nzyme/utils/createEventEmitter.js';
 
-import type { DaemonEvent, FileAgentChangedEvent } from '@poweragents/common/api/DaemonEventTypes.js';
-import { OpencodeEventSubscribeCommand } from '@poweragents/opencode/OpencodeEventSubscribeCommand.js';
-import type { OpencodeEvent } from '@poweragents/opencode/OpencodeEventSubscribeCommand.js';
-import { OpencodeSessionGetCommand } from '@poweragents/opencode/OpencodeSessionGetCommand.js';
-import type { OpencodeSession } from '@poweragents/opencode/OpencodeTypes.js';
+import type { DaemonEvent, FileAgentChangedEvent } from '@piko/common/api/DaemonEventTypes.js';
+import { OpencodeEventSubscribeCommand } from '@piko/opencode/OpencodeEventSubscribeCommand.js';
+import type { OpencodeEvent } from '@piko/opencode/OpencodeEventSubscribeCommand.js';
+import { OpencodeSessionGetCommand } from '@piko/opencode/OpencodeSessionGetCommand.js';
+import type { OpencodeSession } from '@piko/opencode/OpencodeTypes.js';
 
 import { FileAgentStateService } from '../files/FileAgentStateService.js';
 import { ProjectService } from '../projects/ProjectService.js';
@@ -29,9 +29,9 @@ test("tags a new conversation with its project, and skips the agent's sub-sessio
     const created = await container.resolve(ProjectService).create('Alfa');
     assert('created' in created);
     feeds.push([
-        { type: 'sessionCreated', sessionId: 'ses_sub', directory: '/Poweragents/projects/Alfa', parentId: 'ses_1' },
-        { type: 'sessionCreated', sessionId: 'ses_x', directory: '/Poweragents/projects/Próba' },
-        { type: 'sessionCreated', sessionId: 'ses_1', directory: '/Poweragents/projects/Alfa' },
+        { type: 'sessionCreated', sessionId: 'ses_sub', directory: '/Piko/projects/Alfa', parentId: 'ses_1' },
+        { type: 'sessionCreated', sessionId: 'ses_x', directory: '/Piko/projects/Próba' },
+        { type: 'sessionCreated', sessionId: 'ses_1', directory: '/Piko/projects/Alfa' },
     ]);
 
     const events = await collect(container.resolve(ConversationEventService), 1);
@@ -89,14 +89,14 @@ test("marks the file a tool call writes in a project, by the path in the agent's
             sessionId: 'ses_1',
             callId: 'c1',
             name: 'read',
-            input: { path: '/Poweragents/projects/Próba/a.md' },
+            input: { path: '/Piko/projects/Próba/a.md' },
         },
         {
             type: 'toolStarted',
             sessionId: 'ses_1',
             callId: 'c2',
             name: 'Edit',
-            input: { file_path: '/Poweragents/projects/Próba/notes/hello.md', old_string: 'a', new_string: 'b' },
+            input: { file_path: '/Piko/projects/Próba/notes/hello.md', old_string: 'a', new_string: 'b' },
         },
         { type: 'toolFinished', sessionId: 'ses_1', callId: 'c2', name: 'Edit', output: [] },
     ]);
@@ -115,16 +115,14 @@ test("marks every file in an apply_patch's headers, relative to the session's fo
     const { container, feeds, getSession } = await setup();
     const projectId = await createProject(container, 'Alfa');
     // Created before the feed: its folder is asked from the agent.
-    getSession.mockImplementation(id =>
-        Promise.resolve(id === 'ses_1' ? session(id, '/Poweragents/projects/Alfa') : null),
-    );
+    getSession.mockImplementation(id => Promise.resolve(id === 'ses_1' ? session(id, '/Piko/projects/Alfa') : null));
     const patchText = [
         '*** Begin Patch',
         '*** Update File: notes/plan.md',
         '@@',
         '-old',
         '+new',
-        '*** Add File: /Poweragents/projects/Alfa/todo.md',
+        '*** Add File: /Piko/projects/Alfa/todo.md',
         '+todo',
         '*** Delete File: ../elsewhere.md',
         '*** End Patch',
@@ -150,7 +148,7 @@ test('releases every file the agent was writing when its feed is restored', asyn
     const projectId = await createProject(container, 'Alfa');
     feeds.push(
         [
-            { type: 'sessionCreated', sessionId: 'ses_1', directory: '/Poweragents/projects/Alfa' },
+            { type: 'sessionCreated', sessionId: 'ses_1', directory: '/Piko/projects/Alfa' },
             { type: 'toolStarted', sessionId: 'ses_1', callId: 'c1', name: 'write', input: { filePath: 'plan.md' } },
             new Error('connection reset'),
         ],
@@ -173,8 +171,8 @@ test('releases every file the agent was writing when its feed is restored', asyn
  */
 async function setup() {
     const { container, logs } = createTestContainer();
-    const tmp = await mkdtemp(path.join(os.tmpdir(), 'poweragents-conversation-events-'));
-    container.set(EnvVariables, { POWERAGENTS_DATA_ROOT: path.join(tmp, 'root') });
+    const tmp = await mkdtemp(path.join(os.tmpdir(), 'piko-conversation-events-'));
+    container.set(EnvVariables, { PIKO_DATA_ROOT: path.join(tmp, 'root') });
     const state: SandboxState = {
         status: 'ready',
         endpoint: { url: 'http://127.0.0.1:1', username: 'opencode', password: 'pw' },

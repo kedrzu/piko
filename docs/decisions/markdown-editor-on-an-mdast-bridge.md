@@ -6,7 +6,7 @@ Accepted
 
 ## Context
 
-Files open in a rich editor that writes plain Markdown underneath ([D33](../design/poweragents/DECISIONS.md#d33)).
+Files open in a rich editor that writes plain Markdown underneath ([D33](../design/piko/DECISIONS.md#d33)).
 The agent writes arbitrary Markdown, and D33 left unchecked how faithfully Tiptap round-trips it. The
 editor must never lose or change what the agent wrote: an untouched file must not be rewritten, and an
 edited one must keep the meaning of everything the person did not touch.

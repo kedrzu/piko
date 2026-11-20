@@ -2,8 +2,8 @@ import { simplifyAliasesModule } from '@nzyme/nuxt-tools';
 import { loadEnvVariables } from '@nzyme/project-utils/loadEnvVariables.js';
 import { defineNuxtConfig } from 'nuxt/config';
 
-import { DAEMON_PORT, DEV_SERVER_PORT } from '@poweragents/common/daemonAddress.js';
-import { cssOptions } from '@poweragents/ui/viteShared.js';
+import { DAEMON_PORT, DEV_SERVER_PORT } from '@piko/common/daemonAddress.js';
+import { cssOptions } from '@piko/ui/viteShared.js';
 
 /** The environment this build is for; the same `ENV` Nx keys its cache on (`localEnvironment`). */
 const ENV = process.env.ENV ?? 'dev';
@@ -56,9 +56,9 @@ export default defineNuxtConfig({
                 '@nzyme/utils > fast-deep-equal',
                 '@nzyme/vue-utils > lodash.debounce',
                 'reka-ui',
-                '@poweragents/ui > mdast-util-from-markdown',
-                '@poweragents/ui > mdast-util-gfm',
-                '@poweragents/ui > micromark-extension-gfm',
+                '@piko/ui > mdast-util-from-markdown',
+                '@piko/ui > mdast-util-gfm',
+                '@piko/ui > micromark-extension-gfm',
             ],
         },
     },

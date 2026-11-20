@@ -2,15 +2,15 @@ import { HttpError } from '@nzyme/fetch-utils/HttpError.js';
 import { defineCommand } from '@nzyme/ioc/Command.js';
 import { Logger } from '@nzyme/logging/Logger.js';
 
-import type { ConversationRef } from '@poweragents/common/api/ConversationTypes.js';
+import type { ConversationRef } from '@piko/common/api/ConversationTypes.js';
 import type {
     PluginInstallInput,
     PluginInstallOutcome,
     PluginOnboardingError,
     PluginTargetInput,
-} from '@poweragents/common/api/PluginTypes.js';
-import type { AppLanguage } from '@poweragents/common/appLanguages.js';
-import { OpencodeSessionRenameCommand } from '@poweragents/opencode/OpencodeSessionRenameCommand.js';
+} from '@piko/common/api/PluginTypes.js';
+import type { AppLanguage } from '@piko/common/appLanguages.js';
+import { OpencodeSessionRenameCommand } from '@piko/opencode/OpencodeSessionRenameCommand.js';
 
 import { ConversationService } from '../conversations/ConversationService.js';
 import { ProjectService } from '../projects/ProjectService.js';

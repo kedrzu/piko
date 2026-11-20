@@ -4,14 +4,14 @@ import path from 'node:path';
 import { defineService } from '@nzyme/ioc/Service.js';
 import { Logger } from '@nzyme/logging/Logger.js';
 
-import type { AiProvider } from '@poweragents/common/api/AiTypes.js';
+import type { AiProvider } from '@piko/common/api/AiTypes.js';
 
-import { POWERAGENTS_LIMA_HOME } from '../env.js';
+import { PIKO_LIMA_HOME } from '../env.js';
 import { isErrorCode } from '../utils/isErrorCode.js';
 
 /**
  * The provider of the last sign-in that connected the agent, kept across daemon restarts in `ai-provider.json` beside
- * the daemon's other state (the folder above `POWERAGENTS_LIMA_HOME`), readable by its owner only.
+ * the daemon's other state (the folder above `PIKO_LIMA_HOME`), readable by its owner only.
  */
 export interface ActiveProviderStoreShape {
     /** The recorded provider; `undefined` when there is no record or the file holds none this store wrote. */
@@ -28,7 +28,7 @@ interface ActiveProviderRecord {
 /** The active AI provider, kept in a file. */
 export const ActiveProviderStore = defineService({
     name: 'ActiveProviderStore',
-    deps: { limaHome: POWERAGENTS_LIMA_HOME, logger: Logger },
+    deps: { limaHome: PIKO_LIMA_HOME, logger: Logger },
     setup({ limaHome, logger }): ActiveProviderStoreShape {
         const filePath = path.join(path.dirname(limaHome), 'ai-provider.json');
 

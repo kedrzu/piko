@@ -1,4 +1,4 @@
-import type { ConversationAgentPart, ConversationStepPart } from '@poweragents/common/api/ConversationTypes.js';
+import type { ConversationAgentPart, ConversationStepPart } from '@piko/common/api/ConversationTypes.js';
 
 // The replies screens 56–61 draw, for the stories of the conversation's components.
 

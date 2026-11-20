@@ -3,9 +3,9 @@ import { Logger } from '@nzyme/logging/Logger.js';
 import { assertNever } from '@nzyme/utils/assertNever.js';
 import { computed, reactive, ref } from 'vue';
 
-import type { DaemonEvent } from '@poweragents/common/api/DaemonEventTypes.js';
-import { MemoryFileListEndpoint } from '@poweragents/common/api/MemoryFileListEndpoint.js';
-import type { MemoryFile } from '@poweragents/common/api/MemoryTypes.js';
+import type { DaemonEvent } from '@piko/common/api/DaemonEventTypes.js';
+import { MemoryFileListEndpoint } from '@piko/common/api/MemoryFileListEndpoint.js';
+import type { MemoryFile } from '@piko/common/api/MemoryTypes.js';
 
 import { DaemonClient } from '@/daemon/DaemonClient.js';
 import { DaemonEventStream } from '@/daemon/DaemonEventStream.js';

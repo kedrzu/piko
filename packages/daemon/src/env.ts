@@ -8,7 +8,7 @@ import { defineEnvVariable } from '@nzyme/ioc/defineEnvVariable.js';
  * resources; the default, resolved against the daemon's source, is the copy `scripts/fetchLima.ts` downloads for
  * development and does not exist inside a compiled daemon.
  */
-export const POWERAGENTS_LIMA_DIR = defineEnvVariable('POWERAGENTS_LIMA_DIR', {
+export const PIKO_LIMA_DIR = defineEnvVariable('PIKO_LIMA_DIR', {
     default: () => path.resolve(import.meta.dirname, '../vendor/lima'),
 });
 
@@ -17,7 +17,7 @@ export const POWERAGENTS_LIMA_DIR = defineEnvVariable('POWERAGENTS_LIMA_DIR', {
  * resources; the default, resolved against the daemon's source, is `packages/daemon/plugins` and does not exist inside a
  * compiled daemon.
  */
-export const POWERAGENTS_PLUGINS_DIR = defineEnvVariable('POWERAGENTS_PLUGINS_DIR', {
+export const PIKO_PLUGINS_DIR = defineEnvVariable('PIKO_PLUGINS_DIR', {
     default: () => path.resolve(import.meta.dirname, '../plugins'),
 });
 
@@ -25,8 +25,8 @@ export const POWERAGENTS_PLUGINS_DIR = defineEnvVariable('POWERAGENTS_PLUGINS_DI
  * The profile's data root: the projects (`PROJECTS_FOLDER`) and the Memory (`MEMORY_FOLDER`), and the only folder of the
  * computer the sandbox mounts. Set in tests and development to keep a real profile untouched.
  */
-export const POWERAGENTS_DATA_ROOT = defineEnvVariable('POWERAGENTS_DATA_ROOT', {
-    default: () => path.join(os.homedir(), 'Poweragents'),
+export const PIKO_DATA_ROOT = defineEnvVariable('PIKO_DATA_ROOT', {
+    default: () => path.join(os.homedir(), 'Piko'),
 });
 
 /**
@@ -35,8 +35,8 @@ export const POWERAGENTS_DATA_ROOT = defineEnvVariable('POWERAGENTS_DATA_ROOT', 
  * the real VM, its state and its log untouched. Keep the path short: Lima's unix sockets live under it, and macOS caps a
  * socket path at 104 bytes.
  */
-export const POWERAGENTS_LIMA_HOME = defineEnvVariable('POWERAGENTS_LIMA_HOME', {
-    default: () => path.join(os.homedir(), '.poweragents', 'lima'),
+export const PIKO_LIMA_HOME = defineEnvVariable('PIKO_LIMA_HOME', {
+    default: () => path.join(os.homedir(), '.piko', 'lima'),
 });
 
 /** The data root's folder holding every project's folder. */
@@ -49,7 +49,7 @@ export const MEMORY_FOLDER = 'memory';
 export const PLUGINS_FOLDER = 'plugins';
 
 /** The data root's folder the daemon keeps its own files in, which the agent can read but not change. */
-export const DAEMON_FOLDER = '.poweragents';
+export const DAEMON_FOLDER = '.piko';
 
 /** The data root's folder the agent's browser saves downloads to, so the agent in the sandbox can read them. */
 export const DOWNLOADS_FOLDER = 'downloads';
@@ -60,11 +60,11 @@ export const BROWSER_TUNNEL_PORT = 47612;
 /** The loopback port of the proxy the agent's browser sends its traffic through. */
 export const BROWSER_PROXY_PORT = 47613;
 
-/** The loopback port of the daemon's API for the sandbox: what the agent's tools call (`POWERAGENTS_DAEMON_URL`). */
+/** The loopback port of the daemon's API for the sandbox: what the agent's tools call (`PIKO_DAEMON_URL`). */
 export const SANDBOX_API_PORT = 47614;
 
 /**
  * The version of the app that started this daemon, reported on `/status` so the desktop app can tell a daemon left over
  * from before an update. Unset for a daemon run from a worktree in development, which the app never replaces.
  */
-export const POWERAGENTS_VERSION = defineEnvVariable('POWERAGENTS_VERSION', { required: false });
+export const PIKO_VERSION = defineEnvVariable('PIKO_VERSION', { required: false });

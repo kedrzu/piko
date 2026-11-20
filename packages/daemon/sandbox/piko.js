@@ -1,8 +1,8 @@
 #!/usr/bin/env bun
 // @ts-check
-// The `poweragents` command inside the agent's container: the agent manages its plugins through the daemon's sandbox
+// The `piko` command inside the agent's container: the agent manages its plugins through the daemon's sandbox
 // API (`SandboxApiService`). It runs alone in the image, under the image's Bun, so it imports nothing; the daemon
-// embeds it in the Containerfile at `/usr/local/bin/poweragents` (`buildAgentContainerfile`). What it prints is read
+// embeds it in the Containerfile at `/usr/local/bin/piko` (`buildAgentContainerfile`). What it prints is read
 // by the model: short plain text.
 
 /**
@@ -32,9 +32,9 @@
  */
 
 const USAGE = `Usage:
-  poweragents plugin list              the plugins you have here and the ones you can install
-  poweragents plugin install <name>    install a plugin (a project plugin goes into this conversation's project)
-  poweragents plugin remove <name>     remove a plugin you installed`;
+  piko plugin list              the plugins you have here and the ones you can install
+  piko plugin install <name>    install a plugin (a project plugin goes into this conversation's project)
+  piko plugin remove <name>     remove a plugin you installed`;
 
 process.exitCode = await main(process.argv.slice(2));
 
@@ -63,7 +63,7 @@ async function main(args) {
                 return usage();
         }
     } catch (error) {
-        console.error(`poweragents: ${error instanceof Error ? error.message : String(error)}`);
+        console.error(`piko: ${error instanceof Error ? error.message : String(error)}`);
         return 1;
     }
 }
@@ -153,7 +153,7 @@ async function call(connection, method, path, body) {
         });
     } catch (error) {
         throw new Error(
-            `the poweragents app could not be reached (${error instanceof Error ? error.message : String(error)})`,
+            `the piko app could not be reached (${error instanceof Error ? error.message : String(error)})`,
             { cause: error },
         );
     }
@@ -171,18 +171,18 @@ async function call(connection, method, path, body) {
 
 /** The daemon's address, the token and the conversation, from the agent's shell; `null`, said on stderr, when missing. */
 function readConnection() {
-    const url = process.env.POWERAGENTS_DAEMON_URL;
-    const token = process.env.POWERAGENTS_BROWSER_TOKEN;
+    const url = process.env.PIKO_DAEMON_URL;
+    const token = process.env.PIKO_BROWSER_TOKEN;
     const session = process.env.OPENCODE_SESSION_ID;
     const missing = Object.entries({
-        POWERAGENTS_DAEMON_URL: url,
-        POWERAGENTS_BROWSER_TOKEN: token,
+        PIKO_DAEMON_URL: url,
+        PIKO_BROWSER_TOKEN: token,
         OPENCODE_SESSION_ID: session,
     })
         .filter(([, value]) => !value)
         .map(([key]) => key);
     if (!url || !token || !session) {
-        console.error(`poweragents: ${missing.join(', ')} not set; the command works only from the agent's own shell.`);
+        console.error(`piko: ${missing.join(', ')} not set; the command works only from the agent's own shell.`);
         return null;
     }
     return { url, token, session };

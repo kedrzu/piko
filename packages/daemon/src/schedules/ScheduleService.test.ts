@@ -6,8 +6,8 @@ import path from 'node:path';
 import { EnvVariables } from '@nzyme/ioc/helpers/EnvVariables.js';
 import { createTestContainer } from '@nzyme/ioc-testing/createTestContainer.js';
 
-import type { ProjectCreateResult } from '@poweragents/common/api/ProjectTypes.js';
-import type { Schedule, ScheduleCreateInput, ScheduleRun } from '@poweragents/common/api/ScheduleTypes.js';
+import type { ProjectCreateResult } from '@piko/common/api/ProjectTypes.js';
+import type { Schedule, ScheduleCreateInput, ScheduleRun } from '@piko/common/api/ScheduleTypes.js';
 
 import { ProjectService } from '../projects/ProjectService.js';
 import type { ScheduleDefinition } from './utils/parseScheduleDefinition.js';
@@ -272,10 +272,10 @@ test('a scan removes a state whose definition the agent deleted, so a schedule w
 
 async function setup() {
     const { container } = createTestContainer();
-    const tmp = await mkdtemp(path.join(os.tmpdir(), 'poweragents-schedules-'));
+    const tmp = await mkdtemp(path.join(os.tmpdir(), 'piko-schedules-'));
     const outside = path.join(tmp, 'outside');
     await mkdir(outside);
-    container.set(EnvVariables, { POWERAGENTS_DATA_ROOT: path.join(tmp, 'root') });
+    container.set(EnvVariables, { PIKO_DATA_ROOT: path.join(tmp, 'root') });
 
     const projects = container.resolve(ProjectService);
     const alfaId = assertCreated(await projects.create('Alfa'));

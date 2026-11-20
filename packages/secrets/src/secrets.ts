@@ -1,12 +1,12 @@
 /**
- * Every secret the repo uses. All of them sign a release, so they apply only under `POWERAGENTS_ENV=prod`: `dev`
+ * Every secret the repo uses. All of them sign a release, so they apply only under `PIKO_ENV=prod`: `dev`
  * holds none, so `bun run dev` never holds what signs updates and the app.
  */
 import type { EnvVariables } from '@nzyme/ioc/helpers/EnvVariables.js';
 import { defineSecret } from '@nzyme/secrets/defineSecret.js';
 
 function isProd(env: EnvVariables): boolean {
-    return env.POWERAGENTS_ENV === 'prod';
+    return env.PIKO_ENV === 'prod';
 }
 
 export const TAURI_SIGNING_PRIVATE_KEY = defineSecret('TAURI_SIGNING_PRIVATE_KEY', {

@@ -10,8 +10,8 @@ import { useService } from '@nzyme/vue-ioc/useService.js';
 import { useRouter } from 'nuxt/app';
 import { computed, ref, watch } from 'vue';
 
-import { PROJECT_NAME_MAX_LENGTH } from '@poweragents/common/api/ProjectTypes.js';
-import NewProjectDialogView from '@poweragents/ui/NewProjectDialog.vue';
+import { PROJECT_NAME_MAX_LENGTH } from '@piko/common/api/ProjectTypes.js';
+import NewProjectDialogView from '@piko/ui/NewProjectDialog.vue';
 
 import * as l from './NewProjectDialog.loc.js';
 import { ProjectStore } from './ProjectStore.js';

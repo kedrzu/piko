@@ -1,6 +1,6 @@
 readyTitle:
-  en[auto]: A new version of poweragents is ready
-  pl: Nowa wersja poweragents jest gotowa
+  en[auto]: A new version of piko is ready
+  pl: Nowa wersja piko jest gotowa
 readyDescription:
   en[auto]: Restart to switch to {version}. Until then you're on {current}.
   pl: Uruchom ponownie, żeby przejść na {version}. Do tego czasu działasz na {current}.

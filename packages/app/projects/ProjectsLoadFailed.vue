@@ -5,8 +5,8 @@ import { RefreshCw } from '@lucide/vue';
 import { useTranslate } from '@nzyme/vue-i18n/useTranslate.js';
 import { useService } from '@nzyme/vue-ioc/useService.js';
 
-import Button from '@poweragents/ui/Button.vue';
-import ErrorDetails from '@poweragents/ui/ErrorDetails.vue';
+import Button from '@piko/ui/Button.vue';
+import ErrorDetails from '@piko/ui/ErrorDetails.vue';
 
 import { ProjectStore } from './ProjectStore.js';
 import * as l from './ProjectsLoadFailed.loc.js';

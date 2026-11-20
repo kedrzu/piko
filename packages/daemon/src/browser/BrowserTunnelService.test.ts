@@ -213,7 +213,7 @@ test('what a socket sends while the browser starts is answered once it runs, in 
     expect(replies).toEqual(['version', 'created', 'targets']);
 }, 30_000);
 
-test('an upload takes files of /Poweragents only, staged in the order the agent sent them', async () => {
+test('an upload takes files of /Piko only, staged in the order the agent sent them', async () => {
     const { port, dataRoot } = await startTunnel();
     await mkdir(path.join(dataRoot, 'projects'), { recursive: true });
     await writeFile(path.join(dataRoot, 'projects', 'first.txt'), 'first');
@@ -227,11 +227,11 @@ test('an upload takes files of /Poweragents only, staged in the order the agent 
     const nodeId = isPlainObject(found) ? found['nodeId'] : undefined;
 
     await expect(client.call('DOM.setFileInputFiles', { files: ['/etc/passwd'], nodeId }, sessionId)).rejects.toThrow(
-        'only files inside /Poweragents can be uploaded',
+        'only files inside /Piko can be uploaded',
     );
     await Promise.all([
-        client.call('DOM.setFileInputFiles', { files: ['/Poweragents/projects/first.txt'], nodeId }, sessionId),
-        client.call('DOM.setFileInputFiles', { files: ['/Poweragents/projects/second.txt'], nodeId }, sessionId),
+        client.call('DOM.setFileInputFiles', { files: ['/Piko/projects/first.txt'], nodeId }, sessionId),
+        client.call('DOM.setFileInputFiles', { files: ['/Piko/projects/second.txt'], nodeId }, sessionId),
     ]);
 
     expect(
@@ -239,10 +239,10 @@ test('an upload takes files of /Poweragents only, staged in the order the agent 
     ).toBe('second');
 }, 30_000);
 
-test('the pace refuses a site that blocked the agent, in poweragents words, also after the browser relaunched', async () => {
+test('the pace refuses a site that blocked the agent, in piko words, also after the browser relaunched', async () => {
     const { port, stateFolder } = await startTunnel({ pace: true });
     const message =
-        'poweragents is pacing shop.test after it blocked or challenged the agent: the next action on it is possible in 5 min.';
+        'piko is pacing shop.test after it blocked or challenged the agent: the next action on it is possible in 5 min.';
     const client = await connect(port, 'conv-a');
     const sessionId = await attach(client, await createTarget(client));
     await servePages(client, sessionId, { [SHOP_BLOCKED_URL]: PLAIN_HTML }, { [SHOP_BLOCKED_URL]: 403 });
@@ -268,7 +268,7 @@ test('a page names itself Google Chrome, and a client cannot change the identity
 
     for (const method of ['Emulation.setUserAgentOverride', 'Network.setUserAgentOverride']) {
         await expect(client.call(method, { userAgent: 'Agent/1.0' }, sessionId)).rejects.toThrow(
-            "the browser's identity is set by poweragents",
+            "the browser's identity is set by piko",
         );
     }
     await navigate(client, sessionId, BRAND_URL);
@@ -341,8 +341,8 @@ async function startTunnel(options: StartTunnelOptions = {}) {
     cleanups.push(() => proxy.close());
     const executable = options.executable === undefined ? EXECUTABLE : options.executable;
     container.set(EnvVariables, {
-        POWERAGENTS_LIMA_HOME: path.join(stateFolder, 'lima'),
-        POWERAGENTS_DATA_ROOT: path.join(work, 'data'),
+        PIKO_LIMA_HOME: path.join(stateFolder, 'lima'),
+        PIKO_DATA_ROOT: path.join(work, 'data'),
     });
     let ensured = 0;
     container.set(ChromiumInstall, {

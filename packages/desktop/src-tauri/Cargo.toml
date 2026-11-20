@@ -1,12 +1,12 @@
 [package]
-name = "poweragents"
+name = "piko"
 version = "0.1.0"
-description = "poweragents desktop app: the poweragents SPA in a native window"
+description = "piko desktop app: the piko SPA in a native window"
 edition = "2021"
 publish = false
 
 [lib]
-name = "poweragents_lib"
+name = "piko_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]

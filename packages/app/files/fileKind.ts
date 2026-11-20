@@ -1,4 +1,4 @@
-import { fileExtension } from '@poweragents/common/utils/fileExtension.js';
+import { fileExtension } from '@piko/common/utils/fileExtension.js';
 
 /** What a project file is to the person, by its extension: what icon it shows. */
 export type FileKind = 'note' | 'spreadsheet' | 'image' | 'file';

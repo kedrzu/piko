@@ -4,12 +4,12 @@ import { useLanguage } from '@nzyme/vue-i18n/useLanguage.js';
 import { useService } from '@nzyme/vue-ioc/useService.js';
 import { ConfigProvider } from 'reka-ui';
 
-import Toaster from '@poweragents/ui/Toaster.vue';
-import UpdateToast from '@poweragents/ui/UpdateToast.vue';
+import Toaster from '@piko/ui/Toaster.vue';
+import UpdateToast from '@piko/ui/UpdateToast.vue';
 
 import { AppUpdate } from '@/updates/AppUpdate.js';
 
-import '@poweragents/ui/styles/main.scss';
+import '@piko/ui/styles/main.scss';
 
 const language = useLanguage();
 const update = useService(AppUpdate);

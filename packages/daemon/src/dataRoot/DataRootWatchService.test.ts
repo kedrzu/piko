@@ -8,7 +8,7 @@ import { createTestContainer } from '@nzyme/ioc-testing/createTestContainer.js';
 import type { Container } from '@nzyme/ioc/Container.js';
 import { assert } from '@nzyme/utils/assert.js';
 
-import type { DataRootEvent } from '@poweragents/common/api/DaemonEventTypes.js';
+import type { DataRootEvent } from '@piko/common/api/DaemonEventTypes.js';
 
 import { ProjectService } from '../projects/ProjectService.js';
 import { DataRootWatchService } from './DataRootWatchService.js';
@@ -89,12 +89,12 @@ test("sends one projectFilesChanged per project for a burst of changes to the pr
 });
 
 test('starts the watcher again after it failed', async () => {
-    const tmp = await mkdtemp(path.join(os.tmpdir(), 'poweragents-data-root-'));
+    const tmp = await mkdtemp(path.join(os.tmpdir(), 'piko-data-root-'));
     const root = path.join(tmp, 'root');
     // A file where the data root should be: the watcher cannot start.
     await writeFile(root, 'not a folder');
     const { container, logs } = createTestContainer();
-    container.set(EnvVariables, { POWERAGENTS_DATA_ROOT: root });
+    container.set(EnvVariables, { PIKO_DATA_ROOT: root });
     const events = listen(container.resolve(DataRootWatchService));
     expect(logs.filter(log => log.level === 'warn').map(log => log.message)).toEqual([
         'Data root watcher failed, restarting',
@@ -119,10 +119,10 @@ test('starts the watcher again after it failed', async () => {
 });
 
 async function setup() {
-    const tmp = await mkdtemp(path.join(os.tmpdir(), 'poweragents-data-root-'));
+    const tmp = await mkdtemp(path.join(os.tmpdir(), 'piko-data-root-'));
     const root = path.join(tmp, 'root');
     const { container } = createTestContainer();
-    container.set(EnvVariables, { POWERAGENTS_DATA_ROOT: root });
+    container.set(EnvVariables, { PIKO_DATA_ROOT: root });
     const watcher = container.resolve(DataRootWatchService);
     // Started by a first listener, so the folders the tests make are watched; macOS reports nothing that happened
     // before the new watcher's stream got going.

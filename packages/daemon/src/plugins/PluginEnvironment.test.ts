@@ -4,7 +4,7 @@ import { createTestContainer } from '@nzyme/ioc-testing/createTestContainer.js';
 import { createEventEmitter } from '@nzyme/utils/createEventEmitter.js';
 import { createPromise } from '@nzyme/utils/createPromise.js';
 
-import type { PluginEnvironmentError } from '@poweragents/common/api/PluginTypes.js';
+import type { PluginEnvironmentError } from '@piko/common/api/PluginTypes.js';
 
 import { Sandbox } from '../sandbox/Sandbox.js';
 import type { SandboxProcess, SandboxState } from '../sandbox/Sandbox.js';
@@ -18,12 +18,12 @@ import type { EnvironmentPlugin } from './utils/buildEnvironmentFiles.js';
 
 const GMAIL: EnvironmentPlugin = {
     name: 'gmail',
-    dir: '/Poweragents/.poweragents/plugins/gmail',
+    dir: '/Piko/.piko/plugins/gmail',
     environment: { cli: 'cli', npm: { 'left-pad': '1.3.0' }, python: { requests: '2.31.0' } },
 };
 const NOTES: EnvironmentPlugin = {
     name: 'my-notes',
-    dir: '/Poweragents/plugins/my-notes',
+    dir: '/Piko/plugins/my-notes',
     environment: { npm: { chalk: '5.3.0' } },
 };
 
@@ -35,31 +35,31 @@ test('installs the Node packages and syncs the venv from the rendered files, in 
     const expected: PluginEnvironmentApplyResult = { applied: true, errors: new Map() };
     expect(result).toEqual(expected);
     expect(calls).toEqual([
-        { command: ['mkdir', '-p', '/opt/poweragents/env/node'], stdin: '' },
+        { command: ['mkdir', '-p', '/opt/piko/env/node'], stdin: '' },
         {
-            command: ['tee', '/opt/poweragents/env/node/package.json'],
+            command: ['tee', '/opt/piko/env/node/package.json'],
             stdin: packageJson({
-                '@poweragents-plugins/gmail': 'file:/Poweragents/.poweragents/plugins/gmail/cli',
+                '@piko-plugins/gmail': 'file:/Piko/.piko/plugins/gmail/cli',
                 chalk: '5.3.0',
                 'left-pad': '1.3.0',
             }),
         },
-        { command: ['bun', 'install', '--cwd', '/opt/poweragents/env/node', '--backend=copyfile'], stdin: '' },
+        { command: ['bun', 'install', '--cwd', '/opt/piko/env/node', '--backend=copyfile'], stdin: '' },
         {
-            command: ['uv', 'venv', '--allow-existing', '--python', '/usr/bin/python3', '/opt/poweragents/env/python'],
+            command: ['uv', 'venv', '--allow-existing', '--python', '/usr/bin/python3', '/opt/piko/env/python'],
             stdin: '',
         },
-        { command: ['tee', '/opt/poweragents/env/requirements.in'], stdin: 'requests==2.31.0\n' },
+        { command: ['tee', '/opt/piko/env/requirements.in'], stdin: 'requests==2.31.0\n' },
         {
             command: [
                 'uv',
                 'pip',
                 'compile',
-                '/opt/poweragents/env/requirements.in',
+                '/opt/piko/env/requirements.in',
                 '--output-file',
-                '/opt/poweragents/env/requirements.txt',
+                '/opt/piko/env/requirements.txt',
                 '--python',
-                '/opt/poweragents/env/python/bin/python',
+                '/opt/piko/env/python/bin/python',
                 '--quiet',
             ],
             stdin: '',
@@ -69,9 +69,9 @@ test('installs the Node packages and syncs the venv from the rendered files, in 
                 'uv',
                 'pip',
                 'sync',
-                '/opt/poweragents/env/requirements.txt',
+                '/opt/piko/env/requirements.txt',
                 '--python',
-                '/opt/poweragents/env/python/bin/python',
+                '/opt/piko/env/python/bin/python',
             ],
             stdin: '',
         },
@@ -86,16 +86,16 @@ test('a plugin left out loses its packages: its CLI and pins leave package.json,
     await environment.apply([NOTES]);
 
     expect(calls).toEqual([
-        { command: ['mkdir', '-p', '/opt/poweragents/env/node'], stdin: '' },
-        { command: ['tee', '/opt/poweragents/env/node/package.json'], stdin: packageJson({ chalk: '5.3.0' }) },
-        { command: ['bun', 'install', '--cwd', '/opt/poweragents/env/node', '--backend=copyfile'], stdin: '' },
+        { command: ['mkdir', '-p', '/opt/piko/env/node'], stdin: '' },
+        { command: ['tee', '/opt/piko/env/node/package.json'], stdin: packageJson({ chalk: '5.3.0' }) },
+        { command: ['bun', 'install', '--cwd', '/opt/piko/env/node', '--backend=copyfile'], stdin: '' },
         {
             command: [
                 'rm',
                 '-rf',
-                '/opt/poweragents/env/python',
-                '/opt/poweragents/env/requirements.in',
-                '/opt/poweragents/env/requirements.txt',
+                '/opt/piko/env/python',
+                '/opt/piko/env/requirements.in',
+                '/opt/piko/env/requirements.txt',
             ],
             stdin: '',
         },
@@ -143,7 +143,7 @@ test('a conflicting plugin gets its conflict error and the others apply', async 
     const { environment, calls } = setup();
     const rival: EnvironmentPlugin = {
         name: 'zeta',
-        dir: '/Poweragents/plugins/zeta',
+        dir: '/Piko/plugins/zeta',
         environment: { npm: { chalk: '4.0.0' } },
     };
 
@@ -194,10 +194,10 @@ test('applies asked for during one run become one more run with the last plugins
     gate.resolve();
     const results = await Promise.all([first, second, third]);
 
-    const written = calls.filter(call => call.command[1] === '/opt/poweragents/env/node/package.json');
+    const written = calls.filter(call => call.command[1] === '/opt/piko/env/node/package.json');
     expect(written.map(call => call.stdin)).toEqual([
         packageJson({
-            '@poweragents-plugins/gmail': 'file:/Poweragents/.poweragents/plugins/gmail/cli',
+            '@piko-plugins/gmail': 'file:/Piko/.piko/plugins/gmail/cli',
             'left-pad': '1.3.0',
         }),
         packageJson({ chalk: '5.3.0' }),
@@ -226,7 +226,7 @@ test('a hung step is killed at its deadline and fails with what it printed, and 
             output: 'Resolving dependencies\nTimed out after 600 s.',
         };
         expect(failed).toEqual({ applied: true, errors: new Map([['my-notes', error]]) });
-        expect(killed).toEqual([['bun', 'install', '--cwd', '/opt/poweragents/env/node', '--backend=copyfile']]);
+        expect(killed).toEqual([['bun', 'install', '--cwd', '/opt/piko/env/node', '--backend=copyfile']]);
 
         // The queued apply runs: its `bun install` hangs too, and its plugins (none) get no error.
         while (calls.filter(call => call.command[0] === 'bun').length < 2) {

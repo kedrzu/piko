@@ -1,5 +1,5 @@
 {
-    "name": "@poweragents/desktop",
+    "name": "@piko/desktop",
     "private": true,
     "description": "The desktop shell: the app's static build in a native window (Tauri)",
     "type": "module",

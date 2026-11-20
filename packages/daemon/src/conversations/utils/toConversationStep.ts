@@ -6,8 +6,8 @@ import type {
     ConversationStep,
     ConversationStepKind,
     ConversationStepStatus,
-} from '@poweragents/common/api/ConversationTypes.js';
-import { readString } from '@poweragents/common/utils/readString.js';
+} from '@piko/common/api/ConversationTypes.js';
+import { readString } from '@piko/common/utils/readString.js';
 
 import { AGENT_PROJECTS_DIR } from '../../sandbox/buildAgentRunArgs.js';
 
@@ -106,7 +106,7 @@ function readFirstString(input: Record<string, unknown>, keys: string[]) {
     return undefined;
 }
 
-/** `/Poweragents/projects/<project>/notes/plan.md` → `notes/plan.md`; a path elsewhere stays whole. */
+/** `/Piko/projects/<project>/notes/plan.md` → `notes/plan.md`; a path elsewhere stays whole. */
 function toProjectPath(file: string) {
     const relative = path.posix.relative(AGENT_PROJECTS_DIR, file);
     if (relative.startsWith('..') || path.posix.isAbsolute(relative)) {

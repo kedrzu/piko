@@ -4,13 +4,13 @@ import path from 'node:path';
 import { defineService } from '@nzyme/ioc/Service.js';
 import { Logger } from '@nzyme/logging/Logger.js';
 
-import type { AppSetupStartInput, AppSetupStartResult } from '@poweragents/common/api/AppSetupTypes.js';
-import type { ConversationRef } from '@poweragents/common/api/ConversationTypes.js';
-import type { AppLanguage } from '@poweragents/common/appLanguages.js';
-import { OpencodeSessionRenameCommand } from '@poweragents/opencode/OpencodeSessionRenameCommand.js';
+import type { AppSetupStartInput, AppSetupStartResult } from '@piko/common/api/AppSetupTypes.js';
+import type { ConversationRef } from '@piko/common/api/ConversationTypes.js';
+import type { AppLanguage } from '@piko/common/appLanguages.js';
+import { OpencodeSessionRenameCommand } from '@piko/opencode/OpencodeSessionRenameCommand.js';
 
 import { ConversationService } from '../conversations/ConversationService.js';
-import { POWERAGENTS_LIMA_HOME } from '../env.js';
+import { PIKO_LIMA_HOME } from '../env.js';
 import { ProjectService } from '../projects/ProjectService.js';
 import { getLanguageName } from '../utils/getLanguageName.js';
 import { isErrorCode } from '../utils/isErrorCode.js';
@@ -54,7 +54,7 @@ export const AppSetupService = defineService({
         projects: ProjectService,
         conversations: ConversationService,
         rename: OpencodeSessionRenameCommand,
-        limaHome: POWERAGENTS_LIMA_HOME,
+        limaHome: PIKO_LIMA_HOME,
     },
     setup({ logger, projects, conversations, rename, limaHome }): AppSetupServiceShape {
         const stateFile = path.join(path.dirname(limaHome), STATE_FILE);
@@ -168,7 +168,7 @@ export const AppSetupService = defineService({
 function buildOpeningPrompt(language: AppLanguage) {
     const name = getLanguageName(language);
     return [
-        'The person has just set up poweragents and opened it for the first time. This is the onboarding conversation',
+        'The person has just set up piko and opened it for the first time. This is the onboarding conversation',
         'in their project App setup, and nothing has been said yet: you speak first.',
         `Use the onboarding skill now. The app is in ${name}: greet them in ${name}, then keep to the language they`,
         'write in. This message comes from the app, not from the person: do not mention or quote it.',

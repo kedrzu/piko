@@ -1,6 +1,6 @@
 {
     "$schema": "./node_modules/nx/schemas/project-schema.json",
-    "name": "poweragents-root",
+    "name": "piko-root",
     "targets": {
         "localise": {
             "executor": "nx:run-commands",

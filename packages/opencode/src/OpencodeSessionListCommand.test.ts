@@ -33,13 +33,13 @@ test("reads every page of a directory's top-level sessions, filtering each page 
         getEndpoint: () => ({ url: server.url.origin, username: 'opencode', password: 'pw' }),
     });
 
-    const sessions = await container.resolve(OpencodeSessionListCommand)('/Poweragents/Test');
+    const sessions = await container.resolve(OpencodeSessionListCommand)('/Piko/Test');
 
-    const filters = 'directory=%2FPoweragents%2FTest&parentID=null&archived=false&limit=100';
+    const filters = 'directory=%2FPiko%2FTest&parentID=null&archived=false&limit=100';
     expect(requestedQueries).toEqual([`${filters}&order=desc`, `${filters}&cursor=cur_2`]);
     const expected: OpencodeSession[] = [
-        { id: 'ses_2', directory: '/Poweragents/Test', title: 'Sesja', createdAt: 2, updatedAt: 20 },
-        { id: 'ses_1', directory: '/Poweragents/Test', title: 'Sesja', createdAt: 1, updatedAt: 10 },
+        { id: 'ses_2', directory: '/Piko/Test', title: 'Sesja', createdAt: 2, updatedAt: 20 },
+        { id: 'ses_1', directory: '/Piko/Test', title: 'Sesja', createdAt: 1, updatedAt: 10 },
     ];
     expect(sessions).toEqual(expected);
 });
@@ -52,6 +52,6 @@ function vendorSession(id: string, created: number): VendorSession {
         cost: 0,
         tokens: { input: 0, output: 0, reasoning: 0, cache: { read: 0, write: 0 } },
         time: { created, updated: created * 10 },
-        location: { directory: '/Poweragents/Test' },
+        location: { directory: '/Piko/Test' },
     };
 }

@@ -1,9 +1,9 @@
 import { defineService } from '@nzyme/ioc/Service.js';
 import { Logger } from '@nzyme/logging/Logger.js';
 
-import { OpencodePermissionListCommand } from '@poweragents/opencode/OpencodePermissionListCommand.js';
-import type { OpencodePermissionRequest } from '@poweragents/opencode/OpencodePermissionListCommand.js';
-import { OpencodePermissionReplyCommand } from '@poweragents/opencode/OpencodePermissionReplyCommand.js';
+import { OpencodePermissionListCommand } from '@piko/opencode/OpencodePermissionListCommand.js';
+import type { OpencodePermissionRequest } from '@piko/opencode/OpencodePermissionListCommand.js';
+import { OpencodePermissionReplyCommand } from '@piko/opencode/OpencodePermissionReplyCommand.js';
 
 import { toAgentDir } from '../conversations/utils/toAgentDir.js';
 import { ProjectService } from '../projects/ProjectService.js';

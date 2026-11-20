@@ -1,6 +1,6 @@
 import { assertNever } from '@nzyme/utils/assertNever.js';
 
-import type { AppLanguage } from '@poweragents/common/appLanguages.js';
+import type { AppLanguage } from '@piko/common/appLanguages.js';
 
 /**
  * An app language's English name, for the instructions the daemon gives the agent (`Polish`, `English`).

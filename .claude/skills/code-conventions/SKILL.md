@@ -1,7 +1,7 @@
 ---
 name: code-conventions
 description: >-
-    How TypeScript, Vue and Rust code is written in poweragents — file organization and naming, function order, imports,
+    How TypeScript, Vue and Rust code is written in piko — file organization and naming, function order, imports,
     casts, JSDoc, Vue SFC order and BEM classes. Use before writing, refactoring or reviewing any .ts, .vue or .rs file.
 ---
 
@@ -11,7 +11,7 @@ description: >-
 
 - App code by feature: `packages/app/<feature>/`, imported through the `@/` alias; nothing is auto-imported
   (`ARCHITECTURE.md`, "App and UI"). Components: `packages/ui/src/`.
-- Library packages (`common`, `daemon`) import each other through their `exports`: `@poweragents/common/<file>.js`.
+- Library packages (`common`, `daemon`) import each other through their `exports`: `@piko/common/<file>.js`.
 - Generated files, never edited by hand: `*.loc.ts`, every package's `tsconfig.json`.
 
 ## Commands

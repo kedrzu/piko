@@ -1,5 +1,5 @@
-import type { ConversationError } from '@poweragents/common/api/ConversationTypes.js';
-import type { OpencodeReportedError } from '@poweragents/opencode/OpencodeTypes.js';
+import type { ConversationError } from '@piko/common/api/ConversationTypes.js';
+import type { OpencodeReportedError } from '@piko/opencode/OpencodeTypes.js';
 
 /** Claude Code's sign-in has ended or was never there: it asks to run `/login`, or the provider answers 401. */
 const SIGNED_OUT = /not logged in|please run \/login|invalid api key|oauth token (has )?(expired|revoked)/i;

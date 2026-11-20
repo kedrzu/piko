@@ -27,12 +27,12 @@ test('writes each entry to the log beside the Lima home, a caught error with its
     const { transport, logFile } = await setup();
     const error = new TypeError('limactl: no such instance');
 
-    transport('LimaSandbox', 'error', 'Sandbox start failed', { instance: 'poweragents-default', error });
+    transport('LimaSandbox', 'error', 'Sandbox start failed', { instance: 'piko-default', error });
     transport('ApiService', 'info', 'Request served');
 
     const log = await readFile(logFile, 'utf8');
     expect(log).toMatch(/^\d{4}-\d\d-\d\dT[\d:.]+Z ERROR \[LimaSandbox\] Sandbox start failed \{/);
-    expect(log).toContain("instance: 'poweragents-default'");
+    expect(log).toContain("instance: 'piko-default'");
     expect(log).toContain('TypeError: limactl: no such instance');
     expect(log).toContain(`(${import.meta.path}:`);
     expect(log).toMatch(/\n\S+ INFO \[ApiService\] Request served\n$/);
@@ -82,7 +82,7 @@ async function modeOf(target: string) {
 
 /** A transport whose Lima home is in a fresh folder; `prepare` gets the log's path before the transport opens it. */
 async function setup(prepare?: (logFile: string) => Promise<void>) {
-    const root = await mkdtemp(path.join(os.tmpdir(), 'poweragents-log-'));
+    const root = await mkdtemp(path.join(os.tmpdir(), 'piko-log-'));
     const logFile = path.join(root, 'logs', 'daemon.log');
     if (prepare) {
         await mkdir(path.dirname(logFile));
@@ -91,6 +91,6 @@ async function setup(prepare?: (logFile: string) => Promise<void>) {
     }
 
     const { container } = createTestContainer();
-    container.set(EnvVariables, { POWERAGENTS_LIMA_HOME: path.join(root, 'lima') });
+    container.set(EnvVariables, { PIKO_LIMA_HOME: path.join(root, 'lima') });
     return { transport: container.resolve(DaemonLoggerTransport), logFile };
 }

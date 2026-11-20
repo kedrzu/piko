@@ -4,7 +4,7 @@
 import { defineProp } from '@nzyme/vue-utils/defineProp.js';
 import type { PropType } from 'vue';
 
-import type { ConversationStepKind, ConversationStepStatus } from '@poweragents/common/api/ConversationTypes.js';
+import type { ConversationStepKind, ConversationStepStatus } from '@piko/common/api/ConversationTypes.js';
 
 export const StepProps = {
   kind: { type: String as PropType<ConversationStepKind>, required: true },

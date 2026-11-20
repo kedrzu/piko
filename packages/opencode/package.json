@@ -1,5 +1,5 @@
 {
-    "name": "@poweragents/opencode",
+    "name": "@piko/opencode",
     "version": "0.0.0",
     "private": true,
     "description": "The client of OpenCode, the agent engine running in the sandbox: its HTTP API typed from OpenCode's OpenAPI spec, one command per operation",

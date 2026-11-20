@@ -4,10 +4,10 @@ import { assertNever } from '@nzyme/utils/assertNever.js';
 import { createEventEmitter } from '@nzyme/utils/createEventEmitter.js';
 import { computed, reactive, ref } from 'vue';
 
-import { ConversationCreateEndpoint } from '@poweragents/common/api/ConversationCreateEndpoint.js';
-import { ConversationListEndpoint } from '@poweragents/common/api/ConversationListEndpoint.js';
-import type { Conversation } from '@poweragents/common/api/ConversationTypes.js';
-import type { DaemonEvent } from '@poweragents/common/api/DaemonEventTypes.js';
+import { ConversationCreateEndpoint } from '@piko/common/api/ConversationCreateEndpoint.js';
+import { ConversationListEndpoint } from '@piko/common/api/ConversationListEndpoint.js';
+import type { Conversation } from '@piko/common/api/ConversationTypes.js';
+import type { DaemonEvent } from '@piko/common/api/DaemonEventTypes.js';
 
 import { DaemonClient } from '@/daemon/DaemonClient.js';
 import { DaemonEventStream } from '@/daemon/DaemonEventStream.js';

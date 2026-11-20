@@ -8,20 +8,20 @@ import { createTestContainer } from '@nzyme/ioc-testing/createTestContainer.js';
 import { assert } from '@nzyme/utils/assert.js';
 import { createEventEmitter } from '@nzyme/utils/createEventEmitter.js';
 
-import type { AppSetupStartInput, AppSetupStartResult } from '@poweragents/common/api/AppSetupTypes.js';
-import type { ChatgptStatus } from '@poweragents/common/api/ChatgptTypes.js';
-import type { ClaudeStatus } from '@poweragents/common/api/ClaudeTypes.js';
-import { OpencodeSessionActiveListCommand } from '@poweragents/opencode/OpencodeSessionActiveListCommand.js';
-import { OpencodeSessionCreateCommand } from '@poweragents/opencode/OpencodeSessionCreateCommand.js';
-import type { OpencodeSessionCreateCommandParams } from '@poweragents/opencode/OpencodeSessionCreateCommand.js';
-import { OpencodeSessionGetCommand } from '@poweragents/opencode/OpencodeSessionGetCommand.js';
-import { OpencodeSessionListCommand } from '@poweragents/opencode/OpencodeSessionListCommand.js';
-import { OpencodeSessionRenameCommand } from '@poweragents/opencode/OpencodeSessionRenameCommand.js';
-import type { OpencodeSessionRenameCommandParams } from '@poweragents/opencode/OpencodeSessionRenameCommand.js';
-import { OpencodeSessionSyntheticCommand } from '@poweragents/opencode/OpencodeSessionSyntheticCommand.js';
-import type { OpencodeSessionSyntheticCommandParams } from '@poweragents/opencode/OpencodeSessionSyntheticCommand.js';
-import { OpencodeSessionUpdateCommand } from '@poweragents/opencode/OpencodeSessionUpdateCommand.js';
-import type { OpencodeSession } from '@poweragents/opencode/OpencodeTypes.js';
+import type { AppSetupStartInput, AppSetupStartResult } from '@piko/common/api/AppSetupTypes.js';
+import type { ChatgptStatus } from '@piko/common/api/ChatgptTypes.js';
+import type { ClaudeStatus } from '@piko/common/api/ClaudeTypes.js';
+import { OpencodeSessionActiveListCommand } from '@piko/opencode/OpencodeSessionActiveListCommand.js';
+import { OpencodeSessionCreateCommand } from '@piko/opencode/OpencodeSessionCreateCommand.js';
+import type { OpencodeSessionCreateCommandParams } from '@piko/opencode/OpencodeSessionCreateCommand.js';
+import { OpencodeSessionGetCommand } from '@piko/opencode/OpencodeSessionGetCommand.js';
+import { OpencodeSessionListCommand } from '@piko/opencode/OpencodeSessionListCommand.js';
+import { OpencodeSessionRenameCommand } from '@piko/opencode/OpencodeSessionRenameCommand.js';
+import type { OpencodeSessionRenameCommandParams } from '@piko/opencode/OpencodeSessionRenameCommand.js';
+import { OpencodeSessionSyntheticCommand } from '@piko/opencode/OpencodeSessionSyntheticCommand.js';
+import type { OpencodeSessionSyntheticCommandParams } from '@piko/opencode/OpencodeSessionSyntheticCommand.js';
+import { OpencodeSessionUpdateCommand } from '@piko/opencode/OpencodeSessionUpdateCommand.js';
+import type { OpencodeSession } from '@piko/opencode/OpencodeTypes.js';
 
 import { ActiveProviderStore } from '../ai/ActiveProviderStore.js';
 import { ChatgptSignInService } from '../chatgpt/ChatgptSignInService.js';
@@ -53,7 +53,7 @@ test('creates App setup once, starting its onboarding with hidden input, and nev
     };
     expect(first).toEqual(expectedFirst);
     const created: OpencodeSessionCreateCommandParams = {
-        directory: '/Poweragents/projects/App setup',
+        directory: '/Piko/projects/App setup',
         providerId: 'claude-agent',
         modelId: 'sonnet',
         permissions: [],
@@ -86,7 +86,7 @@ test('with ChatGPT the active provider, the onboarding conversation runs on Terr
 
     expect(result.onboarding?.conversationId).toBe('ses_onboarding');
     const created: OpencodeSessionCreateCommandParams = {
-        directory: '/Poweragents/projects/App setup',
+        directory: '/Piko/projects/App setup',
         providerId: 'openai',
         modelId: 'gpt-6.1-terra',
         permissions: [],
@@ -182,12 +182,12 @@ test('an onboarding whose conversation is gone starts in a new one, but never be
 
 async function setup() {
     const { container } = createTestContainer();
-    const tmp = await mkdtemp(path.join(os.tmpdir(), 'poweragents-app-setup-'));
+    const tmp = await mkdtemp(path.join(os.tmpdir(), 'piko-app-setup-'));
     await mkdir(path.join(tmp, 'bundled'));
     container.set(EnvVariables, {
-        POWERAGENTS_DATA_ROOT: path.join(tmp, 'root'),
-        POWERAGENTS_LIMA_HOME: path.join(tmp, 'home', 'lima'),
-        POWERAGENTS_PLUGINS_DIR: path.join(tmp, 'bundled'),
+        PIKO_DATA_ROOT: path.join(tmp, 'root'),
+        PIKO_LIMA_HOME: path.join(tmp, 'home', 'lima'),
+        PIKO_PLUGINS_DIR: path.join(tmp, 'bundled'),
     });
     const state: SandboxState = {
         status: 'ready',

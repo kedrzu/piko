@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
-import type { ConversationMessage } from '@poweragents/common/api/ConversationTypes.js';
+import type { ConversationMessage } from '@piko/common/api/ConversationTypes.js';
 
 import { ACCOUNT_EMAIL, StubDaemon } from '../StubDaemon.js';
 

@@ -2,11 +2,11 @@ import { expect, test } from 'bun:test';
 
 import { composeUpdaterManifest, developmentVersion, findLastStableTag, hasNoCode } from './releasePlan.js';
 
-const DOWNLOAD_URL = 'https://github.com/kedrzu/poweragents/releases/download/development';
+const DOWNLOAD_URL = 'https://github.com/kedrzu/piko/releases/download/development';
 
 test.each<{ files: string[]; expected: boolean }>([
-    { files: ['docs/design/a.png', '.claude/skills/x/SKILL.md', 'README.md', 'poweragents.pen'], expected: true },
-    { files: ['docs/design/poweragents/notes.txt'], expected: true },
+    { files: ['docs/design/a.png', '.claude/skills/x/SKILL.md', 'README.md', 'piko.pen'], expected: true },
+    { files: ['docs/design/piko/notes.txt'], expected: true },
     { files: ['README.md', 'packages/app/a.ts'], expected: false },
     { files: ['README.mdx'], expected: false },
     { files: ['packages/docs/a.ts'], expected: false },
@@ -31,11 +31,7 @@ test.each<{ tags: string[]; commitCount: number; expected: string }>([
 });
 
 test('composeUpdaterManifest gives darwin-aarch64 its bundle and signature and ignores other files', () => {
-    const result = compose([
-        'poweragents_0.1.0_aarch64.dmg',
-        'poweragents_aarch64.app.tar.gz',
-        'poweragents_aarch64.app.tar.gz.sig',
-    ]);
+    const result = compose(['piko_0.1.0_aarch64.dmg', 'piko_aarch64.app.tar.gz', 'piko_aarch64.app.tar.gz.sig']);
     if (!result.valid) {
         throw new Error(result.reason);
     }
@@ -45,26 +41,26 @@ test('composeUpdaterManifest gives darwin-aarch64 its bundle and signature and i
         pub_date: '2026-11-05T11:21:24.295Z',
         platforms: {
             'darwin-aarch64': {
-                signature: 'signature of poweragents_aarch64.app.tar.gz.sig',
-                url: `${DOWNLOAD_URL}/poweragents_aarch64.app.tar.gz`,
+                signature: 'signature of piko_aarch64.app.tar.gz.sig',
+                url: `${DOWNLOAD_URL}/piko_aarch64.app.tar.gz`,
             },
         },
     });
 });
 
 test('composeUpdaterManifest fails on a signature of an unknown bundle instead of leaving a platform out', () => {
-    const result = compose(['poweragents_x64.app.tar.gz', 'poweragents_x64.app.tar.gz.sig']);
+    const result = compose(['piko_x64.app.tar.gz', 'piko_x64.app.tar.gz.sig']);
     expect(result).toEqual({
         valid: false,
-        reason: 'poweragents_x64.app.tar.gz.sig signs no updater bundle this release knows',
+        reason: 'piko_x64.app.tar.gz.sig signs no updater bundle this release knows',
     });
 });
 
 test('composeUpdaterManifest fails on a signature whose bundle is not on the release', () => {
-    const result = compose(['poweragents_aarch64.app.tar.gz.sig']);
+    const result = compose(['piko_aarch64.app.tar.gz.sig']);
     expect(result).toEqual({
         valid: false,
-        reason: 'the release has poweragents_aarch64.app.tar.gz.sig but no poweragents_aarch64.app.tar.gz',
+        reason: 'the release has piko_aarch64.app.tar.gz.sig but no piko_aarch64.app.tar.gz',
     });
 });
 

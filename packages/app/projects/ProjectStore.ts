@@ -5,13 +5,13 @@ import { assertNever } from '@nzyme/utils/assertNever.js';
 import { createSingleRunner } from '@nzyme/utils/createSingleRunner.js';
 import { computed, reactive, ref } from 'vue';
 
-import { AppSetupStartEndpoint } from '@poweragents/common/api/AppSetupStartEndpoint.js';
-import type { ConversationRef } from '@poweragents/common/api/ConversationTypes.js';
-import { ProjectCreateEndpoint } from '@poweragents/common/api/ProjectCreateEndpoint.js';
-import { ProjectListEndpoint } from '@poweragents/common/api/ProjectListEndpoint.js';
-import type { DaemonEvent } from '@poweragents/common/api/DaemonEventTypes.js';
-import type { Project, ProjectCreateResult } from '@poweragents/common/api/ProjectTypes.js';
-import { compareProjectsByName } from '@poweragents/common/utils/compareProjectsByName.js';
+import { AppSetupStartEndpoint } from '@piko/common/api/AppSetupStartEndpoint.js';
+import type { ConversationRef } from '@piko/common/api/ConversationTypes.js';
+import { ProjectCreateEndpoint } from '@piko/common/api/ProjectCreateEndpoint.js';
+import { ProjectListEndpoint } from '@piko/common/api/ProjectListEndpoint.js';
+import type { DaemonEvent } from '@piko/common/api/DaemonEventTypes.js';
+import type { Project, ProjectCreateResult } from '@piko/common/api/ProjectTypes.js';
+import { compareProjectsByName } from '@piko/common/utils/compareProjectsByName.js';
 
 import { DaemonClient } from '@/daemon/DaemonClient.js';
 import { DaemonEventStream } from '@/daemon/DaemonEventStream.js';
@@ -20,9 +20,9 @@ import { LanguageStore } from '@/i18n/LanguageStore.js';
 import * as l from './ProjectStore.loc.js';
 
 /** Where the last opened project's id is kept, so the app reopens it after a restart. */
-const LAST_OPENED_KEY = 'poweragents.lastOpenedProjectId';
+const LAST_OPENED_KEY = 'piko.lastOpenedProjectId';
 /** Where the ids of the projects ever opened are kept: any other project is marked new (design 66). */
-const OPENED_KEY = 'poweragents.openedProjectIds';
+const OPENED_KEY = 'piko.openedProjectIds';
 
 /**
  * The person's projects as the daemon lists them, loaded once and kept in step with the projects the app creates and

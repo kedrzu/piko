@@ -2,7 +2,7 @@ import { defineService } from '@nzyme/ioc/Service.js';
 import { createClient } from '@nzyme/rpc/createClient.js';
 import type { RpcCallFunction } from '@nzyme/rpc/createClient.js';
 
-import { DAEMON_API_PATH } from '@poweragents/common/daemonAddress.js';
+import { DAEMON_API_PATH } from '@piko/common/daemonAddress.js';
 
 import { DaemonUrl } from './DaemonUrl.js';
 

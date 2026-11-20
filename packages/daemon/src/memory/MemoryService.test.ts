@@ -6,7 +6,7 @@ import path from 'node:path';
 import { EnvVariables } from '@nzyme/ioc/helpers/EnvVariables.js';
 import { createTestContainer } from '@nzyme/ioc-testing/createTestContainer.js';
 
-import type { MemoryFile, MemoryFileGetResult } from '@poweragents/common/api/MemoryTypes.js';
+import type { MemoryFile, MemoryFileGetResult } from '@piko/common/api/MemoryTypes.js';
 
 import { MemoryService } from './MemoryService.js';
 
@@ -194,11 +194,11 @@ test('skips folders removed while the listing runs', async () => {
 });
 
 async function setup() {
-    const tmp = await mkdtemp(path.join(os.tmpdir(), 'poweragents-memory-'));
+    const tmp = await mkdtemp(path.join(os.tmpdir(), 'piko-memory-'));
     const root = path.join(tmp, 'root');
     await mkdir(root);
     await writeFile(path.join(tmp, 'secret.md'), '# Secret');
     const { container, logs } = createTestContainer();
-    container.set(EnvVariables, { POWERAGENTS_DATA_ROOT: root });
+    container.set(EnvVariables, { PIKO_DATA_ROOT: root });
     return { memory: container.resolve(MemoryService), root, tmp, logs };
 }

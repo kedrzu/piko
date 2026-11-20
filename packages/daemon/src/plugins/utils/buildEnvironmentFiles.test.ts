@@ -1,18 +1,18 @@
 import { expect, test } from 'bun:test';
 
-import type { PluginEnvironmentError } from '@poweragents/common/api/PluginTypes.js';
+import type { PluginEnvironmentError } from '@piko/common/api/PluginTypes.js';
 
 import { buildEnvironmentFiles } from './buildEnvironmentFiles.js';
 import type { EnvironmentFiles, EnvironmentPlugin } from './buildEnvironmentFiles.js';
 
 const GMAIL: EnvironmentPlugin = {
     name: 'gmail',
-    dir: '/Poweragents/.poweragents/plugins/gmail',
+    dir: '/Piko/.piko/plugins/gmail',
     environment: { cli: 'tools/cli', npm: { 'left-pad': '1.3.0' }, python: { requests: '2.31.0' } },
 };
 const NOTES: EnvironmentPlugin = {
     name: 'my-notes',
-    dir: '/Poweragents/plugins/my-notes',
+    dir: '/Piko/plugins/my-notes',
     environment: { npm: { '@scope/zod': '3.0.0', 'left-pad': '1.3.0' } },
 };
 
@@ -24,7 +24,7 @@ test('renders every pin and each CLI as a file dependency, sorted, the same what
             {
                 private: true,
                 dependencies: {
-                    '@poweragents-plugins/gmail': 'file:/Poweragents/.poweragents/plugins/gmail/tools/cli',
+                    '@piko-plugins/gmail': 'file:/Piko/.piko/plugins/gmail/tools/cli',
                     '@scope/zod': '3.0.0',
                     'left-pad': '1.3.0',
                 },
@@ -50,17 +50,17 @@ test('no plugins: empty dependencies, so an install removes every package, and n
 test('a plugin pinning another version than one before it by name is left out whole; the rest still applies', () => {
     const beta: EnvironmentPlugin = {
         name: 'beta',
-        dir: '/Poweragents/plugins/beta',
+        dir: '/Piko/plugins/beta',
         environment: { cli: 'cli', npm: { chalk: '5.0.0' }, python: { Requests: '2.0.0' } },
     };
     const alpha: EnvironmentPlugin = {
         name: 'alpha',
-        dir: '/Poweragents/plugins/alpha',
+        dir: '/Piko/plugins/alpha',
         environment: { python: { requests: '2.31.0' } },
     };
     const zeta: EnvironmentPlugin = {
         name: 'zeta',
-        dir: '/Poweragents/plugins/zeta',
+        dir: '/Piko/plugins/zeta',
         environment: { npm: { chalk: '4.0.0' } },
     };
 
@@ -76,7 +76,7 @@ test('a plugin pinning another version than one before it by name is left out wh
 });
 
 test('plugins pinning the same version share it', () => {
-    const other: EnvironmentPlugin = { ...NOTES, name: 'other', dir: '/Poweragents/plugins/other' };
+    const other: EnvironmentPlugin = { ...NOTES, name: 'other', dir: '/Piko/plugins/other' };
 
     const files = buildEnvironmentFiles([NOTES, other]);
 

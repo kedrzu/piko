@@ -1,6 +1,6 @@
 import { defineEndpointHandler } from '@nzyme/rpc/defineEndpointHandler.js';
 
-import { ClaudeLoginCompleteEndpoint } from '@poweragents/common/api/ClaudeLoginCompleteEndpoint.js';
+import { ClaudeLoginCompleteEndpoint } from '@piko/common/api/ClaudeLoginCompleteEndpoint.js';
 
 import { ClaudeSignInService } from '../claude/ClaudeSignInService.js';
 

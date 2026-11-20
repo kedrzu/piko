@@ -1,7 +1,7 @@
 ---
 name: forms
 description: >-
-    Forms in poweragents with @nzyme/vue-forms and @nzyme/validation — useForm, fields, validation, input components.
+    Forms in piko with @nzyme/vue-forms and @nzyme/validation — useForm, fields, validation, input components.
     Use before building or changing a form, an input component or a validation rule.
 ---
 

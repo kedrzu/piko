@@ -7,10 +7,10 @@ import { EnvVariables } from '@nzyme/ioc/helpers/EnvVariables.js';
 import { createTestContainer } from '@nzyme/ioc-testing/createTestContainer.js';
 import { createEventEmitter } from '@nzyme/utils/createEventEmitter.js';
 
-import type { PluginInstalledEvent } from '@poweragents/common/api/DaemonEventTypes.js';
-import type { PluginInstall } from '@poweragents/common/api/PluginTypes.js';
-import { OpencodeSessionGetCommand } from '@poweragents/opencode/OpencodeSessionGetCommand.js';
-import type { OpencodeSession } from '@poweragents/opencode/OpencodeTypes.js';
+import type { PluginInstalledEvent } from '@piko/common/api/DaemonEventTypes.js';
+import type { PluginInstall } from '@piko/common/api/PluginTypes.js';
+import { OpencodeSessionGetCommand } from '@piko/opencode/OpencodeSessionGetCommand.js';
+import type { OpencodeSession } from '@piko/opencode/OpencodeTypes.js';
 
 import { toAgentDir } from '../conversations/utils/toAgentDir.js';
 import { PluginService } from '../plugins/PluginService.js';
@@ -27,7 +27,7 @@ import type { SandboxPlugin, SandboxPluginInstallResult } from './SandboxApiServ
 
 const FIXTURES = path.join(import.meta.dirname, '../plugins/fixtures');
 const TOKEN = 'abcdefghijklmnopqrstuvwxyz012345';
-const CLI = path.join(import.meta.dirname, '../../sandbox/poweragents.js');
+const CLI = path.join(import.meta.dirname, '../../sandbox/piko.js');
 
 const cleanups: (() => Promise<void> | void)[] = [];
 
@@ -178,7 +178,7 @@ test("removes a project plugin from the conversation's project only, and refuses
     expect(await installsOf(plugins, 'email-sorting')).toEqual(expectedInstalls);
     const ownBody = await own.text();
     expect([own.status, JSON.parse(ownBody)]).toMatchObject([409, { error: 'OwnPluginNotRemovable' }]);
-    expect(ownBody).toContain('/Poweragents/plugins/my-notes');
+    expect(ownBody).toContain('/Piko/plugins/my-notes');
 });
 
 test("passes PluginService's errors through, and refuses other routes, methods and bodies", async () => {
@@ -209,12 +209,12 @@ test("passes PluginService's errors through, and refuses other routes, methods a
     ]);
 });
 
-test('the poweragents command installs through the API and tells the agent what to do next', async () => {
+test('the piko command installs through the API and tells the agent what to do next', async () => {
     const { port } = await setup();
 
     const result = await runCli(['plugin', 'install', 'gmail'], {
-        POWERAGENTS_DAEMON_URL: `http://127.0.0.1:${port}`,
-        POWERAGENTS_BROWSER_TOKEN: TOKEN,
+        PIKO_DAEMON_URL: `http://127.0.0.1:${port}`,
+        PIKO_BROWSER_TOKEN: TOKEN,
         OPENCODE_SESSION_ID: 'ses_work',
     });
 
@@ -227,22 +227,22 @@ test('the poweragents command installs through the API and tells the agent what 
     });
 });
 
-test("the poweragents command fails clearly outside the agent's shell and on a refusal", async () => {
+test("the piko command fails clearly outside the agent's shell and on a refusal", async () => {
     const { port } = await setup();
 
-    const missing = await runCli(['plugin', 'list'], { POWERAGENTS_DAEMON_URL: `http://127.0.0.1:${port}` });
+    const missing = await runCli(['plugin', 'list'], { PIKO_DAEMON_URL: `http://127.0.0.1:${port}` });
     const refused = await runCli(['plugin', 'install', 'nope'], {
-        POWERAGENTS_DAEMON_URL: `http://127.0.0.1:${port}`,
-        POWERAGENTS_BROWSER_TOKEN: TOKEN,
+        PIKO_DAEMON_URL: `http://127.0.0.1:${port}`,
+        PIKO_BROWSER_TOKEN: TOKEN,
         OPENCODE_SESSION_ID: 'ses_work',
     });
 
     expect(missing).toEqual({
         exitCode: 1,
         stdout: '',
-        stderr: "poweragents: POWERAGENTS_BROWSER_TOKEN, OPENCODE_SESSION_ID not set; the command works only from the agent's own shell.\n",
+        stderr: "piko: PIKO_BROWSER_TOKEN, OPENCODE_SESSION_ID not set; the command works only from the agent's own shell.\n",
     });
-    expect(refused).toEqual({ exitCode: 1, stdout: '', stderr: 'poweragents: No plugin with this name\n' });
+    expect(refused).toEqual({ exitCode: 1, stdout: '', stderr: 'piko: No plugin with this name\n' });
 });
 
 /** Options of a request made by `call`. */
@@ -266,9 +266,9 @@ async function setup() {
 
     const { container } = createTestContainer();
     container.set(EnvVariables, {
-        POWERAGENTS_DATA_ROOT: dataRoot,
-        POWERAGENTS_PLUGINS_DIR: path.join(FIXTURES, 'bundled'),
-        POWERAGENTS_LIMA_HOME: path.join(stateFolder, 'lima'),
+        PIKO_DATA_ROOT: dataRoot,
+        PIKO_PLUGINS_DIR: path.join(FIXTURES, 'bundled'),
+        PIKO_LIMA_HOME: path.join(stateFolder, 'lima'),
     });
     const state: SandboxState = { status: 'stopped' };
     container.set(Sandbox, {
@@ -289,7 +289,7 @@ async function setup() {
     await rm(path.join(gone.dir, '.project.json'));
     const sessions: OpencodeSession[] = [
         fakeSession('ses_work', toAgentDir(work.dir)),
-        fakeSession('ses_memory', '/Poweragents/memory'),
+        fakeSession('ses_memory', '/Piko/memory'),
         fakeSession('ses_gone', toAgentDir(gone.dir)),
     ];
     container.set(OpencodeSessionGetCommand, id => Promise.resolve(sessions.find(item => item.id === id) ?? null));
@@ -354,7 +354,7 @@ async function installsOf(plugins: PluginServiceShape, name: string) {
     return plugin?.installs ?? [];
 }
 
-/** Runs the `poweragents` command as the agent's shell does, with only `env` set besides `PATH`. */
+/** Runs the `piko` command as the agent's shell does, with only `env` set besides `PATH`. */
 async function runCli(args: string[], env: Record<string, string>) {
     const child = Bun.spawn(['bun', CLI, ...args], {
         env: { PATH: process.env.PATH ?? '', ...env },

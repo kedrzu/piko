@@ -1,7 +1,7 @@
 ---
 name: orchestrate
 description: >-
-    Plans and launches parallel work on poweragents: reads the state of the GitHub Project, proposes
+    Plans and launches parallel work on piko: reads the state of the GitHub Project, proposes
     how to split the next work into tasks, writes them as GitHub issues linked by "blocked by", and on
     the owner's word starts an agent per task — code or a `/dev:design` session — in a new Paseo
     worktree. Use whenever the owner wants to plan what comes next, asks "co dalej", "co jest do
@@ -11,7 +11,7 @@ description: >-
     for the git rules of a single branch (`git-workflow`).
 ---
 
-# orchestrate — poweragents
+# orchestrate — piko
 
 The owner builds a large app and one agent at a time caps how fast it grows. You are the planning
 partner that keeps several agents busy at once: you know what is ready, you propose how to split
@@ -92,7 +92,7 @@ approved design session waiting for its turn — and to **Todo** once it is spli
 
 Only on the owner's word ("odpal", "start what's ready", "odpal #14 i #15"). For each task:
 
-1. `mcp__paseo__create_workspace` with `path: "/Users/kedrzu/Dev/poweragents"` (the main
+1. `mcp__paseo__create_workspace` with `path: "/Users/kedrzu/Dev/piko"` (the main
    checkout; its Paseo project is `prj_9f46b29348b5f0ac`), `isolation: "worktree"`,
    `baseBranch: "main"`, `branchName: "<type>/<N>-<slug>"` and a `title` of a few Polish words the
    owner will recognise the task by. Paseo runs `setup.sh` in it, which catches up with
@@ -108,7 +108,7 @@ Then say what you started, one line each, and stop; the conversation with each a
 
 ## The board
 
-GitHub Project `kedrzu/projects/2` ("poweragents", private, linked to `kedrzu/poweragents`):
+GitHub Project `kedrzu/projects/2` ("piko", private, linked to `kedrzu/piko`):
 https://github.com/users/kedrzu/projects/2. Facts read 2026-11-14:
 
 - Project id `PVT_kwHOACW_OM4BrmLU`; Status field `PVTSSF_lAHOACW_OM4BrmLUzhp4KkQ` with options

@@ -5,9 +5,9 @@ import { isTauri } from '@tauri-apps/api/core';
 import { onScopeDispose, ref, toValue, watch } from 'vue';
 import type { MaybeRefOrGetter } from 'vue';
 
-import { ProjectFileContentEndpoint } from '@poweragents/common/api/ProjectFileContentEndpoint.js';
-import { ProjectFileLocateEndpoint } from '@poweragents/common/api/ProjectFileLocateEndpoint.js';
-import { fileExtension } from '@poweragents/common/utils/fileExtension.js';
+import { ProjectFileContentEndpoint } from '@piko/common/api/ProjectFileContentEndpoint.js';
+import { ProjectFileLocateEndpoint } from '@piko/common/api/ProjectFileLocateEndpoint.js';
+import { fileExtension } from '@piko/common/utils/fileExtension.js';
 
 import { DaemonClient } from '@/daemon/DaemonClient.js';
 import { toLocalFileUrl } from '@/utils/toLocalFileUrl.js';

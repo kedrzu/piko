@@ -9,7 +9,7 @@ export default meta;
 type Story = StoryObj<typeof ErrorDetails>;
 
 const DETAILS = [
-    'limactl start poweragents: exit status 1',
+    'limactl start piko: exit status 1',
     'vz: failed to start the virtual machine: not enough free memory',
 ].join('\n');
 

@@ -1,6 +1,6 @@
 import { defineEndpointHandler } from '@nzyme/rpc/defineEndpointHandler.js';
 
-import { ChatgptLoginStartEndpoint } from '@poweragents/common/api/ChatgptLoginStartEndpoint.js';
+import { ChatgptLoginStartEndpoint } from '@piko/common/api/ChatgptLoginStartEndpoint.js';
 
 import { ChatgptSignInService } from '../chatgpt/ChatgptSignInService.js';
 

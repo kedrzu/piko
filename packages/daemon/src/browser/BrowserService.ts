@@ -13,7 +13,7 @@ import { isPlainObject } from '@nzyme/utils/isPlainObject.js';
 import { waitUntil } from '@nzyme/utils/waitUntil.js';
 import { withTimeout } from '@nzyme/utils/withTimeout.js';
 
-import { BROWSER_PROXY_PORT, DOWNLOADS_FOLDER, POWERAGENTS_DATA_ROOT, POWERAGENTS_LIMA_HOME } from '../env.js';
+import { BROWSER_PROXY_PORT, DOWNLOADS_FOLDER, PIKO_DATA_ROOT, PIKO_LIMA_HOME } from '../env.js';
 import { isErrorCode } from '../utils/isErrorCode.js';
 import { isRealFolder } from '../utils/isRealFolder.js';
 import { BrowserPace } from './BrowserPace.js';
@@ -100,8 +100,8 @@ export const BrowserService = defineService({
         focusKeeper: FocusKeeper,
         pace: BrowserPace,
         launchOptions: BrowserLaunch,
-        limaHome: POWERAGENTS_LIMA_HOME,
-        dataRoot: POWERAGENTS_DATA_ROOT,
+        limaHome: PIKO_LIMA_HOME,
+        dataRoot: PIKO_DATA_ROOT,
     },
     setup({ logger, install, focusKeeper, pace, launchOptions, limaHome, dataRoot }): BrowserServiceShape {
         const stateFolder = path.dirname(limaHome);

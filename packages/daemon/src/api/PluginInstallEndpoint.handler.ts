@@ -1,6 +1,6 @@
 import { defineEndpointHandler } from '@nzyme/rpc/defineEndpointHandler.js';
 
-import { PluginInstallEndpoint } from '@poweragents/common/api/PluginInstallEndpoint.js';
+import { PluginInstallEndpoint } from '@piko/common/api/PluginInstallEndpoint.js';
 
 import { PluginAppInstallCommand } from '../plugins/PluginAppInstallCommand.js';
 

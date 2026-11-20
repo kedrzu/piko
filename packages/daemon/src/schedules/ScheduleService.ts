@@ -15,8 +15,8 @@ import type {
     ScheduleRun,
     ScheduleRunOutcome,
     ScheduleUpdateInput,
-} from '@poweragents/common/api/ScheduleTypes.js';
-import { compareProjectsByName } from '@poweragents/common/utils/compareProjectsByName.js';
+} from '@piko/common/api/ScheduleTypes.js';
+import { compareProjectsByName } from '@piko/common/utils/compareProjectsByName.js';
 
 import { ProjectService } from '../projects/ProjectService.js';
 import type { LocalProject } from '../projects/ProjectService.js';

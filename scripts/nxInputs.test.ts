@@ -13,8 +13,8 @@ import { workspaceRoot } from 'nx/src/utils/workspace-root.js';
  * listed tasks — a fileset cannot see a gitignored file. Add a row with every such input.
  */
 const GITIGNORED_INPUTS: GitignoredInput[] = [
-    { file: 'packages/app/.env', tasks: ['@poweragents/app:build'] },
-    { file: 'packages/app/.env.dev', tasks: ['@poweragents/app:build'] },
+    { file: 'packages/app/.env', tasks: ['@piko/app:build'] },
+    { file: 'packages/app/.env.dev', tasks: ['@piko/app:build'] },
 ];
 
 /** A source file of an nzyme package the product's projects depend on. */

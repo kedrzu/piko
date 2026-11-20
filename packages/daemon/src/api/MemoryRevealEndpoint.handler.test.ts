@@ -7,7 +7,7 @@ import { EnvVariables } from '@nzyme/ioc/helpers/EnvVariables.js';
 import { createTestContainer } from '@nzyme/ioc-testing/createTestContainer.js';
 import type { HttpRequest } from '@nzyme/rpc/types/HttpRequest.js';
 
-import type { MemoryRevealInput, MemoryRevealResult } from '@poweragents/common/api/MemoryTypes.js';
+import type { MemoryRevealInput, MemoryRevealResult } from '@piko/common/api/MemoryTypes.js';
 
 import { RevealInFileManagerCommand } from '../host/RevealInFileManagerCommand.js';
 import type {
@@ -85,12 +85,12 @@ test('reports a system whose file manager it cannot open', async () => {
 });
 
 async function setup(outcome: RevealInFileManagerCommandResult = 'revealed') {
-    const tmp = await mkdtemp(path.join(os.tmpdir(), 'poweragents-reveal-'));
+    const tmp = await mkdtemp(path.join(os.tmpdir(), 'piko-reveal-'));
     const root = path.join(tmp, 'root');
     await mkdir(root);
     await writeFile(path.join(tmp, 'secret.md'), '# Secret');
     const { container } = createTestContainer();
-    container.set(EnvVariables, { POWERAGENTS_DATA_ROOT: root });
+    container.set(EnvVariables, { PIKO_DATA_ROOT: root });
     const revealPath = mock((_params: RevealInFileManagerCommandParams) => Promise.resolve(outcome));
     container.set(RevealInFileManagerCommand, revealPath);
     const handler = container.resolve(MemoryRevealEndpointHandler);

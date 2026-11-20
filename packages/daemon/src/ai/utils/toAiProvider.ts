@@ -1,4 +1,4 @@
-import type { AiProvider } from '@poweragents/common/api/AiTypes.js';
+import type { AiProvider } from '@piko/common/api/AiTypes.js';
 
 import { CHATGPT_INTEGRATION } from '../../chatgpt/ChatgptSignInService.js';
 import { CLAUDE_INTEGRATION } from '../../claude/ClaudeSignInService.js';

@@ -84,7 +84,7 @@ while design catches up.
 
 **The orchestrating skill lives in this repository, under `.claude/skills/`.** (2026-11-14, owner)
 
-**Why.** For now it serves poweragents only, so it may name this repo, its Project and its design
+**Why.** For now it serves piko only, so it may name this repo, its Project and its design
 folders directly.
 
 **Rejected.**
@@ -104,7 +104,7 @@ on the owner's OK ([D5](#d5)) — one rule for every kind of task.
 > **Checked 2026-11-14:** Paseo MCP `create_workspace` makes a worktree from a source checkout
 > (`path`, `isolation: worktree`, `branchName`, `baseBranch`, `title`); `create_agent` takes
 > `workspaceId`, `provider` (`claude`, `codex` available on this machine), `initialPrompt`, mode.
-> The poweragents main checkout is `/Users/kedrzu/Dev/poweragents`, Paseo project
+> The piko main checkout is `/Users/kedrzu/Dev/piko`, Paseo project
 > `prj_9f46b29348b5f0ac`.
 
 **Rejected.**

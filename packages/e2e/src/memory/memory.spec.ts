@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
-import type { MemoryFileContent } from '@poweragents/common/api/MemoryTypes.js';
+import type { MemoryFileContent } from '@piko/common/api/MemoryTypes.js';
 
 import { ACCOUNT_EMAIL, StubDaemon } from '../StubDaemon.js';
 

@@ -1,6 +1,6 @@
 import { defineEndpointHandler } from '@nzyme/rpc/defineEndpointHandler.js';
 
-import { ConversationStopEndpoint } from '@poweragents/common/api/ConversationStopEndpoint.js';
+import { ConversationStopEndpoint } from '@piko/common/api/ConversationStopEndpoint.js';
 
 import { ConversationService } from '../conversations/ConversationService.js';
 

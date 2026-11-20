@@ -14,9 +14,9 @@ import { waitUntil } from '@nzyme/utils/waitUntil.js';
 import {
     BROWSER_TUNNEL_PORT,
     DAEMON_FOLDER,
-    POWERAGENTS_DATA_ROOT,
-    POWERAGENTS_LIMA_DIR,
-    POWERAGENTS_LIMA_HOME,
+    PIKO_DATA_ROOT,
+    PIKO_LIMA_DIR,
+    PIKO_LIMA_HOME,
     SANDBOX_API_PORT,
 } from '../env.js';
 import {
@@ -38,19 +38,19 @@ import GENERATIVE_UI_SKILL from '../../sandbox/generative-ui.skill.gen.md' with 
 // A text import: Bun inlines the script as a string (`containerfile.d.ts`), while `import/default` reads the file as the
 // module it would be when run, which has no default export.
 // oxlint-disable-next-line import/default
-import POWERAGENTS_CLI from '../../sandbox/poweragents.js' with { type: 'text' };
+import PIKO_CLI from '../../sandbox/piko.js' with { type: 'text' };
 import { Sandbox, SKILLS_SYNC_FILE } from './Sandbox.js';
 import type { SandboxEndpoint, SandboxExecParams, SandboxProcess, SandboxState } from './Sandbox.js';
 
 const AGENT_CONTAINERFILE = buildAgentContainerfile({
     base: AGENT_CONTAINERFILE_BASE,
     skill: GENERATIVE_UI_SKILL,
-    cli: POWERAGENTS_CLI,
+    cli: PIKO_CLI,
 });
 
-const INSTANCE = 'poweragents-default';
+const INSTANCE = 'piko-default';
 /** The agent's images, tagged by `getImageTag()`. */
-const IMAGE_REPOSITORY = 'poweragents-agent';
+const IMAGE_REPOSITORY = 'piko-agent';
 /**
  * The VM's memory. Lima's vz VM keeps every guest page it ever touched until it restarts, so this caps what the sandbox
  * can take from the computer, not what it takes on average. Lima reads it only when it creates the VM.
@@ -72,7 +72,7 @@ const AGENT_READY_TIMEOUT_MS = 120_000;
 const AGENT_VERIFY_INTERVAL_MS = 5000;
 const AGENT_VERIFY_ATTEMPTS = 3;
 const AGENT_VERIFY_RETRY_MS = 500;
-const BUILD_DIR = '/tmp/poweragents-agent-build';
+const BUILD_DIR = '/tmp/piko-agent-build';
 
 interface LimactlResult {
     exitCode: number;
@@ -87,8 +87,8 @@ interface LimactlOptions {
 }
 
 /**
- * The sandbox on macOS: a Lima VM (`poweragents-default`, under `POWERAGENTS_LIMA_HOME`, `~/.poweragents/lima`) that
- * mounts only the profile's data root (`POWERAGENTS_DATA_ROOT`, `~/Poweragents`), running one rootless container with
+ * The sandbox on macOS: a Lima VM (`piko-default`, under `PIKO_LIMA_HOME`, `~/.piko/lima`) that
+ * mounts only the profile's data root (`PIKO_DATA_ROOT`, `~/Piko`), running one rootless container with
  * OpenCode. `stop()` stops the whole VM, so a stopped sandbox holds no memory; containers and volumes survive in its
  * disk. The agent's image is built from the Containerfile embedded in the daemon, so a compiled daemon needs no file
  * beside it.
@@ -99,9 +99,9 @@ export const LimaSandbox = defineService({
     deps: {
         logger: Logger,
         env: EnvVariables,
-        limaDir: POWERAGENTS_LIMA_DIR,
-        limaHome: POWERAGENTS_LIMA_HOME,
-        dataRoot: POWERAGENTS_DATA_ROOT,
+        limaDir: PIKO_LIMA_DIR,
+        limaHome: PIKO_LIMA_HOME,
+        dataRoot: PIKO_DATA_ROOT,
     },
     setup({ logger, env, limaDir, limaHome, dataRoot }): Sandbox {
         const limactlPath = path.join(limaDir, 'bin', 'limactl');
@@ -267,7 +267,7 @@ export const LimaSandbox = defineService({
         }
 
         async function createVm() {
-            const configDir = await mkdtemp(path.join(os.tmpdir(), 'poweragents-lima-'));
+            const configDir = await mkdtemp(path.join(os.tmpdir(), 'piko-lima-'));
             try {
                 const configFile = path.join(configDir, `${INSTANCE}.yaml`);
                 const config = buildLimaConfig({
@@ -384,7 +384,7 @@ export const LimaSandbox = defineService({
 
             await limactl(shellArgs('nerdctl', 'rm', '--force', AGENT_CONTAINER), { allowFailure: true });
             await limactl(shellArgs('nerdctl', ...run.args), {
-                stdin: `OPENCODE_SERVER_PASSWORD=${password}\nPOWERAGENTS_BROWSER_TOKEN=${browserToken}\n`,
+                stdin: `OPENCODE_SERVER_PASSWORD=${password}\nPIKO_BROWSER_TOKEN=${browserToken}\n`,
             });
 
             await waitUntil(() => isAgentReady(endpoint), {

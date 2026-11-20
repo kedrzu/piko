@@ -21,7 +21,7 @@ if (!triple) {
 }
 
 const extension = process.platform === 'win32' ? '.exe' : '';
-const outfile = path.join(root, 'packages/desktop/src-tauri/binaries', `poweragents-daemon-${triple}${extension}`);
+const outfile = path.join(root, 'packages/desktop/src-tauri/binaries', `piko-daemon-${triple}${extension}`);
 
 const result = Bun.spawnSync(
     ['bun', 'build', '--compile', path.join(root, 'packages/daemon/dist/main.js'), '--outfile', outfile],

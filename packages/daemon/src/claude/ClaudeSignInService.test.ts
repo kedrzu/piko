@@ -3,12 +3,12 @@ import { expect, mock, test } from 'bun:test';
 import { createTestContainer } from '@nzyme/ioc-testing/createTestContainer.js';
 import { createEventEmitter } from '@nzyme/utils/createEventEmitter.js';
 
-import type { AiProvider } from '@poweragents/common/api/AiTypes.js';
-import type { ClaudeLoginResult, ClaudeStatus } from '@poweragents/common/api/ClaudeTypes.js';
-import { OpencodeIntegrationConnectExternalCommand } from '@poweragents/opencode/OpencodeIntegrationConnectExternalCommand.js';
-import type { OpencodeIntegrationConnectExternalCommandParams } from '@poweragents/opencode/OpencodeIntegrationConnectExternalCommand.js';
-import { OpencodeIntegrationGetCommand } from '@poweragents/opencode/OpencodeIntegrationGetCommand.js';
-import type { OpencodeIntegration } from '@poweragents/opencode/OpencodeIntegrationGetCommand.js';
+import type { AiProvider } from '@piko/common/api/AiTypes.js';
+import type { ClaudeLoginResult, ClaudeStatus } from '@piko/common/api/ClaudeTypes.js';
+import { OpencodeIntegrationConnectExternalCommand } from '@piko/opencode/OpencodeIntegrationConnectExternalCommand.js';
+import type { OpencodeIntegrationConnectExternalCommandParams } from '@piko/opencode/OpencodeIntegrationConnectExternalCommand.js';
+import { OpencodeIntegrationGetCommand } from '@piko/opencode/OpencodeIntegrationGetCommand.js';
+import type { OpencodeIntegration } from '@piko/opencode/OpencodeIntegrationGetCommand.js';
 
 import { ActiveProviderStore } from '../ai/ActiveProviderStore.js';
 import { Sandbox } from '../sandbox/Sandbox.js';
@@ -188,7 +188,7 @@ function setup(options: SetupOptions) {
         exec,
         notifySkillsChanged: () => Promise.resolve(),
     });
-    // The real store writes into the user's `~/.poweragents`; the record is asserted through this fake.
+    // The real store writes into the user's `~/.piko`; the record is asserted through this fake.
     const activeProviderSet = mock((_provider: AiProvider) => Promise.resolve());
     container.set(ActiveProviderStore, { get: () => Promise.resolve(undefined), set: activeProviderSet });
     container.set(OpencodeIntegrationGetCommand, () => Promise.resolve(integration));

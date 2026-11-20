@@ -19,9 +19,9 @@ import { assertNever } from '@nzyme/utils/assertNever.js';
 import { useTranslate } from '@nzyme/vue-i18n/useTranslate.js';
 import { computed } from 'vue';
 
-import PathStage from '@poweragents/ui/PathStage.vue';
-import type { PathStageStatus } from '@poweragents/ui/PathStage.vue';
-import SplitWizardShell from '@poweragents/ui/SplitWizardShell.vue';
+import PathStage from '@piko/ui/PathStage.vue';
+import type { PathStageStatus } from '@piko/ui/PathStage.vue';
+import SplitWizardShell from '@piko/ui/SplitWizardShell.vue';
 
 import * as l from './SetupShell.loc.js';
 

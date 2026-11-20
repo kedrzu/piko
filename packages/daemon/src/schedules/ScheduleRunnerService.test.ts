@@ -8,25 +8,25 @@ import { EnvVariables } from '@nzyme/ioc/helpers/EnvVariables.js';
 import { createTestContainer } from '@nzyme/ioc-testing/createTestContainer.js';
 import { createEventEmitter } from '@nzyme/utils/createEventEmitter.js';
 
-import type { Conversation } from '@poweragents/common/api/ConversationTypes.js';
-import type { ScheduleCreateInput, ScheduleRun } from '@poweragents/common/api/ScheduleTypes.js';
-import { OpencodeSessionActiveListCommand } from '@poweragents/opencode/OpencodeSessionActiveListCommand.js';
-import { OpencodeSessionCreateCommand } from '@poweragents/opencode/OpencodeSessionCreateCommand.js';
-import type { OpencodeSessionCreateCommandParams } from '@poweragents/opencode/OpencodeSessionCreateCommand.js';
-import { OpencodeSessionFormListCommand } from '@poweragents/opencode/OpencodeSessionFormListCommand.js';
-import { OpencodeSessionGetCommand } from '@poweragents/opencode/OpencodeSessionGetCommand.js';
-import { OpencodeSessionListCommand } from '@poweragents/opencode/OpencodeSessionListCommand.js';
-import { OpencodeSessionPromptCommand } from '@poweragents/opencode/OpencodeSessionPromptCommand.js';
+import type { Conversation } from '@piko/common/api/ConversationTypes.js';
+import type { ScheduleCreateInput, ScheduleRun } from '@piko/common/api/ScheduleTypes.js';
+import { OpencodeSessionActiveListCommand } from '@piko/opencode/OpencodeSessionActiveListCommand.js';
+import { OpencodeSessionCreateCommand } from '@piko/opencode/OpencodeSessionCreateCommand.js';
+import type { OpencodeSessionCreateCommandParams } from '@piko/opencode/OpencodeSessionCreateCommand.js';
+import { OpencodeSessionFormListCommand } from '@piko/opencode/OpencodeSessionFormListCommand.js';
+import { OpencodeSessionGetCommand } from '@piko/opencode/OpencodeSessionGetCommand.js';
+import { OpencodeSessionListCommand } from '@piko/opencode/OpencodeSessionListCommand.js';
+import { OpencodeSessionPromptCommand } from '@piko/opencode/OpencodeSessionPromptCommand.js';
 import type {
     OpencodePromptReceipt,
     OpencodeSessionPromptCommandParams,
-} from '@poweragents/opencode/OpencodeSessionPromptCommand.js';
-import { OpencodeSessionRenameCommand } from '@poweragents/opencode/OpencodeSessionRenameCommand.js';
-import type { OpencodeSessionRenameCommandParams } from '@poweragents/opencode/OpencodeSessionRenameCommand.js';
-import { OpencodeSessionSyntheticCommand } from '@poweragents/opencode/OpencodeSessionSyntheticCommand.js';
-import type { OpencodeSessionSyntheticCommandParams } from '@poweragents/opencode/OpencodeSessionSyntheticCommand.js';
-import { OpencodeSessionUpdateCommand } from '@poweragents/opencode/OpencodeSessionUpdateCommand.js';
-import type { OpencodeSession } from '@poweragents/opencode/OpencodeTypes.js';
+} from '@piko/opencode/OpencodeSessionPromptCommand.js';
+import { OpencodeSessionRenameCommand } from '@piko/opencode/OpencodeSessionRenameCommand.js';
+import type { OpencodeSessionRenameCommandParams } from '@piko/opencode/OpencodeSessionRenameCommand.js';
+import { OpencodeSessionSyntheticCommand } from '@piko/opencode/OpencodeSessionSyntheticCommand.js';
+import type { OpencodeSessionSyntheticCommandParams } from '@piko/opencode/OpencodeSessionSyntheticCommand.js';
+import { OpencodeSessionUpdateCommand } from '@piko/opencode/OpencodeSessionUpdateCommand.js';
+import type { OpencodeSession } from '@piko/opencode/OpencodeTypes.js';
 
 import { ConversationService } from '../conversations/ConversationService.js';
 import { ChatgptSignInService } from '../chatgpt/ChatgptSignInService.js';
@@ -63,7 +63,7 @@ test('a due term starts a conversation named after the schedule with its prompt,
     await fixture.tick('2026-11-13T07:00:02');
 
     const expectedSession: OpencodeSessionCreateCommandParams = {
-        directory: '/Poweragents/projects/Alfa',
+        directory: '/Piko/projects/Alfa',
         providerId: 'claude-agent',
         modelId: 'sonnet',
         permissions: [],
@@ -344,11 +344,11 @@ const READY: SandboxState = { status: 'ready', endpoint: ENDPOINT };
 
 async function setup() {
     const { container, logs } = createTestContainer();
-    const tmp = await mkdtemp(path.join(os.tmpdir(), 'poweragents-schedule-runner-'));
+    const tmp = await mkdtemp(path.join(os.tmpdir(), 'piko-schedule-runner-'));
     container.set(EnvVariables, {
-        POWERAGENTS_DATA_ROOT: path.join(tmp, 'root'),
-        POWERAGENTS_LIMA_HOME: path.join(tmp, 'home', 'lima'),
-        POWERAGENTS_PLUGINS_DIR: path.join(import.meta.dirname, '..', 'plugins', 'fixtures', 'bundled'),
+        PIKO_DATA_ROOT: path.join(tmp, 'root'),
+        PIKO_LIMA_HOME: path.join(tmp, 'home', 'lima'),
+        PIKO_PLUGINS_DIR: path.join(import.meta.dirname, '..', 'plugins', 'fixtures', 'bundled'),
     });
     // Conversations start on the connected provider's model: Claude here.
     container.set(ClaudeSignInService, {

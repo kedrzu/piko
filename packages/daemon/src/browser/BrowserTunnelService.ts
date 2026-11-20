@@ -6,7 +6,7 @@ import { defineService } from '@nzyme/ioc/Service.js';
 import { Logger } from '@nzyme/logging/Logger.js';
 import type { CdpClient } from '@nzyme/stealth-browser';
 
-import { BROWSER_TUNNEL_PORT, POWERAGENTS_DATA_ROOT, POWERAGENTS_LIMA_HOME } from '../env.js';
+import { BROWSER_TUNNEL_PORT, PIKO_DATA_ROOT, PIKO_LIMA_HOME } from '../env.js';
 import { SandboxTokenCheckCommand } from '../sandbox/SandboxTokenCheckCommand.js';
 import { BrowserService } from './BrowserService.js';
 import type { AgentBrowser } from './BrowserService.js';
@@ -53,8 +53,8 @@ export const BrowserTunnelService = defineService({
         logger: Logger,
         browser: BrowserService,
         install: ChromiumInstall,
-        limaHome: POWERAGENTS_LIMA_HOME,
-        dataRoot: POWERAGENTS_DATA_ROOT,
+        limaHome: PIKO_LIMA_HOME,
+        dataRoot: PIKO_DATA_ROOT,
         checkToken: SandboxTokenCheckCommand,
     },
     setup({ logger, browser, install, limaHome, dataRoot, checkToken }): BrowserTunnelServiceShape {

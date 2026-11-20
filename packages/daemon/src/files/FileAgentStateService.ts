@@ -3,7 +3,7 @@ import { Logger } from '@nzyme/logging/Logger.js';
 import { assert } from '@nzyme/utils/assert.js';
 import { createEventEmitter } from '@nzyme/utils/createEventEmitter.js';
 
-import type { FileAgentChangedEvent, FileAgentState } from '@poweragents/common/api/DaemonEventTypes.js';
+import type { FileAgentChangedEvent, FileAgentState } from '@piko/common/api/DaemonEventTypes.js';
 
 import { toFileKey } from './toFileKey.js';
 

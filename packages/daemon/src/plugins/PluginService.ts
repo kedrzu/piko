@@ -9,10 +9,10 @@ import { Logger } from '@nzyme/logging/Logger.js';
 import { assert } from '@nzyme/utils/assert.js';
 import { createEventEmitter } from '@nzyme/utils/createEventEmitter.js';
 
-import type { PluginsChangedEvent } from '@poweragents/common/api/DaemonEventTypes.js';
-import type { PluginEnvironmentError, PluginInfo, PluginInstall } from '@poweragents/common/api/PluginTypes.js';
+import type { PluginsChangedEvent } from '@piko/common/api/DaemonEventTypes.js';
+import type { PluginEnvironmentError, PluginInfo, PluginInstall } from '@piko/common/api/PluginTypes.js';
 
-import { DAEMON_FOLDER, PLUGINS_FOLDER, POWERAGENTS_DATA_ROOT } from '../env.js';
+import { DAEMON_FOLDER, PLUGINS_FOLDER, PIKO_DATA_ROOT } from '../env.js';
 import { ProjectService } from '../projects/ProjectService.js';
 import { AGENT_DAEMON_DIR, AGENT_DATA_ROOT } from '../sandbox/buildAgentRunArgs.js';
 import { Sandbox, SKILLS_SYNC_FILE } from '../sandbox/Sandbox.js';
@@ -119,7 +119,7 @@ export const PluginService = defineService({
     name: 'PluginService',
     deps: {
         logger: Logger,
-        dataRoot: POWERAGENTS_DATA_ROOT,
+        dataRoot: PIKO_DATA_ROOT,
         catalog: PluginCatalog,
         projects: ProjectService,
         sandbox: Sandbox,

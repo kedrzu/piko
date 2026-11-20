@@ -8,9 +8,9 @@ import { useService } from '@nzyme/vue-ioc/useService.js';
 import { useRouter } from 'nuxt/app';
 import { computed, watch } from 'vue';
 
-import Button from '@poweragents/ui/Button.vue';
-import ErrorDetails from '@poweragents/ui/ErrorDetails.vue';
-import ProgressBar from '@poweragents/ui/ProgressBar.vue';
+import Button from '@piko/ui/Button.vue';
+import ErrorDetails from '@piko/ui/ErrorDetails.vue';
+import ProgressBar from '@piko/ui/ProgressBar.vue';
 
 import * as l from './EnvironmentPage.loc.js';
 import { SetupStore } from './SetupStore.js';

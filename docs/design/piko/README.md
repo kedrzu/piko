@@ -1,4 +1,4 @@
-# poweragents
+# piko
 
 A desktop app that gives people who don't program the same kind of agent setup that developers have
 built for themselves: an AI agent that works inside your projects, uses tools, browses the web, runs on

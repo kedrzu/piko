@@ -4,11 +4,11 @@ import { Logger } from '@nzyme/logging/Logger.js';
 import { createSingleRunner } from '@nzyme/utils/createSingleRunner.js';
 import { waitUntil } from '@nzyme/utils/waitUntil.js';
 
-import { CLAUDE_ALLOWED_PLANS } from '@poweragents/common/api/ClaudeTypes.js';
-import type { ClaudeLoginResult, ClaudeLoginStartResult, ClaudeStatus } from '@poweragents/common/api/ClaudeTypes.js';
-import { OpencodeIntegrationConnectExternalCommand } from '@poweragents/opencode/OpencodeIntegrationConnectExternalCommand.js';
-import { OpencodeIntegrationGetCommand } from '@poweragents/opencode/OpencodeIntegrationGetCommand.js';
-import type { OpencodeIntegration } from '@poweragents/opencode/OpencodeIntegrationGetCommand.js';
+import { CLAUDE_ALLOWED_PLANS } from '@piko/common/api/ClaudeTypes.js';
+import type { ClaudeLoginResult, ClaudeLoginStartResult, ClaudeStatus } from '@piko/common/api/ClaudeTypes.js';
+import { OpencodeIntegrationConnectExternalCommand } from '@piko/opencode/OpencodeIntegrationConnectExternalCommand.js';
+import { OpencodeIntegrationGetCommand } from '@piko/opencode/OpencodeIntegrationGetCommand.js';
+import type { OpencodeIntegration } from '@piko/opencode/OpencodeIntegrationGetCommand.js';
 
 import { ActiveProviderStore } from '../ai/ActiveProviderStore.js';
 import { Sandbox } from '../sandbox/Sandbox.js';

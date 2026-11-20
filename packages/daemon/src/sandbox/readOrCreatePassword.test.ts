@@ -7,7 +7,7 @@ import { expect, test } from 'bun:test';
 import { readOrCreatePassword } from './readOrCreatePassword.js';
 
 test('creates the password once, readable by its owner only, and returns the same one afterwards', async () => {
-    const dir = path.join(await mkdtemp(path.join(os.tmpdir(), 'password-')), '.poweragents');
+    const dir = path.join(await mkdtemp(path.join(os.tmpdir(), 'password-')), '.piko');
     const file = path.join(dir, 'agent-password');
 
     const first = await readOrCreatePassword(file);

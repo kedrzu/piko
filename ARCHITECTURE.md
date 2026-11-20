@@ -1,10 +1,10 @@
-# poweragents architecture
+# piko architecture
 
-poweragents is a desktop app (macOS and Windows) that gives people who don't program the agent setup developers build
+piko is a desktop app (macOS and Windows) that gives people who don't program the agent setup developers build
 for themselves: an agent that works in their projects, browses the web in its own browser, runs on schedules and keeps
 what it learns about them in plain files. A background daemon of ours does all of that and serves it over a local port;
 the desktop app is a thin client of it, and a phone companion will be another. The product design, with every decision
-and its reason, is in `docs/design/poweragents/`.
+and its reason, is in `docs/design/piko/`.
 
 ## Stack
 
@@ -16,21 +16,21 @@ and its reason, is in `docs/design/poweragents/`.
 - **Frontend:** Nuxt 4 and Vue as a static SPA, SCSS with CSS modules, reka-ui, Storybook.
 - **Desktop shell:** Tauri 2, showing the app's static build in a native window.
 - **Daemon:** a Bun process listening on `127.0.0.1` only.
-- **Design:** in Pen, in `poweragents.pen` at the repo root; the product design and its decisions are in
-  `docs/design/poweragents/`.
+- **Design:** in Pen, in `piko.pen` at the repo root; the product design and its decisions are in
+  `docs/design/piko/`.
 
 ## Packages
 
 |Package|Path|Owns|
 |-|-|-|
-|`@poweragents/common`|`packages/common`|Contracts the daemon and its clients share: the daemon's address, the shapes it serves, the languages the product ships. No dependency on either side.|
-|`@poweragents/daemon`|`packages/daemon`|The background service: sandbox, agent engine (OpenCode), schedules, the agent's browser, plugins, sign-ins. Runs whether the app is open or not. Today: a `/status` endpoint.|
-|`@poweragents/ui`|`packages/ui`|Vue components, their stories and component specs, the design tokens and global styles. No routes and no daemon access.|
-|`@poweragents/app`|`packages/app`|The Nuxt app: screens by feature, routes, the IoC container and the services that talk to the daemon.|
-|`@poweragents/desktop`|`packages/desktop`|The Tauri shell around the app's build and its native commands.|
-|`@poweragents/e2e`|`packages/e2e`|Playwright tests of the built app, and the screen harnesses.|
-|`@poweragents/cli`|`packages/cli`|The repo's developer CLI, `bun poweragents …`: the `secrets` commands (the provider over `@poweragents/secrets`) and the `pen` commands. Bun runs it from source.|
-|`@poweragents/secrets`|`packages/secrets`|The secret declarations (`src/secrets.ts`, declarations only), and the Bitwarden store keyed by `POWERAGENTS_ENV`. No TypeScript reads a secret at runtime yet; when one does, it calls `loadSecretsConfig(container, [container.resolve(PoweragentsSecretStore)])` from `@nzyme/secrets`. Today only external tools (Tauri, `codesign`, `gh`, CI) read them, through `bun secrets run` or job `env`.|
+|`@piko/common`|`packages/common`|Contracts the daemon and its clients share: the daemon's address, the shapes it serves, the languages the product ships. No dependency on either side.|
+|`@piko/daemon`|`packages/daemon`|The background service: sandbox, agent engine (OpenCode), schedules, the agent's browser, plugins, sign-ins. Runs whether the app is open or not. Today: a `/status` endpoint.|
+|`@piko/ui`|`packages/ui`|Vue components, their stories and component specs, the design tokens and global styles. No routes and no daemon access.|
+|`@piko/app`|`packages/app`|The Nuxt app: screens by feature, routes, the IoC container and the services that talk to the daemon.|
+|`@piko/desktop`|`packages/desktop`|The Tauri shell around the app's build and its native commands.|
+|`@piko/e2e`|`packages/e2e`|Playwright tests of the built app, and the screen harnesses.|
+|`@piko/cli`|`packages/cli`|The repo's developer CLI, `bun piko …`: the `secrets` commands (the provider over `@piko/secrets`) and the `pen` commands. Bun runs it from source.|
+|`@piko/secrets`|`packages/secrets`|The secret declarations (`src/secrets.ts`, declarations only), and the Bitwarden store keyed by `PIKO_ENV`. No TypeScript reads a secret at runtime yet; when one does, it calls `loadSecretsConfig(container, [container.resolve(PikoSecretStore)])` from `@nzyme/secrets`. Today only external tools (Tauri, `codesign`, `gh`, CI) read them, through `bun secrets run` or job `env`.|
 
 ## Builds
 
@@ -49,12 +49,12 @@ The Vue packages are not emitted: `ui` exports its sources and is type-checked b
   is auto-imported or auto-registered, and `@/` (the app's root) is the only alias.
 - **Services:** `plugins/iocPlugin.ts` creates the one IoC container; every other plugin states
   `dependsOn: ['ioc-plugin']`. The daemon's address reaches the app as `runtimeConfig.public.daemonUrl`, built from
-  `@poweragents/common`.
+  `@piko/common`.
 - **Components** live in `packages/ui`. Each has a story per state, run as a Vitest browser test in Chromium by
   `bun run test:stories`, with axe failing a story on any WCAG 2.2 AA violation. Tokens are in
   `packages/ui/src/styles/tokens.scss`, injected into every SCSS block of the repo's packages by `viteShared.ts`, which
   the app, Storybook and Vitest share.
-- **Languages:** Polish and English (`APP_LANGUAGES` in `@poweragents/common/appLanguages.js`); every `.loc.yaml`
+- **Languages:** Polish and English (`APP_LANGUAGES` in `@piko/common/appLanguages.js`); every `.loc.yaml`
   key has both. The app's `LanguageStore` starts with the first of them among the system's preferred languages, English
   when neither is, and `AppLanguageContext` gives it to every translating service, `<html lang>` and reka-ui. Storybook
   switches the language from its toolbar. Text goes through `@nzyme/i18n` (`.loc.yaml` compiled by
@@ -64,45 +64,45 @@ The Vue packages are not emitted: `ui` exports its sources and is type-checked b
 
 ## Desktop shell and daemon
 
-- The daemon ships inside the app as a Tauri sidecar (`bundle.externalBin`). `bun nx run @poweragents/daemon:sidecar`
+- The daemon ships inside the app as a Tauri sidecar (`bundle.externalBin`). `bun nx run @piko/daemon:sidecar`
   builds it with `tsgo --build`, then compiles `dist/main.js` into one executable with `bun build --compile`
-  (`scripts/bundleDaemonSidecar.ts`), named `binaries/poweragents-daemon-<target triple>` for the machine it runs on.
+  (`scripts/bundleDaemonSidecar.ts`), named `binaries/piko-daemon-<target triple>` for the machine it runs on.
 - A release build of the shell fetches Lima (`scripts/fetchLima.ts`), runs the app's and the sidecar's builds, bundles
   them, and starts the daemon when the app starts (`src-tauri/src/daemon.rs`). The daemon keeps running after the app
   quits; when one already holds the port, the new one exits and the app talks to the running one.
 - The shell discards the daemon's output (stdio to null: a pipe would break once the app quits). The daemon writes its
-  log to the console and to `logs/daemon.log` in the folder above `POWERAGENTS_LIMA_HOME` (`~/.poweragents/logs`),
+  log to the console and to `logs/daemon.log` in the folder above `PIKO_LIMA_HOME` (`~/.piko/logs`),
   moved to `daemon.log.1` on start once over 10 MB (`DaemonLoggerTransport`).
 - The compiled daemon reads nothing beside its source: the agent's Containerfile is embedded (a Bun text import), and
   Lima comes from the app. On macOS the bundle carries `limactl` and its `share/lima` as resources
-  (`tauri.macos.conf.json`), and the shell passes their folder as `POWERAGENTS_LIMA_DIR`; in development it defaults
+  (`tauri.macos.conf.json`), and the shell passes their folder as `PIKO_LIMA_DIR`; in development it defaults
   to `packages/daemon/vendor/lima`. `limactl` must keep the `com.apple.security.virtualization` entitlement it ships
   with, or Lima's vz driver cannot start the VM: the ad-hoc signed bundle leaves it as is, and a signing setup must
   re-sign it with that entitlement.
 - The bundled plugins (design D36) come from the app the same way: the bundle carries `packages/daemon/plugins` as a
-  resource on every platform (`tauri.conf.json`), passed as `POWERAGENTS_PLUGINS_DIR`, which in development defaults to
+  resource on every platform (`tauri.conf.json`), passed as `PIKO_PLUGINS_DIR`, which in development defaults to
   that folder (empty for now; the tests' plugins are in `packages/daemon/src/plugins/fixtures`). The person's own
   plugins are folders in the data root's `plugins/` (design D40).
-- The daemon keeps its plugin state in the data root's hidden `.poweragents/`: `plugins.json` (installed bundled
+- The daemon keeps its plugin state in the data root's hidden `.piko/`: `plugins.json` (installed bundled
   plugins), copies of the installed bundled plugins and `skills/<plugin>:<skill>/` copies of every installed plugin's
   skills (`PluginService`). The container mounts it a second time read-only, so the agent reads it but cannot change it.
-  The plugins' programs live on the `poweragents-env` volume (`PluginEnvironment`). The agent reaches the daemon through
-  the `poweragents` CLI in its image, which calls the sandbox API on host port 47614 (`SandboxApiService`). Decision:
+  The plugins' programs live on the `piko-env` volume (`PluginEnvironment`). The agent reaches the daemon through
+  the `piko` CLI in its image, which calls the sandbox API on host port 47614 (`SandboxApiService`). Decision:
   `docs/decisions/plugin-runtime-in-the-sandbox.md`.
 - The first start downloads what the sandbox needs (the VM's Ubuntu image, then the agent's image built in the VM);
-  the installer carries no image. `POWERAGENTS_LIMA_HOME` (the VM, default `~/.poweragents/lima`; the agent's password
-  sits in the folder above it) and `POWERAGENTS_DATA_ROOT` move a first start into a scratch folder, leaving the real VM
+  the installer carries no image. `PIKO_LIMA_HOME` (the VM, default `~/.piko/lima`; the agent's password
+  sits in the folder above it) and `PIKO_DATA_ROOT` move a first start into a scratch folder, leaving the real VM
   untouched.
-- The profile's data root (`POWERAGENTS_DATA_ROOT`, default `~/Poweragents`) is the only host folder the sandbox
-  mounts, at `/Poweragents` in the VM and the agent's container. It holds `projects/<project folder>/` (a folder with a
+- The profile's data root (`PIKO_DATA_ROOT`, default `~/Piko`) is the only host folder the sandbox
+  mounts, at `/Piko` in the VM and the agent's container. It holds `projects/<project folder>/` (a folder with a
   `.project.json` marker, `ProjectService`) `memory/`, the person's Memory (design D9), and `downloads/`, where the agent's browser downloads land; the daemon
   creates the last two at start. The agent learns both from the global `AGENTS.md` its image puts in OpenCode's config folder
   (`agent.Containerfile`).
 - The agent's browser is Chrome for Testing, pinned and downloaded by the daemon on first start into
-  `~/.poweragents/chromium` (sha256-checked; the installer carries no browser). It launches on first use over
-  `--remote-debugging-pipe` with minimized windows and its profile in `~/.poweragents/browser-profile`. The sandbox
+  `~/.piko/chromium` (sha256-checked; the installer carries no browser). It launches on first use over
+  `--remote-debugging-pipe` with minimized windows and its profile in `~/.piko/browser-profile`. The sandbox
   reaches it only through the daemon's tunnel on host port 47612, guarded by a bearer token from
-  `~/.poweragents/browser-token` (a firewall opening, beside the sandbox API's), which enforces the agent's limits (`checkProductRequest`).
+  `~/.piko/browser-token` (a firewall opening, beside the sandbox API's), which enforces the agent's limits (`checkProductRequest`).
   Downloads go to a daemon-owned staging folder, then into the data root's `downloads/`. Decision:
   `docs/decisions/agent-browser-over-one-pipe.md`.
 - Every request the browser makes goes through the daemon's proxy on port 47613, which refuses non-public addresses
@@ -112,7 +112,7 @@ The Vue packages are not emitted: `ui` exports its sources and is type-checked b
   `bun --watch`, and the shell starts no sidecar.
 - The window may call only Tauri's core (`capabilities/default.json`), and its CSP allows connections only to the shell
   itself and to the daemon's port.
-- The daemon listens on loopback only (port 47610, `POWERAGENTS_DAEMON_PORT` overrides it). Remote clients will reach it
+- The daemon listens on loopback only (port 47610, `PIKO_DAEMON_PORT` overrides it). Remote clients will reach it
   through the relay, never through an open port.
 
 ## Tooling and workflow
@@ -131,7 +131,7 @@ The Vue packages are not emitted: `ui` exports its sources and is type-checked b
 - **Lint and format:** oxlint (type-aware) and oxfmt for code; ESLint for Vue rules, `package.json` and Markdown. They
   cover this repo, never `nzyme/` (`lint:nzyme` runs nzyme's own config). `lint` and `lint:check` also run
   `bun pen check` on the design file.
-- **Design file:** `poweragents.pen` merges node by node through `bun pen merge`, the git merge driver
+- **Design file:** `piko.pen` merges node by node through `bun pen merge`, the git merge driver
   `setup.sh` registers; `bun pen diff` shows what changed. Design rounds run the repo's pinned `pen` CLI, which
   needs `bunx pen login` once per machine and no key.
 - **Ignores:** each `.gitignore` lists only what the repo produces. The root one holds what any directory can produce;

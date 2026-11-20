@@ -75,7 +75,7 @@ RUN case "$TARGETARCH" in \
 # The token is `[A-Za-z0-9_-]` only (`readOrCreatePassword`), so it needs no JSON escaping in the headers.
 COPY <<'EOF_WRAPPER' /usr/local/bin/agent-browser
 #!/bin/sh
-for name in OPENCODE_SESSION_ID POWERAGENTS_BROWSER_URL POWERAGENTS_BROWSER_TOKEN; do
+for name in OPENCODE_SESSION_ID PIKO_BROWSER_URL PIKO_BROWSER_TOKEN; do
     eval "value=\${$name:-}"
     if [ -z "$value" ]; then
         echo "agent-browser: $name is not set; the browser works only from the agent's own shell." >&2
@@ -83,8 +83,8 @@ for name in OPENCODE_SESSION_ID POWERAGENTS_BROWSER_URL POWERAGENTS_BROWSER_TOKE
     fi
 done
 
-export AGENT_BROWSER_CDP="$POWERAGENTS_BROWSER_URL/session/$OPENCODE_SESSION_ID"
-export AGENT_BROWSER_CDP_HEADERS="{\"Authorization\":\"Bearer $POWERAGENTS_BROWSER_TOKEN\"}"
+export AGENT_BROWSER_CDP="$PIKO_BROWSER_URL/session/$OPENCODE_SESSION_ID"
+export AGENT_BROWSER_CDP_HEADERS="{\"Authorization\":\"Bearer $PIKO_BROWSER_TOKEN\"}"
 export AGENT_BROWSER_SESSION="$OPENCODE_SESSION_ID"
 export AGENT_BROWSER_NO_VERSION_CHECK=1
 exec /usr/local/lib/agent-browser/agent-browser "$@"
@@ -92,10 +92,10 @@ EOF_WRAPPER
 RUN chmod 755 /usr/local/bin/agent-browser
 
 # The image pins both versions; neither may update itself inside a running container. `PATH` leads with the bin folders
-# of the plugins' environment, on the `poweragents-env` volume the daemon fills (Node packages and a Python venv).
+# of the plugins' environment, on the `piko-env` volume the daemon fills (Node packages and a Python venv).
 ENV DISABLE_AUTOUPDATER=1 \
     OPENCODE_DISABLE_AUTOUPDATE=1 \
-    PATH=/opt/poweragents/env/node/node_modules/.bin:/opt/poweragents/env/python/bin:$PATH
+    PATH=/opt/piko/env/node/node_modules/.bin:/opt/piko/env/python/bin:$PATH
 
 # The agent works with no approvals (design D28): the sandbox is the boundary, so OpenCode allows every action. Global
 # rules are evaluated after each agent's own (the built-in ones ask before reading `.env` files), and a later rule over
@@ -110,7 +110,7 @@ COPY <<EOF /root/.config/opencode/opencode.json
         { "action": "*", "resource": "*", "effect": "allow" },
         { "action": "edit", "resource": "*", "effect": "ask" }
     ],
-    "skills": ["/Poweragents/.poweragents/skills"]
+    "skills": ["/Piko/.piko/skills"]
 }
 EOF
 
@@ -121,12 +121,12 @@ EOF
 COPY <<'EOF_AGENTS' /root/.config/opencode/AGENTS.md
 # Working for one person
 
-You work for one person, on their own computer, through the poweragents app. Most people who use it do not program:
+You work for one person, on their own computer, through the piko app. Most people who use it do not program:
 explain what you did in plain words, and keep technical detail out unless they ask for it.
 
 ## Memory
 
-The person's Memory is the folder `/Poweragents/memory`: plain Markdown files about them that they can open and edit
+The person's Memory is the folder `/Piko/memory`: plain Markdown files about them that they can open and edit
 themselves. It is the only memory you have between conversations.
 
 - At the start of a task, list the Memory folder and read the files that could matter for it.
@@ -149,7 +149,7 @@ person asks about them.
 
 ## Projects
 
-Each project is a folder under `/Poweragents/projects`; a folder holding a `.project.json` file is a project. You work
+Each project is a folder under `/Piko/projects`; a folder holding a `.project.json` file is a project. You work
 in the current project's folder. You may look into the person's other projects when that helps the task, but change
 them only when the person asks. Leave existing `.project.json` files as they are.
 
@@ -157,8 +157,8 @@ You may create a project without asking when the person's work calls for one; it
 
 1. Pick a short name in the person's language (for example `Posty na Instagram`), not already taken by a project. It
    names the folder too: no `/`, `\`, `:` and no leading dot.
-2. Create the folder `/Poweragents/projects/<name>`.
-3. Write `/Poweragents/projects/<name>/.project.json`, exactly this shape:
+2. Create the folder `/Piko/projects/<name>`.
+3. Write `/Piko/projects/<name>/.project.json`, exactly this shape:
    `{"id": "<new UUID>", "name": "<name>", "createdAt": "<now, ISO 8601 in UTC>"}`. Get the UUID from
    `cat /proc/sys/kernel/random/uuid` and the time from `date -u +%Y-%m-%dT%H:%M:%SZ`; never reuse another project's id.
 
@@ -174,10 +174,10 @@ for you is open to you. Drive it with the `agent-browser` command from the shell
 - `agent-browser get text @e3` reads text; `agent-browser screenshot /tmp/page.png` is for when the layout matters.
 - `agent-browser --help` lists the rest (tabs, waiting, going back, uploads).
 
-Downloads land in `/Poweragents/downloads`; move a file into the project when it belongs there. Upload only files under
-`/Poweragents/...`. The browser cannot open local files or the person's local network.
+Downloads land in `/Piko/downloads`; move a file into the project when it belongs there. Upload only files under
+`/Piko/...`. The browser cannot open local files or the person's local network.
 
-The browser holds every site to a human pace, so a command may take a few seconds longer; a message saying poweragents is
+The browser holds every site to a human pace, so a command may take a few seconds longer; a message saying piko is
 pacing a site is deliberate, so follow it.
 
 When a login, a CAPTCHA or a payment needs the person, stop and say so plainly in the conversation; do not try to get
@@ -191,8 +191,8 @@ schedule, runs one as the command `/<plugin>:<skill>`.
 - Never install programs or libraries loose (`apt`, `pip install`, `npm -g`, downloaded binaries): your environment is
   rebuilt from the installed plugins, and anything else vanishes. When you need one, find a plugin that has it, or write
   your own with the `plugin-authoring` skill.
-- `poweragents plugin list` shows what is installed and what you can install; `poweragents plugin install <name>` and
-  `poweragents plugin remove <name>` change it (a project plugin goes into this conversation's project).
+- `piko plugin list` shows what is installed and what you can install; `piko plugin install <name>` and
+  `piko plugin remove <name>` change it (a project plugin goes into this conversation's project).
 - Install without asking the person first, then say in one sentence that you did: the app shows it in the conversation.
   When the install output tells you to load a skill, load it and follow it now, in this conversation.
 - When a message says a plugin's command was not run because the plugin is not installed, never do the task another
@@ -292,18 +292,18 @@ EOF_SKILL
 COPY <<'EOF_PLUGIN_AUTHORING' /root/.config/opencode/skills/plugin-authoring/SKILL.md
 ---
 name: plugin-authoring
-description: Write or change one of the person's own plugins. Use when a task needs a program or library you do not have and no plugin in `poweragents plugin list` has it, when the person wants a repeatable workflow kept as a skill, or when they ask to improve one of their own plugins.
+description: Write or change one of the person's own plugins. Use when a task needs a program or library you do not have and no plugin in `piko plugin list` has it, when the person wants a repeatable workflow kept as a skill, or when they ask to improve one of their own plugins.
 ---
 
 # Writing the person's own plugin
 
-An own plugin is a folder `/Poweragents/plugins/<name>/`. It is installed by being there and removed by deleting the
+An own plugin is a folder `/Piko/plugins/<name>/`. It is installed by being there and removed by deleting the
 folder; it is available in every project.
 
 ## Name
 
 Lowercase letters and digits in words joined by single hyphens (`invoice-reader`). Not the name of a plugin in
-`poweragents plugin list` that is not your own: that plugin wins and yours is not loaded. The folder's name is the
+`piko plugin list` that is not your own: that plugin wins and yours is not loaded. The folder's name is the
 `name` in `plugin.json`.
 
 ## plugin.json
@@ -354,9 +354,9 @@ It shows as `<plugin>:<skill>` from the next conversation; a changed skill too.
 - Your own CLI: a small Bun package with a `package.json` (`name`, `bin`) and a script starting
   `#!/usr/bin/env bun`. A `bin` that is one path becomes a command named after the plugin. Keep its dependencies few,
   at exact versions, and its output short: you read all of it. A skill of the plugin says how to call it.
-- After writing or changing `environment` or the CLI's code, run `poweragents plugin install <name>`: it applies the
+- After writing or changing `environment` or the CLI's code, run `piko plugin install <name>`: it applies the
   environment and prints any error in full. Fix it and run it again until it succeeds. When it says the plugin has
-  errors, `poweragents plugin list` shows which.
+  errors, `piko plugin list` shows which.
 
 ## Keep in mind
 
@@ -382,7 +382,7 @@ while it slept runs once when it wakes (only the latest missed time).
 
 ## Where schedules live
 
-In the project's folder: `/Poweragents/projects/<project>/.schedules/`.
+In the project's folder: `/Piko/projects/<project>/.schedules/`.
 
 - `<id>.json` is the schedule. You write it.
 - `<id>.state.json` is written by the app: never write or edit it, only read it.
@@ -463,6 +463,6 @@ If the person gives no time, propose one that fits the task rather than asking a
 EOF_SKILL
 
 # The `generative-ui` skill is appended after this file by the daemon (`buildAgentContainerfile`), from the generated
-# `generative-ui.skill.gen.md`; `bun run codegen` writes it from the component library. So is the `poweragents` command
-# (`poweragents.js`), at `/usr/local/bin/poweragents`: the agent manages its plugins with it, through the daemon's
-# sandbox API (`POWERAGENTS_DAEMON_URL`, with the same token as the browser).
+# `generative-ui.skill.gen.md`; `bun run codegen` writes it from the component library. So is the `piko` command
+# (`piko.js`), at `/usr/local/bin/piko`: the agent manages its plugins with it, through the daemon's
+# sandbox API (`PIKO_DAEMON_URL`, with the same token as the browser).

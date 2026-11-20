@@ -1,10 +1,10 @@
 {
-    "name": "@poweragents/cli",
+    "name": "@piko/cli",
     "version": "0.0.0",
     "private": true,
-    "description": "The repo's developer CLI, run as `bun poweragents …`: the secrets and the pen design file commands",
+    "description": "The repo's developer CLI, run as `bun piko …`: the secrets and the pen design file commands",
     "bin": {
-        "poweragents": "src/cli.ts"
+        "piko": "src/cli.ts"
     },
     "type": "module",
     "dependencies": {
@@ -12,7 +12,7 @@
         "@nzyme/ioc": "workspace:*",
         "@nzyme/pen": "workspace:*",
         "@nzyme/secrets": "workspace:*",
-        "@poweragents/secrets": "workspace:*"
+        "@piko/secrets": "workspace:*"
     },
     "devDependencies": {
         "@nzyme/tsconfig": "workspace:*"

@@ -19,7 +19,7 @@ import MemoryEmptyState from './MemoryEmptyState.vue';
 import { MEMORY_FILES, MEMORY_NOW, WORK_MARKDOWN } from './MemoryLayout.fixtures.js';
 import MemoryLayout from './MemoryLayout.vue';
 
-// The main screens from `poweragents.pen`, composed from the components as the app does.
+// The main screens from `piko.pen`, composed from the components as the app does.
 
 const meta: Meta<typeof AppShell> = {
     title: 'AppShell',

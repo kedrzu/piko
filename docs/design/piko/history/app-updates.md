@@ -2,7 +2,7 @@
 
 The installed desktop app updates itself from builds of `main` (the Development stream): it checks every few minutes,
 downloads and installs a new version in the background, then offers a restart. Nothing restarts on its own; quitting
-and reopening also starts the new version. The offer is a **toast**, the first in poweragents, so the toast is drawn
+and reopening also starts the new version. The offer is a **toast**, the first in piko, so the toast is drawn
 as a general design-system component that later features reuse (a background task finished, something failed, an
 Undo), and the update toast as its first use. Base: `e3053e6`.
 

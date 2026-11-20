@@ -35,8 +35,7 @@ const READ_TIMEOUT: Duration = Duration::from_secs(60);
 const STATE_EVENT: &str = "update-state";
 
 /// The manifest of the `development` release. `tauri.conf.json` names it too, but each check asks with its own query.
-const MANIFEST: &str =
-    "https://github.com/kedrzu/poweragents/releases/download/development/latest.json";
+const MANIFEST: &str = "https://github.com/kedrzu/piko/releases/download/development/latest.json";
 
 /// Why a check or a download failed.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
@@ -229,7 +228,7 @@ impl Updates {
         Self {
             inner: Mutex::new(Inner::new(
                 &app.package_info().version.to_string(),
-                option_env!("POWERAGENTS_COMMIT").filter(|commit| !commit.is_empty()),
+                option_env!("PIKO_COMMIT").filter(|commit| !commit.is_empty()),
             )),
             wake: Notify::new(),
         }
@@ -549,7 +548,7 @@ mod tests {
         assert_eq!(
             manifest_url(1700).ok().map(String::from),
             Some(
-                "https://github.com/kedrzu/poweragents/releases/download/development/latest.json?t=1700"
+                "https://github.com/kedrzu/piko/releases/download/development/latest.json?t=1700"
                     .to_owned()
             )
         );

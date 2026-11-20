@@ -7,9 +7,9 @@ Accepted
 ## Context
 
 Schedules run the agent without being asked (issue #21). Each belongs to a project, and each run is an ordinary
-conversation there ([D29](../design/poweragents/DECISIONS.md#d29)). They run only while the computer is awake, and a
-missed time runs once on wake ([D13](../design/poweragents/DECISIONS.md#d13)). The person never needs a settings screen,
-because the agent sets schedules up from a conversation ([D14](../design/poweragents/DECISIONS.md#d14)). That leaves
+conversation there ([D29](../design/piko/DECISIONS.md#d29)). They run only while the computer is awake, and a
+missed time runs once on wake ([D13](../design/piko/DECISIONS.md#d13)). The person never needs a settings screen,
+because the agent sets schedules up from a conversation ([D14](../design/piko/DECISIONS.md#d14)). That leaves
 three questions:
 
 - how the agent reaches schedules;
@@ -34,7 +34,7 @@ The recurrences people ask for include "every other Thursday", "every three week
 
 **How the agent reaches schedules**
 
-- **Daemon MCP server** ([D30](../design/poweragents/DECISIONS.md#d30)): tools with validation in the daemon.
+- **Daemon MCP server** ([D30](../design/piko/DECISIONS.md#d30)): tools with validation in the daemon.
   Trade-off: it opens a port from the sandbox to the host, which needs a firewall opening and a token. It also adds
   tool definitions to every agent's context.
 - **Files and a skill.** The agent writes `<project>/.schedules/<id>.json` as the `schedules` skill describes. The daemon

@@ -1,7 +1,7 @@
 import { isElementNode } from '@openuidev/lang-core';
 import type { ElementNode } from '@openuidev/lang-core';
 
-import { GenerativeUiButtonVariants } from '@poweragents/common/generativeUi/generativeUiLibrary.js';
+import { GenerativeUiButtonVariants } from '@piko/common/generativeUi/generativeUiLibrary.js';
 
 /** Visual weight of a generative UI button, as the program names it. */
 export type GenerativeUiButtonVariant = (typeof GenerativeUiButtonVariants)[number];

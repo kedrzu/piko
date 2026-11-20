@@ -4,18 +4,18 @@ import { assertNever } from '@nzyme/utils/assertNever.js';
 import { createSingleRunner } from '@nzyme/utils/createSingleRunner.js';
 import { computed, reactive, ref } from 'vue';
 
-import { AiStatusGetEndpoint } from '@poweragents/common/api/AiStatusGetEndpoint.js';
-import type { AiProvider, AiStatus } from '@poweragents/common/api/AiTypes.js';
-import { ChatgptLoginCancelEndpoint } from '@poweragents/common/api/ChatgptLoginCancelEndpoint.js';
-import { ChatgptLoginStartEndpoint } from '@poweragents/common/api/ChatgptLoginStartEndpoint.js';
-import { ChatgptLoginStateGetEndpoint } from '@poweragents/common/api/ChatgptLoginStateGetEndpoint.js';
-import type { ChatgptLoginState } from '@poweragents/common/api/ChatgptTypes.js';
-import { ClaudeLoginCompleteEndpoint } from '@poweragents/common/api/ClaudeLoginCompleteEndpoint.js';
-import { ClaudeLoginStartEndpoint } from '@poweragents/common/api/ClaudeLoginStartEndpoint.js';
-import type { ClaudeLoginResult } from '@poweragents/common/api/ClaudeTypes.js';
-import { SandboxStartEndpoint } from '@poweragents/common/api/SandboxStartEndpoint.js';
-import { SandboxStatusGetEndpoint } from '@poweragents/common/api/SandboxStatusGetEndpoint.js';
-import type { SandboxStatus } from '@poweragents/common/api/SandboxTypes.js';
+import { AiStatusGetEndpoint } from '@piko/common/api/AiStatusGetEndpoint.js';
+import type { AiProvider, AiStatus } from '@piko/common/api/AiTypes.js';
+import { ChatgptLoginCancelEndpoint } from '@piko/common/api/ChatgptLoginCancelEndpoint.js';
+import { ChatgptLoginStartEndpoint } from '@piko/common/api/ChatgptLoginStartEndpoint.js';
+import { ChatgptLoginStateGetEndpoint } from '@piko/common/api/ChatgptLoginStateGetEndpoint.js';
+import type { ChatgptLoginState } from '@piko/common/api/ChatgptTypes.js';
+import { ClaudeLoginCompleteEndpoint } from '@piko/common/api/ClaudeLoginCompleteEndpoint.js';
+import { ClaudeLoginStartEndpoint } from '@piko/common/api/ClaudeLoginStartEndpoint.js';
+import type { ClaudeLoginResult } from '@piko/common/api/ClaudeTypes.js';
+import { SandboxStartEndpoint } from '@piko/common/api/SandboxStartEndpoint.js';
+import { SandboxStatusGetEndpoint } from '@piko/common/api/SandboxStatusGetEndpoint.js';
+import type { SandboxStatus } from '@piko/common/api/SandboxTypes.js';
 
 import { DaemonClient } from '@/daemon/DaemonClient.js';
 

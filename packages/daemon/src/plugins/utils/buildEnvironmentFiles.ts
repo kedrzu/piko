@@ -1,6 +1,6 @@
 import path from 'node:path';
 
-import type { PluginEnvironmentError, PluginEnvironmentPart } from '@poweragents/common/api/PluginTypes.js';
+import type { PluginEnvironmentError, PluginEnvironmentPart } from '@piko/common/api/PluginTypes.js';
 
 import type { PluginEnvironment } from '../parsePluginManifest.js';
 
@@ -25,10 +25,10 @@ export interface EnvironmentFiles {
 }
 
 /**
- * The scope of the plugins' CLIs in `node_modules`: a plugin's CLI is the dependency `@poweragents-plugins/<plugin>`. A
+ * The scope of the plugins' CLIs in `node_modules`: a plugin's CLI is the dependency `@piko-plugins/<plugin>`. A
  * CLI whose `bin` is a single path gets the plugin's name as its command.
  */
-export const CLI_PACKAGE_SCOPE = '@poweragents-plugins';
+export const CLI_PACKAGE_SCOPE = '@piko-plugins';
 
 interface FindConflictParams {
     plugin: string;

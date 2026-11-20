@@ -4,9 +4,9 @@ import { assertNever } from '@nzyme/utils/assertNever.js';
 import { createEventEmitter } from '@nzyme/utils/createEventEmitter.js';
 import { createExponentialBackoff } from '@nzyme/utils/createExponentialBackoff.js';
 
-import type { DaemonEvent } from '@poweragents/common/api/DaemonEventTypes.js';
-import { OpencodeEventSubscribeCommand } from '@poweragents/opencode/OpencodeEventSubscribeCommand.js';
-import type { OpencodeSessionEvent } from '@poweragents/opencode/OpencodeEventSubscribeCommand.js';
+import type { DaemonEvent } from '@piko/common/api/DaemonEventTypes.js';
+import { OpencodeEventSubscribeCommand } from '@piko/opencode/OpencodeEventSubscribeCommand.js';
+import type { OpencodeSessionEvent } from '@piko/opencode/OpencodeEventSubscribeCommand.js';
 
 import { toAiProvider } from '../ai/utils/toAiProvider.js';
 import { AgentPathService } from '../files/AgentPathService.js';

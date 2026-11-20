@@ -3318,7 +3318,7 @@
                           "icon": "circle-arrow-down"
                         },
                         "j6YmXu": {
-                          "content": "Nowa wersja poweragents jest gotowa"
+                          "content": "Nowa wersja piko jest gotowa"
                         },
                         "aTIKH": {
                           "content": "Uruchom ponownie, żeby przejść na 0.1.0‑dev.215. Do tego czasu działasz na 0.1.0‑dev.214."
@@ -5304,7 +5304,7 @@
                           "fill": "$ink-muted",
                           "textGrowth": "fixed-width",
                           "width": "fill_container",
-                          "content": "Pliki będą w folderze Poweragents w Twoim katalogu domowym.",
+                          "content": "Pliki będą w folderze Piko w Twoim katalogu domowym.",
                           "lineHeight": 1.45,
                           "fontFamily": "$font-body",
                           "fontSize": 12.5,
@@ -21505,7 +21505,7 @@
                               "id": "U0eOw",
                               "name": "Name",
                               "fill": "$on-ink",
-                              "content": "poweragents",
+                              "content": "piko",
                               "fontFamily": "$font-heading",
                               "fontSize": 19,
                               "fontWeight": "700"
@@ -21879,7 +21879,7 @@
                       "fill": "$ink-body",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
-                      "content": "limactl start poweragents: exit status 1",
+                      "content": "limactl start piko: exit status 1",
                       "lineHeight": 1.6,
                       "fontFamily": "$font-mono",
                       "fontSize": 12,

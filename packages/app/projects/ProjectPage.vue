@@ -6,9 +6,9 @@ import { useService } from '@nzyme/vue-ioc/useService.js';
 import { useRoute, useRouter } from 'nuxt/app';
 import { computed, ref, watch } from 'vue';
 
-import { ConversationSendEndpoint } from '@poweragents/common/api/ConversationSendEndpoint.js';
-import type { Conversation } from '@poweragents/common/api/ConversationTypes.js';
-import ProjectEmptyState from '@poweragents/ui/ProjectEmptyState.vue';
+import { ConversationSendEndpoint } from '@piko/common/api/ConversationSendEndpoint.js';
+import type { Conversation } from '@piko/common/api/ConversationTypes.js';
+import ProjectEmptyState from '@piko/ui/ProjectEmptyState.vue';
 
 import { ConversationStore } from '@/conversations/ConversationStore.js';
 import { DaemonClient } from '@/daemon/DaemonClient.js';

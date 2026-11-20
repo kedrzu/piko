@@ -4,16 +4,12 @@ import { Logger } from '@nzyme/logging/Logger.js';
 import { assertNever } from '@nzyme/utils/assertNever.js';
 import { waitUntil } from '@nzyme/utils/waitUntil.js';
 
-import type {
-    ChatgptLoginStartResult,
-    ChatgptLoginState,
-    ChatgptStatus,
-} from '@poweragents/common/api/ChatgptTypes.js';
-import { OpencodeIntegrationGetCommand } from '@poweragents/opencode/OpencodeIntegrationGetCommand.js';
-import type { OpencodeIntegration } from '@poweragents/opencode/OpencodeIntegrationGetCommand.js';
-import { OpencodeIntegrationOauthCancelCommand } from '@poweragents/opencode/OpencodeIntegrationOauthCancelCommand.js';
-import { OpencodeIntegrationOauthStartCommand } from '@poweragents/opencode/OpencodeIntegrationOauthStartCommand.js';
-import { OpencodeIntegrationOauthStatusCommand } from '@poweragents/opencode/OpencodeIntegrationOauthStatusCommand.js';
+import type { ChatgptLoginStartResult, ChatgptLoginState, ChatgptStatus } from '@piko/common/api/ChatgptTypes.js';
+import { OpencodeIntegrationGetCommand } from '@piko/opencode/OpencodeIntegrationGetCommand.js';
+import type { OpencodeIntegration } from '@piko/opencode/OpencodeIntegrationGetCommand.js';
+import { OpencodeIntegrationOauthCancelCommand } from '@piko/opencode/OpencodeIntegrationOauthCancelCommand.js';
+import { OpencodeIntegrationOauthStartCommand } from '@piko/opencode/OpencodeIntegrationOauthStartCommand.js';
+import { OpencodeIntegrationOauthStatusCommand } from '@piko/opencode/OpencodeIntegrationOauthStatusCommand.js';
 
 import { ActiveProviderStore } from '../ai/ActiveProviderStore.js';
 import { Sandbox } from '../sandbox/Sandbox.js';
@@ -374,7 +370,7 @@ function parseCurlResponse(output: string): Response | undefined {
 
 /** What the browser gets when the callback could not reach the sign-in; never the URL, which carries the code. */
 function forwardFailedResponse() {
-    return new Response('The sign-in could not be passed on to the agent. Go back to poweragents and try again.', {
+    return new Response('The sign-in could not be passed on to the agent. Go back to piko and try again.', {
         status: 502,
         headers: { 'Content-Type': 'text/plain; charset=utf-8' },
     });

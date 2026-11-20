@@ -138,13 +138,13 @@ export const NotClosable: Story = {
     render: () => (
         <Toaster>
             <Toast
-                title="Nowa wersja poweragents jest gotowa"
+                title="Nowa wersja piko jest gotowa"
                 tone="accent"
                 icon={CircleArrowDown}
                 closable={false}
             >
                 {{
-                    default: () => 'Za chwilę poweragents uruchomi się ponownie.',
+                    default: () => 'Za chwilę piko uruchomi się ponownie.',
                     actions: () => (
                         <Button
                             icon={RotateCw}

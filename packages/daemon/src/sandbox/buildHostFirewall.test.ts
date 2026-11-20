@@ -52,7 +52,7 @@ test('replaces its own table and leaves the rest of the traffic open', () => {
     const script = buildHostFirewall({ hostGateway: '192.168.5.2', openings: [] });
 
     expect(script).toContain('policy accept;');
-    expect(script.startsWith('table inet poweragents\ndelete table inet poweragents\n')).toBe(true);
+    expect(script.startsWith('table inet piko\ndelete table inet piko\n')).toBe(true);
 });
 
 /** The rules of the output chain, in order. */

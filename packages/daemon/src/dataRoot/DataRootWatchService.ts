@@ -6,9 +6,9 @@ import { defineService } from '@nzyme/ioc/Service.js';
 import { Logger } from '@nzyme/logging/Logger.js';
 import { createEventEmitter } from '@nzyme/utils/createEventEmitter.js';
 
-import type { DataRootEvent } from '@poweragents/common/api/DaemonEventTypes.js';
+import type { DataRootEvent } from '@piko/common/api/DaemonEventTypes.js';
 
-import { MEMORY_FOLDER, POWERAGENTS_DATA_ROOT, PROJECTS_FOLDER } from '../env.js';
+import { MEMORY_FOLDER, PIKO_DATA_ROOT, PROJECTS_FOLDER } from '../env.js';
 import { ProjectService } from '../projects/ProjectService.js';
 
 /**
@@ -38,7 +38,7 @@ type DataRootChange =
 /** The profile's data root, watched. */
 export const DataRootWatchService = defineService({
     name: 'DataRootWatchService',
-    deps: { logger: Logger, dataRoot: POWERAGENTS_DATA_ROOT, projects: ProjectService },
+    deps: { logger: Logger, dataRoot: PIKO_DATA_ROOT, projects: ProjectService },
     setup({ logger, dataRoot, projects }): DataRootWatchServiceShape {
         const root = path.resolve(dataRoot);
         const emitter = createEventEmitter<[event: DataRootEvent]>();

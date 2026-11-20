@@ -159,16 +159,16 @@
 - Owner: site helpers deferred (own design later); X posting route out of scope entirely — the design is the general
   stealth mechanism. Recorded D10; README rescoped. Owner asked to create the Google Cloud project for reCAPTCHA;
   gcloud needs re-login and a choice of account (two credentialed: work and personal).
-- Owner: reCAPTCHA project on the personal Google account, with billing. Created project `poweragents-stealth-eval`
+- Owner: reCAPTCHA project on the personal Google account, with billing. Created project `piko-stealth-eval`
   and a score key for `kedrzu.github.io`; billing pending (no billing account exists, needs the console). Proposed:
   the test page as a static GitHub Pages site in a separate public repo; the eval harness calls `createAssessment`
   itself, so no backend. Not confirmed.
 - Owner: create the repo. Created public `kedrzu/stealth-eval-page` with GitHub Pages; end-to-end check: a
   Playwright-driven Chrome scored 0.9 (single run, no billing). Billing still for the owner to attach.
-- Owner attached billing to `poweragents-stealth-eval` (gcloud: billingEnabled True). Re-ran the probe from
+- Owner attached billing to `piko-stealth-eval` (gcloud: billingEnabled True). Re-ran the probe from
   Playwright MCP's Chrome: still 0.9, no reasons. Owner asked how Claude in Chrome drives the browser; researching.
 - Claude in Chrome: extension in the person's real Chrome, CDP through `chrome.debugger`, native messaging to Claude
-  Code. Recorded as a Rejected line of D3 (same protocol; the real profile is what poweragents D27 rejected).
+  Code. Recorded as a Rejected line of D3 (same protocol; the real profile is what piko D27 rejected).
 - Owner: pace values and back-off rules come from the baseline measurement (D5 sharpened). Running rightsize before
   proposing to close.
 - Rightsize (three passes) flagged six mechanisms. Dropped as already chosen by the owner with the simpler version in

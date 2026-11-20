@@ -149,8 +149,8 @@ async function startBrowser(options: StartBrowserOptions = {}) {
     cleanups.push(() => proxy.close());
     const executable = options.executable === undefined ? EXECUTABLE : options.executable;
     container.set(EnvVariables, {
-        POWERAGENTS_LIMA_HOME: path.join(stateFolder, 'lima'),
-        POWERAGENTS_DATA_ROOT: dataRoot,
+        PIKO_LIMA_HOME: path.join(stateFolder, 'lima'),
+        PIKO_DATA_ROOT: dataRoot,
     });
     container.set(ChromiumInstall, { ensure: () => Promise.resolve(), getExecutable: () => executable });
     container.set(FocusKeeper, { start: mock(() => {}), restore: mock(() => {}) });

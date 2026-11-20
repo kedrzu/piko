@@ -1,7 +1,7 @@
 import { createContainer } from '@nzyme/ioc/Container.js';
 import { Logger } from '@nzyme/logging/Logger.js';
-import { DAEMON_EVENTS_PATH } from '@poweragents/common/api/DaemonEventTypes.js';
-import { DAEMON_API_PATH, DAEMON_PORT } from '@poweragents/common/daemonAddress.js';
+import { DAEMON_EVENTS_PATH } from '@piko/common/api/DaemonEventTypes.js';
+import { DAEMON_API_PATH, DAEMON_PORT } from '@piko/common/daemonAddress.js';
 
 import { ApiService } from './api/ApiService.js';
 import { ConversationEventService } from './conversations/ConversationEventService.js';
@@ -9,7 +9,7 @@ import { BrowserNetworkGuard } from './browser/BrowserNetworkGuard.js';
 import { BrowserService } from './browser/BrowserService.js';
 import { BrowserTunnelService } from './browser/BrowserTunnelService.js';
 import { ChromiumInstall } from './browser/ChromiumInstall.js';
-import { POWERAGENTS_VERSION } from './env.js';
+import { PIKO_VERSION } from './env.js';
 import { DaemonLoggerTransport } from './logging/DaemonLoggerTransport.js';
 import { MemoryService } from './memory/MemoryService.js';
 import { PluginService } from './plugins/PluginService.js';
@@ -71,7 +71,7 @@ try {
 } catch (error) {
     logger.error('The browser tunnel could not start', { error });
 }
-// What the agent's `poweragents` command calls from the sandbox. A failure is logged and the daemon keeps serving.
+// What the agent's `piko` command calls from the sandbox. A failure is logged and the daemon keeps serving.
 try {
     container.resolve(SandboxApiService).listen();
 } catch (error) {
@@ -107,10 +107,10 @@ container.resolve(ScheduleRunnerService).start();
 // It listens on loopback only: the desktop app reaches it on this machine, and remote clients (the phone) will come
 // through the relay, never through an open port. `/status` stays open to any caller: it reveals only that the daemon
 // runs and its version. The API admits only the app (`ApiService`).
-const version = container.resolve(POWERAGENTS_VERSION);
+const version = container.resolve(PIKO_VERSION);
 const server = Bun.serve({
     hostname: '127.0.0.1',
-    port: Number(process.env.POWERAGENTS_DAEMON_PORT ?? DAEMON_PORT),
+    port: Number(process.env.PIKO_DAEMON_PORT ?? DAEMON_PORT),
     routes: {
         '/status': () => createStatusResponse(version),
         // An event stream stays open for as long as the app does: Bun's idle timeout (10 s) must not close it.

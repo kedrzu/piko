@@ -7,21 +7,21 @@ import type { LoggerObject } from '@nzyme/logging/Logger.js';
 import type { LoggerLevel } from '@nzyme/logging/LoggerLevel.js';
 import { consoleLog, LoggerTransport } from '@nzyme/logging/LoggerTransport.js';
 
-import { POWERAGENTS_LIMA_HOME } from '../env.js';
+import { PIKO_LIMA_HOME } from '../env.js';
 
 /** A log that grows past this, at start or while running, is moved to `daemon.log.1`, replacing the previous one. */
 const MAX_LOG_BYTES = 10 * 1024 * 1024;
 
 /**
  * The daemon's log: every entry goes to the console, as in development, and to `logs/daemon.log` in the folder above
- * `POWERAGENTS_LIMA_HOME` (`~/.poweragents/logs/daemon.log`), the only record when the desktop app runs the daemon with
+ * `PIKO_LIMA_HOME` (`~/.piko/logs/daemon.log`), the only record when the desktop app runs the daemon with
  * its output discarded. One line per entry, the time and level first; a caught error is written whole, stack included.
  * The folder is private to the user (0700) and the file too (0600). A log that cannot be opened or written leaves only the console: logging never takes the daemon down.
  */
 export const DaemonLoggerTransport = defineService({
     name: 'DaemonLoggerTransport',
     implements: LoggerTransport,
-    deps: { limaHome: POWERAGENTS_LIMA_HOME },
+    deps: { limaHome: PIKO_LIMA_HOME },
     setup({ limaHome }): LoggerTransport {
         const file = path.join(path.dirname(limaHome), 'logs', 'daemon.log');
         let log = openLog();

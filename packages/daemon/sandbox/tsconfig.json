@@ -1,5 +1,5 @@
 {
-    // Type-checks the scripts that run inside the agent's container (`poweragents.js`), which the daemon embeds as text
+    // Type-checks the scripts that run inside the agent's container (`piko.js`), which the daemon embeds as text
     // rather than compiling: `bun run typecheck` runs it through the daemon's `typecheck` script.
     "extends": "@nzyme/tsconfig/esm.json",
     "compilerOptions": {

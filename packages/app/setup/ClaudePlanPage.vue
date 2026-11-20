@@ -7,9 +7,9 @@ import { useService } from '@nzyme/vue-ioc/useService.js';
 import { useRouter } from 'nuxt/app';
 import { computed, ref } from 'vue';
 
-import AccountCard from '@poweragents/ui/AccountCard.vue';
-import Button from '@poweragents/ui/Button.vue';
-import CheckList from '@poweragents/ui/CheckList.vue';
+import AccountCard from '@piko/ui/AccountCard.vue';
+import Button from '@piko/ui/Button.vue';
+import CheckList from '@piko/ui/CheckList.vue';
 
 import { openExternalUrl } from '@/utils/openExternalUrl.js';
 

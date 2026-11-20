@@ -11,16 +11,16 @@ import { useRoute, useRouter } from 'nuxt/app';
 import { computed, ref, useTemplateRef, watch } from 'vue';
 import type { RouteLocationRaw } from 'vue-router';
 
-import type { ConversationError } from '@poweragents/common/api/ConversationTypes.js';
-import AgentMessage from '@poweragents/ui/AgentMessage.vue';
-import Composer from '@poweragents/ui/Composer.vue';
-import ConversationLayout from '@poweragents/ui/ConversationLayout.vue';
-import FileChip from '@poweragents/ui/FileChip.vue';
-import MessageError from '@poweragents/ui/MessageError.vue';
-import SideView from '@poweragents/ui/SideView.vue';
-import StatusBanner from '@poweragents/ui/StatusBanner.vue';
-import UserMessage from '@poweragents/ui/UserMessage.vue';
-import { splitGenerativeUi } from '@poweragents/ui/utils/splitGenerativeUi.js';
+import type { ConversationError } from '@piko/common/api/ConversationTypes.js';
+import AgentMessage from '@piko/ui/AgentMessage.vue';
+import Composer from '@piko/ui/Composer.vue';
+import ConversationLayout from '@piko/ui/ConversationLayout.vue';
+import FileChip from '@piko/ui/FileChip.vue';
+import MessageError from '@piko/ui/MessageError.vue';
+import SideView from '@piko/ui/SideView.vue';
+import StatusBanner from '@piko/ui/StatusBanner.vue';
+import UserMessage from '@piko/ui/UserMessage.vue';
+import { splitGenerativeUi } from '@piko/ui/utils/splitGenerativeUi.js';
 
 import * as l from './ConversationPage.loc.js';
 import * as lc from './Conversations.loc.js';

@@ -6,8 +6,8 @@ import { useTranslate } from '@nzyme/vue-i18n/useTranslate.js';
 import { useService } from '@nzyme/vue-ioc/useService.js';
 import { useRouter } from 'nuxt/app';
 
-import Button from '@poweragents/ui/Button.vue';
-import ErrorDetails from '@poweragents/ui/ErrorDetails.vue';
+import Button from '@piko/ui/Button.vue';
+import ErrorDetails from '@piko/ui/ErrorDetails.vue';
 
 import * as l from './AiCheckFailedPage.loc.js';
 import { SetupStore } from './SetupStore.js';

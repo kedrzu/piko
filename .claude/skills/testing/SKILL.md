@@ -1,7 +1,7 @@
 ---
 name: testing
 description: >-
-    Tests in poweragents — whether a change needs one, bun unit tests, story-based component tests in packages/ui and
+    Tests in piko — whether a change needs one, bun unit tests, story-based component tests in packages/ui and
     Playwright e2e in packages/e2e. Use before writing, changing or reviewing any *.test.ts, *.spec.ts or story.
 ---
 

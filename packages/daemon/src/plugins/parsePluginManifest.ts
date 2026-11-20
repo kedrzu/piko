@@ -1,6 +1,6 @@
-import { APP_LANGUAGES } from '@poweragents/common/appLanguages.js';
-import type { AppLanguage } from '@poweragents/common/appLanguages.js';
-import type { PluginError, PluginLevel, PluginMarketplaceText } from '@poweragents/common/api/PluginTypes.js';
+import { APP_LANGUAGES } from '@piko/common/appLanguages.js';
+import type { AppLanguage } from '@piko/common/appLanguages.js';
+import type { PluginError, PluginLevel, PluginMarketplaceText } from '@piko/common/api/PluginTypes.js';
 
 /** A plugin's `plugin.json`, validated. Fields the daemon does not know are dropped. */
 export interface PluginManifest {

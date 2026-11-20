@@ -8,8 +8,8 @@ import { ConfigProvider } from 'reka-ui';
 import { defineComponent, h, ref } from 'vue';
 import { createMemoryHistory, createRouter } from 'vue-router';
 
-import { APP_LANGUAGES, FALLBACK_LANGUAGE, pickAppLanguage } from '@poweragents/common/appLanguages.js';
-import type { AppLanguage } from '@poweragents/common/appLanguages.js';
+import { APP_LANGUAGES, FALLBACK_LANGUAGE, pickAppLanguage } from '@piko/common/appLanguages.js';
+import type { AppLanguage } from '@piko/common/appLanguages.js';
 
 import { DEFAULT_PALETTE, PALETTES } from '../src/styles/Palette.js';
 import type { Palette } from '../src/styles/Palette.js';

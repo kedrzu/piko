@@ -1,4 +1,4 @@
-import type { DaemonStatus } from '@poweragents/common/daemonAddress.js';
+import type { DaemonStatus } from '@piko/common/daemonAddress.js';
 
 /**
  * The answer to `GET /status`. It is open to any caller, so it carries nothing beyond running and the version; an unset

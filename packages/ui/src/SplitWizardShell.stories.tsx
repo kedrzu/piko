@@ -10,7 +10,7 @@ import styles from './SplitWizardShell.stories.module.scss';
 import ProgressBar from './ProgressBar.vue';
 import SplitWizardShell from './SplitWizardShell.vue';
 
-// The first run's screens from `poweragents.pen`, composed from the components as the app will.
+// The first run's screens from `piko.pen`, composed from the components as the app will.
 
 const meta: Meta<typeof SplitWizardShell> = {
     title: 'SplitWizardShell',

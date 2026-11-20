@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
-import type { AiProvider } from '@poweragents/common/api/AiTypes.js';
-import type { ConversationError, ConversationMessage } from '@poweragents/common/api/ConversationTypes.js';
+import type { AiProvider } from '@piko/common/api/AiTypes.js';
+import type { ConversationError, ConversationMessage } from '@piko/common/api/ConversationTypes.js';
 
 import { ACCOUNT_EMAIL, GOOD_CODE, StubDaemon } from '../StubDaemon.js';
 

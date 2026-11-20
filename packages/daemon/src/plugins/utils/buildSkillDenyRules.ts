@@ -1,5 +1,5 @@
-import type { PluginInfo } from '@poweragents/common/api/PluginTypes.js';
-import type { OpencodePermissionRule } from '@poweragents/opencode/OpencodeTypes.js';
+import type { PluginInfo } from '@piko/common/api/PluginTypes.js';
+import type { OpencodePermissionRule } from '@piko/opencode/OpencodeTypes.js';
 
 /**
  * The permission rules that hide from a conversation in `projectId` the skills of the project plugins installed in other

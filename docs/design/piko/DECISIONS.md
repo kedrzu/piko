@@ -546,7 +546,7 @@ account cannot be connected without the person signing in. Plugin tools are buil
 plugin creates drafts and never sends). Inside the sandbox and project nothing needs asking: the sandbox and the
 tunnel are the boundary, unlike coding agents running directly on the computer.
 
-**Open — [#35](https://github.com/kedrzu/poweragents/issues/35).** Whether the schedule and tunnel clauses stay. The
+**Open — [#35](https://github.com/kedrzu/piko/issues/35).** Whether the schedule and tunnel clauses stay. The
 sandbox has open internet, so drafts-only tools stop sending in the person's name but not extraction; a schedule would
 make a one-off leak repeat. The tunnel has no list of destinations, so its clause may protect nothing. Decided after
 schedules and the browser are built, not in the plugins design.
@@ -796,8 +796,8 @@ design agent proposal, owner did not object)
 level (profile or project, [D34](#d34)), optionally the onboarding skill, and the additions to the environment with
 pinned versions (the plugin's CLI package, npm packages, Python packages). How many projects a plugin sets up, where it
 keeps what it learns and which plugins it works with are written in its onboarding skill, and the agent does them with
-its ordinary tools. Accounts ([#50](https://github.com/kedrzu/poweragents/issues/50)) and MCP servers
-([#52](https://github.com/kedrzu/poweragents/issues/52)) are added to it when they are built. (2026-11-14, owner)
+its ordinary tools. Accounts ([#50](https://github.com/kedrzu/piko/issues/50)) and MCP servers
+([#52](https://github.com/kedrzu/piko/issues/52)) are added to it when they are built. (2026-11-14, owner)
 
 **Why.** Every part named in [D17](#d17) has one place, and a project's own setup has the same parts ([D43](#d43)).
 A field the platform does not act on is a promise nothing keeps; the agent already creates projects and reads skills,
@@ -820,7 +820,7 @@ otherwise weigh on everyone who never uses it.
 
 **Rejected.**
 
-- Plugins the agent writes, as folders in `/Poweragents/plugins/<name>/`, always for the whole profile, shown in the
+- Plugins the agent writes, as folders in `/Piko/plugins/<name>/`, always for the whole profile, shown in the
   Plugins list as "Twój plugin" ([history](history/DECISIONS.md#d40)) — the person asked for something done, not for a
   plugin; what the agent builds now lives in the project's setup ([D43](#d43)) (owner, 2026-11-15).
 - Installing as a request to the daemon, which alone writes the list of installed plugins and shows a plugin with a
@@ -879,7 +879,7 @@ agent cannot name a plugin of its own after a bundled one.
 
 ## D43
 
-**What the agent builds with the person lives in the project where it is used, in a hidden `.poweragents/` folder of
+**What the agent builds with the person lives in the project where it is used, in a hidden `.piko/` folder of
 that project: its skills, its scripts, the libraries those scripts use and the system programs the project needs.
 This is the project's setup. The agent never writes plugins of its own. Plugins are what one installs, from the
 marketplace; a project's setup is what one makes, by talking to the agent in that project.** (2026-11-15, owner)
@@ -900,7 +900,7 @@ are a later design: the agent would turn a project's setup into one once the per
 
 **Rejected.**
 
-- Installed packages (`node_modules`, a venv) inside `<project>/.poweragents/` — simplest for the agent, but hundreds
+- Installed packages (`node_modules`, a venv) inside `<project>/.piko/` — simplest for the agent, but hundreds
   of megabytes of Linux binaries in the person's folder, in their backups and, once data can live on a cloud drive
   ([D22](#d22)), in its sync; moving a project would carry them (owner, 2026-11-15).
 - The agent writing its own profile-level plugins ([history](history/DECISIONS.md#d40)) — see [D40](#d40).
@@ -964,13 +964,13 @@ together with whether OpenCode can find a project's skills in its folder by itse
 
 ## D46
 
-**A project's setup declares its JS libraries in `.poweragents/package.json` with `bun.lock`; `.poweragents/node_modules`
+**A project's setup declares its JS libraries in `.piko/package.json` with `bun.lock`; `.piko/node_modules`
 is a symlink to a folder for that project, by its id, in the sandbox's volume. Its Python scripts declare their
 dependencies in their own header (PEP 723) and run with `uv run`, which builds their environments in uv's cache in the
-sandbox. The agent installs libraries itself (`bun add` in `.poweragents/`), and when it finds a setup not installed —
+sandbox. The agent installs libraries itself (`bun add` in `.piko/`), and when it finds a setup not installed —
 e.g. a project that came from another machine — it runs `bun install` itself. The daemon reinstalls every project's
-libraries only when it rebuilds the sandbox. System programs are listed in a small file in `.poweragents/`, and the
-agent asks the daemon to apply it with `poweragents apply`.** (2026-11-16, owner; simplified at the rightsize review)
+libraries only when it rebuilds the sandbox. System programs are listed in a small file in `.piko/`, and the
+agent asks the daemon to apply it with `piko apply`.** (2026-11-16, owner; simplified at the rightsize review)
 
 **Why.** The agent is fluent in these tools, and the files remain the only source the environment is rebuilt from
 ([D25](#d25)), so a daemon in between would protect nothing. Lockfiles here are the source, not a record of the result:
@@ -978,8 +978,8 @@ the agent writes them ([D26](#d26)). A folder named by project id survives renam
 headers need no symlink, no `--project` flag and nothing from the daemon. System programs need the whole sandbox
 rebuilt from declarations, which only the daemon does.
 
-> **Checked 2026-11-16 (macOS, Bun 1.4.4, uv 0.13.0):** with `.poweragents/node_modules` a symlink to another folder,
-> `bun add is-odd@3.0.1` installed there and `bun <abs>/.poweragents/scripts/t.ts` resolved it from any working
+> **Checked 2026-11-16 (macOS, Bun 1.4.4, uv 0.13.0):** with `.piko/node_modules` a symlink to another folder,
+> `bun add is-odd@3.0.1` installed there and `bun <abs>/.piko/scripts/t.ts` resolved it from any working
 > directory. Not yet repeated in the Linux sandbox on its volume, nor with the symlink dangling (a project from another
 > machine) before `bun install`.
 
@@ -989,7 +989,7 @@ iCloud and Google Drive treat a dangling symlink is unchecked; it returns with c
 **Rejected.**
 
 - One `pyproject.toml` with `uv.lock` per project and `.venv` a symlink ([history](history/DECISIONS.md#d46)) — needs
-  the symlink, `uv run --project .poweragents` everywhere and the daemon rebuilding Python; its argument, one place
+  the symlink, `uv run --project .piko` everywhere and the daemon rebuilding Python; its argument, one place
   showing what the project needs, was the design agent's (owner, 2026-11-16, rightsize review).
 - The daemon detecting a project that arrived from elsewhere and installing it — no way to detect it was ever
   described; the agent installing on first need costs one install's time.
@@ -999,19 +999,19 @@ iCloud and Google Drive treat a dangling symlink is unchecked; it returns with c
 
 ## D47
 
-**A project with a setup has `.poweragents/AGENTS.md`, for the agent: what the setup holds and how to use it — which
+**A project with a setup has `.piko/AGENTS.md`, for the agent: what the setup holds and how to use it — which
 skills and scripts exist and how to run them — with details in references beside it and in the setup's own files. It
 is loaded into every conversation of the project, and the agent keeps it current whenever it changes the setup. There
 is no separate description for the person: asked what a project can do, the agent explains it from that file.**
 (2026-11-16, owner)
 
-**Why.** The agent needs to know a setup exists before it reads `.poweragents/`. A text for the person had no case
+**Why.** The agent needs to know a setup exists before it reads `.piko/`. A text for the person had no case
 strong enough to justify a second file to keep in step; it can be added when one appears.
 
 > **Checked 2026-11-16:** on OpenCode's `dev` branch, a relative entry in a global `opencode.json` `instructions` is
 > searched from the session's directory up to the project root — "Relative patterns search upward from the location to
 > the project root" ([instruction.ts](https://raw.githubusercontent.com/anomalyco/opencode/dev/packages/core/src/config/plugin/instruction.ts)).
-> So `"instructions": [".poweragents/AGENTS.md"]` in the image's config loads each project's own file. It is watched
+> So `"instructions": [".piko/AGENTS.md"]` in the image's config loads each project's own file. It is watched
 > and a change reaches a running session as a diff. Only `AGENTS.md` in the directory itself or above is found
 > automatically. Not checked on 2.2.7, the version the sandbox runs; and its file watcher misses changes made from the
 > host until a write from the VM side wakes it ([plugin runtime ADR](../../decisions/plugin-runtime-in-the-sandbox.md)).
@@ -1028,7 +1028,7 @@ strong enough to justify a second file to keep in step; it can be added when one
 
 ## D48
 
-**`poweragents check`, run in the sandbox, tells the agent whether every schedule of a project calls a command that
+**`piko check`, run in the sandbox, tells the agent whether every schedule of a project calls a command that
 exists: `/<plugin>:<skill>` of a plugin installed and visible in that project, or `/<skill>` of its setup. The agent's
 instructions have it run the check after every change to a project's setup or schedules.** (2026-11-16, owner's idea;
 scope narrowed at the rightsize review)

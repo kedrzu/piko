@@ -49,7 +49,7 @@ tags — because that is where this is heading ([plugins ship with the app](DECI
 The agent never installs anything loose, because the environment is rebuilt from what is declared and a loose install
 would vanish ([why the environment is declared](DECISIONS.md#d25)). Asked to cut a video, it may need `ffmpeg`, a
 script and a skill; it does not write a plugin for that, but adds them to the project's own setup, a hidden
-`.poweragents/` folder in the project. Plugins are what one installs; a project's setup is what one makes, by talking
+`.piko/` folder in the project. Plugins are what one installs; a project's setup is what one makes, by talking
 to the agent there ([what the agent builds lives in the project](DECISIONS.md#d43)). The folder holds only what the
 agent wrote — skills, scripts, which libraries and programs they need — and the sandbox installs from it, so a project
 moves as a handful of text files.
@@ -62,12 +62,12 @@ name, `/sort`: every plugin command carries its plugin's name before a colon, so
 project's setup, and the daemon stops a conversation whose project has no such skill, as it does for a missing plugin
 ([commands of the project's setup](DECISIONS.md#d45)).
 
-Inside `.poweragents/` the agent works as in any software project. JS libraries go in a `package.json` with its
+Inside `.piko/` the agent works as in any software project. JS libraries go in a `package.json` with its
 lockfile, installed with `bun add` into the sandbox through a link; a Python script names its own dependencies in its
 header and runs with `uv run`. When a setup is not installed yet — a project brought from another machine — the agent
 installs it; the daemon reinstalls every setup only when it rebuilds the sandbox. System programs are listed in a small
 file the daemon applies on request ([how a setup declares what it needs](DECISIONS.md#d46)). The agent learns what a
-setup holds from an `AGENTS.md` inside `.poweragents/`, loaded into every conversation there; asked what a project can
+setup holds from an `AGENTS.md` inside `.piko/`, loaded into every conversation there; asked what a project can
 do, it explains from that file ([the agent's description of a setup](DECISIONS.md#d47)). After changing a setup or a
 schedule, the agent runs a check that every schedule's command exists ([what the check covers](DECISIONS.md#d48)).
 
@@ -109,7 +109,7 @@ the person says "install it back" and the agent, seeing what happened, carries o
 ## Still open
 
 Whether a schedule the agent creates on its own needs the person's confirmation is decided after schedules are built
-([#35](https://github.com/kedrzu/poweragents/issues/35)). How a plugin installs a Linux system program — from the
+([#35](https://github.com/kedrzu/piko/issues/35)). How a plugin installs a Linux system program — from the
 distribution's packages or as a pinned download — waits for the first plugin that needs one
 ([deferred](DECISIONS.md#d26)).
 

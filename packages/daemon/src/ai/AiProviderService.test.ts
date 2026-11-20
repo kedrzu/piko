@@ -2,9 +2,9 @@ import { expect, mock, test } from 'bun:test';
 
 import { createTestContainer } from '@nzyme/ioc-testing/createTestContainer.js';
 
-import type { AiProvider, AiStatus } from '@poweragents/common/api/AiTypes.js';
-import type { ChatgptStatus } from '@poweragents/common/api/ChatgptTypes.js';
-import type { ClaudeStatus } from '@poweragents/common/api/ClaudeTypes.js';
+import type { AiProvider, AiStatus } from '@piko/common/api/AiTypes.js';
+import type { ChatgptStatus } from '@piko/common/api/ChatgptTypes.js';
+import type { ClaudeStatus } from '@piko/common/api/ClaudeTypes.js';
 
 import { ChatgptSignInService } from '../chatgpt/ChatgptSignInService.js';
 import { ClaudeSignInService } from '../claude/ClaudeSignInService.js';
@@ -12,7 +12,7 @@ import { ActiveProviderStore } from './ActiveProviderStore.js';
 import { AiProviderService } from './AiProviderService.js';
 
 // The sign-in services are the boundary (they ask the sandbox); the record is kept in memory, never in the real
-// `~/.poweragents/ai-provider.json`.
+// `~/.piko/ai-provider.json`.
 
 const CLAUDE_MAX: ClaudeStatus = { connected: true, email: 'ola@example.com', plan: 'max', planAllowed: true };
 

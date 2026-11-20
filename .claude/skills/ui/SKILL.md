@@ -1,7 +1,7 @@
 ---
 name: ui
 description: >-
-    Building components and screens in poweragents — components, stories and tokens in packages/ui, screens in
+    Building components and screens in piko — components, stories and tokens in packages/ui, screens in
     packages/app. Use before creating or changing any .vue component, story or screen: props, styling, accessibility.
 ---
 
@@ -23,7 +23,7 @@ description: >-
 
 - Components live in `packages/ui`, apart from the app: the phone companion will reuse them (`ARCHITECTURE.md`,
   "Decisions").
-- Screens are drawn in `poweragents.pen` first (`design` skill); tokens follow its variables.
+- Screens are drawn in `piko.pen` first (`design` skill); tokens follow its variables.
 
 Links in the document below are relative to `nzyme/docs/practice/`; package READMEs are `nzyme/packages/<pkg>/README.md`.
 

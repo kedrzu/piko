@@ -1,7 +1,7 @@
 ---
 name: ioc
 description: >-
-    Dependency injection in poweragents — services, commands, stores, interfaces and env variables with @nzyme/ioc, and
+    Dependency injection in piko — services, commands, stores, interfaces and env variables with @nzyme/ioc, and
     the app's one container. Use before creating or changing a service, command or store, or wiring dependencies.
 ---
 

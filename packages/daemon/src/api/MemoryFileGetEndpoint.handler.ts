@@ -1,6 +1,6 @@
 import { defineEndpointHandler } from '@nzyme/rpc/defineEndpointHandler.js';
 
-import { MemoryFileGetEndpoint } from '@poweragents/common/api/MemoryFileGetEndpoint.js';
+import { MemoryFileGetEndpoint } from '@piko/common/api/MemoryFileGetEndpoint.js';
 
 import { MemoryService } from '../memory/MemoryService.js';
 

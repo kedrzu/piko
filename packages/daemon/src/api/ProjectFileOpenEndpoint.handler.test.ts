@@ -8,7 +8,7 @@ import { createTestContainer } from '@nzyme/ioc-testing/createTestContainer.js';
 import type { HttpRequest } from '@nzyme/rpc/types/HttpRequest.js';
 import { assert } from '@nzyme/utils/assert.js';
 
-import type { ProjectFileInput, ProjectFileOpenResult } from '@poweragents/common/api/ProjectFileTypes.js';
+import type { ProjectFileInput, ProjectFileOpenResult } from '@piko/common/api/ProjectFileTypes.js';
 
 import { OpenWithDefaultAppCommand } from '../host/OpenWithDefaultAppCommand.js';
 import type {
@@ -82,12 +82,12 @@ test('reports a system where it cannot open files', async () => {
 });
 
 async function setup(outcome: OpenWithDefaultAppCommandResult = 'opened') {
-    const tmp = await mkdtemp(path.join(os.tmpdir(), 'poweragents-open-'));
+    const tmp = await mkdtemp(path.join(os.tmpdir(), 'piko-open-'));
     const root = path.join(tmp, 'root');
     await mkdir(root);
     await writeFile(path.join(tmp, 'secret.md'), '# Secret');
     const { container } = createTestContainer();
-    container.set(EnvVariables, { POWERAGENTS_DATA_ROOT: root });
+    container.set(EnvVariables, { PIKO_DATA_ROOT: root });
     const openPath = mock((_params: OpenWithDefaultAppCommandParams) => Promise.resolve(outcome));
     container.set(OpenWithDefaultAppCommand, openPath);
     const created = await container.resolve(ProjectService).create('Projekt');
