@@ -1,6 +1,8 @@
 import { defineInterface } from '@nzyme/ioc/Interface.js';
 import type { EventEmitter } from '@nzyme/utils/createEventEmitter.js';
 
+import type { SandboxStartProgress } from '@piko/common/api/SandboxTypes.js';
+
 /**
  * Where the sandbox is in its lifecycle. `start()` walks `startingVm → buildingImage → startingAgent → ready`;
  * `buildingImage` is skipped when the image is already built.
@@ -67,6 +69,11 @@ export interface Sandbox {
      * stopped answering starts again (and reports `startingVm`) instead of reporting `ready`.
      */
     getVerifiedState(): Promise<SandboxState>;
+    /**
+     * How far the current start has come, or `null` outside a start and before it has planned its steps. Computed on
+     * every call and never emitted, so only the status read for the app calls it.
+     */
+    getStartProgress(): SandboxStartProgress | null;
     /** Fires on every state transition with the new state. */
     readonly stateChanged: EventEmitter<[state: SandboxState]>;
     /**

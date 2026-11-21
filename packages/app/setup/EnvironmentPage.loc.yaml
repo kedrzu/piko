@@ -22,6 +22,15 @@ startingAgent:
 almostReady:
   en[auto]: Almost ready…
   pl: Prawie gotowe…
+remainingMoment:
+  en[auto]: Just a moment…
+  pl: Jeszcze chwila…
+remainingUnderMinute:
+  en[auto]: Less than a minute
+  pl: Mniej niż minuta
+remainingMinutes:
+  en[auto]: About {count} min left
+  pl: Jeszcze ok. {count} min
 failedTitle:
   en[auto]: Couldn't prepare the agent's workplace
   pl: Nie udało się przygotować miejsca pracy agenta

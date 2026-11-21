@@ -367,6 +367,7 @@ async function setup() {
     container.set(Sandbox, {
         getState: () => sandboxState,
         getVerifiedState: () => Promise.resolve(sandboxState),
+        getStartProgress: () => null,
         stateChanged: createEventEmitter<[state: SandboxState]>().event,
         start: () => Promise.resolve(ENDPOINT),
         stop: () => Promise.resolve(),

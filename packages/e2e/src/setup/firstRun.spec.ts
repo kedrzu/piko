@@ -44,6 +44,23 @@ test('home shows only once the sandbox is ready and Claude connected', async ({ 
     });
 });
 
+test('the environment screen shows how far the start is and the time left', async ({ page }) => {
+    const daemon = await StubDaemon.install(page);
+    daemon.sandbox = { status: 'startingVm', progress: { fraction: 0.42, remainingMs: 150_000 } };
+    await page.goto('/');
+
+    const bar = page.getByRole('progressbar', { name: "Starting the agent's computer…" });
+    await expect(bar).toHaveAttribute('aria-valuenow', '42');
+    await expect(page.getByText('About 3 min left')).toBeVisible();
+
+    daemon.sandbox = { status: 'buildingImage', progress: { fraction: 0.9, remainingMs: 0 } };
+    await expect(page.getByText('Just a moment…')).toBeVisible();
+    await expect(page.getByRole('progressbar', { name: 'Preparing the tools…' })).toHaveAttribute(
+        'aria-valuenow',
+        '90',
+    );
+});
+
 test('a failed start shows its details and retries', async ({ page }) => {
     const daemon = await StubDaemon.install(page);
     daemon.sandbox = { status: 'failed', message: 'vz: not enough free memory' };
