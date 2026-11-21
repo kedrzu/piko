@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/vue3-vite';
 
 import {
     CHOICES_TEXT,
+    LEGACY_CHOICES_TEXT,
     PLAN_FORM_HALF_WRITTEN,
     PLAN_FORM_TEXT,
     TWO_UIS_TEXT,
@@ -122,9 +123,44 @@ export const TwoUis: Story = {
     args: { parts: [{ type: 'text', text: TWO_UIS_TEXT }], uiActive: true },
 };
 
-/** Answered by the person's next message: the choice that sent it keeps its check. */
+/** Answered by a click: the choice keeps its check. */
 export const AnsweredChoice: Story = {
-    args: { parts: [{ type: 'text', text: CHOICES_TEXT }], answer: 'Zacznijmy od snu' },
+    args: {
+        parts: [{ type: 'text', text: CHOICES_TEXT }],
+        answer: {
+            kind: 'generativeUiAnswer',
+            source: 'choices',
+            name: 'choices',
+            button: 'Sen',
+            defaultButton: true,
+            fields: [],
+        },
+    },
+};
+
+/** Screen 78: the form was answered, so it is gone; the agent's text around it stays. */
+export const AnsweredForm: Story = {
+    args: {
+        parts: [{ type: 'text', text: PLAN_FORM_TEXT }],
+        answer: {
+            kind: 'generativeUiAnswer',
+            source: 'form',
+            name: 'plan',
+            button: 'Ułóż plan',
+            defaultButton: true,
+            fields: [{ name: 'areas', label: 'Czym mam się zająć?', value: ['Sen'] }],
+        },
+    },
+};
+
+/** The form passed over: the person typed instead, so it stays, inactive. */
+export const FormAnsweredByTyping: Story = {
+    args: { parts: [{ type: 'text', text: PLAN_FORM_TEXT }], answer: 'Zróbmy to później' },
+};
+
+/** Choices from before buttons lost their action, answered then with a button's message: that button keeps its check. */
+export const LegacyAnsweredChoice: Story = {
+    args: { parts: [{ type: 'text', text: LEGACY_CHOICES_TEXT }], answer: 'Zacznijmy od snu' },
 };
 
 /** What the app renders in the `file` slot, with the path for a name. */

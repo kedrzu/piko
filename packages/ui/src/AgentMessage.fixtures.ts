@@ -76,10 +76,17 @@ const PLAN_UI = `root = Stack([intro, form])
 intro = Text("Żeby ułożyć plan, potrzebuję kilku informacji.")
 form = Form("plan", [areas], [send])
 areas = CheckboxGroup("areas", "Czym mam się zająć?", ["Sen", "Jedzenie", "Ruch"], true)
-send = Button("Ułóż plan", @ToAssistant("Ułóż mi plan"), "primary")
+send = Button("Ułóż plan", "primary")
 `;
 
 const CHOICE_UI = `root = Stack([choices])
+choices = Buttons([sleep, food])
+sleep = Button("Sen")
+food = Button("Jedzenie")
+`;
+
+/** The choices as a program wrote them before buttons lost their action: each sent a message of its own. */
+const LEGACY_CHOICE_UI = `root = Stack([choices])
 choices = Buttons([sleep, food])
 sleep = Button("Sen", @ToAssistant("Zacznijmy od snu"))
 food = Button("Jedzenie", @ToAssistant("Zacznijmy od jedzenia"))
@@ -96,3 +103,6 @@ export const TWO_UIS_TEXT = `Najpierw wybierz, od czego zaczynamy.\n\n\`\`\`open
 
 /** A reply ending with equal choices under its text. */
 export const CHOICES_TEXT = `Od czego zaczynamy?\n\n\`\`\`openui\n${CHOICE_UI}\`\`\``;
+
+/** A reply ending with choices from before buttons lost their action, answered then with a button's message. */
+export const LEGACY_CHOICES_TEXT = `Od czego zaczynamy?\n\n\`\`\`openui\n${LEGACY_CHOICE_UI}\`\`\``;

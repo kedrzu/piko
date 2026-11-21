@@ -23,6 +23,8 @@ export interface OpencodePromptMessage {
     /** Server clock, epoch ms. */
     createdAt: number;
     text: string;
+    /** What the sender attached to the prompt. */
+    metadata?: Record<string, unknown>;
 }
 
 /** One reply of the agent; a run produces one per model step. */
@@ -154,7 +156,7 @@ function mapMessage(message: Schemas['Session.Message.Info']): OpencodeMessage {
     const base = { id: message.id, createdAt: message.time.created };
     switch (message.type) {
         case 'user':
-            return { ...base, type: 'prompt', text: message.text };
+            return { ...base, type: 'prompt', text: message.text, metadata: message.metadata };
         case 'assistant':
             return {
                 ...base,

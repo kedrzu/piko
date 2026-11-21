@@ -9,6 +9,7 @@ export interface OpencodeInboxPrompt {
     /** The prompt's id: the receipt's `messageId`, which the message would have been listed under once delivered. */
     id: string;
     text: string;
+    metadata?: Record<string, unknown>;
 }
 
 /** Options of `OpencodeSessionInboxClearCommand`. */
@@ -65,7 +66,7 @@ export const OpencodeSessionInboxClearCommand = defineCommand({
                     throw createOpencodeStatusError('cancelInbox', cancelled);
                 }
                 if (item.type === 'user') {
-                    prompts.push({ id: item.id, text: item.payload.text });
+                    prompts.push({ id: item.id, text: item.payload.text, metadata: item.payload.metadata });
                 } else {
                     syntheticCount++;
                 }

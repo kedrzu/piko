@@ -6,7 +6,13 @@ picker, a card. They are designed as one language, so a new element is assembled
 from scratch. Whatever produces an element, generated UI or a built-in one, it follows this document.
 
 In `piko.pen`: the `Conversation elements` row of `Atoms` and `Organisms` and the column of `Molecules`, and
-screens 67–74 (the design log is [history/conversation-elements.md](../history/conversation-elements.md)).
+screens 67–74, 78, 81 and 82 (the design log is [history/conversation-elements.md](../history/conversation-elements.md)).
+
+## Nothing hidden
+
+An element carries no text the person does not see, and an answer is exactly what the person saw and chose — never a
+message written for them behind a button ([D23](../DECISIONS.md#d23)). This holds for every element, generated or
+built in, now and later.
 
 ## Where an element sits
 
@@ -34,19 +40,28 @@ screens 67–74 (the design log is [history/conversation-elements.md](../history
 - **Appearing** — while the agent is still writing, the element builds up in place (a form gains its fields, the
   actions come last) and nothing is clickable yet; the writing caret sits inside the card.
 - **Active** — the agent has finished and the element is the conversation's last; controls work.
-- **Answered** — once the person answers, by the element or by typing, the element stays in the history, inactive: the
-  card loses its fill (white with a `border` outline), controls are disabled, text turns `ink-muted`. A picked choice
-  keeps a check and its outline (`atoms/Button/Chosen`, screen 74), so scrolling back shows what was picked. The answer
-  itself is the person's own message below.
+- **Answered** — once the person answers, by the element or by typing, it stops being active. Bare choices stay in
+  the history, inactive: disabled, text `ink-muted`; the picked choice keeps a check and its outline
+  (`atoms/Button/Chosen`, screen 74), and the person's message below is its label. An answered form is not kept:
+  it collapses (animated) and the person's structured message takes its place (screens 78, 81, 82), so the agent's reply
+  keeps only its text and the answers are read in one place. A card that is not answered by its own button (the
+  person typed instead) stays inactive: no fill, a `border` outline, controls disabled.
 - **Invalid** — a required field left empty shows a message at the field ("Uzupełnij to pole") with an icon in the
   attention colour, and nothing is sent. Checkbox rows in error take the softer `attention-border` outline, so several
   rows do not shout.
 
 ## What an answer looks like
 
-The answer is sent as the person's message, in their words, so the conversation reads naturally and the agent reads it
-as text: a choice sends the text its button carries (written in the person's voice, "Zacznijmy od CV"); a form sends
-its button's text, a blank line, then `Label: value` per filled field.
+The answer is sent as the person's message, as structured data named by the agent's own names, and the agent reads
+it as one JSON block. A choice answers with its button's label, which is also the person's message. A form answers
+with the clicked button's label and the filled fields, and shows them in the person's own bubble
+(`molecules/User message/Answers`). The bubble shows only what the form showed and what the person entered. Each answered question stands as its label, small and muted (`molecules/Answer`), over the answer in
+`ink`. Picked options stand one per line with a check (`molecules/Answer/Picked`, `molecules/Picked option`), a select
+shows its value, free text its paragraph. Unanswered optional questions are left out; labels read as the form showed
+them.
+The clicked button's label, as it read in the form, shows only when it was not the form's first button (the default
+send) or no field was filled; it comes after the answers, in normal message text. With nothing filled the bubble is that label alone, an
+ordinary message (screen 82). No boxes or outlines inside the bubble: it reads as a message, not a form.
 
 ## Copy and accessibility
 
