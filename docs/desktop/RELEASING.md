@@ -85,7 +85,8 @@ The updater bundle is signed with a minisign key. Its public half is `plugins.up
 `packages/desktop/src-tauri/tauri.conf.json`. **If the private key is lost, installed apps can never update again**:
 they accept only updates signed by this key, and every install would have to be replaced by hand.
 
-Made once, in the owner's own terminal, so neither value passes through an agent:
+The key in use (minisign key ID `3EC00C36EC432E7E`) was made on 2026-11-21. The store is its only readable copy:
+GitHub secrets can't be read back. It was made once, so that neither value is ever printed:
 
 ```sh
 KEYDIR=$(mktemp -d)

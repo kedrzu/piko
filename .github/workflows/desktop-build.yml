@@ -52,6 +52,17 @@ jobs:
           # The gitlink is the pin; nzyme is public, so the default token clones it.
           submodules: recursive
 
+      # Without the key Tauri fails only after the whole build, with "Missing comment in secret key".
+      - name: Check the updater key is set
+        run: |
+          if [ -z "$TAURI_SIGNING_PRIVATE_KEY" ] || [ -z "$TAURI_SIGNING_PRIVATE_KEY_PASSWORD" ]; then
+            echo "::error::TAURI_SIGNING_PRIVATE_KEY or its password is not a repository secret: see docs/desktop/RELEASING.md → Updater key"
+            exit 1
+          fi
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version-file: package.json
