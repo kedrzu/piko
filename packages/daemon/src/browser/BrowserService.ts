@@ -89,6 +89,8 @@ const STALE_EXIT_TIMEOUT_MS = 5000;
 const THUMBNAIL_QUALITY = 60;
 /** How long a thumbnail may take before the handoff goes without one. */
 const THUMBNAIL_TIMEOUT_MS = 10_000;
+/** How long a thumbnail capture waits for its frame before a second capture makes the hidden page paint one. */
+const THUMBNAIL_NUDGE_MS = 500;
 /** A download guid as the browser makes it; anything else never becomes part of a path. */
 const DOWNLOAD_GUID = /^[\w-]+$/;
 
@@ -156,9 +158,7 @@ export const BrowserService = defineService({
             // A page that renders no frame (the browser has nothing to paint it with) would leave the call waiting for
             // good; the handoff UI shows no thumbnail instead.
             const reply = await withTimeout({
-                operation: withOwnSession(current, targetId, sessionId =>
-                    current.send('Page.captureScreenshot', { format: 'jpeg', quality: THUMBNAIL_QUALITY }, sessionId),
-                ),
+                operation: withOwnSession(current, targetId, sessionId => captureHiddenPage(current, sessionId)),
                 timeoutMs: THUMBNAIL_TIMEOUT_MS,
                 onTimeout: () => {
                     logger.warn('A thumbnail timed out', { conversationId });
@@ -173,6 +173,26 @@ export const BrowserService = defineService({
                 throw new TypeError('Page.captureScreenshot gave no image');
             }
             return Buffer.from(data, 'base64');
+        }
+
+        /**
+         * `Page.captureScreenshot` of a page in a minimized window: the browser makes the hidden page render and copies
+         * its next presented frame, but now and then that frame never comes and the capture waits for good (seen
+         * 2026-11-21 on Chrome for Testing 156, Linux headless, about one capture in three under load). A second
+         * capture sent meanwhile gets a frame painted, which answers both; whichever answers first is the thumbnail.
+         */
+        async function captureHiddenPage(current: AgentBrowser, sessionId: string) {
+            const capture = () =>
+                current.send('Page.captureScreenshot', { format: 'jpeg', quality: THUMBNAIL_QUALITY }, sessionId);
+            let nudge: ReturnType<typeof setTimeout> | undefined;
+            const nudged = new Promise<unknown>(resolve => {
+                nudge = setTimeout(() => resolve(capture()), THUMBNAIL_NUDGE_MS);
+            });
+            try {
+                return await Promise.race([capture(), nudged]);
+            } finally {
+                clearTimeout(nudge);
+            }
         }
 
         async function ensureDownloadsFolder() {
