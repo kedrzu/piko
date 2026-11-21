@@ -16,6 +16,8 @@ import type {
     ConversationStopResult,
 } from '@piko/common/api/ConversationTypes.js';
 import type { Project, ProjectCreateResult } from '@piko/common/api/ProjectTypes.js';
+import { buildGenerativeUiAnswerText } from '@piko/common/generativeUi/GenerativeUiAnswer.js';
+import type { GenerativeUiAnswer } from '@piko/common/generativeUi/GenerativeUiAnswer.js';
 import { OpencodeMessageListCommand } from '@piko/opencode/OpencodeMessageListCommand.js';
 import type {
     OpencodeMessageListCommandParams,
@@ -368,6 +370,44 @@ test.each([
     },
 );
 
+test('an answer goes out as the text the agent reads with the answer as metadata, on every path, and comes back with it', async () => {
+    const fixture = await setup();
+    fixture.sessions.push(session('ses_1', fixture.dirA));
+    const ref = { projectId: fixture.projectA.id, conversationId: 'ses_1' };
+    const answer: GenerativeUiAnswer = {
+        kind: 'generativeUiAnswer',
+        source: 'choices',
+        name: 'next',
+        button: 'Yes',
+        defaultButton: true,
+        fields: [],
+    };
+    const text = buildGenerativeUiAnswerText(answer);
+
+    await fixture.conversations.send({ ...ref, answer });
+    const prompted: OpencodeSessionPromptCommandParams = { sessionId: 'ses_1', text, metadata: answer };
+    expect(fixture.prompt).toHaveBeenLastCalledWith(prompted);
+
+    // Waiting in the inbox: listed with its answer, withdrawn by stop with it.
+    fixture.inbox.push({ type: 'prompt', id: 'msg_w', createdAt: 1, text, metadata: answer });
+    fixture.inbox.push({ type: 'prompt', id: 'msg_v', createdAt: 1, text: 'Plain', metadata: { kind: 'other' } });
+    const page = await fixture.conversations.listMessages(ref);
+    const waiting: ConversationMessagePage['messages'] = [
+        { type: 'user', id: 'msg_w', createdAt: 1, text, answer, pending: true },
+        { type: 'user', id: 'msg_v', createdAt: 1, text: 'Plain', pending: true },
+    ];
+    expect(page.messages).toEqual(waiting);
+    const stopped = await fixture.conversations.stop(ref);
+    const expected: ConversationStopResult = {
+        stopped: true,
+        withdrawn: [
+            { id: 'msg_w', text, answer },
+            { id: 'msg_v', text: 'Plain' },
+        ],
+    };
+    expect(stopped).toEqual(expected);
+});
+
 test("stopping withdraws a held plugin command with its note, leaving OpenCode's own synthetic input", async () => {
     const fixture = await setup();
     fixture.sessions.push(session('ses_1', fixture.dirA));
@@ -639,7 +679,7 @@ async function setup() {
         prompt: mock((params: OpencodeSessionPromptCommandParams): Promise<OpencodePromptReceipt> => {
             const messageId = `msg_${params.text}`;
             if (params.resume === false) {
-                inbox.push(waitingPrompt(messageId, params.text));
+                inbox.push({ ...waitingPrompt(messageId, params.text), metadata: params.metadata });
             }
             return Promise.resolve({ messageId, admittedAt: 1 });
         }),
@@ -708,7 +748,7 @@ async function setup() {
                 wanted !== undefined &&
                 Object.entries(wanted).every(([key, value]) => item.metadata?.[key] === value);
             if (item.type === 'prompt') {
-                prompts.push({ id: item.id, text: item.text });
+                prompts.push({ id: item.id, text: item.text, metadata: item.metadata });
             } else if (!ours) {
                 kept.push(item);
             }

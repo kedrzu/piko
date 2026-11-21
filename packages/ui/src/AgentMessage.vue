@@ -5,6 +5,7 @@ import { defineProp } from '@nzyme/vue-utils/defineProp.js';
 import type { PropType } from 'vue';
 
 import type { ConversationAgentPart } from '@piko/common/api/ConversationTypes.js';
+import type { GenerativeUiAnswer } from '@piko/common/generativeUi/GenerativeUiAnswer.js';
 
 export const AgentMessageProps = {
   /** The reply's text and steps, in the order the agent produced them. */
@@ -13,8 +14,11 @@ export const AgentMessageProps = {
   running: Boolean,
   /** The reply's last UI takes answers (this is the conversation's latest reply); otherwise its controls are disabled. */
   uiActive: Boolean,
-  /** The person's next message after this reply: the reply's last UI shows the choice that sent it as chosen. */
-  answer: defineProp<string>(),
+  /**
+   * The person's next message after this reply, for the reply's last UI: its answer through the UI, or its text when
+   * the person typed (or answered before answers were structured). The UI shows its choice as chosen, or drops its form.
+   */
+  answer: defineProp<string | GenerativeUiAnswer>(),
 } as const;
 
 /** A file the reply wrote or changed, for the `file` slot. */
@@ -28,7 +32,7 @@ export interface AgentMessageFile {
 /** What the reply reports. */
 export interface AgentMessageEvents {
   /** The person's answer through a generative UI, to send as their next message. Awaited: the control shows busy. */
-  reply: [text: string];
+  answer: [answer: GenerativeUiAnswer];
 }
 </script>
 
@@ -69,8 +73,8 @@ const lastUiIndex = computed(() => blocks.value.findLastIndex(block => block.typ
 const steps = computed(() => props.parts.filter(part => part.type === 'step'));
 const files = computed(() => toFiles(steps.value));
 
-async function reply(text: string) {
-  await emitAsync('reply', text);
+async function answer(value: GenerativeUiAnswer) {
+  await emitAsync('answer', value);
 }
 
 /** The files of the reply's write and edit steps; a failed step's file may not exist, so it gives none. */
@@ -164,7 +168,7 @@ function toTextBlocks(text: string): Block[] {
           :active="props.uiActive && index === lastUiIndex"
           :answer="index === lastUiIndex ? props.answer : undefined"
           :answered="index !== lastUiIndex || props.answer !== undefined"
-          @reply="reply"
+          @answer="answer"
         />
         <StepList v-else>
           <Step

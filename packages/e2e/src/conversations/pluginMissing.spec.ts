@@ -39,9 +39,9 @@ test('a command of a plugin not installed shows with a note why it did not run, 
     await expect(messages(page).getByText('Już zainstalowałam, działaj')).toBeVisible();
     await expect(prompt).toHaveCount(1);
     await expect(note).toBeVisible();
-    expect(daemon.sent.map(message => message.text)).toEqual([
-        '/kalendarz:plan-tygodnia',
-        'Już zainstalowałam, działaj',
+    expect(daemon.sent).toEqual([
+        expect.objectContaining({ text: '/kalendarz:plan-tygodnia' }),
+        expect.objectContaining({ text: 'Już zainstalowałam, działaj' }),
     ]);
     const promptBox = await prompt.boundingBox();
     const noteBox = await note.boundingBox();

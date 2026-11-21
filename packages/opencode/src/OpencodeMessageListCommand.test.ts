@@ -19,7 +19,7 @@ const vendorMessages: VendorMessage[] = [
         text: 'Use the onboarding skill.',
         metadata: { kind: 'appSetup' },
     },
-    { id: 'msg_1', type: 'user', time: { created: 1 }, text: 'Utwórz plik' },
+    { id: 'msg_1', type: 'user', time: { created: 1 }, text: 'Utwórz plik', metadata: { kind: 'answer' } },
     {
         id: 'msg_2',
         type: 'model-switched',
@@ -110,7 +110,7 @@ test('maps a page oldest first: prompts, replies with their tool calls in every 
             text: 'Use the onboarding skill.',
             metadata: { kind: 'appSetup' },
         },
-        { type: 'prompt', id: 'msg_1', createdAt: 1, text: 'Utwórz plik' },
+        { type: 'prompt', id: 'msg_1', createdAt: 1, text: 'Utwórz plik', metadata: { kind: 'answer' } },
         { type: 'other', id: 'msg_2', createdAt: 2 },
         {
             type: 'reply',
