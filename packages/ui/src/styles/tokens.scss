@@ -149,6 +149,10 @@ $color-brand-1: var(--color-brand-1); // fills and lines only; text and icons us
 $color-brand-2: var(--color-brand-2);
 $color-brand-1-strong: var(--color-brand-1-strong); // ≥ 4.5:1 with $color-surface in every palette
 
+// Piko, the agent's mascot and the logo's "p" (`docs/brand/`): the same mint in every palette, so the logo never
+// changes. A graphic only, never text (2.1:1 on $color-surface).
+$color-piko: #45c095;
+
 /// The custom properties of one palette from `$palettes`, for `main.scss`.
 @mixin palette-properties($name) {
     @each $role, $value in map.get($palettes, $name) {
@@ -223,7 +227,6 @@ $font-size-title-s: 1.75rem; // 28px, an empty state's title
 $font-size-dialog-title: 1.5rem; // 24px, a dialog's title
 $font-size-file-title: 1.625rem; // 26px, a previewed file's name
 $font-size-heading: 1.25rem; // 20px, a card's name
-$font-size-brand: 1.1875rem; // 19px, the product name beside the agent mark
 $font-size-lead: 1.0625rem; // 17px, a step's body
 $font-size-body-l: 1rem; // 16px, a path stage's title
 $font-size-label: 0.9375rem; // 15px, progress labels

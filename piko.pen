@@ -611,42 +611,119 @@
               "id": "nyX3c",
               "name": "atoms/Agent mark",
               "reusable": true,
-              "width": 30,
+              "width": 24,
               "height": 30,
-              "fill": {
-                "type": "gradient",
-                "gradientType": "linear",
-                "enabled": true,
-                "rotation": 135,
-                "size": {
-                  "height": 1
-                },
-                "colors": [
-                  {
-                    "color": "$brand-1",
-                    "position": 0
-                  },
-                  {
-                    "color": "$brand-2",
-                    "position": 1
-                  }
-                ]
-              },
-              "cornerRadius": 10,
-              "justifyContent": "center",
-              "alignItems": "center",
+              "layout": "none",
               "children": [
                 {
-                  "type": "icon",
-                  "id": "QBWSk",
-                  "name": "Icon",
-                  "width": 15,
-                  "height": 15,
-                  "icon": "sparkle",
-                  "library": "lucide",
-                  "fill": "$on-ink"
+                  "type": "path",
+                  "id": "N2FzlD",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Body",
+                  "geometry": "M0 185a118.6 114 0 1 1 237.2 0 118.6 114 0 1 1-237.2 0z m0 0h66v148h-66z m0 148a33 33 0 1 1 66 0 33 33 0 1 1-66 0z",
+                  "viewBox": [
+                    0,
+                    71,
+                    237.2,
+                    295
+                  ],
+                  "fill": "$piko",
+                  "width": 24,
+                  "height": 30
+                },
+                {
+                  "type": "path",
+                  "id": "xSFDs",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Eyes",
+                  "geometry": "M109.6 158a9 9 0 0 1 18 0v14a9 9 0 0 1-18 0z m45 0a9 9 0 0 1 18 0v14a9 9 0 0 1-18 0z",
+                  "viewBox": [
+                    0,
+                    71,
+                    237.2,
+                    295
+                  ],
+                  "fill": "$ink",
+                  "width": 24,
+                  "height": 30
                 }
               ]
+            },
+            {
+              "type": "frame",
+              "id": "fOS2H",
+              "name": "atoms/Wordmark",
+              "reusable": true,
+              "width": 68.826,
+              "height": 32,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "path",
+                  "id": "gqBPx",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Body",
+                  "geometry": "M0 185a118.6 114 0 1 1 237.2 0 118.6 114 0 1 1-237.2 0z m0 0h66v148h-66z m0 148a33 33 0 1 1 66 0 33 33 0 1 1-66 0z",
+                  "viewBox": [
+                    0,
+                    0,
+                    787.2,
+                    366
+                  ],
+                  "fill": "$piko",
+                  "width": 68.826,
+                  "height": 32
+                },
+                {
+                  "type": "path",
+                  "id": "axseu",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Eyes",
+                  "geometry": "M109.6 158a9 9 0 0 1 18 0v14a9 9 0 0 1-18 0z m45 0a9 9 0 0 1 18 0v14a9 9 0 0 1-18 0z",
+                  "viewBox": [
+                    0,
+                    0,
+                    787.2,
+                    366
+                  ],
+                  "fill": "$ink",
+                  "width": 68.826,
+                  "height": 32
+                },
+                {
+                  "type": "path",
+                  "id": "NoyRq",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Letters",
+                  "geometry": "M261.2 109a33 33 0 0 1 66 0v152a33 33 0 0 1-66 0z m0-76a33 33 0 1 1 66 0 33 33 0 1 1-66 0z m92 0a33 33 0 0 1 66 0v228a33 33 0 0 1-66 0z m58.373 129.373l77-77a32 32 0 0 1 45.254 45.254l-77 77a32 32 0 0 1-45.254-45.254z m45.254 0l77 77a32 32 0 0 1-45.254 45.254l-77-77a32 32 0 0 1 45.254-45.254z m102.373 22.627a114 114 0 1 1 228 0 114 114 0 1 1-228 0z m66 0a48 48 0 1 0 96 0 48 48 0 1 0-96 0z",
+                  "viewBox": [
+                    0,
+                    0,
+                    787.2,
+                    366
+                  ],
+                  "fill": "$ink",
+                  "width": 68.826,
+                  "height": 32
+                }
+              ]
+            },
+            {
+              "id": "s0qF0q",
+              "type": "ref",
+              "reusable": true,
+              "ref": "fOS2H",
+              "name": "atoms/Wordmark / on dark",
+              "descendants": {
+                "NoyRq": {
+                  "fill": "$on-ink"
+                }
+              }
             },
             {
               "type": "frame",
@@ -4672,17 +4749,20 @@
                       "alignItems": "center",
                       "children": [
                         {
-                          "id": "XExiX",
+                          "id": "ZuCR1",
                           "type": "ref",
                           "ref": "nyX3c",
                           "name": "Mark",
-                          "width": 48,
+                          "width": 38.6,
                           "height": 48,
-                          "cornerRadius": 15,
                           "descendants": {
-                            "QBWSk": {
-                              "width": 22,
-                              "height": 22
+                            "N2FzlD": {
+                              "width": 38.6,
+                              "height": 48
+                            },
+                            "xSFDs": {
+                              "width": 38.6,
+                              "height": 48
                             }
                           }
                         },
@@ -21488,29 +21568,26 @@
                       ],
                       "children": [
                         {
-                          "type": "frame",
-                          "id": "FwjjA",
+                          "id": "c2Ygp",
+                          "type": "ref",
+                          "ref": "s0qF0q",
                           "name": "Brand",
-                          "gap": 10,
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "id": "OoPSA",
-                              "type": "ref",
-                              "ref": "nyX3c",
-                              "name": "Agent mark"
+                          "width": 111.843,
+                          "height": 52,
+                          "descendants": {
+                            "gqBPx": {
+                              "width": 111.843,
+                              "height": 52
                             },
-                            {
-                              "type": "text",
-                              "id": "U0eOw",
-                              "name": "Name",
-                              "fill": "$on-ink",
-                              "content": "piko",
-                              "fontFamily": "$font-heading",
-                              "fontSize": 19,
-                              "fontWeight": "700"
+                            "axseu": {
+                              "width": 111.843,
+                              "height": 52
+                            },
+                            "NoyRq": {
+                              "width": 111.843,
+                              "height": 52
                             }
-                          ]
+                          }
                         },
                         {
                           "type": "text",
@@ -21712,7 +21789,7 @@
         "M6fg09": {
           "children": [
             {
-              "id": "gTm5B",
+              "id": "QXhyw",
               "type": "ref",
               "ref": "X1PFC3",
               "name": "Stage 1",
@@ -21730,7 +21807,7 @@
               }
             },
             {
-              "id": "zNoPX",
+              "id": "tfLjo",
               "type": "ref",
               "ref": "ypFu6",
               "name": "Stage 2",
@@ -21748,7 +21825,7 @@
               }
             },
             {
-              "id": "z0dsmK",
+              "id": "RMiks",
               "type": "ref",
               "ref": "ypFu6",
               "name": "Stage 3",
@@ -21774,7 +21851,7 @@
           "children": [
             {
               "type": "text",
-              "id": "GDLEQ",
+              "id": "c7BrAZ",
               "name": "Eyebrow",
               "fill": "$brand-1-strong",
               "content": "KROK 1 Z 2",
@@ -21785,7 +21862,7 @@
             },
             {
               "type": "text",
-              "id": "GyZkX",
+              "id": "PCfHl",
               "name": "Title",
               "fill": "$ink",
               "textGrowth": "fixed-width",
@@ -21798,7 +21875,7 @@
             },
             {
               "type": "text",
-              "id": "s6Ukg",
+              "id": "j7O9o",
               "name": "Body",
               "fill": "$ink-body",
               "textGrowth": "fixed-width",
@@ -21811,7 +21888,7 @@
             },
             {
               "type": "frame",
-              "id": "C2zPX",
+              "id": "l0CI1",
               "name": "Actions and details",
               "width": "fill_container",
               "layout": "vertical",
@@ -21819,14 +21896,14 @@
               "children": [
                 {
                   "type": "frame",
-                  "id": "uRgac",
+                  "id": "wBRwu",
                   "name": "Actions",
                   "width": "fill_container",
                   "gap": 10,
                   "alignItems": "center",
                   "children": [
                     {
-                      "id": "l3dnpm",
+                      "id": "V1BdZL",
                       "type": "ref",
                       "ref": "htbsA",
                       "name": "Try again",
@@ -21840,7 +21917,7 @@
                       }
                     },
                     {
-                      "id": "f56JK",
+                      "id": "B9iIt",
                       "type": "ref",
                       "ref": "hFTdW",
                       "name": "Details",
@@ -21857,7 +21934,7 @@
                 },
                 {
                   "type": "frame",
-                  "id": "V9uVV0",
+                  "id": "xleqY",
                   "x": 0,
                   "y": 44,
                   "name": "Details",
@@ -21874,7 +21951,7 @@
                   "children": [
                     {
                       "type": "text",
-                      "id": "dMbXl",
+                      "id": "L74Q5",
                       "name": "Line 1",
                       "fill": "$ink-body",
                       "textGrowth": "fixed-width",
@@ -21887,7 +21964,7 @@
                     },
                     {
                       "type": "text",
-                      "id": "NUh4P",
+                      "id": "R8VNT",
                       "name": "Line 2",
                       "fill": "$ink-body",
                       "textGrowth": "fixed-width",
@@ -21920,7 +21997,7 @@
         "M6fg09": {
           "children": [
             {
-              "id": "TOnSP",
+              "id": "I7XJwK",
               "type": "ref",
               "ref": "pJMyt",
               "name": "Stage 1",
@@ -21938,7 +22015,7 @@
               }
             },
             {
-              "id": "UaKeQ",
+              "id": "Kdzex",
               "type": "ref",
               "ref": "PGihN",
               "name": "Stage 2",
@@ -21956,7 +22033,7 @@
               }
             },
             {
-              "id": "m6r3jZ",
+              "id": "AEGqo",
               "type": "ref",
               "ref": "ypFu6",
               "name": "Stage 3",
@@ -21982,7 +22059,7 @@
           "children": [
             {
               "type": "text",
-              "id": "s67vLU",
+              "id": "xl1To",
               "name": "Eyebrow",
               "fill": "$brand-1-strong",
               "content": "KROK 2 Z 2",
@@ -21993,7 +22070,7 @@
             },
             {
               "type": "text",
-              "id": "BdQp8",
+              "id": "x5VCq",
               "name": "Title",
               "fill": "$ink",
               "textGrowth": "fixed-width",
@@ -22006,7 +22083,7 @@
             },
             {
               "type": "text",
-              "id": "NwU9j",
+              "id": "MCEBi",
               "name": "Body",
               "fill": "$ink-body",
               "textGrowth": "fixed-width",
@@ -22019,14 +22096,14 @@
             },
             {
               "type": "frame",
-              "id": "Ddbcr",
+              "id": "tmyvQ",
               "name": "Instructions",
               "width": "fill_container",
               "layout": "vertical",
               "gap": 10,
               "children": [
                 {
-                  "id": "GwBTX",
+                  "id": "K7AmEP",
                   "type": "ref",
                   "ref": "aeCOW",
                   "name": "Step 1",
@@ -22041,7 +22118,7 @@
                   }
                 },
                 {
-                  "id": "PXAA1",
+                  "id": "Kjmu6",
                   "type": "ref",
                   "ref": "aeCOW",
                   "name": "Step 2",
@@ -22056,7 +22133,7 @@
                   }
                 },
                 {
-                  "id": "k64IP",
+                  "id": "wqlGw",
                   "type": "ref",
                   "ref": "aeCOW",
                   "name": "Step 3",
@@ -22073,7 +22150,7 @@
               ]
             },
             {
-              "id": "qRl7x",
+              "id": "gb6EO",
               "type": "ref",
               "ref": "f8H1g",
               "name": "Code field",
@@ -22081,7 +22158,7 @@
             },
             {
               "type": "frame",
-              "id": "FGoQv",
+              "id": "xxHSw",
               "name": "Actions",
               "width": "fill_container",
               "gap": 10,
@@ -22089,7 +22166,7 @@
               "alignItems": "center",
               "children": [
                 {
-                  "id": "l3XJ1",
+                  "id": "XqMU9",
                   "type": "ref",
                   "ref": "hFTdW",
                   "name": "Back",
@@ -22104,13 +22181,13 @@
                 },
                 {
                   "type": "frame",
-                  "id": "M0ZFR",
+                  "id": "NCi6m",
                   "name": "Right",
                   "gap": 10,
                   "alignItems": "center",
                   "children": [
                     {
-                      "id": "G8XRnF",
+                      "id": "Xm6Nl",
                       "type": "ref",
                       "ref": "c1lNY",
                       "name": "Open again",
@@ -22124,7 +22201,7 @@
                       }
                     },
                     {
-                      "id": "F1xie",
+                      "id": "VIZTJ",
                       "type": "ref",
                       "ref": "htbsA",
                       "name": "Connect",
@@ -22159,7 +22236,7 @@
         "M6fg09": {
           "children": [
             {
-              "id": "F3j64U",
+              "id": "jhxsB",
               "type": "ref",
               "ref": "pJMyt",
               "name": "Stage 1",
@@ -22177,7 +22254,7 @@
               }
             },
             {
-              "id": "KGcO3",
+              "id": "CfNBs",
               "type": "ref",
               "ref": "PGihN",
               "name": "Stage 2",
@@ -22195,7 +22272,7 @@
               }
             },
             {
-              "id": "JrgtN",
+              "id": "KPOj8",
               "type": "ref",
               "ref": "ypFu6",
               "name": "Stage 3",
@@ -22221,7 +22298,7 @@
           "children": [
             {
               "type": "text",
-              "id": "f0fGAi",
+              "id": "dxuVw",
               "name": "Eyebrow",
               "fill": "$brand-1-strong",
               "content": "KROK 2 Z 2",
@@ -22232,7 +22309,7 @@
             },
             {
               "type": "text",
-              "id": "J1VZE",
+              "id": "F3QLpR",
               "name": "Title",
               "fill": "$ink",
               "textGrowth": "fixed-width",
@@ -22245,7 +22322,7 @@
             },
             {
               "type": "text",
-              "id": "L91UV",
+              "id": "m0uXNj",
               "name": "Body",
               "fill": "$ink-body",
               "textGrowth": "fixed-width",
@@ -22258,14 +22335,14 @@
             },
             {
               "type": "frame",
-              "id": "tjUYS",
+              "id": "YeLdb",
               "name": "Instructions",
               "width": "fill_container",
               "layout": "vertical",
               "gap": 10,
               "children": [
                 {
-                  "id": "p6AI96",
+                  "id": "Mhcir",
                   "type": "ref",
                   "ref": "aeCOW",
                   "name": "Step 1",
@@ -22280,7 +22357,7 @@
                   }
                 },
                 {
-                  "id": "L4oOq",
+                  "id": "buamn",
                   "type": "ref",
                   "ref": "aeCOW",
                   "name": "Step 2",
@@ -22295,7 +22372,7 @@
                   }
                 },
                 {
-                  "id": "GA3lK",
+                  "id": "suQR5",
                   "type": "ref",
                   "ref": "aeCOW",
                   "name": "Step 3",
@@ -22312,7 +22389,7 @@
               ]
             },
             {
-              "id": "eTIYh",
+              "id": "E8Fz5",
               "type": "ref",
               "ref": "Y2wwo5",
               "name": "Code field",
@@ -22320,7 +22397,7 @@
             },
             {
               "type": "frame",
-              "id": "nvvdN",
+              "id": "KdgK8",
               "name": "Actions",
               "width": "fill_container",
               "gap": 10,
@@ -22328,7 +22405,7 @@
               "alignItems": "center",
               "children": [
                 {
-                  "id": "Tw8WL",
+                  "id": "vlnw6",
                   "type": "ref",
                   "ref": "hFTdW",
                   "name": "Back",
@@ -22343,13 +22420,13 @@
                 },
                 {
                   "type": "frame",
-                  "id": "N1Wv6",
+                  "id": "ZbGcH",
                   "name": "Right",
                   "gap": 10,
                   "alignItems": "center",
                   "children": [
                     {
-                      "id": "jbCQ6",
+                      "id": "o0r1vH",
                       "type": "ref",
                       "ref": "c1lNY",
                       "name": "Open again",
@@ -22363,7 +22440,7 @@
                       }
                     },
                     {
-                      "id": "RGj6A",
+                      "id": "mXFKK",
                       "type": "ref",
                       "ref": "htbsA",
                       "name": "Connect",
@@ -22398,7 +22475,7 @@
         "M6fg09": {
           "children": [
             {
-              "id": "QlxcY",
+              "id": "K593Ps",
               "type": "ref",
               "ref": "pJMyt",
               "name": "Stage 1",
@@ -22416,7 +22493,7 @@
               }
             },
             {
-              "id": "z2Qnel",
+              "id": "iQwBX",
               "type": "ref",
               "ref": "PGihN",
               "name": "Stage 2",
@@ -22434,7 +22511,7 @@
               }
             },
             {
-              "id": "SO475",
+              "id": "WOxWY",
               "type": "ref",
               "ref": "ypFu6",
               "name": "Stage 3",
@@ -22460,7 +22537,7 @@
           "children": [
             {
               "type": "text",
-              "id": "sCd3a",
+              "id": "tkRbL",
               "name": "Eyebrow",
               "fill": "$brand-1-strong",
               "content": "KROK 2 Z 2",
@@ -22471,7 +22548,7 @@
             },
             {
               "type": "text",
-              "id": "eGbNu",
+              "id": "aLVjk",
               "name": "Title",
               "fill": "$ink",
               "textGrowth": "fixed-width",
@@ -22484,7 +22561,7 @@
             },
             {
               "type": "text",
-              "id": "w7pUV",
+              "id": "RRpnE",
               "name": "Body",
               "fill": "$ink-body",
               "textGrowth": "fixed-width",
@@ -22497,7 +22574,7 @@
             },
             {
               "type": "frame",
-              "id": "VhPJV",
+              "id": "Vk3hC",
               "name": "Account",
               "width": "fill_container",
               "fill": "$surface-soft",
@@ -22510,7 +22587,7 @@
               "alignItems": "center",
               "children": [
                 {
-                  "id": "Ef6Kc",
+                  "id": "f2TCj",
                   "type": "ref",
                   "ref": "n2BS1f",
                   "name": "Tile",
@@ -22524,7 +22601,7 @@
                 },
                 {
                   "type": "frame",
-                  "id": "pPzYJ",
+                  "id": "HL7UR",
                   "name": "Who",
                   "width": "fill_container",
                   "layout": "vertical",
@@ -22532,7 +22609,7 @@
                   "children": [
                     {
                       "type": "text",
-                      "id": "Imdln",
+                      "id": "nHn3e",
                       "name": "Name",
                       "fill": "$ink",
                       "content": "Claude",
@@ -22542,7 +22619,7 @@
                     },
                     {
                       "type": "text",
-                      "id": "VH2UL",
+                      "id": "CdHJ7",
                       "name": "Email",
                       "fill": "$ink-muted",
                       "content": "ania@example.com",
@@ -22554,7 +22631,7 @@
                 },
                 {
                   "type": "frame",
-                  "id": "W4otrA",
+                  "id": "acxb2",
                   "x": 437,
                   "y": 19,
                   "name": "Plan",
@@ -22570,7 +22647,7 @@
                   "children": [
                     {
                       "type": "text",
-                      "id": "wYTHB",
+                      "id": "l3iaZz",
                       "name": "Label",
                       "fill": "$ink-muted",
                       "content": "Plan Free",
@@ -22584,7 +22661,7 @@
             },
             {
               "type": "frame",
-              "id": "Hs5ee",
+              "id": "zMUZZ",
               "name": "Plans that work",
               "width": "fill_container",
               "layout": "vertical",
@@ -22592,7 +22669,7 @@
               "children": [
                 {
                   "type": "text",
-                  "id": "bnt4n",
+                  "id": "A8GyZ",
                   "name": "Label",
                   "fill": "$ink-body",
                   "content": "Agent działa z planem:",
@@ -22602,12 +22679,12 @@
                 },
                 {
                   "type": "frame",
-                  "id": "m9XEFM",
+                  "id": "vigdQ",
                   "name": "Plans",
                   "gap": 20,
                   "children": [
                     {
-                      "id": "O1GlGC",
+                      "id": "niOq6",
                       "type": "ref",
                       "ref": "l60d8L",
                       "name": "Claude Pro",
@@ -22619,7 +22696,7 @@
                       }
                     },
                     {
-                      "id": "Xs8eN",
+                      "id": "Z4dyps",
                       "type": "ref",
                       "ref": "l60d8L",
                       "name": "Claude Max",
@@ -22636,7 +22713,7 @@
             },
             {
               "type": "text",
-              "id": "LLtnB",
+              "id": "APuU2",
               "name": "Body",
               "fill": "$ink-muted",
               "textGrowth": "fixed-width",
@@ -22649,7 +22726,7 @@
             },
             {
               "type": "frame",
-              "id": "bYvFt",
+              "id": "i5Ytd",
               "name": "Actions",
               "width": "fill_container",
               "gap": 10,
@@ -22657,7 +22734,7 @@
               "alignItems": "center",
               "children": [
                 {
-                  "id": "cnFmb",
+                  "id": "MTJtG",
                   "type": "ref",
                   "ref": "hFTdW",
                   "name": "Back",
@@ -22672,13 +22749,13 @@
                 },
                 {
                   "type": "frame",
-                  "id": "zmqxw",
+                  "id": "RHEmi",
                   "name": "Right",
                   "gap": 10,
                   "alignItems": "center",
                   "children": [
                     {
-                      "id": "CZ2lC",
+                      "id": "xbIKu",
                       "type": "ref",
                       "ref": "c1lNY",
                       "name": "See plans",
@@ -22692,7 +22769,7 @@
                       }
                     },
                     {
-                      "id": "rh9sA",
+                      "id": "aOB95",
                       "type": "ref",
                       "ref": "htbsA",
                       "name": "Other account",
@@ -22730,7 +22807,7 @@
         "M6fg09": {
           "children": [
             {
-              "id": "CJWow",
+              "id": "bZdzD",
               "type": "ref",
               "ref": "pJMyt",
               "name": "Stage 1",
@@ -22748,7 +22825,7 @@
               }
             },
             {
-              "id": "W8SeVY",
+              "id": "BfzK9",
               "type": "ref",
               "ref": "pJMyt",
               "name": "Stage 2",
@@ -22766,7 +22843,7 @@
               }
             },
             {
-              "id": "tJk42",
+              "id": "mmalC",
               "type": "ref",
               "ref": "PGihN",
               "name": "Stage 3",
@@ -22792,7 +22869,7 @@
           "children": [
             {
               "type": "text",
-              "id": "EZQyn",
+              "id": "qijy8",
               "name": "Eyebrow",
               "fill": "$brand-1-strong",
               "content": "GOTOWE",
@@ -22803,7 +22880,7 @@
             },
             {
               "type": "text",
-              "id": "g8yYbp",
+              "id": "N2z9Bw",
               "name": "Title",
               "fill": "$ink",
               "textGrowth": "fixed-width",
@@ -22816,7 +22893,7 @@
             },
             {
               "type": "frame",
-              "id": "ul9ei",
+              "id": "lwDPm",
               "name": "Account",
               "width": "fill_container",
               "fill": "$surface-soft",
@@ -22829,7 +22906,7 @@
               "alignItems": "center",
               "children": [
                 {
-                  "id": "PcXLY",
+                  "id": "O23n0",
                   "type": "ref",
                   "ref": "n2BS1f",
                   "name": "Tile",
@@ -22843,7 +22920,7 @@
                 },
                 {
                   "type": "frame",
-                  "id": "Z2T5tv",
+                  "id": "Zq4gc",
                   "name": "Who",
                   "width": "fill_container",
                   "layout": "vertical",
@@ -22851,7 +22928,7 @@
                   "children": [
                     {
                       "type": "text",
-                      "id": "m5AjQA",
+                      "id": "f5IJn",
                       "name": "Name",
                       "fill": "$ink",
                       "content": "Claude",
@@ -22861,7 +22938,7 @@
                     },
                     {
                       "type": "text",
-                      "id": "G8D8hj",
+                      "id": "PDEfk",
                       "name": "Email",
                       "fill": "$ink-muted",
                       "content": "ania@example.com",
@@ -22872,7 +22949,7 @@
                   ]
                 },
                 {
-                  "id": "d73LKW",
+                  "id": "Yqqz6",
                   "type": "ref",
                   "ref": "l60d8L",
                   "name": "Connected"
@@ -22881,7 +22958,7 @@
             },
             {
               "type": "text",
-              "id": "OtubC",
+              "id": "idp6b",
               "name": "Body",
               "fill": "$ink-body",
               "textGrowth": "fixed-width",
@@ -22894,7 +22971,7 @@
             },
             {
               "type": "frame",
-              "id": "Ywpxz",
+              "id": "MWvIV",
               "name": "Actions",
               "width": "fill_container",
               "gap": 10,
@@ -22902,7 +22979,7 @@
               "alignItems": "center",
               "children": [
                 {
-                  "id": "Q5ia3",
+                  "id": "enkCT",
                   "type": "ref",
                   "ref": "htbsA",
                   "name": "Continue",
@@ -22935,7 +23012,7 @@
         "M6fg09": {
           "children": [
             {
-              "id": "RaF8h",
+              "id": "ENVqA",
               "type": "ref",
               "ref": "PGihN",
               "name": "Stage 1",
@@ -22953,7 +23030,7 @@
               }
             },
             {
-              "id": "aTgxZ",
+              "id": "e33Or",
               "type": "ref",
               "ref": "ypFu6",
               "name": "Stage 2",
@@ -22971,7 +23048,7 @@
               }
             },
             {
-              "id": "lX8q7",
+              "id": "C6JMXU",
               "type": "ref",
               "ref": "ypFu6",
               "name": "Stage 3",
@@ -22997,7 +23074,7 @@
           "children": [
             {
               "type": "text",
-              "id": "u89dN",
+              "id": "JcVMm",
               "name": "Eyebrow",
               "fill": "$brand-1-strong",
               "content": "KROK 1 Z 2",
@@ -23008,7 +23085,7 @@
             },
             {
               "type": "text",
-              "id": "P9nz0",
+              "id": "e8J7VZ",
               "name": "Title",
               "fill": "$ink",
               "textGrowth": "fixed-width",
@@ -23021,7 +23098,7 @@
             },
             {
               "type": "text",
-              "id": "nwJFU",
+              "id": "Z374tI",
               "name": "Body",
               "fill": "$ink-body",
               "textGrowth": "fixed-width",
@@ -23033,7 +23110,7 @@
               "fontWeight": "normal"
             },
             {
-              "id": "eNB2E",
+              "id": "A57uk",
               "type": "ref",
               "ref": "nwmvW",
               "name": "Progress",
@@ -23046,7 +23123,7 @@
             },
             {
               "type": "text",
-              "id": "m6wE4n",
+              "id": "J2Dzb",
               "name": "Hint",
               "fill": "$ink-muted",
               "textGrowth": "fixed-width",
@@ -23074,7 +23151,7 @@
         "M6fg09": {
           "children": [
             {
-              "id": "ptAjg",
+              "id": "WrywW",
               "type": "ref",
               "ref": "pJMyt",
               "name": "Stage 1",
@@ -23092,7 +23169,7 @@
               }
             },
             {
-              "id": "A2Mqsb",
+              "id": "m8gP2r",
               "type": "ref",
               "ref": "PGihN",
               "name": "Stage 2",
@@ -23110,7 +23187,7 @@
               }
             },
             {
-              "id": "LGk1q",
+              "id": "OieVL",
               "type": "ref",
               "ref": "ypFu6",
               "name": "Stage 3",
@@ -23136,7 +23213,7 @@
           "children": [
             {
               "type": "text",
-              "id": "SSPdV",
+              "id": "sgudj",
               "name": "Eyebrow",
               "fill": "$brand-1-strong",
               "content": "KROK 2 Z 2",
@@ -23147,7 +23224,7 @@
             },
             {
               "type": "text",
-              "id": "FoC0n",
+              "id": "aS482",
               "name": "Title",
               "fill": "$ink",
               "textGrowth": "fixed-width",
@@ -23160,7 +23237,7 @@
             },
             {
               "type": "text",
-              "id": "ZZCv2",
+              "id": "oZZmd",
               "name": "Body",
               "fill": "$ink-body",
               "textGrowth": "fixed-width",
@@ -23173,20 +23250,20 @@
             },
             {
               "type": "frame",
-              "id": "ADL5B",
+              "id": "I3vpTb",
               "name": "Providers",
               "width": "fill_container",
               "gap": 16,
               "children": [
                 {
-                  "id": "dt964",
+                  "id": "y968t",
                   "type": "ref",
                   "ref": "H3hsbO",
                   "name": "Claude",
                   "width": "fill_container"
                 },
                 {
-                  "id": "v2H3S",
+                  "id": "TKcdF",
                   "type": "ref",
                   "ref": "Rk7mi",
                   "name": "ChatGPT",
@@ -23212,7 +23289,7 @@
         "M6fg09": {
           "children": [
             {
-              "id": "eIIkf",
+              "id": "ffWxS",
               "type": "ref",
               "ref": "pJMyt",
               "name": "Stage 1",
@@ -23230,7 +23307,7 @@
               }
             },
             {
-              "id": "Ag5oB",
+              "id": "obYex",
               "type": "ref",
               "ref": "X1PFC3",
               "name": "Stage 2",
@@ -23248,7 +23325,7 @@
               }
             },
             {
-              "id": "L6DH1z",
+              "id": "jmPBT",
               "type": "ref",
               "ref": "ypFu6",
               "name": "Stage 3",
@@ -23274,7 +23351,7 @@
           "children": [
             {
               "type": "text",
-              "id": "GQCAy",
+              "id": "ZRVSD",
               "name": "Eyebrow",
               "fill": "$brand-1-strong",
               "content": "KROK 2 Z 2",
@@ -23285,7 +23362,7 @@
             },
             {
               "type": "text",
-              "id": "T2vyUU",
+              "id": "WpUv3",
               "name": "Title",
               "fill": "$ink",
               "textGrowth": "fixed-width",
@@ -23298,7 +23375,7 @@
             },
             {
               "type": "text",
-              "id": "TfpMx",
+              "id": "QrF5D",
               "name": "Body",
               "fill": "$ink-body",
               "textGrowth": "fixed-width",
@@ -23311,7 +23388,7 @@
             },
             {
               "type": "frame",
-              "id": "SQW6c",
+              "id": "t4LcwX",
               "name": "Actions and details",
               "width": "fill_container",
               "layout": "vertical",
@@ -23319,14 +23396,14 @@
               "children": [
                 {
                   "type": "frame",
-                  "id": "vZxKE",
+                  "id": "Iz4Bk",
                   "name": "Actions",
                   "width": "fill_container",
                   "gap": 10,
                   "alignItems": "center",
                   "children": [
                     {
-                      "id": "gK0m2",
+                      "id": "U3QXwQ",
                       "type": "ref",
                       "ref": "htbsA",
                       "name": "Try again",
@@ -23340,7 +23417,7 @@
                       }
                     },
                     {
-                      "id": "i9fMN",
+                      "id": "PFOZz",
                       "type": "ref",
                       "ref": "hFTdW",
                       "name": "Details",
@@ -23357,7 +23434,7 @@
                 },
                 {
                   "type": "frame",
-                  "id": "Cminq",
+                  "id": "MwV4M",
                   "x": 0,
                   "y": 44,
                   "name": "Details",
@@ -23374,7 +23451,7 @@
                   "children": [
                     {
                       "type": "text",
-                      "id": "S3IYU",
+                      "id": "FZXq8",
                       "name": "Line 1",
                       "fill": "$ink-body",
                       "textGrowth": "fixed-width",
@@ -23387,7 +23464,7 @@
                     },
                     {
                       "type": "text",
-                      "id": "wHB9p",
+                      "id": "a2ptOo",
                       "name": "Line 2",
                       "fill": "$ink-body",
                       "textGrowth": "fixed-width",
@@ -31284,6 +31361,10 @@
     "field-border": {
       "type": "color",
       "value": "#7A827C"
+    },
+    "piko": {
+      "type": "color",
+      "value": "#45C095"
     }
   },
   "fileToken": "46e7939c-9cbb-4b8f-ad6a-00eb62c69442"
