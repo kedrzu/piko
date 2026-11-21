@@ -50,7 +50,13 @@ if (sha256 !== tarball.sha256) {
 // The marker goes last, so an interrupted run leaves no marker and the next run unpacks again.
 await rm(target, { recursive: true, force: true });
 await mkdir(target, { recursive: true });
-const untar = Bun.spawnSync(['tar', '-xzf', '-', '-C', target], { stdin: bytes, stdout: 'inherit', stderr: 'inherit' });
+// The guest agent of macOS guests is left out: the sandbox runs Linux, and notarization rejects the unsigned Mach-O
+// inside the `.gz`, which no codesign step can reach.
+const untar = Bun.spawnSync(['tar', '-xzf', '-', '-C', target, '--exclude', 'share/lima/lima-guestagent.Darwin-*'], {
+    stdin: bytes,
+    stdout: 'inherit',
+    stderr: 'inherit',
+});
 if (untar.exitCode !== 0) {
     throw new Error(`Unpacking ${fileName} failed with exit code ${untar.exitCode}`);
 }
