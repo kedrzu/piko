@@ -73,6 +73,8 @@ function toggle() {
 }
 
 .errorDetails_box {
+  // The containing block of what it scrolls: absolutely positioned content would otherwise lengthen the window.
+  position: relative;
   margin: 0;
   padding: $spacing-14 $spacing-16;
   overflow-x: auto;

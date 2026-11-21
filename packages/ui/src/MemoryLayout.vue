@@ -270,6 +270,8 @@ $preview-max-width: 680px;
 }
 
 .memoryLayout_files {
+  // The containing block of what it scrolls: absolutely positioned content would otherwise lengthen the window.
+  position: relative;
   flex: none;
   width: $files-width;
   padding: $spacing-14 $spacing-14 $spacing-14 0;
@@ -287,6 +289,8 @@ $preview-max-width: 680px;
 }
 
 .memoryLayout_preview {
+  // The containing block of what it scrolls: absolutely positioned content would otherwise lengthen the window.
+  position: relative;
   flex: 1;
   min-width: 0;
   padding: $spacing-28 $spacing-48;
