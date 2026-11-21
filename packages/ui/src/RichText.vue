@@ -326,6 +326,8 @@ function collectDefinitions(tree: Root) {
 }
 
 .richText_tableScroll {
+  // The containing block of what it scrolls: absolutely positioned content would otherwise lengthen the window.
+  position: relative;
   margin: 0 0 $spacing-12;
   overflow-x: auto;
 
