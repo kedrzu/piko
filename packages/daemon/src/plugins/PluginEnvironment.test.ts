@@ -282,6 +282,7 @@ function setup() {
     container.set(Sandbox, {
         getState: () => state.current,
         getVerifiedState: () => Promise.resolve(state.current),
+        getStartProgress: () => null,
         stateChanged: createEventEmitter<[state: SandboxState]>().event,
         start: () => Promise.reject(new Error('not used')),
         stop: () => Promise.resolve(),

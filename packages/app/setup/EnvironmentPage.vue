@@ -22,7 +22,7 @@ const t = useTranslate();
 
 const sandbox = computed(() => setup.state.sandbox);
 const failure = computed(() => (sandbox.value?.status === 'failed' ? sandbox.value.message : null));
-/** What the sandbox does now; the bar moves without a fraction, since no phase reports how far it is. */
+/** What the sandbox does now. */
 const phaseLabel = computed(() => {
   const status = sandbox.value?.status;
   switch (status) {
@@ -44,6 +44,33 @@ const phaseLabel = computed(() => {
     default:
       return assertNever(status);
   }
+});
+
+/** How far the start is, once the daemon has planned it; the bar moves without it. */
+const progress = computed(() => {
+  switch (sandbox.value?.status) {
+    case 'startingVm':
+    case 'buildingImage':
+    case 'startingAgent':
+      return sandbox.value.progress;
+    default:
+      return undefined;
+  }
+});
+/** Full once ready, so the bar does not fall back to moving before the redirect. */
+const barValue = computed(() => (sandbox.value?.status === 'ready' ? 1 : progress.value?.fraction));
+const remainingLabel = computed(() => {
+  if (progress.value == null) {
+    return undefined;
+  }
+  const { remainingMs } = progress.value;
+  if (remainingMs <= 0) {
+    return t(l.remainingMoment);
+  }
+  if (remainingMs < 60_000) {
+    return t(l.remainingUnderMinute);
+  }
+  return t(l.remainingMinutes, { count: Math.ceil(remainingMs / 60_000) });
 });
 
 watch(
@@ -91,7 +118,11 @@ async function retry() {
     :title="t(l.preparingTitle)"
     :body="t(l.preparingBody)"
   >
-    <ProgressBar :label="phaseLabel" />
+    <ProgressBar
+      :label="phaseLabel"
+      :value="barValue"
+      :hint="remainingLabel"
+    />
     <p :class="$style.environmentPage_hint">
       {{ t(l.preparingHint) }}
     </p>

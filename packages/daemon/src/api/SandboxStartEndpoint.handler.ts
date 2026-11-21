@@ -17,7 +17,7 @@ export const SandboxStartEndpointHandler = defineEndpointHandler({
                 // sandbox and leaves it `failed`.
                 sandbox.start().catch(() => undefined);
             }
-            return toSandboxStatus(sandbox.getState());
+            return toSandboxStatus(sandbox.getState(), sandbox.getStartProgress());
         };
     },
 });

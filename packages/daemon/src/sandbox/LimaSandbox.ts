@@ -19,6 +19,7 @@ import {
     PIKO_LIMA_HOME,
     SANDBOX_API_PORT,
 } from '../env.js';
+import { readStreamLines } from '../utils/readStreamLines.js';
 import {
     AGENT_CONTAINER,
     AGENT_DATA_ROOT,
@@ -32,6 +33,11 @@ import { buildAgentContainerfile } from './buildAgentContainerfile.js';
 import { buildHostFirewall } from './buildHostFirewall.js';
 import type { FirewallOpening } from './buildHostFirewall.js';
 import { buildLimaConfig } from './buildLimaConfig.js';
+import { createBuildProgressParser } from './createBuildProgressParser.js';
+import { createLimaStartProgress, getNewVmDownloadStep } from './createLimaStartProgress.js';
+import type { CreateLimaStartProgressOptions } from './createLimaStartProgress.js';
+import { createStartProgress } from './createStartProgress.js';
+import type { StartProgress, StartProgressStep } from './createStartProgress.js';
 import { readOrCreatePassword } from './readOrCreatePassword.js';
 import AGENT_CONTAINERFILE_BASE from '../../sandbox/agent.Containerfile' with { type: 'text' };
 import GENERATIVE_UI_SKILL from '../../sandbox/generative-ui.skill.gen.md' with { type: 'text' };
@@ -73,6 +79,24 @@ const AGENT_VERIFY_INTERVAL_MS = 5000;
 const AGENT_VERIFY_ATTEMPTS = 3;
 const AGENT_VERIFY_RETRY_MS = 500;
 const BUILD_DIR = '/tmp/piko-agent-build';
+/** Lima's download cache: Go's `os.UserCacheDir()` on macOS, whatever `LIMA_HOME` is. */
+const LIMA_CACHE_DIR = path.join(os.homedir(), 'Library', 'Caches', 'lima');
+/** How often a running `limactl start` has its downloads measured. */
+const DOWNLOAD_SAMPLE_INTERVAL_MS = 1000;
+
+/*
+ * The steps of a start and their expected durations, for the progress bar. Measured on one Apple silicon Mac with a warm
+ * Lima cache (`~/.piko/logs/daemon.log`): creating the VM took 33.9 s, the image build 44.2 s, the restart after it
+ * 11.2 s and starting the agent 1.1 s; the tracker scales them by how fast this machine turns out to be.
+ */
+/** Booting a new VM after its downloads, with converting the image to a raw disk. */
+const BOOT_NEW_VM_STEP: StartProgressStep = { id: 'bootNewVm', expectedMs: 45_000 };
+/** Starting an existing VM: an estimate, as it was not measured; a restart (below) is the closest measurement. */
+const START_VM_STEP: StartProgressStep = { id: 'startVm', expectedMs: 15_000 };
+const BUILD_IMAGE_STEP: StartProgressStep = { id: 'buildImage', expectedMs: 45_000 };
+const RESTART_VM_STEP: StartProgressStep = { id: 'restartVm', expectedMs: 12_000 };
+/** Starting or reusing the agent's container; more than the measured 1.1 s, which reused a running container. */
+const START_AGENT_STEP: StartProgressStep = { id: 'startAgent', expectedMs: 3_000 };
 
 interface LimactlResult {
     exitCode: number;
@@ -80,10 +104,15 @@ interface LimactlResult {
     stderr: string;
 }
 
+/** What a `limactl start` reports its progress to; the cache is always Lima's. */
+type StartLimaInstanceOptions = Omit<CreateLimaStartProgressOptions, 'cacheDir'>;
+
 interface LimactlOptions {
     stdin?: string;
     /** Resolve with a non-zero exit code instead of throwing. */
     allowFailure?: boolean;
+    /** Called with each stderr line as it arrives; the result still carries the whole stderr. */
+    onStderrLine?: (line: string) => void;
 }
 
 /**
@@ -115,10 +144,13 @@ export const LimaSandbox = defineService({
         const verifyRunner = createSingleRunner({ handler: verifyAgent });
         /** When the agent last answered, in ms since the epoch. */
         let agentVerifiedAt = 0;
+        /** The progress of the current start; a new one per start attempt, dropped when it fails. */
+        let startProgress: StartProgress | undefined;
 
         return {
             getState: () => state,
             getVerifiedState,
+            getStartProgress,
             stateChanged: stateChanged.event,
             start,
             stop,
@@ -185,6 +217,17 @@ export const LimaSandbox = defineService({
             await limactl(shellArgs('sh', '-c', `date > ${AGENT_SKILLS_DIR}/${SKILLS_SYNC_FILE}`));
         }
 
+        function getStartProgress() {
+            switch (state.status) {
+                case 'startingVm':
+                case 'buildingImage':
+                case 'startingAgent':
+                    return startProgress?.snapshot() ?? null;
+                default:
+                    return null;
+            }
+        }
+
         async function getVerifiedState() {
             if (state.status === 'ready' && Date.now() - agentVerifiedAt >= AGENT_VERIFY_INTERVAL_MS) {
                 await verifyRunner.execute();
@@ -218,33 +261,44 @@ export const LimaSandbox = defineService({
         }
 
         async function startSandbox(): Promise<SandboxEndpoint> {
+            const progress = createStartProgress();
+            startProgress = progress;
             try {
                 setState({ status: 'startingVm' });
-                await startVm();
+                await startVm(progress);
                 await applyHostFirewall();
 
                 const image = getImageTag();
-                if (!(await imageExists(image))) {
+                if (await imageExists(image)) {
+                    // Planned for a new VM, which normally lacks the image: retired, so the bar does not wait for them.
+                    progress.complete(BUILD_IMAGE_STEP.id);
+                    progress.complete(RESTART_VM_STEP.id);
+                } else {
+                    progress.addSteps([BUILD_IMAGE_STEP, RESTART_VM_STEP]);
                     setState({ status: 'buildingImage' });
-                    await buildImage(image);
+                    await buildImage(image, progress);
                     await removeSupersededImages(image);
-                    await restartVm();
+                    await restartVm(progress);
                 }
 
+                progress.begin(START_AGENT_STEP.id);
                 setState({ status: 'startingAgent' });
                 const endpoint = await startAgent(image);
+                progress.complete(START_AGENT_STEP.id);
+                progress.finish();
 
                 agentVerifiedAt = Date.now();
                 setState({ status: 'ready', endpoint });
                 return endpoint;
             } catch (error) {
+                startProgress = undefined;
                 logger.error('Sandbox failed to start', { error });
                 setState({ status: 'failed', message: getErrorMessage(error) });
                 throw error;
             }
         }
 
-        async function startVm() {
+        async function startVm(progress: StartProgress) {
             const stopwatch = createStopwatch();
             await mkdir(dataRoot, { recursive: true });
             // The agent's container mounts the daemon's folder read-only over the data root, so it must exist before the
@@ -254,19 +308,35 @@ export const LimaSandbox = defineService({
 
             const status = await getVmStatus();
             if (status === 'Running') {
+                progress.addSteps([START_AGENT_STEP]);
                 return;
             }
 
             if (status === undefined) {
-                await createVm();
+                // A new VM never has the agent's image, so the build and the restart after it are planned up front.
+                progress.addSteps([
+                    getNewVmDownloadStep(),
+                    BOOT_NEW_VM_STEP,
+                    BUILD_IMAGE_STEP,
+                    RESTART_VM_STEP,
+                    START_AGENT_STEP,
+                ]);
+                await createVm(progress);
+                progress.complete(BOOT_NEW_VM_STEP.id);
             } else {
-                await limactl(['start', '--tty=false', INSTANCE]);
+                progress.addSteps([START_VM_STEP, START_AGENT_STEP]);
+                await startLimaInstance(['start', '--tty=false', INSTANCE], {
+                    progress,
+                    step: START_VM_STEP.id,
+                    downloadPlanned: false,
+                });
+                progress.complete(START_VM_STEP.id);
             }
 
             logger.info('Sandbox VM started', { created: status === undefined, durationMs: stopwatch.duration() });
         }
 
-        async function createVm() {
+        async function createVm(progress: StartProgress) {
             const configDir = await mkdtemp(path.join(os.tmpdir(), 'piko-lima-'));
             try {
                 const configFile = path.join(configDir, `${INSTANCE}.yaml`);
@@ -277,7 +347,11 @@ export const LimaSandbox = defineService({
                     memoryGiB: VM_MEMORY_GIB,
                 });
                 await writeFile(configFile, config);
-                await limactl(['start', '--tty=false', `--name=${INSTANCE}`, configFile]);
+                await startLimaInstance(['start', '--tty=false', `--name=${INSTANCE}`, configFile], {
+                    progress,
+                    step: BOOT_NEW_VM_STEP.id,
+                    downloadPlanned: true,
+                });
             } finally {
                 await rm(configDir, { recursive: true, force: true });
             }
@@ -313,11 +387,19 @@ export const LimaSandbox = defineService({
             return result.exitCode === 0;
         }
 
-        async function buildImage(image: string) {
+        async function buildImage(image: string, progress: StartProgress) {
             const stopwatch = createStopwatch();
+            progress.begin(BUILD_IMAGE_STEP.id);
             const script = `mkdir -p ${BUILD_DIR} && cat > ${BUILD_DIR}/Containerfile`;
             await limactl(shellArgs('sh', '-c', script), { stdin: AGENT_CONTAINERFILE });
-            await limactl(shellArgs('nerdctl', 'build', '--tag', image, BUILD_DIR));
+            const parser = createBuildProgressParser();
+            await limactl(shellArgs('nerdctl', 'build', '--progress=plain', '--tag', image, BUILD_DIR), {
+                onStderrLine: line => {
+                    parser.push(line);
+                    progress.reportFraction(BUILD_IMAGE_STEP.id, parser.fraction);
+                },
+            });
+            progress.complete(BUILD_IMAGE_STEP.id);
             logger.info('Sandbox image built', { image, durationMs: stopwatch.duration() });
         }
 
@@ -354,10 +436,16 @@ export const LimaSandbox = defineService({
          * Returns the memory the image build touched to the computer: Lima's vz VM keeps every guest page until it
          * restarts, and a build leaves about 1.4 GB of them behind.
          */
-        async function restartVm() {
+        async function restartVm(progress: StartProgress) {
             const stopwatch = createStopwatch();
+            progress.begin(RESTART_VM_STEP.id);
             await limactl(['stop', INSTANCE]);
-            await limactl(['start', '--tty=false', INSTANCE]);
+            await startLimaInstance(['start', '--tty=false', INSTANCE], {
+                progress,
+                step: RESTART_VM_STEP.id,
+                downloadPlanned: false,
+            });
+            progress.complete(RESTART_VM_STEP.id);
             logger.info('Sandbox VM restarted after the image build', { durationMs: stopwatch.duration() });
         }
 
@@ -431,6 +519,25 @@ export const LimaSandbox = defineService({
             return ['shell', '--workdir', '/', INSTANCE, ...command];
         }
 
+        /**
+         * Runs a `limactl start` while reporting it to the start's progress: its downloads are measured every second.
+         * A measurement that fails is logged and the start goes on.
+         */
+        async function startLimaInstance(args: string[], options: StartLimaInstanceOptions) {
+            const limaProgress = createLimaStartProgress({ ...options, cacheDir: LIMA_CACHE_DIR });
+            const interval = setInterval(() => {
+                limaProgress.sample().catch((error: unknown) => {
+                    logger.debug('Sandbox download not measured', { error });
+                });
+            }, DOWNLOAD_SAMPLE_INTERVAL_MS);
+            try {
+                await limactl(args, { onStderrLine: line => limaProgress.push(line) });
+            } finally {
+                clearInterval(interval);
+            }
+            limaProgress.end();
+        }
+
         async function limactl(args: string[], options: LimactlOptions = {}): Promise<LimactlResult> {
             const child = Bun.spawn([limactlPath, ...args], {
                 env: limactlEnv,
@@ -438,9 +545,12 @@ export const LimaSandbox = defineService({
                 stdout: 'pipe',
                 stderr: 'pipe',
             });
+            const onStderrLine = options.onStderrLine;
             const [stdout, stderr, exitCode] = await Promise.all([
                 new Response(child.stdout).text(),
-                new Response(child.stderr).text(),
+                onStderrLine
+                    ? readStreamLines(child.stderr, line => reportLine(onStderrLine, line))
+                    : new Response(child.stderr).text(),
                 child.exited,
             ]);
 
@@ -452,6 +562,15 @@ export const LimaSandbox = defineService({
             }
 
             return { exitCode, stdout, stderr };
+        }
+
+        /** Passes a line to a progress callback; progress is advisory, so its failure never fails the command. */
+        function reportLine(onLine: (line: string) => void, line: string) {
+            try {
+                onLine(line);
+            } catch (error) {
+                logger.debug('Sandbox start progress not reported', { error });
+            }
         }
 
         function setState(next: SandboxState) {

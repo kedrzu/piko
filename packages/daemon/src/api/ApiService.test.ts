@@ -309,6 +309,7 @@ function setup(agentEvents: OpencodeEvent[] = [], getVerifiedState?: () => Promi
     container.set(Sandbox, {
         getState: () => state,
         getVerifiedState: getVerifiedState ?? (() => Promise.resolve(state)),
+        getStartProgress: () => null,
         stateChanged: createEventEmitter<[state: SandboxState]>().event,
         start: () => Promise.resolve(state.endpoint),
         stop: () => Promise.resolve(),

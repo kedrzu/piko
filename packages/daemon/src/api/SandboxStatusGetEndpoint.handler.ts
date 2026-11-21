@@ -10,6 +10,9 @@ export const SandboxStatusGetEndpointHandler = defineEndpointHandler({
     endpoint: SandboxStatusGetEndpoint,
     deps: { sandbox: Sandbox },
     setup({ sandbox }) {
-        return async () => toSandboxStatus(await sandbox.getVerifiedState());
+        return async () => {
+            const state = await sandbox.getVerifiedState();
+            return toSandboxStatus(state, sandbox.getStartProgress());
+        };
     },
 });
