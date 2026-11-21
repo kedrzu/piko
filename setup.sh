@@ -144,6 +144,17 @@ fi
 
 bash setup.build.sh
 
+# --- Claude Code plugins ---
+#
+# Project-scope plugin installs are recorded per checkout path, so every clone and worktree needs its
+# own (nzyme/scripts/claude-plugins.sh). Non-fatal: a skipped step is reported, never fails setup.
+if [ "$CI" != "true" ]; then
+    echo ""
+    echo "🧩 Setting up the project's Claude Code plugins..."
+    echo ""
+    bash nzyme/scripts/claude-plugins.sh || warn "Some Claude Code plugins were not set up: see the lines above."
+fi
+
 # --- Code index (agent navigation) ---
 #
 # Not part of setup.build.sh: CI has no agent to read it. Non-fatal — an indexing failure must never
