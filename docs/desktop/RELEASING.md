@@ -110,6 +110,11 @@ PIKO_ENV=prod bun secrets run TAURI_SIGNING_PRIVATE_KEY TAURI_SIGNING_PRIVATE_KE
 Without these the app is ad-hoc signed (above). With them, the build signs with the Developer ID and notarizes. Tauri's
 guide: [macOS code signing](https://v2.tauri.app/distribute/sign/macos/).
 
+They are set. A Developer ID certificate belongs to the team, not to an app, so piko signs with the one githq uses:
+the six values were copied on 2026-11-21 from githq's `GITHQ_PROD_` secrets in the same Bitwarden project.
+githq's `APPLE_PROVISIONING_PROFILE` is not needed here, since it only carries githq's associated domains. The
+certificate expires on 2027-12-04: renew it for both apps, then repeat steps 3 and 4 below.
+
 1. In the Apple Developer Program, as the Account Holder, create a **Developer ID Application** certificate from a
    certificate signing request made in Keychain Access, and open the downloaded `.cer` to install it.
 
