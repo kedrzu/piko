@@ -123,6 +123,8 @@ $window-bar-height: 48px; // where the window's own buttons sit, over the story 
 }
 
 .splitWizardShell_logo {
+  --wordmark-height: 52px;
+
   align-self: flex-start;
 }
 

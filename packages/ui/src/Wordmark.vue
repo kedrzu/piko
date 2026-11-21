@@ -1,4 +1,4 @@
-<!-- The logo: the word "piko" with Piko as its "p". The letters take the text colour, so it reads on light and dark. -->
+<!-- The logo: the word "piko" with Piko as its "p". The letters take the text colour, so it reads on light and dark; `--wordmark-height` sizes it. -->
 
 <script lang="ts" setup>
 import { useTranslate } from '@nzyme/vue-i18n/useTranslate.js';
@@ -95,7 +95,7 @@ const t = useTranslate();
 .wordmark {
   display: block;
   width: auto;
-  height: 32px;
+  height: var(--wordmark-height, 32px);
 }
 
 .wordmark_piko {
