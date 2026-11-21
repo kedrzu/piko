@@ -135,6 +135,8 @@ $split-width: 470px; // the conversation beside a side view, as frame 26 draws i
 }
 
 .conversationLayout_scroller {
+  // The containing block of what it scrolls: absolutely positioned content would otherwise lengthen the window.
+  position: relative;
   flex: 1;
   min-height: 0;
   overflow-y: auto;

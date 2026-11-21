@@ -107,6 +107,8 @@ function open() {
 $document-width: 680px; // the page's column, as screens 06 and 34 draw it
 
 .fileLayout {
+  // The containing block of what it scrolls: absolutely positioned content would otherwise lengthen the window.
+  position: relative;
   flex: 1;
   min-height: 0;
   overflow-y: auto;
