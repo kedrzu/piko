@@ -31,6 +31,9 @@ import type {
 import { PROJECT_NAME_MAX_LENGTH } from '@piko/common/api/ProjectTypes.js';
 import type { Project, ProjectCreateResult } from '@piko/common/api/ProjectTypes.js';
 import type { SandboxStatus } from '@piko/common/api/SandboxTypes.js';
+import type { Schedule, ScheduleRef, ScheduleRun, ScheduleUpdateInput } from '@piko/common/api/ScheduleTypes.js';
+import { parseScheduleRef } from '@piko/common/api/utils/parseScheduleRef.js';
+import { parseScheduleUpdateInput } from '@piko/common/api/utils/parseScheduleUpdateInput.js';
 import { DAEMON_API_PATH, DAEMON_PORT } from '@piko/common/daemonAddress.js';
 import { buildGenerativeUiAnswerText, readGenerativeUiAnswer } from '@piko/common/generativeUi/GenerativeUiAnswer.js';
 import type { GenerativeUiAnswer } from '@piko/common/generativeUi/GenerativeUiAnswer.js';
@@ -64,6 +67,14 @@ const TEXT_EXTENSIONS = ['.md', '.markdown', '.txt', '.csv'];
 const TEXT_MAX_BYTES = 1024 * 1024;
 /** When the stub's files last changed: a fixed time, so a screen saying when reads the same in every run. */
 const FILE_UPDATED_AT = Date.UTC(2026, 10, 1, 9, 0);
+
+/** An error answer of the daemon's API: the status and the body (`HttpError`'s payload in the app). */
+export interface StubErrorAnswer {
+    status: number;
+    /** The error's name (`InvalidSchedule`). */
+    error: string;
+    message: string;
+}
 
 /** A message the app sent, as the stub took it: typed text, or an answer to generated UI. */
 export type StubSentMessage = { conversationId: string; queued: boolean } & (
@@ -135,6 +146,20 @@ export class StubDaemon {
     readonly sent: StubSentMessage[] = [];
     /** The conversations the app stopped, by id, in order. */
     readonly stopped: string[] = [];
+    /**
+     * The profile's schedules, in any order (the stub lists them as the daemon sorts them). Change them and `emit`
+     * `schedulesChanged`, as the daemon does when the agent writes one.
+     */
+    schedules: Schedule[] = [];
+    /** Each schedule's runs by schedule id, newest first; the newest is the schedule's `lastRun` in the list. */
+    scheduleRuns: Record<string, ScheduleRun[]> = {};
+    /** The schedule changes the app saved, in order, as it sent them. */
+    readonly scheduleUpdates: ScheduleUpdateInput[] = [];
+    /**
+     * Endpoints set to fail, by name (`schedules/update`): each call answers with the error until it is deleted. The
+     * call is still counted in `calls`.
+     */
+    readonly failures = new Map<string, StubErrorAnswer>();
     /** The endpoints called, in order, by name (`claude/login/start`). */
     readonly calls: string[] = [];
     /** Set: the event stream is refused with a 503, as by a daemon still starting; the app gives up and retries later. */
@@ -178,8 +203,23 @@ export class StubDaemon {
                 await route.fulfill({ status: 500, json: { error: 'Error', message: failure }, headers });
                 return;
             }
+            const set = daemon.failures.get(name);
+            if (set !== undefined) {
+                await route.fulfill({ status: set.status, json: { error: set.error, message: set.message }, headers });
+                return;
+            }
 
-            const answer = daemon.answer(name, request.postData());
+            let answer: unknown;
+            try {
+                answer = daemon.answer(name, request.postData());
+            } catch (error) {
+                if (!(error instanceof StubDaemonError)) {
+                    throw error;
+                }
+                const { status, ...body } = error.answer;
+                await route.fulfill({ status, json: body, headers });
+                return;
+            }
             await daemon.held.get(name);
             if (name === 'conversations/messages' && daemon.messagesDelayMs > 0) {
                 await sleep(daemon.messagesDelayMs);
@@ -331,8 +371,13 @@ export class StubDaemon {
             case 'memory/reveal':
                 return this.reveal(body);
             case 'schedules/list':
-                // The shell lists them for the sidebar's count. TODO(#28): schedules and their runs, for their e2e.
-                return [];
+                return this.listSchedules(body);
+            case 'schedules/runs':
+                return this.scheduleRuns[this.findSchedule(readScheduleRef(body)).id] ?? [];
+            case 'schedules/update':
+                return this.updateSchedule(body);
+            case 'schedules/delete':
+                return this.deleteSchedule(readScheduleRef(body));
             case 'ai/status':
                 return this.aiStatus();
             case 'claude/login/start':
@@ -466,6 +511,58 @@ export class StubDaemon {
             return null;
         }
         return this.fileContents[projectId]?.[path] ?? '';
+    }
+
+    /** Like the daemon: one project's, or with no `projectId` every project's, by project, then name; each with its newest run. */
+    private listSchedules(body: string | null): Schedule[] {
+        const projectId = readInput(body, 'projectId');
+        return this.schedules
+            .filter(schedule => projectId === '' || schedule.projectId === projectId)
+            .toSorted((a, b) => a.projectName.localeCompare(b.projectName) || a.name.localeCompare(b.name))
+            .map(schedule => this.withLastRun(schedule));
+    }
+
+    /** Like the daemon: the fields sent replace the schedule's; a paused schedule has no next term. */
+    private updateSchedule(body: string | null): Schedule {
+        const input = parseScheduleUpdateInput(parseBody(body));
+        if (input === undefined) {
+            throw new StubDaemonError({ status: 400, error: 'BadRequest', message: 'Invalid input' });
+        }
+        const current = this.findSchedule(input);
+        this.scheduleUpdates.push(input);
+        const { projectId: _projectId, scheduleId: _scheduleId, ...changes } = input;
+        const updated: Schedule = { ...current, ...changes };
+        if (updated.paused) {
+            delete updated.nextRunAt;
+        }
+        this.schedules = this.schedules.map(schedule => (schedule === current ? updated : schedule));
+        return this.withLastRun(updated);
+    }
+
+    /** Like the daemon: removes the schedule with its runs. */
+    private deleteSchedule(ref: ScheduleRef) {
+        const current = this.findSchedule(ref);
+        this.schedules = this.schedules.filter(schedule => schedule !== current);
+        delete this.scheduleRuns[current.id];
+        return null;
+    }
+
+    private withLastRun(schedule: Schedule): Schedule {
+        const lastRun = this.scheduleRuns[schedule.id]?.[0];
+        return lastRun ? { ...schedule, lastRun } : schedule;
+    }
+
+    /** A schedule by its project and id; a `404 ScheduleNotFound` answer when there is none. */
+    private findSchedule(ref: ScheduleRef) {
+        const schedule = this.schedules.find(item => item.projectId === ref.projectId && item.id === ref.scheduleId);
+        if (!schedule) {
+            throw new StubDaemonError({
+                status: 404,
+                error: 'ScheduleNotFound',
+                message: `Schedule ${ref.scheduleId} not found`,
+            });
+        }
+        return schedule;
     }
 
     private readMemoryFile(path: string): MemoryFileGetResult {
@@ -667,6 +764,28 @@ export class StubDaemon {
 }
 
 type SentBody = { text: string } | { answer: GenerativeUiAnswer };
+
+/** Thrown while answering an endpoint: the endpoint answers with this error. */
+class StubDaemonError extends Error {
+    constructor(readonly answer: StubErrorAnswer) {
+        super(answer.message);
+    }
+}
+
+/** An endpoint's JSON input as an object; `{}` when there is none. */
+function parseBody(body: string | null): object {
+    const input: unknown = body === null ? null : JSON.parse(body);
+    return typeof input === 'object' && input !== null ? input : {};
+}
+
+/** The schedule an endpoint's input points at; a 400 answer when it points at none. */
+function readScheduleRef(body: string | null): ScheduleRef {
+    const ref = parseScheduleRef(parseBody(body));
+    if (ref === undefined) {
+        throw new StubDaemonError({ status: 400, error: 'BadRequest', message: 'Invalid input' });
+    }
+    return ref;
+}
 
 /** The text or the answer of `conversations/send`'s input: the answer when it is well-formed, else the text. */
 function readSentBody(body: string | null): SentBody {
