@@ -87,6 +87,40 @@ test('a rule exhausted by UNTIL keeps its last term as latest and has no next te
     expect(result).toEqual(expected);
 });
 
+// The rules the app's presets save, anchored as `buildSchedulePreset()` in the app anchors them: at the preset's latest
+// occurrence before saving, here on Sunday 22 November 2026 at 10:00.
+test('the rules the app saves fire only on the days of their preset', () => {
+    const now = warsaw('2026-11-22T10:00');
+    const weekdays = schedule('FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR;BYHOUR=7;BYMINUTE=30', '2026-11-20T07:30');
+    const weeklyMonday = schedule('FREQ=WEEKLY;BYDAY=MO;BYHOUR=9;BYMINUTE=0', '2026-11-16T09:00');
+    const monthlyThird = schedule('FREQ=MONTHLY;BYMONTHDAY=3;BYHOUR=8;BYMINUTE=0', '2026-11-03T08:00');
+
+    const results = [
+        findScheduleTerms(weekdays, { now, timeZone: TIME_ZONE, count: 6 }),
+        findScheduleTerms(weeklyMonday, { now, timeZone: TIME_ZONE, count: 1 }),
+        findScheduleTerms(monthlyThird, { now, timeZone: TIME_ZONE, count: 2 }),
+    ];
+
+    const expected: FindScheduleTermsResult[] = [
+        {
+            // Friday, then Monday to Friday and Monday again: never Saturday or Sunday.
+            latest: warsaw('2026-11-20T07:30'),
+            next: [
+                warsaw('2026-11-23T07:30'),
+                warsaw('2026-11-24T07:30'),
+                warsaw('2026-11-25T07:30'),
+                warsaw('2026-11-26T07:30'),
+                warsaw('2026-11-27T07:30'),
+                warsaw('2026-11-30T07:30'),
+            ],
+        },
+        // Saved on a Sunday, it does not fire that Sunday: the anchor is the Monday before.
+        { latest: warsaw('2026-11-16T09:00'), next: [warsaw('2026-11-23T09:00')] },
+        { latest: warsaw('2026-11-03T08:00'), next: [warsaw('2026-12-03T08:00'), warsaw('2027-01-03T08:00')] },
+    ];
+    expect(results).toEqual(expected);
+});
+
 test.each([
     ['never occurs', 'FREQ=MONTHLY;BYMONTH=2;BYMONTHDAY=31', '2026-01-01T09:00'],
     ['too many occurrences to walk', 'FREQ=HOURLY;COUNT=100000', '2020-01-01T09:00'],

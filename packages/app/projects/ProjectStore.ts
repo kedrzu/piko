@@ -16,6 +16,7 @@ import { compareProjectsByName } from '@piko/common/utils/compareProjectsByName.
 import { DaemonClient } from '@/daemon/DaemonClient.js';
 import { DaemonEventStream } from '@/daemon/DaemonEventStream.js';
 import { LanguageStore } from '@/i18n/LanguageStore.js';
+import { parseStoredIds } from '@/utils/parseStoredIds.js';
 
 import * as l from './ProjectStore.loc.js';
 
@@ -182,7 +183,7 @@ export const ProjectStore = defineService({
          * new): every project listed now counts as opened, so only those that appear later are marked new.
          */
         function readOpened(list: readonly Project[]): ReadonlySet<string> {
-            const stored = parseIds(localStorage.getItem(OPENED_KEY));
+            const stored = parseStoredIds(localStorage.getItem(OPENED_KEY));
             if (stored) {
                 return new Set(stored);
             }
@@ -229,17 +230,3 @@ export const ProjectStore = defineService({
         }
     },
 });
-
-/** A stored list of ids, or `null` when nothing (or something else) is stored. */
-function parseIds(stored: string | null) {
-    if (stored === null) {
-        return null;
-    }
-    let value: unknown;
-    try {
-        value = JSON.parse(stored);
-    } catch {
-        return null;
-    }
-    return Array.isArray(value) ? value.filter((id): id is string => typeof id === 'string') : null;
-}
