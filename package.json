@@ -30,6 +30,7 @@
         "test:stories": "nx run-many -t test:stories",
         "storybook": "bun --cwd packages/ui storybook",
         "e2e": "bun --cwd packages/e2e test",
+        "icons": "bun scripts/generateIcons.ts",
         "index": "nzyme index",
         "pen": "piko pen",
         "secrets": "piko secrets",
@@ -53,7 +54,8 @@
         "oxfmt": "0.77.0",
         "oxlint": "1.92.0",
         "oxlint-tsgolint": "7.0.2006",
-        "playwright": "1.64.1"
+        "playwright": "1.64.1",
+        "sharp": "0.34.5"
     },
     "overrides": {
         "@types/bun": "1.4.4",

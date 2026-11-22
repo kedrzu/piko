@@ -74,6 +74,8 @@ const t = useTranslate();
 
 <style lang="scss" module>
 .tabBar {
+  // The containing block of what it scrolls: absolutely positioned content would otherwise lengthen the window.
+  position: relative;
   flex: 1;
   min-width: 0;
   overflow-x: auto;

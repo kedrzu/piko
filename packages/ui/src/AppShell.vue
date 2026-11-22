@@ -41,6 +41,8 @@ $sidebar-width: 300px;
 }
 
 .appShell_sidebar {
+  // The containing block of what it scrolls: absolutely positioned content would otherwise lengthen the window.
+  position: relative;
   min-height: 0;
   overflow-y: auto;
 }
@@ -65,6 +67,8 @@ $sidebar-width: 300px;
 }
 
 .appShell_content {
+  // The containing block of what it scrolls: absolutely positioned content would otherwise lengthen the window.
+  position: relative;
   display: flex;
   flex: 1;
   flex-direction: column;

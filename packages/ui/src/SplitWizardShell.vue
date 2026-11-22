@@ -1,4 +1,4 @@
-<!-- Full-window wizard: a dark story panel (brand, headline, the path's stages, footnote) beside the white pane of the current step. -->
+<!-- Full-window wizard: a dark story panel (logo, headline, the path's stages, footnote) beside the white pane of the current step. -->
 
 <script lang="ts">
 import { defineProp } from '@nzyme/vue-utils/defineProp.js';
@@ -19,10 +19,8 @@ export const SplitWizardShellProps = {
 
 <script lang="ts" setup>
 import { ShieldCheck } from '@lucide/vue';
-import { useTranslate } from '@nzyme/vue-i18n/useTranslate.js';
 
-import AgentMark from './AgentMark.vue';
-import * as l from './SplitWizardShell.loc.js';
+import Wordmark from './Wordmark.vue';
 
 const props = defineProps(SplitWizardShellProps);
 const slots = defineSlots<{
@@ -35,18 +33,13 @@ const slots = defineSlots<{
   /** The step's buttons, at the end of the actions' row, the primary one last. */
   actions?(): unknown;
 }>();
-
-const t = useTranslate();
 </script>
 
 <template>
   <div :class="$style.splitWizardShell">
     <aside :class="$style.splitWizardShell_story">
       <div :class="$style.splitWizardShell_top">
-        <div :class="$style.splitWizardShell_brand">
-          <AgentMark />
-          <span :class="$style.splitWizardShell_brandName">{{ t(l.brand) }}</span>
-        </div>
+        <Wordmark :class="$style.splitWizardShell_logo" />
         <p :class="$style.splitWizardShell_headline">
           {{ props.headline }}
         </p>
@@ -129,17 +122,10 @@ $window-bar-height: 48px; // where the window's own buttons sit, over the story 
   padding-top: $spacing-48;
 }
 
-.splitWizardShell_brand {
-  display: flex;
-  gap: $spacing-10;
-  align-items: center;
-}
+.splitWizardShell_logo {
+  --wordmark-height: 52px;
 
-.splitWizardShell_brandName {
-  @include font-heading;
-  font-size: $font-size-brand;
-  font-weight: $font-weight-bold;
-  line-height: 1.2;
+  align-self: flex-start;
 }
 
 .splitWizardShell_headline {
