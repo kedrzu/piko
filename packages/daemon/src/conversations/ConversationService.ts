@@ -13,8 +13,10 @@ import type {
     ConversationSendInput,
     ConversationSendResult,
     ConversationStopResult,
+    ConversationWithdrawnMessage,
 } from '@piko/common/api/ConversationTypes.js';
 import type { PluginInfo } from '@piko/common/api/PluginTypes.js';
+import { buildGenerativeUiAnswerText, readGenerativeUiAnswer } from '@piko/common/generativeUi/GenerativeUiAnswer.js';
 import { OpencodeMessageListCommand } from '@piko/opencode/OpencodeMessageListCommand.js';
 import { OpencodeSessionActiveListCommand } from '@piko/opencode/OpencodeSessionActiveListCommand.js';
 import { OpencodeSessionCreateCommand } from '@piko/opencode/OpencodeSessionCreateCommand.js';
@@ -168,9 +170,12 @@ export const ConversationService = defineService({
             // to the agent at its next step, within the same run. A run ending in between starts a new one instead;
             // the message is reported as queued either way. A waiting message keeps its inbox id once delivered.
             const queued = (await deps.listActiveSessions()).has(sessionId);
-            const command = parsePluginCommand(input.text);
+            // An answer to generated UI goes out as the text the agent reads, with the answer itself stored as metadata.
+            const text = 'answer' in input ? buildGenerativeUiAnswerText(input.answer) : input.text;
+            const metadata = 'answer' in input ? input.answer : undefined;
+            const command = parsePluginCommand(text);
             if (!command) {
-                const receipt = await deps.prompt({ sessionId, text: input.text });
+                const receipt = await deps.prompt({ sessionId, text, metadata });
                 return { queued, messageId: receipt.messageId };
             }
 
@@ -180,13 +185,13 @@ export const ConversationService = defineService({
                 const skills = details.skills.includes(command.skill)
                     ? [`${command.plugin}:${command.skill}`]
                     : undefined;
-                const receipt = await deps.prompt({ sessionId, text: input.text, skills });
+                const receipt = await deps.prompt({ sessionId, text, skills, metadata });
                 return { queued, messageId: receipt.messageId };
             }
 
             // Both wait in the inbox, the message first: the agent reads them with the person's next message and never
             // works on a plugin it does not have (design D42).
-            const receipt = await deps.prompt({ sessionId, text: input.text, resume: false });
+            const receipt = await deps.prompt({ sessionId, text, resume: false, metadata });
             await deps.synthetic({
                 sessionId,
                 text: buildPluginMissingNote(command),
@@ -213,7 +218,11 @@ export const ConversationService = defineService({
             // Interrupted, the session delivers nothing more, so every message still in its inbox is one the agent never
             // read. Left there, it would start the next run along with the person's next message; so would a note that
             // a plugin's command was not run, withdrawn with the command.
-            const withdrawn = await deps.clearInbox(ref.conversationId, { syntheticMetadata: PLUGIN_MISSING_NOTE });
+            const prompts = await deps.clearInbox(ref.conversationId, { syntheticMetadata: PLUGIN_MISSING_NOTE });
+            const withdrawn: ConversationWithdrawnMessage[] = prompts.map(prompt => {
+                const answer = readGenerativeUiAnswer(prompt.metadata);
+                return { id: prompt.id, text: prompt.text, ...(answer && { answer }) };
+            });
             return { stopped, withdrawn };
         }
 
@@ -339,8 +348,17 @@ function buildPluginMissingNote(command: PluginCommand) {
 /** A message still waiting in the inbox as the conversation shows it; `undefined` for input the person never sees. */
 function toWaitingMessage(item: OpencodeInboxItem): ConversationMessage | undefined {
     switch (item.type) {
-        case 'prompt':
-            return { type: 'user', id: item.id, createdAt: item.createdAt, text: item.text, pending: true };
+        case 'prompt': {
+            const answer = readGenerativeUiAnswer(item.metadata);
+            return {
+                type: 'user',
+                id: item.id,
+                createdAt: item.createdAt,
+                text: item.text,
+                ...(answer && { answer }),
+                pending: true,
+            };
+        }
         case 'synthetic': {
             const plugin = readPluginMissingNote(item.metadata);
             return plugin === undefined

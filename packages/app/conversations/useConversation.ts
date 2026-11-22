@@ -21,12 +21,16 @@ import type {
     ConversationStepPart,
 } from '@piko/common/api/ConversationTypes.js';
 import type { DaemonEvent } from '@piko/common/api/DaemonEventTypes.js';
+import type { GenerativeUiAnswer } from '@piko/common/generativeUi/GenerativeUiAnswer.js';
 
 import { DaemonClient } from '@/daemon/DaemonClient.js';
 import { DaemonEventStream } from '@/daemon/DaemonEventStream.js';
 import { SetupStore } from '@/setup/SetupStore.js';
 
 import { ConversationStore } from './ConversationStore.js';
+
+/** What the person sends: a typed message, or the answer to a generative UI. */
+export type ConversationSendBody = { text: string } | { answer: GenerativeUiAnswer };
 
 export interface UseConversationOptions {
     projectId: MaybeRefOrGetter<string>;
@@ -35,7 +39,7 @@ export interface UseConversationOptions {
 
 /** What the conversation's screen shows, in order. */
 export type ConversationItem =
-    | { type: 'user'; key: string; text: string }
+    | { type: 'user'; key: string; text: string; answer?: GenerativeUiAnswer }
     | { type: 'agent'; key: string; parts: ConversationAgentPart[]; running: boolean }
     | ConversationErrorItem
     | { type: 'pluginMissing'; key: string; plugin: string };
@@ -47,8 +51,8 @@ export interface ConversationErrorItem {
     error: ConversationError;
     /** When the run ended, epoch ms (the sandbox's clock). */
     at: number;
-    /** The message to send again. */
-    retryText?: string;
+    /** What to send again: the last message of the person, as it was sent. */
+    retry?: ConversationSendBody;
 }
 
 export interface ConversationViewModel {
@@ -69,9 +73,12 @@ export interface ConversationViewModel {
      * whose fix is done (signed in again, the limit reset) or cannot be known (a limit with no reset time).
      */
     readonly retryable: boolean;
-    /** Sends a message; queued by the daemon while the agent works. */
-    send(text: string): Promise<void>;
-    /** Stops the agent; resolves the messages still waiting for it, withdrawn, for the person to keep or drop. */
+    /** Sends a message or an answer; queued by the daemon while the agent works. */
+    send(input: ConversationSendBody): Promise<void>;
+    /**
+     * Stops the agent; resolves the typed messages still waiting for it, withdrawn, for the person to keep or drop.
+     * A withdrawn answer is dropped: it is not text to put back.
+     */
     stop(): Promise<string[]>;
     /** Reads the page of older messages, if there is one. */
     loadOlder(): Promise<void>;
@@ -83,7 +90,9 @@ interface PendingMessage {
     key: string;
     /** The id the daemon lists it under; unknown until the daemon has taken it. */
     messageId?: string;
+    /** What was typed; empty for an answer, which the screen shows from `answer`. */
     text: string;
+    answer?: GenerativeUiAnswer;
     /** The daemon queued it for the agent's next step; it shows after the reply being written. */
     queued: boolean;
     /**
@@ -139,7 +148,7 @@ export function useConversation(options: UseConversationOptions): ConversationVi
     });
     const retryable = computed(() => {
         const item = lastError.value;
-        return item?.retryText !== undefined && canRetry(item);
+        return item?.retry !== undefined && canRetry(item);
     });
 
     watch(
@@ -183,17 +192,22 @@ export function useConversation(options: UseConversationOptions): ConversationVi
         loadOlder,
     });
 
-    async function send(text: string) {
+    async function send(input: ConversationSendBody) {
         const id = conversationId.value;
         const endedBefore = runEnds.get(id) ?? 0;
-        const message: PendingMessage = { key: `pending-${++pendingSeq}`, text, queued: false };
+        const message: PendingMessage = {
+            key: `pending-${++pendingSeq}`,
+            text: 'text' in input ? input.text : '',
+            answer: 'answer' in input ? input.answer : undefined,
+            queued: false,
+        };
         pending.value = [...pending.value, message];
         try {
-            const result = await daemon(ConversationSendEndpoint, {
-                projectId: projectId.value,
-                conversationId: id,
-                text,
-            });
+            const target = { projectId: projectId.value, conversationId: id };
+            const result =
+                'text' in input
+                    ? await daemon(ConversationSendEndpoint, { ...target, text: input.text })
+                    : await daemon(ConversationSendEndpoint, { ...target, answer: input.answer });
             const taken = pending.value.map(item =>
                 item.key === message.key
                     ? { ...item, messageId: result.messageId, queued: result.queued, overtaken: false }
@@ -226,7 +240,7 @@ export function useConversation(options: UseConversationOptions): ConversationVi
         const withdrawnIds = new Set(withdrawn.map(message => message.id));
         pending.value = pending.value.filter(item => item.messageId === undefined || !withdrawnIds.has(item.messageId));
         await load();
-        return withdrawn.map(message => message.text);
+        return withdrawn.filter(message => message.answer === undefined).map(message => message.text);
     }
 
     async function loadOlder() {
@@ -424,7 +438,7 @@ function toItems({ messages, pending, running }: ToItemsParams) {
         items.push(...waiting);
     }
     for (const message of started) {
-        items.push({ type: 'user', key: message.key, text: message.text });
+        items.push({ type: 'user', key: message.key, text: message.text, answer: message.answer });
     }
     if (running) {
         const last = items.at(-1);
@@ -438,7 +452,7 @@ function toItems({ messages, pending, running }: ToItemsParams) {
         items.push(...waiting);
     }
     for (const message of pending.filter(item => item.queued)) {
-        items.push({ type: 'user', key: message.key, text: message.text });
+        items.push({ type: 'user', key: message.key, text: message.text, answer: message.answer });
     }
     return items;
 }
@@ -446,15 +460,15 @@ function toItems({ messages, pending, running }: ToItemsParams) {
 /** The items of messages the daemon lists, in their order. */
 function toListedItems(messages: readonly ConversationMessage[], running: boolean) {
     const items: ConversationItem[] = [];
-    let lastUserText: string | undefined;
+    let lastUserBody: ConversationSendBody | undefined;
     let runError: ConversationError | undefined;
     let runErrorAt = 0;
 
     for (const message of messages) {
         switch (message.type) {
             case 'user':
-                items.push({ type: 'user', key: message.id, text: message.text });
-                lastUserText = message.text;
+                items.push({ type: 'user', key: message.id, text: message.text, answer: message.answer });
+                lastUserBody = message.answer ? { answer: message.answer } : { text: message.text };
                 break;
             case 'agent': {
                 const last = items.at(-1);
@@ -477,7 +491,7 @@ function toListedItems(messages: readonly ConversationMessage[], running: boolea
                         key: message.id,
                         error,
                         at: message.createdAt,
-                        retryText: lastUserText,
+                        retry: lastUserBody,
                     });
                 }
                 runError = undefined;
@@ -491,7 +505,7 @@ function toListedItems(messages: readonly ConversationMessage[], running: boolea
         }
     }
     if (runError && !running) {
-        items.push({ type: 'error', key: 'run-error', error: runError, at: runErrorAt, retryText: lastUserText });
+        items.push({ type: 'error', key: 'run-error', error: runError, at: runErrorAt, retry: lastUserBody });
     }
     return items;
 }

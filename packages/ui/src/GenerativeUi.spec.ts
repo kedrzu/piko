@@ -2,22 +2,42 @@ import { composeStories } from '@storybook/vue3-vite';
 import { expect, test, vi } from 'vitest';
 import { page, userEvent } from 'vitest/browser';
 
+import type { GenerativeUiAnswer } from '@piko/common/generativeUi/GenerativeUiAnswer.js';
+
 import * as stories from './GenerativeUi.stories.jsx';
 
-const { Broken, Choices, ChoicesAnswered, ChoicesInactive, FormActive, FormInactive, Streaming } =
-    composeStories(stories);
+const {
+    Broken,
+    Choices,
+    ChoicesAnswered,
+    ChoicesInactive,
+    FormActive,
+    FormAnswered,
+    FormInactive,
+    LegacyChoicesAnswered,
+    LegacyForm,
+    Streaming,
+} = composeStories(stories);
 
-test('a button click replies with exactly its message', async () => {
-    const reply = vi.fn(async (_text: string) => {});
-    await Choices.run({ args: { ...Choices.args, onReply: reply } });
+test("a button click answers with its label and the row's name", async () => {
+    const onAnswer = vi.fn(async (_answer: GenerativeUiAnswer) => {});
+    await Choices.run({ args: { ...Choices.args, onAnswer } });
 
     await userEvent.click(page.getByRole('button', { name: 'Jedzenie' }));
 
-    expect(reply).toHaveBeenCalledTimes(1);
-    expect(reply).toHaveBeenCalledWith('Zacznijmy od jedzenia');
+    const expected: GenerativeUiAnswer = {
+        kind: 'generativeUiAnswer',
+        source: 'choices',
+        name: 'choices',
+        button: 'Jedzenie',
+        defaultButton: true,
+        fields: [],
+    };
+    expect(onAnswer).toHaveBeenCalledTimes(1);
+    expect(onAnswer).toHaveBeenCalledWith(expected);
 });
 
-test('once answered, the button whose message the person sent is announced as chosen, the others not', async () => {
+test('once answered, the button the person clicked is announced as chosen, the others not', async () => {
     await Choices.run();
 
     await userEvent.click(page.getByRole('button', { name: 'Ruch' }));
@@ -27,11 +47,27 @@ test('once answered, the button whose message the person sent is announced as ch
     await expect.element(page.getByRole('button', { name: 'Sen' })).not.toHaveAttribute('aria-pressed');
 });
 
-test('an answer typed with stray spaces still marks its choice; another answer marks none', async () => {
-    await ChoicesAnswered.run({ args: { ...ChoicesAnswered.args, answer: '  Zacznijmy od jedzenia\n' } });
+test('a structured answer marks the choice it names, nothing else', async () => {
+    await ChoicesAnswered.run();
+    await expect.element(page.getByRole('button', { name: 'Jedzenie' })).toHaveAttribute('aria-pressed', 'true');
+    await expect.element(page.getByRole('button', { name: 'Sen' })).not.toHaveAttribute('aria-pressed');
+});
+
+test('a typed answer with stray spaces still marks the choice whose label it is; another answer marks none', async () => {
+    await ChoicesAnswered.run({ args: { ...ChoicesAnswered.args, answer: '  Jedzenie\n' } });
     await expect.element(page.getByRole('button', { name: 'Jedzenie' })).toHaveAttribute('aria-pressed', 'true');
 
-    await ChoicesAnswered.run({ args: { ...ChoicesAnswered.args, answer: 'Zacznijmy od jedzenia, ale później' } });
+    await ChoicesAnswered.run({ args: { ...ChoicesAnswered.args, answer: 'Jedzenie, ale później' } });
+    await expect.element(page.getByRole('button', { name: 'Jedzenie' })).not.toHaveAttribute('aria-pressed');
+});
+
+test("an old program's choices show, and its plain-text answer marks the button whose message or label it is", async () => {
+    await LegacyChoicesAnswered.run({ args: { ...LegacyChoicesAnswered.args, answer: '  Zacznijmy od jedzenia\n' } });
+    await expect.element(page.getByRole('button', { name: 'Jedzenie' })).toHaveAttribute('aria-pressed', 'true');
+    await expect.element(page.getByRole('button', { name: 'Sen' })).not.toHaveAttribute('aria-pressed');
+
+    await LegacyChoicesAnswered.run({ args: { ...LegacyChoicesAnswered.args, answer: 'Ruch' } });
+    await expect.element(page.getByRole('button', { name: 'Ruch' })).toHaveAttribute('aria-pressed', 'true');
     await expect.element(page.getByRole('button', { name: 'Jedzenie' })).not.toHaveAttribute('aria-pressed');
 });
 
@@ -48,9 +84,9 @@ test('an optional field says so in its label; a required one carries no mark', a
     await expect.element(page.getByRole('group', { name: 'Czym mam się zająć?', exact: true })).toBeVisible();
 });
 
-test('Enter in a field sends the form with the first button: its message, then the filled fields in order', async () => {
-    const reply = vi.fn(async (_text: string) => {});
-    await FormActive.run({ args: { ...FormActive.args, onReply: reply } });
+test('Enter in a field sends the form with the first button: its label and the filled fields in form order', async () => {
+    const onAnswer = vi.fn(async (_answer: GenerativeUiAnswer) => {});
+    await FormActive.run({ args: { ...FormActive.args, onAnswer } });
 
     await userEvent.click(page.getByRole('checkbox', { name: 'Ruch' }));
     await userEvent.click(page.getByRole('checkbox', { name: 'Sen' }));
@@ -59,35 +95,87 @@ test('Enter in a field sends the form with the first button: its message, then t
     await userEvent.fill(page.getByRole('textbox', { name: 'Jak masz na imię?' }), 'Ola');
     await userEvent.keyboard('{Enter}');
 
-    expect(reply).toHaveBeenCalledTimes(1);
-    expect(reply).toHaveBeenCalledWith(
-        'Ułóż mi plan\n\n' +
-            'Jak masz na imię?: Ola\n' +
-            'Od którego dnia zaczynamy?: Środa\n' +
-            'Czym mam się zająć?: Sen, Ruch\n' +
-            'Coś jeszcze?: Wstaję o 6\nPracuję zdalnie',
-    );
+    // The empty optional "Twój główny cel" is left out; the free text keeps its line break.
+    const expected: GenerativeUiAnswer = {
+        kind: 'generativeUiAnswer',
+        source: 'form',
+        name: 'plan',
+        button: 'Ułóż plan',
+        defaultButton: true,
+        fields: [
+            { name: 'name', label: 'Jak masz na imię?', value: 'Ola' },
+            { name: 'day', label: 'Od którego dnia zaczynamy?', value: 'Środa' },
+            { name: 'areas', label: 'Czym mam się zająć?', value: ['Sen', 'Ruch'] },
+            { name: 'note', label: 'Coś jeszcze?', value: 'Wstaję o 6\nPracuję zdalnie' },
+        ],
+    };
+    expect(onAnswer).toHaveBeenCalledTimes(1);
+    expect(onAnswer).toHaveBeenCalledWith(expected);
 });
 
-test('another button of the form sends its own message', async () => {
-    const reply = vi.fn(async (_text: string) => {});
-    await FormActive.run({ args: { ...FormActive.args, onReply: reply } });
+test('another button of the form answers with its own label, not as the default send', async () => {
+    const onAnswer = vi.fn(async (_answer: GenerativeUiAnswer) => {});
+    await FormActive.run({ args: { ...FormActive.args, onAnswer } });
 
     await userEvent.fill(page.getByRole('textbox', { name: 'Jak masz na imię?' }), 'Ola');
     await userEvent.click(page.getByRole('checkbox', { name: 'Sen' }));
     await userEvent.click(page.getByRole('button', { name: 'Bez szczegółów' }));
 
-    expect(reply).toHaveBeenCalledWith('Ułóż plan bez szczegółów\n\nJak masz na imię?: Ola\nCzym mam się zająć?: Sen');
+    const expected: GenerativeUiAnswer = {
+        kind: 'generativeUiAnswer',
+        source: 'form',
+        name: 'plan',
+        button: 'Bez szczegółów',
+        defaultButton: false,
+        fields: [
+            { name: 'name', label: 'Jak masz na imię?', value: 'Ola' },
+            { name: 'areas', label: 'Czym mam się zająć?', value: ['Sen'] },
+        ],
+    };
+    expect(onAnswer).toHaveBeenCalledWith(expected);
+});
+
+test("once sent, the form collapses away and the person's message shows its answers; the agent's text stays", async () => {
+    await FormActive.run();
+
+    await userEvent.fill(page.getByRole('textbox', { name: 'Jak masz na imię?' }), 'Ola');
+    await userEvent.click(page.getByRole('checkbox', { name: 'Sen' }));
+    await userEvent.click(page.getByRole('button', { name: 'Ułóż plan' }));
+
+    await expect.element(page.getByRole('textbox', { name: 'Jak masz na imię?' })).not.toBeInTheDocument();
+    await expect.element(page.getByRole('button', { name: 'Ułóż plan' })).not.toBeInTheDocument();
+    await expect.element(page.getByText('Żeby ułożyć plan, potrzebuję kilku informacji.')).toBeVisible();
+    await expect.element(page.getByRole('definition').filter({ hasText: 'Ola' })).toBeVisible();
+});
+
+test('a conversation loaded with the form answered never shows the form', async () => {
+    await FormAnswered.run();
+
+    expect(document.querySelector('form')).toBeNull();
+    await expect.element(page.getByText('Żeby ułożyć plan, potrzebuję kilku informacji.')).toBeVisible();
+});
+
+test("an old program's form shows its fields and buttons and answers with the clicked button's label", async () => {
+    const onAnswer = vi.fn(async (_answer: GenerativeUiAnswer) => {});
+    await LegacyForm.run({ args: { ...LegacyForm.args, onAnswer } });
+
+    await userEvent.fill(page.getByRole('textbox', { name: 'Jak masz na imię?' }), 'Ola');
+    await userEvent.click(page.getByRole('checkbox', { name: 'Sen' }));
+    await userEvent.click(page.getByRole('button', { name: 'Bez szczegółów' }));
+
+    expect(onAnswer).toHaveBeenCalledWith(
+        expect.objectContaining<Partial<GenerativeUiAnswer>>({ button: 'Bez szczegółów', defaultButton: false }),
+    );
 });
 
 test('with a required field empty the form sends nothing and the field says to fill it in', async () => {
-    const reply = vi.fn(async (_text: string) => {});
-    await FormActive.run({ args: { ...FormActive.args, onReply: reply } });
+    const onAnswer = vi.fn(async (_answer: GenerativeUiAnswer) => {});
+    await FormActive.run({ args: { ...FormActive.args, onAnswer } });
 
     await userEvent.click(page.getByRole('checkbox', { name: 'Jedzenie' }));
     await userEvent.click(page.getByRole('button', { name: 'Ułóż plan' }));
 
-    expect(reply).not.toHaveBeenCalled();
+    expect(onAnswer).not.toHaveBeenCalled();
     const name = page.getByRole('textbox', { name: 'Jak masz na imię?' });
     await expect.element(name).toHaveAttribute('aria-invalid', 'true');
     await expect.element(name).toHaveAccessibleDescription('Fill this in');
@@ -101,9 +189,9 @@ test('an inactive UI has its controls disabled', async () => {
     }
 });
 
-test('an inactive form has every field and button disabled and sends nothing on Enter', async () => {
-    const reply = vi.fn(async (_text: string) => {});
-    await FormInactive.run({ args: { ...FormInactive.args, onReply: reply } });
+test('a passed-over form stays visible with every field and button disabled, and sends nothing on Enter', async () => {
+    const onAnswer = vi.fn(async (_answer: GenerativeUiAnswer) => {});
+    await FormInactive.run({ args: { ...FormInactive.args, onAnswer } });
 
     await expect.element(page.getByRole('textbox', { name: 'Jak masz na imię?' })).toBeDisabled();
     await expect.element(page.getByRole('textbox', { name: 'Coś jeszcze?' })).toBeDisabled();
@@ -116,7 +204,7 @@ test('an inactive form has every field and button disabled and sends nothing on 
     await new Promise(resolve => {
         setTimeout(resolve, 100);
     });
-    expect(reply).not.toHaveBeenCalled();
+    expect(onAnswer).not.toHaveBeenCalled();
 });
 
 test('a program still streaming shows what is written so far, disabled, and never its code', async () => {

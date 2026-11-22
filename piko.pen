@@ -3049,6 +3049,192 @@
                       }
                     }
                   ]
+                },
+                {
+                  "type": "frame",
+                  "id": "wLxGx",
+                  "name": "Answer bubbles",
+                  "width": 680,
+                  "layout": "vertical",
+                  "gap": 24,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "CtNa0",
+                      "name": "molecules/Picked option",
+                      "reusable": true,
+                      "width": "fill_container",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "GXwm5",
+                          "name": "Check",
+                          "width": 15,
+                          "height": 22,
+                          "layout": "vertical",
+                          "justifyContent": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "HoKCF",
+                              "name": "Icon",
+                              "width": 15,
+                              "height": 15,
+                              "icon": "check",
+                              "library": "lucide",
+                              "fill": "$brand-1-strong"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "OtNKZ",
+                          "name": "Text",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Wybrana opcja",
+                          "lineHeight": 1.5,
+                          "fontFamily": "$font-body",
+                          "fontSize": 15,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Q70ei",
+                      "name": "molecules/Answer",
+                      "reusable": true,
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "qUCeP",
+                          "name": "Label",
+                          "fill": "$ink-muted",
+                          "content": "Etykieta",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$font-body",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "yWoYt",
+                          "name": "Value",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Odpowiedź",
+                          "lineHeight": 1.5,
+                          "fontFamily": "$font-body",
+                          "fontSize": 15,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "fvjgb",
+                      "type": "ref",
+                      "reusable": true,
+                      "ref": "Q70ei",
+                      "name": "molecules/Answer/Picked",
+                      "descendants": {
+                        "yWoYt": {
+                          "type": "frame",
+                          "id": "VFcWM",
+                          "name": "Picks",
+                          "slot": [
+                            "CtNa0"
+                          ],
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "id": "z8W5D",
+                              "type": "ref",
+                              "ref": "CtNa0",
+                              "name": "Option 1"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "id": "pdwue",
+                      "type": "ref",
+                      "reusable": true,
+                      "ref": "Xtqoj",
+                      "name": "molecules/User message/Answers",
+                      "descendants": {
+                        "n0WRAe": {
+                          "type": "frame",
+                          "id": "RYZ5h",
+                          "name": "Bubble",
+                          "width": 578,
+                          "fill": "$surface-soft",
+                          "cornerRadius": 18,
+                          "layout": "vertical",
+                          "gap": 16,
+                          "padding": [
+                            12,
+                            16,
+                            14,
+                            16
+                          ],
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "MP3Wa",
+                              "name": "Answers",
+                              "slot": [
+                                "Q70ei",
+                                "fvjgb"
+                              ],
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 14,
+                              "children": [
+                                {
+                                  "id": "iKGF2",
+                                  "type": "ref",
+                                  "ref": "fvjgb",
+                                  "name": "Answer 1"
+                                },
+                                {
+                                  "id": "xYvLy",
+                                  "type": "ref",
+                                  "ref": "Q70ei",
+                                  "name": "Answer 2"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "W2q6HS",
+                              "x": 16,
+                              "y": 12,
+                              "name": "Button label",
+                              "enabled": false,
+                              "fill": "$ink",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container(0)",
+                              "content": "Pomiń na razie",
+                              "lineHeight": 1.5,
+                              "fontFamily": "$font-body",
+                              "fontSize": 15,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
                 }
               ]
             },
@@ -30745,6 +30931,1001 @@
           "name": "Update toast",
           "x": 1046,
           "y": 707
+        }
+      ]
+    },
+    {
+      "id": "RpGVt",
+      "type": "ref",
+      "ref": "JaaCj",
+      "name": "78 · Conversation · an answered form becomes the person's structured message",
+      "x": 3900,
+      "y": 18529,
+      "theme": {
+        "palette": "meadow"
+      },
+      "descendants": {
+        "V87knr": {
+          "id": "DC2hI",
+          "type": "ref",
+          "ref": "zjgDq",
+          "name": "Sidebar",
+          "descendants": {
+            "bSPlA": {
+              "children": [
+                {
+                  "id": "vyJJq",
+                  "type": "ref",
+                  "ref": "QxQVq",
+                  "name": "App setup",
+                  "fill": "$surface-glass",
+                  "descendants": {
+                    "dmWzY": {
+                      "fill": "$project-slate",
+                      "icon": "folder-open"
+                    },
+                    "AlfMX": {
+                      "content": "App setup",
+                      "fontWeight": "600"
+                    },
+                    "Cisy9": {
+                      "enabled": true
+                    },
+                    "qYhP0": {
+                      "enabled": false
+                    }
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "mfjVw",
+                  "name": "App setup conversations",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 1,
+                  "padding": [
+                    2,
+                    0,
+                    4,
+                    12
+                  ],
+                  "children": [
+                    {
+                      "id": "HNxYJ",
+                      "type": "ref",
+                      "ref": "lpPvh",
+                      "name": "Nowa rozmowa",
+                      "descendants": {
+                        "KdzmS": {
+                          "icon": "plus"
+                        },
+                        "j74np": {
+                          "content": "Nowa rozmowa"
+                        },
+                        "g1fOgp": {
+                          "enabled": false
+                        },
+                        "FsA04": {
+                          "enabled": false
+                        }
+                      }
+                    },
+                    {
+                      "id": "vGAVU",
+                      "type": "ref",
+                      "ref": "lpPvh",
+                      "name": "Poznajmy się",
+                      "fill": "$surface",
+                      "descendants": {
+                        "KdzmS": {
+                          "icon": "message-circle"
+                        },
+                        "j74np": {
+                          "content": "Poznajmy się",
+                          "fill": "$ink",
+                          "fontWeight": "600"
+                        },
+                        "g1fOgp": {
+                          "enabled": true,
+                          "icon": "loader-circle",
+                          "fill": "$brand-1"
+                        },
+                        "FsA04": {
+                          "enabled": false
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        "c0GQTX/zHLo4": {
+          "children": [
+            {
+              "id": "sgSnr",
+              "type": "ref",
+              "ref": "Mc2Yy",
+              "name": "Tab Poznajmy się",
+              "descendants": {
+                "hLTUY": {
+                  "icon": "loader-circle",
+                  "fill": "$brand-1"
+                },
+                "zs1nz": {
+                  "content": "Poznajmy się"
+                },
+                "m3uLD": {
+                  "enabled": false
+                },
+                "nxa4D": {
+                  "enabled": false
+                }
+              }
+            }
+          ]
+        },
+        "PMXH9": {
+          "children": [
+            {
+              "type": "frame",
+              "id": "rybBo",
+              "name": "Column",
+              "width": 680,
+              "layout": "vertical",
+              "gap": 22,
+              "children": [
+                {
+                  "id": "YBdW5",
+                  "type": "ref",
+                  "ref": "pmiBI",
+                  "name": "Agent message",
+                  "width": "fill_container",
+                  "descendants": {
+                    "S9TZJo": {
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "omlDz",
+                          "name": "Text",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Dobrze, to teraz konkretnie. Odpowiedz na kilka pytań, a ja dopasuję do tego, jak będę Ci pomagać.",
+                          "lineHeight": 1.6,
+                          "fontFamily": "$font-body",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "q6p8F",
+                          "name": "Text",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "W czym chciałbyś mieć pomoc?",
+                          "lineHeight": 1.6,
+                          "fontFamily": "$font-body",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "id": "rOK0m",
+                  "type": "ref",
+                  "ref": "pdwue",
+                  "name": "User message",
+                  "descendants": {
+                    "MP3Wa": {
+                      "children": [
+                        {
+                          "id": "Mdnc8",
+                          "type": "ref",
+                          "ref": "fvjgb",
+                          "name": "Answer 1",
+                          "descendants": {
+                            "qUCeP": {
+                              "content": "Wybierz, co pasuje"
+                            },
+                            "VFcWM": {
+                              "children": [
+                                {
+                                  "id": "Y9S55",
+                                  "type": "ref",
+                                  "ref": "CtNa0",
+                                  "name": "Option 1",
+                                  "descendants": {
+                                    "OtNKZ": {
+                                      "content": "Teksty i komunikacja (maile, posty, LinkedIn)"
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        },
+                        {
+                          "id": "GFFLH",
+                          "type": "ref",
+                          "ref": "Q70ei",
+                          "name": "Answer 2",
+                          "descendants": {
+                            "qUCeP": {
+                              "content": "Ile czasu tygodniowo?"
+                            },
+                            "yWoYt": {
+                              "content": "1–2 godziny"
+                            }
+                          }
+                        },
+                        {
+                          "id": "GNECe",
+                          "type": "ref",
+                          "ref": "Q70ei",
+                          "name": "Answer 3",
+                          "descendants": {
+                            "qUCeP": {
+                              "content": "Coś jeszcze?"
+                            },
+                            "yWoYt": {
+                              "content": "W rzeczach zawodowych raczej nie potrzebuję pomocy, radzę sobie w osobnym agencie kodującym. Bardziej potrzebuję tego do pobocznych projektów i spraw osobistych."
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "id": "A3X2a",
+                  "type": "ref",
+                  "ref": "pmiBI",
+                  "name": "Agent message",
+                  "width": "fill_container",
+                  "descendants": {
+                    "S9TZJo": {
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "NyaKq",
+                          "name": "Streaming",
+                          "gap": 6,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "FQGDK",
+                              "name": "Text",
+                              "fill": "$ink",
+                              "content": "Dzięki! Zacznijmy od tekstów — pokażę Ci, jak",
+                              "lineHeight": 1.6,
+                              "fontFamily": "$font-body",
+                              "fontSize": 16,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "id": "jUjew",
+                              "type": "ref",
+                              "ref": "vLxz0",
+                              "name": "Caret"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "QvtOh",
+              "name": "Flex",
+              "width": 10,
+              "height": "fill_container"
+            },
+            {
+              "id": "c16Ng",
+              "type": "ref",
+              "ref": "uuLci",
+              "name": "Composer",
+              "width": 720,
+              "descendants": {
+                "p6GTa": {
+                  "content": "Dopisz coś, gdy agent pisze…"
+                },
+                "DvNYs": {
+                  "enabled": false
+                },
+                "cYALa": {
+                  "id": "EoZte",
+                  "type": "ref",
+                  "ref": "c1lNY",
+                  "name": "Stop",
+                  "descendants": {
+                    "K2mQY": {
+                      "icon": "square",
+                      "fill": "$ink"
+                    },
+                    "QINi0": {
+                      "content": "Zatrzymaj"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "dDGf9",
+      "type": "ref",
+      "ref": "JaaCj",
+      "name": "81 · Conversation · structured answer with several picks",
+      "x": 5420,
+      "y": 18529,
+      "theme": {
+        "palette": "meadow"
+      },
+      "descendants": {
+        "V87knr": {
+          "id": "OVewf",
+          "type": "ref",
+          "ref": "zjgDq",
+          "name": "Sidebar",
+          "descendants": {
+            "bSPlA": {
+              "children": [
+                {
+                  "id": "HTEOT",
+                  "type": "ref",
+                  "ref": "QxQVq",
+                  "name": "App setup",
+                  "fill": "$surface-glass",
+                  "descendants": {
+                    "dmWzY": {
+                      "fill": "$project-slate",
+                      "icon": "folder-open"
+                    },
+                    "AlfMX": {
+                      "content": "App setup",
+                      "fontWeight": "600"
+                    },
+                    "Cisy9": {
+                      "enabled": true
+                    },
+                    "qYhP0": {
+                      "enabled": false
+                    }
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "KfxMh",
+                  "name": "App setup conversations",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 1,
+                  "padding": [
+                    2,
+                    0,
+                    4,
+                    12
+                  ],
+                  "children": [
+                    {
+                      "id": "r9URX",
+                      "type": "ref",
+                      "ref": "lpPvh",
+                      "name": "Nowa rozmowa",
+                      "descendants": {
+                        "KdzmS": {
+                          "icon": "plus"
+                        },
+                        "j74np": {
+                          "content": "Nowa rozmowa"
+                        },
+                        "g1fOgp": {
+                          "enabled": false
+                        },
+                        "FsA04": {
+                          "enabled": false
+                        }
+                      }
+                    },
+                    {
+                      "id": "ERCan",
+                      "type": "ref",
+                      "ref": "lpPvh",
+                      "name": "Poznajmy się",
+                      "fill": "$surface",
+                      "descendants": {
+                        "KdzmS": {
+                          "icon": "message-circle"
+                        },
+                        "j74np": {
+                          "content": "Poznajmy się",
+                          "fill": "$ink",
+                          "fontWeight": "600"
+                        },
+                        "g1fOgp": {
+                          "enabled": true,
+                          "icon": "loader-circle",
+                          "fill": "$brand-1"
+                        },
+                        "FsA04": {
+                          "enabled": false
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        "c0GQTX/zHLo4": {
+          "children": [
+            {
+              "id": "Q37YrS",
+              "type": "ref",
+              "ref": "Mc2Yy",
+              "name": "Tab Poznajmy się",
+              "descendants": {
+                "hLTUY": {
+                  "icon": "loader-circle",
+                  "fill": "$brand-1"
+                },
+                "zs1nz": {
+                  "content": "Poznajmy się"
+                },
+                "m3uLD": {
+                  "enabled": false
+                },
+                "nxa4D": {
+                  "enabled": false
+                }
+              }
+            }
+          ]
+        },
+        "PMXH9": {
+          "children": [
+            {
+              "type": "frame",
+              "id": "vQvnX",
+              "name": "Column",
+              "width": 680,
+              "layout": "vertical",
+              "gap": 22,
+              "children": [
+                {
+                  "id": "Nl92U",
+                  "type": "ref",
+                  "ref": "pmiBI",
+                  "name": "Agent message",
+                  "width": "fill_container",
+                  "descendants": {
+                    "S9TZJo": {
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "djL6Z",
+                          "name": "Text",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Dobrze, to teraz konkretnie. Odpowiedz na kilka pytań, a ja dopasuję do tego, jak będę Ci pomagać.",
+                          "lineHeight": 1.6,
+                          "fontFamily": "$font-body",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "J3P46L",
+                          "name": "Text",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "W czym chciałbyś mieć pomoc?",
+                          "lineHeight": 1.6,
+                          "fontFamily": "$font-body",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "id": "tPJEU",
+                  "type": "ref",
+                  "ref": "pdwue",
+                  "name": "User message",
+                  "descendants": {
+                    "MP3Wa": {
+                      "children": [
+                        {
+                          "id": "njvYb",
+                          "type": "ref",
+                          "ref": "fvjgb",
+                          "name": "Answer 1",
+                          "descendants": {
+                            "qUCeP": {
+                              "content": "Wybierz, co pasuje"
+                            },
+                            "VFcWM": {
+                              "children": [
+                                {
+                                  "id": "spLBY",
+                                  "type": "ref",
+                                  "ref": "CtNa0",
+                                  "name": "Option 1",
+                                  "descendants": {
+                                    "OtNKZ": {
+                                      "content": "Teksty i komunikacja (maile, posty, LinkedIn)"
+                                    }
+                                  }
+                                },
+                                {
+                                  "id": "NMOJ8",
+                                  "type": "ref",
+                                  "ref": "CtNa0",
+                                  "name": "Option 2",
+                                  "descendants": {
+                                    "OtNKZ": {
+                                      "content": "Szukanie informacji i porównywanie"
+                                    }
+                                  }
+                                },
+                                {
+                                  "id": "Mrxbp",
+                                  "type": "ref",
+                                  "ref": "CtNa0",
+                                  "name": "Option 3",
+                                  "descendants": {
+                                    "OtNKZ": {
+                                      "content": "Planowanie i organizacja"
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        },
+                        {
+                          "id": "J45Ueg",
+                          "type": "ref",
+                          "ref": "Q70ei",
+                          "name": "Answer 2",
+                          "descendants": {
+                            "qUCeP": {
+                              "content": "Ile czasu tygodniowo?"
+                            },
+                            "yWoYt": {
+                              "content": "1–2 godziny"
+                            }
+                          }
+                        },
+                        {
+                          "id": "fcZl1",
+                          "type": "ref",
+                          "ref": "Q70ei",
+                          "name": "Answer 3",
+                          "descendants": {
+                            "qUCeP": {
+                              "content": "Coś jeszcze?"
+                            },
+                            "yWoYt": {
+                              "content": "W rzeczach zawodowych raczej nie potrzebuję pomocy, radzę sobie w osobnym agencie kodującym. Bardziej potrzebuję tego do pobocznych projektów i spraw osobistych. Na przykład: prowadzę małego bloga o górach i chciałbym, żeby ktoś pilnował terminów wpisów i podsuwał tematy. Do tego planuję remont mieszkania, więc przyda się porównywanie ofert ekip i materiałów, a także pilnowanie budżetu w jednym arkuszu. A po godzinach uczę się hiszpańskiego — chętnie dostanę co tydzień krótką listę słówek z tego, o czym akurat czytam."
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "id": "ie2vY",
+                  "type": "ref",
+                  "ref": "pmiBI",
+                  "name": "Agent message",
+                  "width": "fill_container",
+                  "descendants": {
+                    "S9TZJo": {
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "kkRU6",
+                          "name": "Streaming",
+                          "gap": 6,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "Xwx6k",
+                              "name": "Text",
+                              "fill": "$ink",
+                              "content": "Dzięki! Zacznijmy od tekstów — pokażę Ci, jak",
+                              "lineHeight": 1.6,
+                              "fontFamily": "$font-body",
+                              "fontSize": 16,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "id": "i6Fub",
+                              "type": "ref",
+                              "ref": "vLxz0",
+                              "name": "Caret"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "wWL9u",
+              "name": "Flex",
+              "width": 10,
+              "height": "fill_container"
+            },
+            {
+              "id": "tw3mo",
+              "type": "ref",
+              "ref": "uuLci",
+              "name": "Composer",
+              "width": 720,
+              "descendants": {
+                "p6GTa": {
+                  "content": "Dopisz coś, gdy agent pisze…"
+                },
+                "DvNYs": {
+                  "enabled": false
+                },
+                "cYALa": {
+                  "id": "Qk6G2",
+                  "type": "ref",
+                  "ref": "c1lNY",
+                  "name": "Stop",
+                  "descendants": {
+                    "K2mQY": {
+                      "icon": "square",
+                      "fill": "$ink"
+                    },
+                    "QINi0": {
+                      "content": "Zatrzymaj"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "uYotE",
+      "type": "ref",
+      "ref": "JaaCj",
+      "name": "82 · Conversation · structured answer with the button that sent it",
+      "x": 6940,
+      "y": 18529,
+      "theme": {
+        "palette": "meadow"
+      },
+      "descendants": {
+        "V87knr": {
+          "id": "ukkxK",
+          "type": "ref",
+          "ref": "zjgDq",
+          "name": "Sidebar",
+          "descendants": {
+            "bSPlA": {
+              "children": [
+                {
+                  "id": "CWVKS",
+                  "type": "ref",
+                  "ref": "QxQVq",
+                  "name": "App setup",
+                  "fill": "$surface-glass",
+                  "descendants": {
+                    "dmWzY": {
+                      "fill": "$project-slate",
+                      "icon": "folder-open"
+                    },
+                    "AlfMX": {
+                      "content": "App setup",
+                      "fontWeight": "600"
+                    },
+                    "Cisy9": {
+                      "enabled": true
+                    },
+                    "qYhP0": {
+                      "enabled": false
+                    }
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "f4lUGv",
+                  "name": "App setup conversations",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 1,
+                  "padding": [
+                    2,
+                    0,
+                    4,
+                    12
+                  ],
+                  "children": [
+                    {
+                      "id": "Q74PvB",
+                      "type": "ref",
+                      "ref": "lpPvh",
+                      "name": "Nowa rozmowa",
+                      "descendants": {
+                        "KdzmS": {
+                          "icon": "plus"
+                        },
+                        "j74np": {
+                          "content": "Nowa rozmowa"
+                        },
+                        "g1fOgp": {
+                          "enabled": false
+                        },
+                        "FsA04": {
+                          "enabled": false
+                        }
+                      }
+                    },
+                    {
+                      "id": "ErfVA",
+                      "type": "ref",
+                      "ref": "lpPvh",
+                      "name": "Poznajmy się",
+                      "fill": "$surface",
+                      "descendants": {
+                        "KdzmS": {
+                          "icon": "message-circle"
+                        },
+                        "j74np": {
+                          "content": "Poznajmy się",
+                          "fill": "$ink",
+                          "fontWeight": "600"
+                        },
+                        "g1fOgp": {
+                          "enabled": true,
+                          "icon": "loader-circle",
+                          "fill": "$brand-1"
+                        },
+                        "FsA04": {
+                          "enabled": false
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        "c0GQTX/zHLo4": {
+          "children": [
+            {
+              "id": "MSsmC",
+              "type": "ref",
+              "ref": "Mc2Yy",
+              "name": "Tab Poznajmy się",
+              "descendants": {
+                "hLTUY": {
+                  "icon": "loader-circle",
+                  "fill": "$brand-1"
+                },
+                "zs1nz": {
+                  "content": "Poznajmy się"
+                },
+                "m3uLD": {
+                  "enabled": false
+                },
+                "nxa4D": {
+                  "enabled": false
+                }
+              }
+            }
+          ]
+        },
+        "PMXH9": {
+          "children": [
+            {
+              "type": "frame",
+              "id": "UlNnf",
+              "name": "Column",
+              "width": 680,
+              "layout": "vertical",
+              "gap": 22,
+              "children": [
+                {
+                  "id": "L89Zp",
+                  "type": "ref",
+                  "ref": "pmiBI",
+                  "name": "Agent message",
+                  "width": "fill_container",
+                  "descendants": {
+                    "S9TZJo": {
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "qUAPC",
+                          "name": "Text",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Dobrze, to teraz konkretnie. Odpowiedz na kilka pytań, a ja dopasuję do tego, jak będę Ci pomagać.",
+                          "lineHeight": 1.6,
+                          "fontFamily": "$font-body",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "FYftQ",
+                          "name": "Text",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "W czym chciałbyś mieć pomoc?",
+                          "lineHeight": 1.6,
+                          "fontFamily": "$font-body",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "id": "aPjlD",
+                  "type": "ref",
+                  "ref": "Xtqoj",
+                  "name": "User message",
+                  "descendants": {
+                    "u2BlxK": {
+                      "content": "Pomiń na razie"
+                    }
+                  }
+                },
+                {
+                  "id": "MBGJw",
+                  "type": "ref",
+                  "ref": "pmiBI",
+                  "name": "Agent message",
+                  "width": "fill_container",
+                  "descendants": {
+                    "S9TZJo": {
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "SwUt0",
+                          "name": "Streaming",
+                          "gap": 6,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "D9YmTM",
+                              "name": "Text",
+                              "fill": "$ink",
+                              "content": "Jasne, wrócimy do tego, kiedy zechcesz. Na razie",
+                              "lineHeight": 1.6,
+                              "fontFamily": "$font-body",
+                              "fontSize": 16,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "id": "HxFsa",
+                              "type": "ref",
+                              "ref": "vLxz0",
+                              "name": "Caret"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "f7yHDP",
+              "name": "Flex",
+              "width": 10,
+              "height": "fill_container"
+            },
+            {
+              "id": "czcw0",
+              "type": "ref",
+              "ref": "uuLci",
+              "name": "Composer",
+              "width": 720,
+              "descendants": {
+                "p6GTa": {
+                  "content": "Dopisz coś, gdy agent pisze…"
+                },
+                "DvNYs": {
+                  "enabled": false
+                },
+                "cYALa": {
+                  "id": "grDrV",
+                  "type": "ref",
+                  "ref": "c1lNY",
+                  "name": "Stop",
+                  "descendants": {
+                    "K2mQY": {
+                      "icon": "square",
+                      "fill": "$ink"
+                    },
+                    "QINi0": {
+                      "content": "Zatrzymaj"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "frame",
+      "id": "Z8omms",
+      "x": 6940,
+      "y": 19453,
+      "name": "82 · Caption",
+      "theme": {
+        "palette": "meadow"
+      },
+      "width": 1440,
+      "layout": "vertical",
+      "gap": 6,
+      "children": [
+        {
+          "type": "text",
+          "id": "n41d0",
+          "name": "Title",
+          "fill": "$ink",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "82 · Conversation · structured answer with the button that sent it",
+          "lineHeight": 1.5,
+          "fontFamily": "$font-body",
+          "fontSize": 15,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "muCe2",
+          "name": "Text",
+          "fill": "$ink-muted",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "The form had two buttons, “Wyślij” and “Pomiń na razie”. The person clicked “Pomiń na razie” with nothing filled, so the bubble holds only that label, as it read in the form, in normal message text.\nRule: the clicked button’s label shows only when it was not the form's first button (the default send) or no field was filled, and it comes after the answers. A button’s hidden message never shows.",
+          "lineHeight": 1.5,
+          "fontFamily": "$font-body",
+          "fontSize": 14,
+          "fontWeight": "normal"
         }
       ]
     },

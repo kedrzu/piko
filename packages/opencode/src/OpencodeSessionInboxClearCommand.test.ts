@@ -13,7 +13,7 @@ type VendorSyntheticPayload = components['schemas']['Session.Inbox.SyntheticPayl
 // A stand-in OpenCode server on the loopback: per session, an inbox with two of the person's prompts around synthetic
 // input: OpenCode's own, and the caller's, told by its metadata.
 const inbox: VendorInboxItem[] = [
-    userItem('msg_1', 'Dopisz czwarty punkt'),
+    userItem('msg_1', 'Dopisz czwarty punkt', { kind: 'answer' }),
     syntheticItem('msg_2', { text: 'Kontynuuj' }),
     syntheticItem('msg_3', { text: 'Not run', metadata: { app: 'note', plugin: 'gmail' } }),
     syntheticItem('msg_4', { text: 'Other note', metadata: { app: 'other' } }),
@@ -37,7 +37,7 @@ const server = Bun.serve({
 afterAll(() => server.stop(true));
 
 const PROMPTS: OpencodeInboxPrompt[] = [
-    { id: 'msg_1', text: 'Dopisz czwarty punkt' },
+    { id: 'msg_1', text: 'Dopisz czwarty punkt', metadata: { kind: 'answer' } },
     { id: 'msg_5', text: 'I piąty' },
 ];
 
@@ -63,8 +63,15 @@ function resolveCommand() {
     return container.resolve(OpencodeSessionInboxClearCommand);
 }
 
-function userItem(id: string, text: string): VendorInboxItem {
-    return { id, sessionID: 'ses_1', time: { created: 1 }, type: 'user', payload: { text }, delivery: 'steer' };
+function userItem(id: string, text: string, metadata?: Record<string, unknown>): VendorInboxItem {
+    return {
+        id,
+        sessionID: 'ses_1',
+        time: { created: 1 },
+        type: 'user',
+        payload: { text, metadata },
+        delivery: 'steer',
+    };
 }
 
 function syntheticItem(id: string, payload: VendorSyntheticPayload): VendorInboxItem {

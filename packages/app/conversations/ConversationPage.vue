@@ -12,6 +12,7 @@ import { computed, ref, useTemplateRef, watch } from 'vue';
 import type { RouteLocationRaw } from 'vue-router';
 
 import type { ConversationError } from '@piko/common/api/ConversationTypes.js';
+import type { GenerativeUiAnswer } from '@piko/common/generativeUi/GenerativeUiAnswer.js';
 import AgentMessage from '@piko/ui/AgentMessage.vue';
 import Composer from '@piko/ui/Composer.vue';
 import ConversationLayout from '@piko/ui/ConversationLayout.vue';
@@ -34,6 +35,7 @@ import type { Tab } from '@/tabs/TabStore.js';
 
 import { ConversationStore } from './ConversationStore.js';
 import { useConversation } from './useConversation.js';
+import type { ConversationSendBody } from './useConversation.js';
 
 const route = useRoute();
 const router = useRouter();
@@ -97,13 +99,13 @@ const uiWaiting = computed(() => {
     .join('\n\n');
   return splitGenerativeUi(text).some(segment => segment.type === 'ui');
 });
-/** Each reply's answer: the text of the first message the person sent after it, keyed by the reply's key. */
+/** Each reply's answer: the first message the person sent after it (its answer through the UI, else its text), keyed by the reply's key. */
 const answers = computed(() => {
-  const result = new Map<string, string>();
-  let next: string | undefined;
+  const result = new Map<string, string | GenerativeUiAnswer>();
+  let next: string | GenerativeUiAnswer | undefined;
   for (const item of conversation.items.toReversed()) {
     if (item.type === 'user') {
-      next = item.text;
+      next = item.answer ?? item.text;
     } else if (item.type === 'agent' && next !== undefined) {
       result.set(item.key, next);
     }
@@ -173,16 +175,16 @@ async function closeSideFile() {
 /** Sends what the person typed; a failure puts it back in the composer. */
 async function send(text: string) {
   message.value = '';
-  if (!(await deliver(text))) {
+  if (!(await deliver({ text }))) {
     message.value = text;
   }
 }
 
 /** Whether the message was sent (or queued). A generative UI's answer goes through it too, the composer untouched. */
-async function deliver(text: string) {
+async function deliver(input: ConversationSendBody) {
   layout.value?.scrollToEnd();
   try {
-    await conversation.send(text);
+    await conversation.send(input);
     return true;
   } catch (error) {
     logger.warn('Message could not be sent', { conversationId: conversationId.value, error });
@@ -190,10 +192,15 @@ async function deliver(text: string) {
   }
 }
 
-/** Sends the unanswered message again. */
-async function retry(text: string | undefined) {
-  if (text !== undefined) {
-    await send(text);
+/** Sends the unanswered message again, as it was sent: typed text as typed, an answer as an answer (composer untouched). */
+async function retry(input: ConversationSendBody | undefined) {
+  if (input === undefined) {
+    return;
+  }
+  if ('text' in input) {
+    await send(input.text);
+  } else {
+    await deliver(input);
   }
 }
 
@@ -247,6 +254,7 @@ function describeReset(resetAt: number | undefined) {
       <UserMessage
         v-if="item.type === 'user'"
         :text="item.text"
+        :answer="item.answer"
       />
       <AgentMessage
         v-else-if="item.type === 'agent'"
@@ -254,7 +262,7 @@ function describeReset(resetAt: number | undefined) {
         :running="item.running"
         :ui-active="item.key === activeUiKey"
         :answer="answers.get(item.key)"
-        @reply="deliver"
+        @answer="answer => deliver({ answer })"
       >
         <template #file="file">
           <FileChip
@@ -271,7 +279,7 @@ function describeReset(resetAt: number | undefined) {
         :class="$style.conversationPage_error"
         :text="describeError(item.error)"
         :retryable="item.key === lastItemKey && conversation.retryable"
-        @retry="retry(item.retryText)"
+        @retry="retry(item.retry)"
       />
       <MessageError
         v-else

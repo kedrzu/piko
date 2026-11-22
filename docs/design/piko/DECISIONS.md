@@ -396,6 +396,19 @@ generated from the app's component library (`@openuidev/lang-core` signatures) a
 needed — not a permanent system-prompt addition. A click or a submitted form is sent as the person's
 next message. (2026-11-14, owner)
 
+**Nothing hidden.** A component carries no text the person does not see, and an answer is exactly
+what the person saw and chose: a button answers with its label, a form with its field labels and
+values. Every answer is structured data named by the agent's own names (a form's `name`, its fields'
+`name`s, a choice row's statement name), kept in the person's message metadata for the app and
+given to the agent as one JSON block. A sent form collapses and the person's message shows its
+answers (screens 78, 81, 82). Every component added later follows the same rule. (2026-11-21, owner)
+
+> **Checked 2026-11-21:** OpenCode 2.2.7 keeps a prompt's `metadata` on the inbox item and on the
+> delivered user message, and never sends it to the model (`core/src/session/runner/to-llm-message.ts`
+> builds a user turn from skills, text and files only). OpenUI's own chat does the same split: a short
+> `humanFriendlyMessage` shown, `formState` keyed by field names sent to the model
+> ([conversation history](https://www.openui.com/docs/build-agents/conversation-history)).
+
 > **Checked 2026-11-14:** a tool registered by a local OpenCode 2.2.7 plugin reaches Claude through
 > the `claude-agent` provider, but its input arrives whole (`session.tool.input.started`, then
 > `ended` with empty text, then `called` with the full input — no `session.tool.input.delta`), so a
@@ -406,6 +419,9 @@ next message. (2026-11-14, owner)
 
 - A built-in tool the agent calls to show UI (2026-11-08) — no streaming with the Claude provider,
   an extra model step per UI, escaped input (checked 2026-11-14, above).
+- `@ToAssistant("message")` on buttons (2026-11-21) — the message was text the person never saw,
+  shown later as words they had not written; answers as `Label: value` text gave the agent labels,
+  not the names it asked by.
 
 ## D24
 

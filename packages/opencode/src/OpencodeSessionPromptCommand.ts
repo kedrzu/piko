@@ -14,6 +14,8 @@ export interface OpencodeSessionPromptCommandParams {
      * stays idle.
      */
     resume?: boolean;
+    /** Stored with the prompt's message and inbox item; OpenCode never gives it to the model. */
+    metadata?: Record<string, unknown>;
 }
 
 /** A prompt OpenCode has admitted into a session. */
@@ -44,6 +46,7 @@ export const OpencodeSessionPromptCommand = defineCommand({
                     text: params.text,
                     skills: params.skills?.map(id => ({ id })),
                     resume: params.resume,
+                    metadata: params.metadata,
                 },
             });
             if (response.status !== 200) {

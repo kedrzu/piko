@@ -1,4 +1,4 @@
-import { action, createLibrary, defineComponent } from '@openuidev/lang-core';
+import { createLibrary, defineComponent } from '@openuidev/lang-core';
 import { z } from 'zod';
 
 /** The component every OpenUI program starts from (`root = Stack([...])`). */
@@ -7,6 +7,10 @@ export const GenerativeUiRoot = 'Stack';
 /** Visual weight of a Button: `primary` is the main choice, `secondary` an alternative. */
 export const GenerativeUiButtonVariants = ['primary', 'secondary'] as const;
 
+// A component carries no text the person does not see, and an answer is exactly what the person saw and chose:
+// a button answers with its label, a form with its field labels and values. Read this before adding a component:
+// no action, no hidden message prop (like the former `@ToAssistant("...")`), nothing the person is not shown.
+//
 // Components are framework-free: `component` is null and the Vue renderer maps `typeName` to its own
 // component. Key order of each props schema is the positional argument order of the OpenUI call.
 
@@ -20,11 +24,10 @@ const Text = defineComponent({
 const Button = defineComponent({
     name: 'Button',
     description:
-        'One button. Its action is what happens on click: @ToAssistant(message) sends the message as the' +
-        ' answer in the conversation.',
+        'One button. Clicking it answers with its label, exactly as shown. The first button of a Form is its' +
+        ' default send.',
     props: z.object({
         label: z.string(),
-        action: action(),
         variant: z.enum(GenerativeUiButtonVariants).optional(),
     }),
     component: null,
@@ -88,8 +91,8 @@ const CheckboxGroup = defineComponent({
 const Form = defineComponent({
     name: 'Form',
     description:
-        'A small form: named fields plus buttons. Submitting sends the field values with the button' +
-        ' message back as the answer.',
+        'A small form: named fields plus buttons. Submitting sends the filled field values and the clicked' +
+        ' button label back as the answer.',
     props: z.object({
         name: z.string(),
         fields: z.array(z.union([TextInput.ref, TextArea.ref, Select.ref, CheckboxGroup.ref])),

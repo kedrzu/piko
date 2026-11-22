@@ -1,5 +1,6 @@
 import { assertNever } from '@nzyme/utils/assertNever.js';
 
+import { readGenerativeUiAnswer } from '@piko/common/generativeUi/GenerativeUiAnswer.js';
 import type {
     ConversationAgentPart,
     ConversationMessage,
@@ -24,8 +25,16 @@ import { toConversationStep } from './toConversationStep.js';
  */
 export function toConversationMessage(message: OpencodeMessage): ConversationMessage | undefined {
     switch (message.type) {
-        case 'prompt':
-            return { type: 'user', id: message.id, createdAt: message.createdAt, text: message.text };
+        case 'prompt': {
+            const answer = readGenerativeUiAnswer(message.metadata);
+            return {
+                type: 'user',
+                id: message.id,
+                createdAt: message.createdAt,
+                text: message.text,
+                ...(answer && { answer }),
+            };
+        }
         case 'reply':
             return {
                 type: 'agent',

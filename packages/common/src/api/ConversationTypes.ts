@@ -1,3 +1,4 @@
+import type { GenerativeUiAnswer } from '../generativeUi/GenerativeUiAnswer.js';
 import type { AiProvider } from './AiTypes.js';
 
 /** A conversation with the agent in a project: the agent's working directory is the project's folder. */
@@ -27,9 +28,7 @@ export interface ConversationProjectInput {
 }
 
 /** A message the person sends. */
-export interface ConversationSendInput extends ConversationRef {
-    text: string;
-}
+export type ConversationSendInput = ConversationRef & ({ text: string } | { answer: GenerativeUiAnswer });
 
 /** How a sent message was taken. */
 export interface ConversationSendResult {
@@ -55,6 +54,8 @@ export interface ConversationWithdrawnMessage {
     /** The id it was sent under (`ConversationSendResult.messageId`). */
     id: string;
     text: string;
+    /** Set when the message was an answer to generated UI: `text` is then what the agent would have read. */
+    answer?: GenerativeUiAnswer;
 }
 
 /** How a stop ended. */
@@ -96,6 +97,8 @@ export interface ConversationUserMessage {
     /** Epoch ms. */
     createdAt: number;
     text: string;
+    /** Set when the message was an answer to generated UI: `text` is then what the agent reads. */
+    answer?: GenerativeUiAnswer;
     /** Still waiting for the agent: sent while it worked, or held back with a plugin's missing command. */
     pending?: boolean;
 }
