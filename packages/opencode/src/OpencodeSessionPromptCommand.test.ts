@@ -54,3 +54,19 @@ test('attaches skills by id and passes resume on; a plain prompt carries neither
         { text: 'Dzięki' },
     ]);
 });
+
+test('passes metadata along with the prompt', async () => {
+    const { container } = createTestContainer();
+    container.set(OpencodeConnection, {
+        getEndpoint: () => ({ url: server.url.origin, username: 'opencode', password: 'pw' }),
+    });
+    bodies.length = 0;
+
+    await container.resolve(OpencodeSessionPromptCommand)({
+        sessionId: 'ses_1',
+        text: 'Tak',
+        metadata: { kind: 'generativeUiAnswer' },
+    });
+
+    expect(bodies).toEqual([{ text: 'Tak', metadata: { kind: 'generativeUiAnswer' } }]);
+});

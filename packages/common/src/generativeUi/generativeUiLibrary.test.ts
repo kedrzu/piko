@@ -1,7 +1,7 @@
 import { expect, test } from 'bun:test';
 
 import { createStreamingParser, evaluateRoot } from '@openuidev/lang-core';
-import type { ActionPlan, ElementNode } from '@openuidev/lang-core';
+import type { ElementNode } from '@openuidev/lang-core';
 
 import { GenerativeUiLibrary, GenerativeUiRoot, GenerativeUiSchema } from './generativeUiLibrary.js';
 
@@ -10,7 +10,7 @@ intro = Text("What should I help you with?")
 form = Form("areas", [areas, note], [send])
 areas = CheckboxGroup("areas", "Areas", ["Work", "Studies", "Home"], true)
 note = TextArea("note", "Anything else?")
-send = Button("Send", @ToAssistant("Here is what I want help with"), "primary")
+send = Button("Send", "primary")
 `;
 
 test('every component has a description and a signature derived from its props', () => {
@@ -23,7 +23,7 @@ test('every component has a description and a signature derived from its props',
         Stack: 'Stack(children: (Text | Buttons | Form)[])',
         Text: 'Text(text: string)',
         Buttons: 'Buttons(buttons: Button[])',
-        Button: 'Button(label: string, action: ActionExpression, variant?: "primary" | "secondary")',
+        Button: 'Button(label: string, variant?: "primary" | "secondary")',
         Form: 'Form(name: string, fields: (TextInput | TextArea | Select | CheckboxGroup)[], buttons: Button[])',
         TextInput: 'TextInput(name: string, label: string, placeholder?: string, required?: boolean)',
         TextArea: 'TextArea(name: string, label: string, placeholder?: string, required?: boolean)',
@@ -35,7 +35,7 @@ test('every component has a description and a signature derived from its props',
     }
 });
 
-test('parses a program into elements with props and a ToAssistant action plan', () => {
+test('parses a program into elements with props', () => {
     const result = createStreamingParser(GenerativeUiSchema, GenerativeUiRoot).set(program, true);
     const root = evaluateRoot(result, {
         ctx: { getState: () => null, resolveRef: () => null },
@@ -59,10 +59,25 @@ test('parses a program into elements with props and a ToAssistant action plan', 
     expect(note).toMatchObject({ typeName: 'TextArea', props: { name: 'note', label: 'Anything else?' } });
 
     const [button] = childrenOf(form, 'buttons');
-    const expectedAction: ActionPlan = {
-        steps: [{ type: 'continue_conversation', message: 'Here is what I want help with' }],
-    };
-    expect(button?.props).toMatchObject({ label: 'Send', action: expectedAction, variant: 'primary' });
+    expect(button?.props).toEqual({ label: 'Send', variant: 'primary' });
+});
+
+test('a legacy ToAssistant button reports excess-args and never yields an action the app would read', () => {
+    const legacy = 'root = Stack([Buttons([send])])\nsend = Button("Send", @ToAssistant("Hidden text"), "primary")\n';
+
+    const result = createStreamingParser(GenerativeUiSchema, GenerativeUiRoot).set(legacy, true);
+    const root = evaluateRoot(result, {
+        ctx: { getState: () => null, resolveRef: () => null },
+        library: GenerativeUiLibrary,
+        store: null,
+    });
+
+    expect(result.meta.errors.map(error => error.code)).toEqual(['excess-args']);
+    const [buttons] = childrenOf(root);
+    const [button] = childrenOf(buttons, 'buttons');
+    expect(button?.props).toHaveProperty('label', 'Send');
+    expect(button?.props).not.toHaveProperty('action');
+    expect(button?.props['variant']).toEqual({ steps: [{ type: 'continue_conversation', message: 'Hidden text' }] });
 });
 
 test('returns a partial tree for a program cut off mid-statement', () => {

@@ -32,6 +32,8 @@ import { PROJECT_NAME_MAX_LENGTH } from '@piko/common/api/ProjectTypes.js';
 import type { Project, ProjectCreateResult } from '@piko/common/api/ProjectTypes.js';
 import type { SandboxStatus } from '@piko/common/api/SandboxTypes.js';
 import { DAEMON_API_PATH, DAEMON_PORT } from '@piko/common/daemonAddress.js';
+import { buildGenerativeUiAnswerText, readGenerativeUiAnswer } from '@piko/common/generativeUi/GenerativeUiAnswer.js';
+import type { GenerativeUiAnswer } from '@piko/common/generativeUi/GenerativeUiAnswer.js';
 import { isOpenableFile } from '@piko/common/utils/isOpenableFile.js';
 
 /** The code `StubDaemon` takes as a Claude account with an allowed plan; any other code is rejected. */
@@ -63,12 +65,11 @@ const TEXT_MAX_BYTES = 1024 * 1024;
 /** When the stub's files last changed: a fixed time, so a screen saying when reads the same in every run. */
 const FILE_UPDATED_AT = Date.UTC(2026, 10, 1, 9, 0);
 
-/** A message the app sent, as the stub took it. */
-export interface StubSentMessage {
-    conversationId: string;
-    text: string;
-    queued: boolean;
-}
+/** A message the app sent, as the stub took it: typed text, or an answer to generated UI. */
+export type StubSentMessage = { conversationId: string; queued: boolean } & (
+    | { text: string }
+    | { answer: GenerativeUiAnswer }
+);
 
 /**
  * The daemon's API, answered in the test's page instead of by a daemon: a sandbox, Claude and ChatGPT sign-ins, projects
@@ -301,7 +302,7 @@ export class StubDaemon {
             case 'conversations/create':
                 return this.createConversation(readInput(body, 'projectId'));
             case 'conversations/send':
-                return this.send(readInput(body, 'conversationId'), readInput(body, 'text'));
+                return this.send(readInput(body, 'conversationId'), readSentBody(body));
             case 'conversations/stop':
                 return this.stop(readInput(body, 'conversationId'));
             case 'conversations/messages':
@@ -536,17 +537,20 @@ export class StubDaemon {
      * delivering what waited with it. Either way it is answered with the id it is (or will be) listed under: `sent-<n>`,
      * n counting from 1. A command of a plugin in `missingPlugins` starts nothing: it waits, listed, with the note why.
      */
-    private send(conversationId: string, text: string): ConversationSendResult {
+    private send(conversationId: string, body: SentBody): ConversationSendResult {
         const conversation = this.findConversation(conversationId);
         const queued = conversation?.running ?? false;
-        this.sent.push({ conversationId, text, queued });
+        this.sent.push({ conversationId, ...body, queued });
+        // An answer is listed with the text the agent reads, and the answer itself for the app to show.
+        const text = 'text' in body ? body.text : buildGenerativeUiAnswerText(body.answer);
+        const answer = 'answer' in body ? { answer: body.answer } : {};
         const messageId = sentMessageId(this.sent.length - 1);
         const listed = this.messages[conversationId] ?? [];
         const plugin = /^\/([^\s:]+):\S+/.exec(text)?.[1];
         if (plugin !== undefined && this.missingPlugins.includes(plugin)) {
             this.messages[conversationId] = [
                 ...listed,
-                { type: 'user', id: messageId, createdAt: Date.now(), text, pending: true },
+                { type: 'user', id: messageId, createdAt: Date.now(), text, ...answer, pending: true },
                 { type: 'pluginMissing', id: `note-${messageId}`, createdAt: Date.now(), plugin },
             ];
             return { queued, messageId, stoppedBy: { plugin } };
@@ -554,7 +558,7 @@ export class StubDaemon {
         if (!queued) {
             this.messages[conversationId] = [
                 ...listed.map(message => (message.type === 'user' ? { ...message, pending: false } : message)),
-                { type: 'user', id: messageId, createdAt: Date.now(), text },
+                { type: 'user', id: messageId, createdAt: Date.now(), text, ...answer },
             ];
             this.setRunning(conversationId, true);
         }
@@ -569,7 +573,15 @@ export class StubDaemon {
         const withdrawn: ConversationWithdrawnMessage[] = [];
         for (const [index, message] of this.sent.entries()) {
             if (message.conversationId === conversationId && message.queued) {
-                withdrawn.push({ id: sentMessageId(index), text: message.text });
+                withdrawn.push(
+                    'text' in message
+                        ? { id: sentMessageId(index), text: message.text }
+                        : {
+                              id: sentMessageId(index),
+                              text: buildGenerativeUiAnswerText(message.answer),
+                              answer: message.answer,
+                          },
+                );
             }
         }
         for (const message of this.sent) {
@@ -649,6 +661,16 @@ export class StubDaemon {
         this.projects = [...this.projects, project].toSorted((a, b) => a.name.localeCompare(b.name));
         return { created: project };
     }
+}
+
+type SentBody = { text: string } | { answer: GenerativeUiAnswer };
+
+/** The text or the answer of `conversations/send`'s input: the answer when it is well-formed, else the text. */
+function readSentBody(body: string | null): SentBody {
+    const input: unknown = body === null ? null : JSON.parse(body);
+    const answer =
+        typeof input === 'object' && input !== null ? readGenerativeUiAnswer(Reflect.get(input, 'answer')) : undefined;
+    return answer === undefined ? { text: readInput(body, 'text') } : { answer };
 }
 
 /** A string field of an endpoint's JSON input; `''` when it is missing. */
