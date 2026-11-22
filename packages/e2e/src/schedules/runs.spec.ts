@@ -13,7 +13,9 @@ test("a run's conversation says its schedule, when it was due and started, and w
 
     await page.goto('/projects/p-health/conversations/c-late');
     await expect(main(page).getByText('Started by Morning inbox')).toBeVisible();
-    await expect(main(page)).toContainText('Due today 7:00 · started 9:13, the computer was asleep or piko was closed');
+    await expect(main(page)).toContainText(
+        "Due today 7:00 · started 9:13, late: the computer was asleep, piko was closed or the agent's environment was still starting",
+    );
 
     await page.goto('/projects/p-health/conversations/c-ontime');
     await expect(main(page)).toContainText('Due yesterday 7:00 · started 7:02');
@@ -122,6 +124,7 @@ test("an agent's change to the schedules shows in the project's history without 
         { term: moment(20, 9, 0), at: moment(20, 9, 0), outcome: 'skipped' },
         ...(daemon.scheduleRuns['s-report'] ?? []),
     ];
+    await expect.poll(() => daemon.streaming).toBe(true);
     daemon.emit({ type: 'schedulesChanged', projectId: 'p-health' });
 
     await expect(historyRows(page)).toHaveText([/Skipped/, /Couldn't start/]);

@@ -225,3 +225,22 @@ message counts), or approved by the owner.
   "Show 23 older" hidden (the list isn't paged).
 
 `77`'s error already read "Couldn't save. <the daemon's reason>"; unchanged.
+
+## Round 10 · implementation (schedules, #28)
+
+Asked: word a late run's timing as the built app does. The daemon doesn't know why a run started late, and the agent's
+environment still starting is a third likely cause, so the text names all three.
+
+- [x] `molecules/Run header` (`e3sGdM`): `Meta` (`G6hMR`) "Due Tue 7:00 · ran 7:42, your Mac was asleep until then" →
+  "Due Tue 7:00 · started 7:42, late: the computer was asleep, piko was closed or the agent's environment was still
+  starting"; `auto` → `fixed-width`, `fill_container`, so it wraps to a second line.
+- [x] 13 Conversation · the agent's computer is waking up (`J5p5m`), `Run header` (`lXEMc`), and 16 Conversation · a
+  connected account stopped working (`S0qTs`), `Run header` (`Uvxq8`): `Meta` override "Due today 7:00 · ran on time" →
+  "Due today 7:00 · started 7:00", the app's on-time form.
+- [x] 10 Schedule · its runs (`G1Wg0U`, row `R5Eazq`), 75 (`H0Y0UY`, `s4T6T`), 76 (`GUVm0`, `GBLEE`), 77 (`DaeZG`,
+  `pw5ad`), 78 (`gZAuG`, `kn1P2`): the late run's `Meta` "Due 8:00 · started 9:14, the computer was asleep or piko was
+  closed" → "Due 8:00 · started 9:14, late: the computer was asleep, piko was closed or the agent's environment was still
+  starting".
+- [x] 11 Project · all conversations (`MN3wL`), row `AqOtr`: `Meta` "Due 7:00 · started 9:13" → "Due 7:00 · started
+  9:13, late: the computer was asleep, piko was closed or the agent's environment was still starting" (two hours after
+  its term, the app says why).

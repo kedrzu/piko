@@ -136,6 +136,7 @@ test("an agent's change to the schedule shows on its page without a reload", asy
         { term: moment(20, 9, 0), at: moment(20, 9, 0), outcome: 'skipped' },
         ...(daemon.scheduleRuns['s-report'] ?? []),
     ];
+    await expect.poll(() => daemon.streaming).toBe(true);
     daemon.emit({ type: 'schedulesChanged', projectId: 'p-health' });
 
     await expect(runRows(page)).toHaveText([/Skipped/, /Couldn't start/]);

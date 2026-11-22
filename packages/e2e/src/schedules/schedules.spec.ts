@@ -61,6 +61,7 @@ test("an agent's change to the schedules shows on Schedules without a reload", a
             nextRunAt: moment(21, 11, 0),
         },
     ];
+    await expect.poll(() => daemon.streaming).toBe(true);
     daemon.emit({ type: 'schedulesChanged', projectId: 'p-health' });
 
     await expect(scheduleRows(page)).toHaveText([/Drink water/, /Morning inbox/, /Weekly report/, /Invoice reminder/]);
@@ -92,6 +93,7 @@ test("a schedule the agent removed loses its tab while another screen shows; whi
     await expect(tabLinks(page)).toHaveText(['Weekly report', 'Morning inbox']);
 
     daemon.schedules = daemon.schedules.filter(schedule => schedule.id === 's-invoices');
+    await expect.poll(() => daemon.streaming).toBe(true);
     daemon.emit({ type: 'schedulesChanged', projectId: 'p-health' });
 
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('This schedule is gone');

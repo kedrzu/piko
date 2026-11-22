@@ -5,5 +5,5 @@ onTime:
   en[auto]: Due {due} · started {time}
 
 late:
-  pl: Termin {due} · ruszyło {time}, komputer był uśpiony albo piko było zamknięte
-  en[auto]: Due {due} · started {time}, the computer was asleep or piko was closed
+  pl: 'Termin {due} · ruszyło {time}, z opóźnieniem: komputer był uśpiony, piko było zamknięte albo środowisko agenta jeszcze się uruchamiało'
+  en[auto]: 'Due {due} · started {time}, late: the computer was asleep, piko was closed or the agent''s environment was still starting'

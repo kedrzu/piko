@@ -6677,7 +6677,9 @@
                       "id": "G6hMR",
                       "name": "Meta",
                       "fill": "$ink-body",
-                      "content": "Due Tue 7:00 · ran 7:42, your Mac was asleep until then",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Due Tue 7:00 · started 7:42, late: the computer was asleep, piko was closed or the agent's environment was still starting",
                       "fontFamily": "$font-body",
                       "fontSize": 13,
                       "fontWeight": "normal"
@@ -13051,7 +13053,7 @@
                               "content": "Two invoices to file"
                             },
                             "v1x5GU": {
-                              "content": "Due 8:00 · started 9:14, the computer was asleep or piko was closed"
+                              "content": "Due 8:00 · started 9:14, late: the computer was asleep, piko was closed or the agent's environment was still starting"
                             }
                           }
                         },
@@ -13989,7 +13991,7 @@
                           "content": "Ran late · 1 new role"
                         },
                         "v1x5GU": {
-                          "content": "Due 7:00 · started 9:13"
+                          "content": "Due 7:00 · started 9:13, late: the computer was asleep, piko was closed or the agent's environment was still starting"
                         },
                         "avoan": {
                           "enabled": true
@@ -14902,7 +14904,7 @@
                       "content": "Started by Morning routine"
                     },
                     "G6hMR": {
-                      "content": "Due today 7:00 · ran on time"
+                      "content": "Due today 7:00 · started 7:00"
                     }
                   }
                 },
@@ -16161,7 +16163,7 @@
                       "content": "Started by Sort my email"
                     },
                     "G6hMR": {
-                      "content": "Due today 7:00 · ran on time"
+                      "content": "Due today 7:00 · started 7:00"
                     }
                   }
                 },
@@ -32442,7 +32444,7 @@
                               "content": "Two invoices to file"
                             },
                             "v1x5GU": {
-                              "content": "Due 8:00 · started 9:14, the computer was asleep or piko was closed"
+                              "content": "Due 8:00 · started 9:14, late: the computer was asleep, piko was closed or the agent's environment was still starting"
                             }
                           }
                         },
@@ -33214,7 +33216,7 @@
                               "content": "Two invoices to file"
                             },
                             "v1x5GU": {
-                              "content": "Due 8:00 · started 9:14, the computer was asleep or piko was closed"
+                              "content": "Due 8:00 · started 9:14, late: the computer was asleep, piko was closed or the agent's environment was still starting"
                             }
                           }
                         },
@@ -34004,7 +34006,7 @@
                               "content": "Two invoices to file"
                             },
                             "v1x5GU": {
-                              "content": "Due 8:00 · started 9:14, the computer was asleep or piko was closed"
+                              "content": "Due 8:00 · started 9:14, late: the computer was asleep, piko was closed or the agent's environment was still starting"
                             }
                           }
                         },
@@ -34836,7 +34838,7 @@
                                   "content": "Two invoices to file"
                                 },
                                 "v1x5GU": {
-                                  "content": "Due 8:00 · started 9:14, the computer was asleep or piko was closed"
+                                  "content": "Due 8:00 · started 9:14, late: the computer was asleep, piko was closed or the agent's environment was still starting"
                                 }
                               }
                             },
