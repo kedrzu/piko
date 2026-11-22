@@ -39,6 +39,8 @@ export const ScheduleLayoutProps = {
   paused: Boolean,
   /** The runs are being read: a spinner in the list's place, never "No runs yet". */
   runsLoading: Boolean,
+  /** Why the runs could not be read, the technical message behind "Show details"; shown with Try again. */
+  runsError: defineProp<string>(),
   /** Newest first. */
   runs: { type: Array as PropType<readonly ScheduleLayoutRun[]>, default: () => [] },
   /** When it runs next ("tomorrow 8:00"), said while it has no runs yet. */
@@ -55,6 +57,8 @@ export const ScheduleLayoutProps = {
   saving: Boolean,
   /** Why the last save failed. */
   saveError: defineProp<string>(),
+  /** Why the last deletion failed, in the delete dialog. */
+  deleteError: defineProp<string>(),
   /** The schedule was removed (by the agent) while the screen was open: only that, and the way back. */
   gone: Boolean,
 } as const;
@@ -71,17 +75,20 @@ export interface ScheduleLayoutEvents {
   save: [value: ScheduleSettingsValue];
   /** The person confirmed the deletion; awaited, the dialog's Delete schedule is busy until it settles. */
   delete: [];
+  /** The person asked to read the runs again; awaited, Try again is busy until it settles. */
+  retryRuns: [];
 }
 </script>
 
 <script lang="ts" setup>
-import { ArrowLeft, CalendarX, ChevronRight, Folder, Trash2 } from '@lucide/vue';
+import { ArrowLeft, CalendarX, ChevronRight, Folder, RefreshCw, Trash2 } from '@lucide/vue';
 import { useTranslate } from '@nzyme/vue-i18n/useTranslate.js';
 import { useEmitAsync } from '@nzyme/vue-utils/useEmitAsync.js';
 import { useId } from 'vue';
 import { RouterLink } from 'vue-router';
 
 import Button from './Button.vue';
+import ErrorDetails from './ErrorDetails.vue';
 import HistoryRow from './HistoryRow.vue';
 import ScheduleDeleteDialog from './ScheduleDeleteDialog.vue';
 import * as l from './ScheduleLayout.loc.js';
@@ -101,6 +108,10 @@ const runsId = useId();
 
 function confirmDelete() {
   return emitAsync('delete');
+}
+
+function retryRuns() {
+  return emitAsync('retryRuns');
 }
 </script>
 
@@ -201,8 +212,25 @@ function confirmDelete() {
           >
             {{ t(l.runs) }}
           </h2>
+          <div
+            v-if="props.runsError != null"
+            :class="[$style.scheduleLayout_list, $style.scheduleLayout_runsFailed]"
+            role="alert"
+          >
+            <p :class="$style.scheduleLayout_runsFailedBody">{{ t(l.runsFailed) }}</p>
+            <ErrorDetails :details="props.runsError">
+              <template #actions>
+                <Button
+                  :icon="RefreshCw"
+                  @click="retryRuns"
+                >
+                  {{ t(l.retry) }}
+                </Button>
+              </template>
+            </ErrorDetails>
+          </div>
           <Spinner
-            v-if="props.runsLoading"
+            v-else-if="props.runsLoading"
             :class="$style.scheduleLayout_spinner"
             :label="t(l.loadingRuns)"
           />
@@ -249,6 +277,7 @@ function confirmDelete() {
         v-model:open="deleteOpen"
         :name="props.name"
         :project-name="props.projectName"
+        :error="props.deleteError"
         @confirm="confirmDelete"
       />
     </template>
@@ -403,6 +432,17 @@ $settings-width: 340px;
   overflow: hidden;
   border: 1px solid $color-border;
   border-radius: $radius-l;
+}
+
+.scheduleLayout_runsFailed {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-12;
+}
+
+.scheduleLayout_runsFailedBody {
+  margin: 0;
+  color: $color-ink-body;
 }
 
 .scheduleLayout_noRuns {

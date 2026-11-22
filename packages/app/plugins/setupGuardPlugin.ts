@@ -17,6 +17,8 @@ const ALLOWED_ROUTES: Record<SetupProgress, readonly [string, ...string[]]> = {
     done: [
         'home',
         'memory',
+        'schedules',
+        'schedule',
         'project',
         'conversation',
         'file',
@@ -29,7 +31,7 @@ const ALLOWED_ROUTES: Record<SetupProgress, readonly [string, ...string[]]> = {
 };
 
 /** The app's own screens, past the first run. */
-const APP_ROUTES: readonly string[] = ['home', 'memory', 'project', 'conversation', 'file'];
+const APP_ROUTES: readonly string[] = ['home', 'memory', 'schedules', 'schedule', 'project', 'conversation', 'file'];
 
 /**
  * Keeps the first run in order: a navigation goes to a screen allowed where the first run stands, so the app never

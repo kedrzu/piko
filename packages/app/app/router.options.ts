@@ -21,6 +21,16 @@ export default {
                     component: () => import('@/memory/MemoryPage.vue'),
                 },
                 {
+                    path: 'schedules',
+                    name: 'schedules',
+                    component: () => import('@/schedules/SchedulesPage.vue'),
+                },
+                {
+                    path: 'projects/:projectId/schedules/:scheduleId',
+                    name: 'schedule',
+                    component: () => import('@/schedules/SchedulePage.vue'),
+                },
+                {
                     path: 'projects/:projectId',
                     name: 'project',
                     component: () => import('@/projects/ProjectPage.vue'),

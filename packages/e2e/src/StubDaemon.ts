@@ -330,6 +330,9 @@ export class StubDaemon {
                 return this.readMemoryFile(readInput(body, 'path'));
             case 'memory/reveal':
                 return this.reveal(body);
+            case 'schedules/list':
+                // The shell lists them for the sidebar's count. TODO(#28): schedules and their runs, for their e2e.
+                return [];
             case 'ai/status':
                 return this.aiStatus();
             case 'claude/login/start':

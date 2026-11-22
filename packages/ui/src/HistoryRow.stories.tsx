@@ -55,6 +55,19 @@ export const Running: Story = {
     decorators: [inList],
 };
 
+/** A run whose conversation is not at hand (not loaded yet, or gone): only that it started. */
+export const Started: Story = {
+    args: {
+        day: 'Dziś',
+        time: '8:00',
+        status: 'started',
+        title: 'Sortuj moją pocztę',
+        detail: 'Uruchomione o 8:00',
+        to: '/projects/p2/conversations/c3',
+    },
+    decorators: [inList],
+};
+
 export const Late: Story = {
     args: {
         day: 'pt 20 lis',

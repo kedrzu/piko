@@ -41,6 +41,21 @@ export const Finished: Story = {
     decorators: [inTable],
 };
 
+/** A last run in another project: whether it still runs is not known, so only that it started. */
+export const Started: Story = {
+    args: {
+        name: 'Sortuj moją pocztę',
+        to: '/schedules/s1',
+        projectName: 'Poczta',
+        projectColor: 'green',
+        when: 'Codziennie o 8:00',
+        lastRun: 'started',
+        lastRunAt: 'dziś 8:00',
+        nextAt: 'jutro 8:00',
+    },
+    decorators: [inTable],
+};
+
 /** Pen `molecules/Schedule row/Paused`. */
 export const Paused: Story = {
     args: {

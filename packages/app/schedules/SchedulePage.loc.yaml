@@ -1,0 +1,53 @@
+# What a schedule's screen says of its runs, and of the schedule when it cannot be read or saved.
+
+stillRunning:
+  pl: Wciąż działa
+  en[auto]: Still running
+
+finishedAt:
+  pl: Zakończone o {time}
+  en[auto]: Finished at {time}
+
+startedAt:
+  pl: Uruchomione o {time}
+  en[auto]: Started at {time}
+
+late:
+  pl: Termin {due} · ruszyło {time}, komputer był uśpiony albo piko było zamknięte
+  en[auto]: Due {due} · started {time}, the computer was asleep or piko was closed
+
+skipped:
+  pl: Pominięte
+  en[auto]: Skipped
+
+skippedDetail:
+  pl: Poprzednie uruchomienie wciąż na Ciebie czekało
+  en[auto]: The previous run was still waiting for you
+
+failed:
+  pl: Nie udało się uruchomić
+  en[auto]: Couldn't start
+
+failedDetail:
+  pl: Agent nie mógł zacząć pracy
+  en[auto]: The agent could not start
+
+saveFailed:
+  pl: Nie udało się zapisać zmian. Spróbuj ponownie.
+  en[auto]: The changes could not be saved. Try again.
+
+loadFailedTitle:
+  pl: Nie udało się wczytać harmonogramu
+  en[auto]: Couldn't load the schedule
+
+loadFailedBody:
+  pl: To nie Twój błąd, a harmonogram jest bezpieczny. Spróbuj ponownie; jeśli to się powtórzy, zamknij aplikację i otwórz ją jeszcze raz.
+  en[auto]: It's not your fault, and the schedule is safe. Try again; if it happens again, close the app and open it once more.
+
+retry:
+  pl: Spróbuj ponownie
+  en[auto]: Try again
+
+deleteFailed:
+  pl: Nie udało się połączyć z piko działającym w tle. Spróbuj ponownie; jeśli to się powtórzy, zamknij aplikację i otwórz ją jeszcze raz.
+  en[auto]: piko's background service didn't answer. Try again; if it happens again, close the app and open it once more.

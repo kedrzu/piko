@@ -8,7 +8,7 @@ const meta: Meta<typeof RunStatusIcon> = { title: 'RunStatusIcon', component: Ru
 export default meta;
 type Story = StoryObj<typeof RunStatusIcon>;
 
-const STATUSES: RunStatus[] = ['running', 'finished', 'late', 'skipped', 'failed', 'notRun', 'person'];
+const STATUSES: RunStatus[] = ['running', 'started', 'finished', 'late', 'skipped', 'failed', 'notRun', 'person'];
 
 /** Every status, at the History row's size. */
 export const All: Story = {

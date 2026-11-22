@@ -55,7 +55,7 @@ export const ScheduleStore = defineService({
 
         events.event.on(onEvent);
 
-        return { state, load, runsOf, update, remove };
+        return { state, load, runsOf, retryRuns, update, remove };
 
         /**
          * Lists the schedules unless they are listed already; the events keep them current from then on. A failure is
@@ -77,6 +77,11 @@ export const ScheduleStore = defineService({
                 void loadRuns(schedule);
             }
             return held ?? { runs: null, error: null };
+        }
+
+        /** Loads a schedule's runs again, after they failed to load; the runs held stay until the answer comes. */
+        async function retryRuns(schedule: ScheduleRef) {
+            await loadRuns(schedule);
         }
 
         /** Changes a schedule and lists it as the daemon answered, with its last run. */

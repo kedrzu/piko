@@ -13,3 +13,7 @@ cancel:
 confirm:
   pl: Usuń harmonogram
   en[auto]: Delete schedule
+
+failedTitle:
+  pl: Nie udało się usunąć harmonogramu
+  en[auto]: Couldn't delete the schedule

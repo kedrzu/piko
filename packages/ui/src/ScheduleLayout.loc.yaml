@@ -49,3 +49,11 @@ back:
 loadingRuns:
   pl: Wczytuję uruchomienia
   en[auto]: Loading the runs
+
+runsFailed:
+  pl: Nie udało się wczytać uruchomień. To nie Twój błąd, a harmonogram działa dalej.
+  en[auto]: Couldn't load the runs. It's not your fault, and the schedule keeps running.
+
+retry:
+  pl: Spróbuj ponownie
+  en[auto]: Try again

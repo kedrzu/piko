@@ -1,14 +1,14 @@
-<!-- What became of a schedule's run, or of a conversation, as an icon in its colour: turning while it runs, a check when finished, a moon when late, a crossed calendar when skipped, an alert when it couldn't start, a dashed circle before the first run, a speech bubble for a conversation the person started. Decoration: the text beside it says the same; sized by its parent's font. -->
+<!-- What became of a schedule's run, or of a conversation, as an icon in its colour: turning while it runs, a play sign when it started and how it went is unknown, a check when finished, a moon when late, a crossed calendar when skipped, an alert when it couldn't start, a dashed circle before the first run, a speech bubble for a conversation the person started. Decoration: the text beside it says the same; sized by its parent's font. -->
 
 <script lang="ts">
 import type { PropType } from 'vue';
 
 /**
- * `running` still runs; `finished` ran and ended; `late` started after its time (piko was closed or the computer
+ * `running` still runs; `started` started, whether it still runs unknown (its conversation is not at hand); `finished` ran and ended; `late` started after its time (piko was closed or the computer
  * asleep); `skipped` did not start because the previous run still waited; `failed` couldn't start; `notRun` has not
  * come yet; `person` is a conversation the person started, not a run.
  */
-export type RunStatus = 'running' | 'finished' | 'late' | 'skipped' | 'failed' | 'notRun' | 'person';
+export type RunStatus = 'running' | 'started' | 'finished' | 'late' | 'skipped' | 'failed' | 'notRun' | 'person';
 
 export const RunStatusIconProps = {
   status: { type: String as PropType<RunStatus>, required: true },
@@ -16,7 +16,7 @@ export const RunStatusIconProps = {
 </script>
 
 <script lang="ts" setup>
-import { CalendarX, CircleAlert, CircleCheck, CircleDashed, MessageCircle, Moon } from '@lucide/vue';
+import { CalendarX, CircleAlert, CircleCheck, CircleDashed, CirclePlay, MessageCircle, Moon } from '@lucide/vue';
 import { assertNever } from '@nzyme/utils/assertNever.js';
 import { computed } from 'vue';
 
@@ -28,6 +28,8 @@ const icon = computed(() => {
   switch (props.status) {
     case 'running':
       return null;
+    case 'started':
+      return CirclePlay;
     case 'finished':
       return CircleCheck;
     case 'late':
@@ -73,6 +75,10 @@ const icon = computed(() => {
 }
 
 .runStatusIcon_running {
+  color: $color-link-ink;
+}
+
+.runStatusIcon_started {
   color: $color-link-ink;
 }
 

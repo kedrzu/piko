@@ -7,8 +7,11 @@ import type { RouteLocationRaw } from 'vue-router';
 
 import type { ProjectColor } from './ProjectColor.js';
 
-/** What became of the schedule's last run (`RunStatus`, a conversation aside); `notRun` before its first. */
-export type ScheduleRowLastRun = 'running' | 'finished' | 'late' | 'skipped' | 'failed' | 'notRun';
+/**
+ * What became of the schedule's last run (`RunStatus`, a conversation aside); `notRun` before its first, `started` when
+ * whether it still runs is not known.
+ */
+export type ScheduleRowLastRun = 'running' | 'started' | 'finished' | 'late' | 'skipped' | 'failed' | 'notRun';
 
 export const ScheduleRowProps = {
   name: { type: String, required: true },

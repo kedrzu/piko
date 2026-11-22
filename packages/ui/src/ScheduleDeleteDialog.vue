@@ -1,9 +1,13 @@
 <!-- The dialog that confirms deleting a schedule (screen 78): what deleting it does (its runs go, its conversations stay in the project), Cancel and Delete schedule; Delete is busy until the deletion settles. -->
 
 <script lang="ts">
+import { defineProp } from '@nzyme/vue-utils/defineProp.js';
+
 export const ScheduleDeleteDialogProps = {
   name: { type: String, required: true },
   projectName: { type: String, required: true },
+  /** Why the last deletion failed; shown above the buttons, the dialog staying open to try again. */
+  error: defineProp<string>(),
 } as const;
 
 /** What the dialog reports. */
@@ -21,6 +25,7 @@ import { useEmitAsync } from '@nzyme/vue-utils/useEmitAsync.js';
 import Button from './Button.vue';
 import Dialog from './Dialog.vue';
 import DialogDescription from './DialogDescription.vue';
+import ErrorNotice from './ErrorNotice.vue';
 import * as l from './ScheduleDeleteDialog.loc.js';
 
 const props = defineProps(ScheduleDeleteDialogProps);
@@ -44,6 +49,11 @@ function confirm() {
     <DialogDescription :class="$style.scheduleDeleteDialog_body">
       {{ t(l.body, { project: props.projectName }) }}
     </DialogDescription>
+    <ErrorNotice
+      v-if="props.error"
+      :title="t(l.failedTitle)"
+      :body="props.error"
+    />
     <div :class="$style.scheduleDeleteDialog_actions">
       <Button
         variant="secondary"

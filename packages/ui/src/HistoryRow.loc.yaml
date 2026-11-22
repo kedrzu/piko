@@ -2,6 +2,10 @@ running:
   pl: Działa
   en[auto]: Running
 
+started:
+  pl: Uruchomione
+  en[auto]: Started
+
 finished:
   pl: Zakończone
   en[auto]: Finished

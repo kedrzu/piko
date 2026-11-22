@@ -99,6 +99,11 @@ export const RunsLoading: Story = {
     args: { ...SORT_MY_EMAIL, runs: [], runsLoading: true },
 };
 
+/** The runs could not be read: why, with Try again. */
+export const RunsFailed: Story = {
+    args: { ...SORT_MY_EMAIL, runs: [], runsError: 'Error: connect ECONNREFUSED 127.0.0.1:4317' },
+};
+
 export const Paused: Story = {
     args: { ...SORT_MY_EMAIL, paused: true },
 };
@@ -128,6 +133,15 @@ export const SaveFailed: Story = {
 /** Screen 78: Delete asks first. */
 export const DeleteOpen: Story = {
     args: { ...SORT_MY_EMAIL, deleteOpen: true },
+};
+
+/** The deletion failed: the dialog stays open and says so. */
+export const DeleteFailed: Story = {
+    args: {
+        ...SORT_MY_EMAIL,
+        deleteOpen: true,
+        deleteError: 'Nie udało się połączyć z piko działającym w tle. Spróbuj ponownie.',
+    },
 };
 
 /** Screen 80: the agent removed the schedule while the screen was open. */

@@ -1,0 +1,30 @@
+# A moment of a schedule (a run, the next term): its day said alone ("Today", in a history row's day column) and with
+# its time inside a sentence ("Next: tomorrow 8:00").
+
+today:
+  en: Today
+  pl: Dziś
+
+yesterday:
+  en: Yesterday
+  pl: Wczoraj
+
+tomorrow:
+  en: Tomorrow
+  pl: Jutro
+
+todayAt:
+  en: today {time}
+  pl: dziś {time}
+
+yesterdayAt:
+  en: yesterday {time}
+  pl: wczoraj {time}
+
+tomorrowAt:
+  en: tomorrow {time}
+  pl: jutro {time}
+
+dateAt:
+  en: '{date}, {time}'
+  pl: '{date}, {time}'
