@@ -15,6 +15,8 @@ export interface Schedule {
     paused: boolean;
     /** The next term (epoch ms); absent while the schedule is paused or once the rule has run out. */
     nextRunAt?: number;
+    /** The newest run, from the schedule's state; absent while it has not run, or has no state. */
+    lastRun?: ScheduleRun;
 }
 
 /** What became of one term of a schedule. */

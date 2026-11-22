@@ -123,6 +123,7 @@ export const ConversationStore = defineService({
                 case 'projectFilesChanged':
                 case 'fileAgentChanged':
                 case 'memoryChanged':
+                case 'schedulesChanged':
                 case 'pluginsChanged':
                 case 'pluginInstalled':
                     // Not about conversations.

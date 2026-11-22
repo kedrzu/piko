@@ -8,14 +8,14 @@ import { createEventEmitter } from '@nzyme/utils/createEventEmitter.js';
 
 import type { DataRootEvent } from '@piko/common/api/DaemonEventTypes.js';
 
-import { MEMORY_FOLDER, PIKO_DATA_ROOT, PROJECTS_FOLDER } from '../env.js';
+import { MEMORY_FOLDER, PIKO_DATA_ROOT, PROJECTS_FOLDER, SCHEDULES_FOLDER } from '../env.js';
 import { ProjectService } from '../projects/ProjectService.js';
 
 /**
  * Changes in the profile's data root, for the daemon's event stream: one watcher on the whole data root, started by the
  * first listener and closed when the last one leaves. A watcher that fails is closed and started again after
  * `RESTART_DELAY_MS`, while anyone listens. Changes are gathered for `DEBOUNCE_MS` from the first one, then each kind is
- * sent once (files inside a project once per project), so an agent writing many files sends a few events, not one per
+ * sent once (files and schedules inside a project once per project), so an agent writing many files sends a few events, not one per
  * file.
  */
 export interface DataRootWatchServiceShape {
@@ -32,8 +32,21 @@ const PROJECT_MARKER = '.project.json';
 /** What one change in the data root means, before it is sent. */
 type DataRootChange =
     | { type: 'projectsChanged' | 'memoryChanged' }
-    /** A file inside the project kept in `folder` (a folder name directly in the projects' folder). */
-    | { type: 'projectFilesChanged'; folder: string };
+    /**
+     * A file inside the project kept in `folder` (a folder name directly in the projects' folder): one in the project's
+     * schedules folder is `schedulesChanged`, any other `projectFilesChanged`.
+     */
+    | { type: 'projectFilesChanged' | 'schedulesChanged'; folder: string };
+
+/** Params of the watcher's flush of the changes inside projects. */
+interface ProjectChangesFlushParams {
+    /** Folders of projects with changed files. */
+    folders: string[];
+    /** Folders of projects with changed schedules. */
+    scheduleFolders: string[];
+    /** Every project may have changed. */
+    all: boolean;
+}
 
 /** The profile's data root, watched. */
 export const DataRootWatchService = defineService({
@@ -45,6 +58,8 @@ export const DataRootWatchService = defineService({
         const pending = new Set<'projectsChanged' | 'memoryChanged'>();
         /** The folders of projects whose files changed; mapped to the projects' ids when sent. */
         const pendingFolders = new Set<string>();
+        /** The folders of projects whose schedules changed; mapped to the projects' ids when sent. */
+        const pendingScheduleFolders = new Set<string>();
         /** Whether any project's files may have changed: a change without a file name. */
         let pendingAllProjects = false;
         let listenerCount = 0;
@@ -123,6 +138,7 @@ export const DataRootWatchService = defineService({
             timer = undefined;
             pending.clear();
             pendingFolders.clear();
+            pendingScheduleFolders.clear();
             pendingAllProjects = false;
             failing = false;
             logger.debug('Data root no longer watched');
@@ -141,6 +157,8 @@ export const DataRootWatchService = defineService({
                 }
                 if (change.type === 'projectFilesChanged') {
                     pendingFolders.add(change.folder);
+                } else if (change.type === 'schedulesChanged') {
+                    pendingScheduleFolders.add(change.folder);
                 } else {
                     pending.add(change.type);
                 }
@@ -156,26 +174,33 @@ export const DataRootWatchService = defineService({
                 emitter.emit({ type });
             }
             const folders = [...pendingFolders];
+            const scheduleFolders = [...pendingScheduleFolders];
             const allProjects = pendingAllProjects;
             pendingFolders.clear();
+            pendingScheduleFolders.clear();
             pendingAllProjects = false;
-            if (allProjects || folders.length > 0) {
-                void flushProjectFiles(folders, allProjects);
+            if (allProjects || folders.length > 0 || scheduleFolders.length > 0) {
+                void flushProjectChanges({ folders, scheduleFolders, all: allProjects });
             }
         }
 
         /**
-         * Sends `projectFilesChanged` for each project kept in one of `folders`, or for every project when `all`. The
-         * folder is mapped to the project now, not when the change came: a folder without a marker is no project.
+         * Sends `projectFilesChanged` for each project kept in one of `folders` and `schedulesChanged` for each kept in
+         * one of `scheduleFolders`, or both for every project when `all`. A folder is mapped to the project now, not when
+         * the change came: a folder without a marker is no project.
          */
-        async function flushProjectFiles(folders: string[], all: boolean) {
+        async function flushProjectChanges({ folders, scheduleFolders, all }: ProjectChangesFlushParams) {
             const list = await projects.list().catch((error: unknown) => {
-                logger.warn('Projects could not be listed, project file changes not sent', { error });
+                logger.warn('Projects could not be listed, project changes not sent', { error });
                 return [];
             });
             for (const project of list) {
-                if (all || folders.includes(path.basename(project.dir))) {
+                const folder = path.basename(project.dir);
+                if (all || folders.includes(folder)) {
                     emitter.emit({ type: 'projectFilesChanged', projectId: project.id });
+                }
+                if (all || scheduleFolders.includes(folder)) {
+                    emitter.emit({ type: 'schedulesChanged', projectId: project.id });
                 }
             }
         }
@@ -184,7 +209,7 @@ export const DataRootWatchService = defineService({
 
 /**
  * What a change at `file` (relative to the data root) means to the app, or `null` when nothing: a project folder itself
- * or its marker changes the project list, any other file inside a project folder that project's files, anything in the
+ * or its marker changes the project list, a file inside a project's schedules folder that project's schedules, any other file inside a project folder that project's files, anything in the
  * Memory folder the Memory.
  * @__NO_SIDE_EFFECTS__
  */
@@ -195,7 +220,7 @@ function classify(file: string): DataRootChange | null {
             if (folder === undefined || name === undefined || (name === PROJECT_MARKER && rest.length === 0)) {
                 return { type: 'projectsChanged' };
             }
-            return { type: 'projectFilesChanged', folder };
+            return { type: name === SCHEDULES_FOLDER ? 'schedulesChanged' : 'projectFilesChanged', folder };
         case MEMORY_FOLDER:
             return { type: 'memoryChanged' };
         default:

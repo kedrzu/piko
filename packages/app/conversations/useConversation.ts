@@ -333,6 +333,7 @@ export function useConversation(options: UseConversationOptions): ConversationVi
         if (
             event.type === 'projectsChanged' ||
             event.type === 'projectFilesChanged' ||
+            event.type === 'schedulesChanged' ||
             event.type === 'memoryChanged' ||
             event.type === 'fileAgentChanged' ||
             event.type === 'pluginsChanged' ||

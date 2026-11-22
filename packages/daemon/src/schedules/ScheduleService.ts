@@ -18,6 +18,7 @@ import type {
 } from '@piko/common/api/ScheduleTypes.js';
 import { compareProjectsByName } from '@piko/common/utils/compareProjectsByName.js';
 
+import { SCHEDULES_FOLDER } from '../env.js';
 import { ProjectService } from '../projects/ProjectService.js';
 import type { LocalProject } from '../projects/ProjectService.js';
 import { isErrorCode } from '../utils/isErrorCode.js';
@@ -115,7 +116,6 @@ interface ScheduleFolder {
     stateIds: string[];
 }
 
-const SCHEDULES_FOLDER = '.schedules';
 /** A schedule's id, its file's name: never a path, never hidden. */
 const SCHEDULE_ID = /^[a-z0-9][a-z0-9-]{0,63}$/;
 const DEFINITION_SUFFIX = '.json';
@@ -147,7 +147,8 @@ export const ScheduleService = defineService({
                 for (const id of folder.definitionIds) {
                     const result = await readDefinition(folder.dir, id);
                     if (result && 'definition' in result) {
-                        own.push(toSchedule(project, { id, definition: result.definition }));
+                        const state = await readState(folder.dir, id);
+                        own.push(toSchedule(project, { id, definition: result.definition }, state));
                     }
                 }
                 schedules.push(...own.toSorted(compareProjectsByName));
@@ -164,7 +165,7 @@ export const ScheduleService = defineService({
                 const id = randomUUID();
                 await replaceFile(definitionFile(dir, id), serialize(definition));
                 logger.info('Schedule created', { projectId: project.id, scheduleId: id });
-                return toSchedule(project, { id, definition });
+                return toSchedule(project, { id, definition }, null);
             });
         }
 
@@ -177,7 +178,7 @@ export const ScheduleService = defineService({
                 const definition = validate({ ...current, ...fields });
                 await replaceFile(definitionFile(dir, id), serialize(definition));
                 logger.info('Schedule updated', { projectId: project.id, scheduleId: id });
-                return toSchedule(project, { id, definition });
+                return toSchedule(project, { id, definition }, await readState(dir, id));
             });
         }
 
@@ -464,8 +465,11 @@ function serialize(value: ScheduleDefinition | ScheduleState) {
     return `${JSON.stringify(value, null, 4)}\n`;
 }
 
-/** The schedule as the API gives it, with its next term now, unless paused or the rule has run out. */
-function toSchedule(project: LocalProject, { id, definition }: StoredSchedule): Schedule {
+/**
+ * The schedule as the API gives it, with its next term now, unless paused or the rule has run out, and its newest run
+ * from `state`.
+ */
+function toSchedule(project: LocalProject, { id, definition }: StoredSchedule, state: ScheduleState | null): Schedule {
     const paused = definition.paused ?? false;
     const schedule: Schedule = {
         id,
@@ -484,6 +488,10 @@ function toSchedule(project: LocalProject, { id, definition }: StoredSchedule): 
         if (next != null) {
             schedule.nextRunAt = next;
         }
+    }
+    const lastRun = state?.runs[0];
+    if (lastRun) {
+        schedule.lastRun = lastRun;
     }
     return schedule;
 }

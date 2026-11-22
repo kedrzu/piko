@@ -42,6 +42,9 @@ export const PIKO_LIMA_HOME = defineEnvVariable('PIKO_LIMA_HOME', {
 /** The data root's folder holding every project's folder. */
 export const PROJECTS_FOLDER = 'projects';
 
+/** The folder inside each project's folder holding its schedules: a definition and a state file per schedule. */
+export const SCHEDULES_FOLDER = '.schedules';
+
 /** The data root's folder holding the Memory: plain files about the person, read and written by the agent (design D9). */
 export const MEMORY_FOLDER = 'memory';
 

@@ -72,6 +72,7 @@ export const FileAgentStore = defineService({
                 case 'projectsChanged':
                 case 'projectFilesChanged':
                 case 'memoryChanged':
+                case 'schedulesChanged':
                 case 'pluginsChanged':
                 case 'pluginInstalled':
                 case 'conversationCreated':
