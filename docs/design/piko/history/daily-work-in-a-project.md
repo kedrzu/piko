@@ -136,3 +136,59 @@ Asked: one schedule icon everywhere, the run header included; in the sidebar it 
   routine, Sort my email) hide the leading icon and show the trailing one, in `organisms/Sidebar` and every screen.
 - [ ] Sidebar overrides of every screen rebuilt (an override on a template row had wiped them mid-round; rebuilt
   from the last saved file with the same content).
+
+## Round 8 · agent brief (schedules, #28)
+
+Asked: make `09` and `10` buildable: show only the data a schedule and its runs have (name, project, `when`, prompt,
+paused, next term; per run its term, when it was handled, started / skipped / failed, late, still running), draw the
+inline editing and the states. Removed everything the product doesn't have: per-run summaries, "Waiting for you" as a
+run state, plugin and account lines, per-schedule icons, the description line, "Ask for a new schedule".
+
+Changed: the schedule row and a new switch atom are components; `10` draws its runs as `History row` instances; six new
+screens.
+
+- [ ] Daily work · components (`C1PeFe`): new `Row 4` (`R8WApW`) with `atoms/Switch/On` (`vyJn4`), `atoms/Switch/Off`
+  (`cAyC4`, an instance of On), `molecules/Schedule row/Paused` (`Ty0dF`) and `molecules/Text area/Filled/Grows`
+  (`q3y33O`, the text area whose input grows with the prompt, `fit_content(104)`); `molecules/Schedule row` moved
+  into Row 4.
+- [ ] `molecules/Schedule row` (`PnF9h`): `Subtitle` removed; tile project colour and per-schedule icon →
+  `$link-soft` / `calendar-clock` / `$link-ink`; `When` 150 → 210 px; `Last run` 200 → 220 px and vertical: `Status`
+  (status icon + "Done · today 8:00") over `Next` ("Next: tomorrow 8:00", 12 px `$ink-faint`); hand-drawn `Toggle` →
+  `atoms/Switch/On`; width 1000 → 1034.
+- [ ] `molecules/Schedule row/Paused` (`Ty0dF`): tile, name, project, when and status at 0.5 opacity; `Next` →
+  "Paused" (`$ink-body`, 600); switch → `atoms/Switch/Off`.
+- [ ] 09 Schedules (`D7r3x`): rows rebuilt as eight `Schedule row` instances, one per last-run state: still running,
+  ran late, skipped, done, couldn't start (`$attention-ink` label), not run yet, "No more runs", paused. Status icons:
+  `loader-circle` `$link-ink`, `moon` `$project-amber`, `calendar-x` `$attention-muted`, `circle-check`
+  `$project-green`, `circle-alert` `$attention`, `circle-dashed` `$ink-faint`. Column `What it does` → `Name`, widths
+  follow the row. `Ask for a new schedule` hidden. Lede → "…in every project. Open one to see its runs and change
+  it." Notes reworded: late = runs once when piko is back for the latest missed time; skipped = the previous run
+  still waited (the "shows in Waiting for you" clause dropped). Table radius 16 → `$radius-l`.
+- [ ] 10 Schedule · its runs (`G1Wg0U`): tab icon `mail` → `calendar-clock`, its needs-you dot hidden; header tile →
+  `calendar-clock` on `$link-soft`; meta → "Runs in" + project folder + `Email` as a link; toggle → `atoms/Switch/On`;
+  new `Delete` (`atoms/Button/Ghost`, `trash-2`). Runs → seven `molecules/History row` instances (still running, late,
+  skipped, done, couldn't start, done, done); skipped and failed runs hide the chevron (no conversation). How it runs:
+  `Change` → `Edit`, the prompt as several lines, `Runs in` shows the project with its folder and loses `Open project`,
+  `Needs` and the reconnect warning removed. List and panel radius 16 → `$radius-l`.
+- [ ] 11 Project · all conversations (`MN3wL`): the waiting row (`UBkxZ`) → `LaLWi`, an ordinary finished run ("3 new
+  roles to look at", Today 7:00, no highlight, no dot); skipped row meta → "The previous run was still waiting for
+  you"; late row meta → "Due 7:00 · started 9:13", time 9:14 → 9:13.
+- [ ] 75 Schedule · editing (`H0Y0UY`): new; 10 with How it runs as a form: Name (`Text field/Filled`), What it does
+  (`Text area/Filled/Grows`), Repeat (`Select/Filled`: Every day / Weekdays / Every week on / Every month on day) and
+  Time in a `Day and time` row (Day appears there for weekly and monthly), Runs in read-only, `Form actions` Save and
+  Cancel.
+- [ ] 76 Schedule · a rule the picker can't show (`GUVm0`): new; When read-only ("Every day at 8:00 until 31
+  December") with the hint "This schedule repeats in a way you can't set here. Ask the agent in Email to change it."
+- [ ] 77 Schedule · couldn't save (`DaeZG`): new; Every week on Sunday at 2:30, the daemon's error under the form
+  (`$attention-ink`, `circle-alert`): the time doesn't exist on the night the clocks go forward.
+- [ ] 78 Schedule · delete? (`gZAuG`): new; 10 under the frosted scrim of `17`, dialog "Delete Sort my email?": its
+  run history is deleted, the conversations stay in Email; Cancel and Delete schedule (Attention).
+- [ ] 79 Schedules · none yet (`B4HaS`): new; 09 without table or notes; centred `calendar-clock` tile, "No schedules
+  yet" and how the agent creates one when asked in a project, with an example. No button.
+- [ ] 80 Schedule · gone (`vTtee`): new; 10's breadcrumb and tab, "This schedule is gone", the conversations stay in
+  Email, a "Back to Schedules" link.
+
+Open: `Runs in` has no Edit: the brief's edit form doesn't change the project, so the link would lead nowhere. The
+unused specimen `History row · scheduled, needs you` (`I2tLO`) and the sidebar's "Routine skipped today" waiting item
+still draw the removed waiting signal; they belong to the task that brings it back. `11`'s late row keeps its title
+"Ran late · 1 new role" (the brief only changed its second line).
