@@ -1193,6 +1193,7 @@
     },
   },
   "patchedDependencies": {
+    "@vitest/browser-playwright@4.1.12": "patches/@vitest%2Fbrowser-playwright@4.1.12.patch",
     "bun-types@1.4.4": "patches/bun-types@1.4.4.patch",
   },
   "overrides": {
