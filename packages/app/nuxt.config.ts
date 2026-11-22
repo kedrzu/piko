@@ -19,6 +19,15 @@ export default defineNuxtConfig({
     ssr: false,
     devtools: { enabled: true },
     devServer: { port: DEV_SERVER_PORT },
+    // Both rendered from `docs/brand/` by `bun run icons`; the `.ico` for browsers without SVG favicons.
+    app: {
+        head: {
+            link: [
+                { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
+                { rel: 'icon', href: '/favicon.ico', sizes: '48x48' },
+            ],
+        },
+    },
     modules: [simplifyAliasesModule()],
     // Nothing is auto-registered or auto-imported: every component and function is imported explicitly.
     components: false,

@@ -101,6 +101,8 @@ function pad(row: string[]) {
 }
 
 .csvPreview_scroller {
+  // The containing block of what it scrolls: absolutely positioned content would otherwise lengthen the window.
+  position: relative;
   overflow-x: auto;
   border: 1px solid $color-border;
   border-radius: $radius-m;
