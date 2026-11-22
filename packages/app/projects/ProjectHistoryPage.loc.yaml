@@ -1,0 +1,9 @@
+# The filters of a project's history; each schedule's filter is its name.
+
+all:
+  pl: Wszystkie
+  en[auto]: All
+
+mine:
+  pl: Rozpoczęte przez Ciebie
+  en[auto]: Started by you

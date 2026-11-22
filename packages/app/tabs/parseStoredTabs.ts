@@ -42,6 +42,12 @@ function parseTab(item: unknown): Tab | null {
                 ? { kind: 'schedule', projectId, scheduleId, title: typeof title === 'string' ? title : null }
                 : null;
         }
+        case 'history': {
+            const filter: unknown = Reflect.get(item, 'filter');
+            return typeof projectId === 'string'
+                ? { kind: 'history', projectId, filter: typeof filter === 'string' ? filter : null }
+                : null;
+        }
         case 'newConversation':
             return typeof projectId === 'string' ? { kind: 'newConversation', projectId } : null;
         case 'conversation': {

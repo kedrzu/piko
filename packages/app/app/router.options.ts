@@ -31,6 +31,13 @@ export default {
                     component: () => import('@/schedules/SchedulePage.vue'),
                 },
                 {
+                    // The filter is `?schedule=<schedule id>`, or `?schedule=mine` for the person's conversations; none
+                    // for all.
+                    path: 'projects/:projectId/history',
+                    name: 'history',
+                    component: () => import('@/projects/ProjectHistoryPage.vue'),
+                },
+                {
                     path: 'projects/:projectId',
                     name: 'project',
                     component: () => import('@/projects/ProjectPage.vue'),

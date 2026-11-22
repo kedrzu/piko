@@ -1,0 +1,29 @@
+# What a schedule's run says in a history row (a schedule's screen, a project's history).
+
+stillRunning:
+  pl: Wciąż działa
+  en[auto]: Still running
+
+finishedAt:
+  pl: Zakończone o {time}
+  en[auto]: Finished at {time}
+
+startedAt:
+  pl: Uruchomione o {time}
+  en[auto]: Started at {time}
+
+skipped:
+  pl: Pominięte
+  en[auto]: Skipped
+
+skippedDetail:
+  pl: Poprzednie uruchomienie wciąż na Ciebie czekało
+  en[auto]: The previous run was still waiting for you
+
+failed:
+  pl: Nie udało się uruchomić
+  en[auto]: Couldn't start
+
+failedDetail:
+  pl: Agent nie mógł zacząć pracy
+  en[auto]: The agent could not start

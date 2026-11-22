@@ -1,4 +1,4 @@
-<!-- The app after the first run: Memory, Schedules (with how many) and the projects in the sidebar (App setup pinned first, a project not opened yet marked new) with the active tab's project, its conversations and its files, the open tabs, the screen of the route inside, and the new-project dialog. Starts the daemon's event stream. -->
+<!-- The app after the first run: Memory, Schedules (with how many) and the projects in the sidebar (App setup pinned first, a project not opened yet marked new) with the active tab's project, the conversations she started and the runs she opened, All conversations, its files, the open tabs, the screen of the route inside, and the new-project dialog. Starts the daemon's event stream. -->
 
 <script lang="ts" setup>
 import { NuxtPage } from '#components';
@@ -18,6 +18,7 @@ import type { TabBarItem } from '@piko/ui/TabBar.vue';
 
 import * as lc from '@/conversations/Conversations.loc.js';
 import { ConversationStore } from '@/conversations/ConversationStore.js';
+import { OpenedRunStore } from '@/conversations/OpenedRunStore.js';
 import { DaemonEventStream } from '@/daemon/DaemonEventStream.js';
 import { FileAgentStore } from '@/files/FileAgentStore.js';
 import { fileKind } from '@/files/fileKind.js';
@@ -38,6 +39,7 @@ import ProjectsLoadFailed from './ProjectsLoadFailed.vue';
 
 const store = useService(ProjectStore);
 const conversationStore = useService(ConversationStore);
+const openedRuns = useService(OpenedRunStore);
 const fileStore = useService(ProjectFileStore);
 // Before the event stream starts: the daemon sends what the agent is writing as soon as the app connects.
 const fileAgents = useService(FileAgentStore);
@@ -75,15 +77,27 @@ const selected = computed(() => {
 const selectedConversationId = computed(() =>
   route.name === 'conversation' ? String(route.params['conversationId']) : undefined,
 );
+/**
+ * The conversations the person started and the runs she opened; the other runs are in the project's history and on
+ * their schedule's screen. One of unknown origin may be a run, so it waits until known.
+ */
 const conversations = computed(() =>
   conversationStore.state.projectId === selected.value?.id
-    ? (conversationStore.state.conversations ?? []).map((conversation): ProjectSidebarConversation => ({
-        id: conversation.id,
-        title: conversation.title ?? t(lc.untitled),
-        to: { name: 'conversation', params: { projectId: selected.value?.id, conversationId: conversation.id } },
-        running: conversation.running,
-      }))
+    ? (conversationStore.state.conversations ?? [])
+        .filter(
+          conversation => conversationStore.originOf(conversation) === 'person' || openedRuns.isOpened(conversation.id),
+        )
+        .map((conversation): ProjectSidebarConversation => ({
+          id: conversation.id,
+          title: conversation.title ?? t(lc.untitled),
+          to: { name: 'conversation', params: { projectId: selected.value?.id, conversationId: conversation.id } },
+          running: conversation.running,
+          scheduled: conversationStore.originOf(conversation) === 'run',
+        }))
     : [],
+);
+const allConversationsSelected = computed(
+  () => route.name === 'history' && String(route.params['projectId']) === selected.value?.id,
 );
 const selectedFilePath = computed(() => {
   const path = route.query['path'];
@@ -190,6 +204,8 @@ function tabItem(tab: Tab): TabBarItem {
     }
     case 'newConversation':
       return { ...base, title: t(lc.newConversation), icon: 'conversation', color: colorOf(tab.projectId) };
+    case 'history':
+      return { ...base, title: t(l.allConversations), icon: 'conversation', color: colorOf(tab.projectId) };
     case 'conversation': {
       const live =
         conversationStore.state.projectId === tab.projectId ? conversationStore.find(tab.conversationId) : undefined;
@@ -240,6 +256,8 @@ function colorOf(projectId: string): ProjectColor {
         :selected-id="selected?.id"
         :conversations="conversations"
         :selected-conversation-id="selectedConversationId"
+        :all-conversations-to="selected ? { name: 'history', params: { projectId: selected.id } } : undefined"
+        :all-conversations-selected="allConversationsSelected"
         :files="files"
         :selected-file-path="selectedFilePath"
         @toggle-folder="fileStore.toggle"

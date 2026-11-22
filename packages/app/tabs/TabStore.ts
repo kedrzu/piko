@@ -31,6 +31,12 @@ export type Tab =
           title: string | null;
       }
     | { kind: 'newConversation'; projectId: string }
+    | {
+          kind: 'history';
+          projectId: string;
+          /** The filter last shown (`?schedule=`), so coming back to the tab keeps it; `null` for all. */
+          filter: string | null;
+      }
     | { kind: 'file'; projectId: string; path: string }
     | { kind: 'memory' }
     | { kind: 'schedules' }
@@ -80,6 +86,10 @@ export const TabStore = defineService({
                     return { kind: 'schedule', projectId, scheduleId: String(route.params['scheduleId']), title: null };
                 case 'project':
                     return { kind: 'newConversation', projectId };
+                case 'history': {
+                    const filter = route.query['schedule'];
+                    return { kind: 'history', projectId, filter: typeof filter === 'string' ? filter : null };
+                }
                 case 'conversation':
                     return {
                         kind: 'conversation',
@@ -107,6 +117,9 @@ export const TabStore = defineService({
                     return `schedule:${tab.projectId}:${tab.scheduleId}`;
                 case 'newConversation':
                     return `newConversation:${tab.projectId}`;
+                case 'history':
+                    // One per project, whatever it is filtered by.
+                    return `history:${tab.projectId}`;
                 case 'conversation':
                     return `conversation:${tab.projectId}:${tab.conversationId}`;
                 case 'file':
@@ -127,6 +140,12 @@ export const TabStore = defineService({
                     return { name: 'schedule', params: { projectId: tab.projectId, scheduleId: tab.scheduleId } };
                 case 'newConversation':
                     return { name: 'project', params: { projectId: tab.projectId } };
+                case 'history':
+                    return {
+                        name: 'history',
+                        params: { projectId: tab.projectId },
+                        query: tab.filter === null ? {} : { schedule: tab.filter },
+                    };
                 case 'conversation':
                     return {
                         name: 'conversation',
@@ -139,13 +158,18 @@ export const TabStore = defineService({
             }
         }
 
-        /** Opens a tab at the end, unless it is open already. */
+        /** Opens a tab at the end, unless it is open already; a history tab open already takes the filter shown now. */
         function open(tab: Tab) {
             const key = keyOf(tab);
-            if (tabs.value.some(other => keyOf(other) === key)) {
+            const index = tabs.value.findIndex(other => keyOf(other) === key);
+            if (index === -1) {
+                save([...tabs.value, withTitle(tab)]);
                 return;
             }
-            save([...tabs.value, withTitle(tab)]);
+            const held = tabs.value[index];
+            if (tab.kind === 'history' && held?.kind === 'history' && held.filter !== tab.filter) {
+                save(tabs.value.with(index, tab));
+            }
         }
 
         /**

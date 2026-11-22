@@ -5,3 +5,7 @@ memory:
 schedules:
   en: Schedules
   pl: Harmonogramy
+
+allConversations:
+  en: All conversations
+  pl: Wszystkie rozmowy

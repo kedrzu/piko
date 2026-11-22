@@ -3,7 +3,6 @@
 <script lang="ts" setup>
 import { RefreshCw } from '@lucide/vue';
 import { HttpError } from '@nzyme/fetch-utils/HttpError.js';
-import { assertNever } from '@nzyme/utils/assertNever.js';
 import { useLanguage } from '@nzyme/vue-i18n/useLanguage.js';
 import { useTranslate } from '@nzyme/vue-i18n/useTranslate.js';
 import { useLogger } from '@nzyme/vue-ioc/useLogger.js';
@@ -18,15 +17,14 @@ import ScheduleLayout from '@piko/ui/ScheduleLayout.vue';
 import type { ScheduleLayoutRun } from '@piko/ui/ScheduleLayout.vue';
 import type { ScheduleSettingsValue } from '@piko/ui/ScheduleSettings.vue';
 
-import * as lc from '@/conversations/Conversations.loc.js';
 import { ConversationStore } from '@/conversations/ConversationStore.js';
 import { projectColor } from '@/projects/projectColor.js';
 import { ProjectStore } from '@/projects/ProjectStore.js';
 import { TabStore } from '@/tabs/TabStore.js';
 
 import { buildScheduleUpdate } from './buildScheduleUpdate.js';
+import { describeRun } from './describeRun.js';
 import { formatScheduleMoment } from './formatScheduleMoment.js';
-import { isLateRun } from './isLateRun.js';
 import { parseSchedulePreset } from './schedulePreset.js';
 import * as l from './SchedulePage.loc.js';
 import { ScheduleStore } from './ScheduleStore.js';
@@ -34,8 +32,6 @@ import { useSchedulePausing } from './useSchedulePausing.js';
 
 /** How often "now" moves on, so "Today" turns into "Yesterday" without a reload. */
 const CLOCK_TICK_MS = 60_000;
-/** The time of a term that never started. */
-const NO_TIME = '—';
 
 const store = useService(ScheduleStore);
 const conversations = useService(ConversationStore);
@@ -186,91 +182,27 @@ async function retry() {
 }
 
 function toRunRow(run: ScheduleRun): ScheduleLayoutRun {
-  const id = `${run.term}:${run.at}`;
-  const due = moment(run.term);
-  switch (run.outcome) {
-    case 'started':
-      return { id, ...startedRun(run) };
-    case 'skipped':
-      return {
-        id,
-        day: due.day,
-        time: NO_TIME,
-        status: 'skipped',
-        title: t(l.skipped),
-        statusInTitle: true,
-        detail: t(l.skippedDetail),
-      };
-    case 'failed':
-      return {
-        id,
-        day: due.day,
-        time: NO_TIME,
-        status: 'failed',
-        title: t(l.failed),
-        statusInTitle: true,
-        detail: run.message ?? t(l.failedDetail),
-        to: conversationRoute(run.conversationId),
-      };
-    default:
-      return assertNever(run.outcome);
-  }
-}
-
-/**
- * A started run with its conversation's title and state, when the conversation is at hand (the schedule's project is
- * the open one, so its conversations are listed). Without it, the schedule's name and only that it started.
- */
-function startedRun(run: ScheduleRun): Omit<ScheduleLayoutRun, 'id'> {
-  const ran = moment(run.at);
-  const late = isLateRun(run);
+  const { projectId } = scheduleRef.value;
+  // The schedule's project is the open one, so its conversations are listed; another's are not at hand.
   const conversation =
-    run.conversationId !== undefined && conversations.state.projectId === scheduleRef.value.projectId
+    run.conversationId !== undefined && conversations.state.projectId === projectId
       ? conversations.find(run.conversationId)
       : undefined;
-  const base = { day: ran.day, time: ran.time, to: conversationRoute(run.conversationId) };
-  if (!conversation) {
-    return {
-      ...base,
-      status: late ? 'late' : 'started',
-      title: name.value,
-      detail: late ? lateDetail(run) : t(l.startedAt, { time: ran.time }),
-    };
-  }
-  const title = conversation.title ?? t(lc.untitled);
-  if (conversation.running) {
-    return { ...base, status: 'running', title, detail: t(l.stillRunning) };
-  }
-  if (late) {
-    return { ...base, status: 'late', title, detail: lateDetail(run) };
-  }
   return {
-    ...base,
-    status: 'finished',
-    title,
-    detail: t(l.finishedAt, { time: momentBeside(conversation.updatedAt, run.at) }),
+    id: `${run.term}:${run.at}`,
+    ...describeRun({
+      run,
+      conversation,
+      scheduleName: name.value,
+      projectId,
+      now: now.value,
+      language: language.value,
+    }),
   };
-}
-
-/** When a late run was due and when it started, with the likely reason. */
-function lateDetail(run: ScheduleRun) {
-  return t(l.late, { due: momentBeside(run.term, run.at), time: moment(run.at).time });
-}
-
-function conversationRoute(conversationId: string | undefined) {
-  return conversationId === undefined
-    ? undefined
-    : { name: 'conversation', params: { projectId: scheduleRef.value.projectId, conversationId } };
 }
 
 function moment(at: number) {
   return formatScheduleMoment({ at, now: now.value, language: language.value });
-}
-
-/** A moment said beside another: its time alone on the same day, with its day otherwise. */
-function momentBeside(at: number, other: number) {
-  const said = moment(at);
-  return said.day === moment(other).day ? said.time : said.dayAndTime;
 }
 
 /** The name the schedule's tab remembers, for a schedule gone before this run of the app listed it. */

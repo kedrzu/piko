@@ -10,6 +10,8 @@ test('every kind of tab comes back as it was stored', () => {
         { kind: 'schedule', projectId: 'p1', scheduleId: 's1', title: 'Sort my mail' },
         { kind: 'schedule', projectId: 'p1', scheduleId: 's2', title: null },
         { kind: 'newConversation', projectId: 'p1' },
+        { kind: 'history', projectId: 'p1', filter: 's1' },
+        { kind: 'history', projectId: 'p2', filter: null },
         { kind: 'conversation', projectId: 'p1', conversationId: 'c1', title: null },
         { kind: 'file', projectId: 'p1', path: 'notes/plan.md' },
     ];
@@ -21,6 +23,8 @@ test('what is not a tab is left out, the rest kept in order', () => {
     const stored = JSON.stringify([
         { kind: 'schedule', projectId: 'p1' },
         { kind: 'schedule', projectId: 'p1', scheduleId: 's1', title: 3 },
+        { kind: 'history', filter: 'mine' },
+        { kind: 'history', projectId: 'p1', filter: 7 },
         { kind: 'unknown' },
         null,
         { kind: 'schedules' },
@@ -28,6 +32,7 @@ test('what is not a tab is left out, the rest kept in order', () => {
 
     const expected: Tab[] = [
         { kind: 'schedule', projectId: 'p1', scheduleId: 's1', title: null },
+        { kind: 'history', projectId: 'p1', filter: null },
         { kind: 'schedules' },
     ];
     expect(parseStoredTabs(stored)).toEqual(expected);

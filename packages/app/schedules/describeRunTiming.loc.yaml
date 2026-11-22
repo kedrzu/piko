@@ -1,0 +1,9 @@
+# When a schedule's run was due and when it started, with why it was late.
+
+onTime:
+  pl: Termin {due} · ruszyło {time}
+  en[auto]: Due {due} · started {time}
+
+late:
+  pl: Termin {due} · ruszyło {time}, komputer był uśpiony albo piko było zamknięte
+  en[auto]: Due {due} · started {time}, the computer was asleep or piko was closed
