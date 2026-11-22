@@ -1,4 +1,4 @@
-<!-- The app's sidebar: a New project button in the window bar, Memory, then the projects (each with its mark: App setup's pin, a new project's sparkles), the open one with its Conversations (New conversation first) and its Files (a tree whose folders expand in place) under it, or a line saying there are none. -->
+<!-- The app's sidebar: a New project button in the window bar, Memory and Schedules (with how many there are), then the projects (each with its mark: App setup's pin, a new project's sparkles), the open one with its Conversations (New conversation first, All conversations last) and its Files (a tree whose folders expand in place) under it, or a line saying there are none. -->
 
 <script lang="ts">
 import { defineProp } from '@nzyme/vue-utils/defineProp.js';
@@ -28,6 +28,8 @@ export interface ProjectSidebarConversation {
   to: RouteLocationRaw;
   /** The agent is working on it. */
   running: boolean;
+  /** A schedule started it: its calendar after the title. */
+  scheduled?: boolean;
 }
 
 /** A line of the open project's file tree as the sidebar lists it, under its expanded folders. */
@@ -53,6 +55,12 @@ export const ProjectSidebarProps = {
   memoryTo: { type: [String, Object] as PropType<RouteLocationRaw>, required: true },
   /** The Memory screen is open. */
   memorySelected: Boolean,
+  /** The Schedules screen; the item shows only with it. */
+  schedulesTo: defineProp<RouteLocationRaw>(),
+  /** The Schedules screen (or a schedule's) is open. */
+  schedulesSelected: Boolean,
+  /** How many schedules there are, after the item's label; none while unknown. */
+  schedulesCount: defineProp<number>(),
   /** In the order they are listed. */
   projects: { type: Array as PropType<readonly ProjectSidebarItem[]>, required: true },
   /** The id of the project open now. */
@@ -61,6 +69,10 @@ export const ProjectSidebarProps = {
   conversations: { type: Array as PropType<readonly ProjectSidebarConversation[]>, default: () => [] },
   /** The id of the conversation open now; none while the open project's screen (a new conversation) shows. */
   selectedConversationId: defineProp<string>(),
+  /** The open project's every conversation; the All conversations item shows under its conversations only with it. */
+  allConversationsTo: defineProp<RouteLocationRaw>(),
+  /** The open project's every conversation is open. */
+  allConversationsSelected: Boolean,
   /** The open project's file tree; `null` while it loads. */
   files: { type: Array as PropType<readonly ProjectSidebarFile[] | null>, default: null },
   /** The path of the file open now. */
@@ -76,7 +88,7 @@ export const ProjectSidebarEmits = {
 </script>
 
 <script lang="ts" setup>
-import { Brain, FolderPlus } from '@lucide/vue';
+import { Brain, CalendarClock, FolderPlus } from '@lucide/vue';
 import { useTranslate } from '@nzyme/vue-i18n/useTranslate.js';
 import { computed, useId } from 'vue';
 import { RouterLink } from 'vue-router';
@@ -96,7 +108,9 @@ const headingId = useId();
 const conversationsId = useId();
 const filesId = useId();
 /** Something under the open project shows, not the project's own screen (a new conversation). */
-const childSelected = computed(() => Boolean(props.selectedConversationId ?? props.selectedFilePath));
+const childSelected = computed(() =>
+  Boolean(props.selectedConversationId ?? props.selectedFilePath ?? props.allConversationsSelected),
+);
 const running = computed(() => props.conversations.some(conversation => conversation.running));
 </script>
 
@@ -124,6 +138,23 @@ const running = computed(() => props.conversations.some(conversation => conversa
           aria-hidden="true"
         />
         {{ t(l.memory) }}
+      </RouterLink>
+      <RouterLink
+        v-if="props.schedulesTo"
+        :to="props.schedulesTo"
+        :class="[$style.projectSidebar_navItem, props.schedulesSelected && $style.projectSidebar_navItem_selected]"
+        :aria-current="props.schedulesSelected ? 'page' : undefined"
+      >
+        <CalendarClock
+          :class="$style.projectSidebar_navIcon"
+          aria-hidden="true"
+        />
+        {{ t(l.schedules) }}
+        <span
+          v-if="props.schedulesCount != null"
+          :class="$style.projectSidebar_navCount"
+          >{{ props.schedulesCount }}</span
+        >
       </RouterLink>
     </nav>
     <nav
@@ -178,6 +209,15 @@ const running = computed(() => props.conversations.some(conversation => conversa
                   :to="conversation.to"
                   :selected="conversation.id === props.selectedConversationId"
                   :running="conversation.running"
+                  :scheduled="conversation.scheduled"
+                />
+              </li>
+              <li v-if="props.allConversationsTo">
+                <ConversationRow
+                  kind="all"
+                  :label="t(l.allConversations)"
+                  :to="props.allConversationsTo"
+                  :selected="props.allConversationsSelected"
                 />
               </li>
             </ul>
@@ -267,6 +307,13 @@ $window-bar-height: 48px; // where the window's own buttons sit, beside the New 
 .projectSidebar_navItem_selected {
   background: $color-surface-glass;
   font-weight: $font-weight-semibold;
+}
+
+.projectSidebar_navCount {
+  margin-left: auto;
+  color: $color-ink-muted;
+  font-size: $font-size-small;
+  font-weight: $font-weight-regular;
 }
 
 .projectSidebar_navIcon {

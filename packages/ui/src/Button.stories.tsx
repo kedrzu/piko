@@ -1,4 +1,4 @@
-import { ArrowLeft, ExternalLink, History, Link } from '@lucide/vue';
+import { ArrowLeft, ExternalLink, History, Link, Trash2 } from '@lucide/vue';
 import type { Meta, StoryObj } from '@storybook/vue3-vite';
 
 import styles from './Button.stories.module.scss';
@@ -44,6 +44,27 @@ export const OnTint: Story = {
             >
                 Wszystkie uruchomienia
             </Button>
+        </div>
+    ),
+};
+
+/** Pen `atoms/Button/Attention`, the delete dialog's confirmation. */
+export const Destructive: Story = {
+    render: () => (
+        <Button
+            variant="destructive"
+            icon={Trash2}
+        >
+            Usuń harmonogram
+        </Button>
+    ),
+};
+
+/** A setting's Edit, set in its panel's text. */
+export const Inline: Story = {
+    render: () => (
+        <div class={styles['panel']}>
+            <Button variant="inline">Edytuj</Button>
         </div>
     ),
 };

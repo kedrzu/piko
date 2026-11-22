@@ -1,4 +1,4 @@
-<!-- Pill button with an optional icon: primary, secondary or ghost; busy while its async click handler runs. -->
+<!-- Pill button with an optional icon: primary, secondary, ghost and the rest of its variants; busy while its async click handler runs. -->
 
 <script lang="ts">
 import type { LucideIcon } from '@lucide/vue';
@@ -8,9 +8,10 @@ import { defineProp } from '@nzyme/vue-utils/defineProp.js';
 /**
  * How much a button stands out: one primary action per step, secondary beside it, ghost for a way back; attention for
  * the fix on an attention tint (a banner saying what went wrong); onTint for a secondary action on a tinted box (the
- * run header).
+ * run header); destructive for the action that deletes, confirmed in a dialog; inline for a small action set in a
+ * panel's text (a setting's Edit), link-coloured and without a pill.
  */
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'attention' | 'onTint';
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'attention' | 'onTint' | 'destructive' | 'inline';
 
 export const ButtonProps = {
   ...useButton.props,
@@ -165,6 +166,29 @@ const t = useTranslate();
   &:not(:disabled) {
     @include hover {
       --button-background: #{$color-attention-soft};
+    }
+  }
+}
+
+// `attention-ink`, not the design's `attention`: white on `attention` is under 4.5:1, so no lighter hover either.
+.button_destructive {
+  --button-background: #{$color-attention-ink};
+  --button-border: #{$color-attention-ink};
+  --button-text: #{$color-on-ink};
+}
+
+// Text set in a panel: no pill to pad it, 24px tall for the target size (2.5.8).
+.button_inline {
+  --button-text: #{$color-link-ink};
+
+  min-height: 24px;
+  padding: 0 $spacing-04;
+  border-radius: $radius-s;
+  font-size: $font-size-badge;
+
+  &:not(:disabled) {
+    @include hover {
+      text-decoration: underline;
     }
   }
 }

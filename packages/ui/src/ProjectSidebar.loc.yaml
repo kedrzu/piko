@@ -33,3 +33,11 @@ files:
 noFiles:
   en: No files yet
   pl: Nie ma jeszcze plików
+
+schedules:
+  en: Schedules
+  pl: Harmonogramy
+
+allConversations:
+  en: All conversations
+  pl: Wszystkie rozmowy

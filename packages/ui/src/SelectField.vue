@@ -1,16 +1,24 @@
-<!-- A labelled dropdown that picks one of its options, starting on a "Choose…" prompt; an error shows under it. -->
+<!-- A labelled dropdown that picks one of its options, starting on a "Choose…" prompt unless it always holds one; an error shows under it. -->
 
 <script lang="ts">
 import { useSelectInput } from '@nzyme/vue-forms/components/useSelectInput.jsx';
 import { defineProp } from '@nzyme/vue-utils/defineProp.js';
 import type { PropType } from 'vue';
 
+/** An option whose value is not what the person reads (a code behind a translated label). */
+export interface SelectFieldOption {
+  value: string;
+  label: string;
+}
+
 export const SelectFieldProps = {
   ...useSelectInput.props,
   /** The visible label (with its "(optional)" mark), the dropdown's accessible name. */
   label: { type: String, required: true },
-  /** The options, each its own label and value. */
-  options: { type: Array as PropType<readonly string[]>, required: true },
+  /** The options: a string is its own label and value. */
+  options: { type: Array as PropType<readonly (string | SelectFieldOption)[]>, required: true },
+  /** The value is always one of the options: no "Choose…" prompt to pick. */
+  noPrompt: Boolean,
   /** A line under the field; an error takes its place. */
   help: defineProp<string>(),
   /** Marks the label "(optional)"; leave it off for a required field, which carries no mark. */
@@ -22,6 +30,7 @@ export const SelectFieldEmits = useSelectInput.emits;
 <script lang="ts" setup>
 import { ChevronDown } from '@lucide/vue';
 import { useTranslate } from '@nzyme/vue-i18n/useTranslate.js';
+import { computed } from 'vue';
 
 import FieldFrame from './FieldFrame.vue';
 import * as l from './SelectField.loc.js';
@@ -31,6 +40,9 @@ defineEmits(SelectFieldEmits);
 
 const { SelectInput, field } = useSelectInput();
 const t = useTranslate();
+const choices = computed(() =>
+  props.options.map(option => (typeof option === 'string' ? { value: option, label: option } : option)),
+);
 </script>
 
 <template>
@@ -49,13 +61,18 @@ const t = useTranslate();
         :aria-invalid="invalid || undefined"
         :aria-describedby="describedBy"
       >
-        <option value="">{{ props.placeholder ?? t(l.placeholder) }}</option>
         <option
-          v-for="option in props.options"
-          :key="option"
-          :value="option"
+          v-if="!props.noPrompt"
+          value=""
         >
-          {{ option }}
+          {{ props.placeholder ?? t(l.placeholder) }}
+        </option>
+        <option
+          v-for="option in choices"
+          :key="option.value"
+          :value="option.value"
+        >
+          {{ option.label }}
         </option>
       </SelectInput>
       <ChevronDown

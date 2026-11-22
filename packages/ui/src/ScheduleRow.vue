@@ -34,13 +34,14 @@ export const ScheduleRowEmits = {
 </script>
 
 <script lang="ts" setup>
-import { CalendarClock, Folder } from '@lucide/vue';
+import { Folder } from '@lucide/vue';
 import { useTranslate } from '@nzyme/vue-i18n/useTranslate.js';
 import { computed } from 'vue';
 import { RouterLink } from 'vue-router';
 
 import RunStatusIcon from './RunStatusIcon.vue';
 import * as l from './ScheduleRow.loc.js';
+import ScheduleTile from './ScheduleTile.vue';
 import Switch from './Switch.vue';
 
 const props = defineProps(ScheduleRowProps);
@@ -70,12 +71,7 @@ const next = computed(() => {
       props.paused && $style.scheduleRow_paused,
     ]"
   >
-    <span
-      :class="[$style.scheduleRow_tile, $style.scheduleRow_dim]"
-      aria-hidden="true"
-    >
-      <CalendarClock :class="$style.scheduleRow_tileIcon" />
-    </span>
+    <ScheduleTile :class="$style.scheduleRow_dim" />
     <span
       role="cell"
       :class="$style.scheduleRow_name"
@@ -155,22 +151,6 @@ const next = computed(() => {
     outline: 2px solid $color-focus;
     outline-offset: -2px;
   }
-}
-
-.scheduleRow_tile {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  border-radius: $radius-s;
-  background: $color-link-soft;
-  color: $color-link-ink;
-}
-
-.scheduleRow_tileIcon {
-  width: 15px;
-  height: 15px;
 }
 
 .scheduleRow_name {

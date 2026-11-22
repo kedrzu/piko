@@ -1,0 +1,43 @@
+title:
+  pl: Harmonogramy
+  en[auto]: Schedules
+
+lede:
+  pl: Wszystko, co agent robi sam, we wszystkich projektach. Otwórz harmonogram, żeby zobaczyć jego uruchomienia i go zmienić.
+  en[auto]: Everything the agent does on its own, in every project. Open one to see its runs and change it.
+
+table:
+  pl: Harmonogramy
+  en[auto]: Schedules
+
+loading:
+  pl: Wczytuję harmonogramy
+  en[auto]: Loading the schedules
+
+lateNote:
+  pl: Jeśli piko było zamknięte albo komputer był uśpiony w porze harmonogramu, uruchomi się on raz, gdy piko wróci, za ostatni przegapiony termin, i będzie oznaczony jako opóźniony.
+  en[auto]: If piko was closed or the computer was asleep at a schedule's time, it runs once when piko is back, for the latest time it missed, and shows as late.
+
+skippedNote:
+  pl: Jeśli poprzednie uruchomienie wciąż na Ciebie czeka, następne zostanie pominięte, zamiast się nawarstwiać.
+  en[auto]: If the previous run is still waiting for you, the next one is skipped rather than piling up.
+
+emptyTitle:
+  pl: Nie ma jeszcze harmonogramów
+  en[auto]: No schedules yet
+
+emptyBody:
+  pl: 'Agent tworzy harmonogram, gdy poprosisz go o to w projekcie. Na przykład: „Każdego ranka sprawdź moją skrzynkę i powiedz mi, co jest pilne”.'
+  en[auto]: "The agent creates a schedule when you ask for one in a project. For example: “Every morning, check my inbox and tell me what's urgent.”"
+
+failedTitle:
+  pl: Nie udało się wczytać harmonogramów
+  en[auto]: Couldn't load the schedules
+
+failedBody:
+  pl: To nie Twój błąd, a harmonogramy dalej działają. Spróbuj ponownie; jeśli to się powtórzy, zamknij aplikację i otwórz ją jeszcze raz.
+  en[auto]: It's not your fault, and the schedules still run. Try again; if it happens again, close the app and open it once more.
+
+retry:
+  pl: Spróbuj ponownie
+  en[auto]: Try again

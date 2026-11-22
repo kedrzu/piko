@@ -1,0 +1,15 @@
+title:
+  pl: Usunąć „{name}”?
+  en[auto]: Delete {name}?
+
+body:
+  pl: Przestanie działać, a historia jego uruchomień zostanie usunięta. Rozmowy, które rozpoczął, zostaną w projekcie {project}.
+  en[auto]: It stops running and its run history is deleted. The conversations it started stay in {project}.
+
+cancel:
+  pl: Anuluj
+  en[auto]: Cancel
+
+confirm:
+  pl: Usuń harmonogram
+  en[auto]: Delete schedule

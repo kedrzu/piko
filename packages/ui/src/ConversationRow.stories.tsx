@@ -95,3 +95,17 @@ export const LongTitle: Story = {
         </div>
     ),
 };
+
+/** Screen 11: All conversations open, under the project's conversations. */
+export const AllConversations: Story = {
+    render: () => (
+        <div class={styles['backdrop']}>
+            <ConversationRow
+                kind="all"
+                label="Wszystkie rozmowy"
+                to="/projects/p1/history"
+                selected
+            />
+        </div>
+    ),
+};

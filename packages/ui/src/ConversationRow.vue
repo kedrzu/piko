@@ -1,11 +1,11 @@
-<!-- A row under the open project in the sidebar: a conversation (a speech bubble, its title, a spinner while the agent works; a schedule's calendar after the title, in place of the bubble, when a schedule started it) or New conversation (a plus); a link, white when open. -->
+<!-- A row under the open project in the sidebar: a conversation (a speech bubble, its title, a spinner while the agent works; a schedule's calendar after the title, in place of the bubble, when a schedule started it), New conversation (a plus) or All conversations (a clock turning back); a link, white when open. -->
 
 <script lang="ts">
 import type { PropType } from 'vue';
 import type { RouteLocationRaw } from 'vue-router';
 
-/** What the row opens: a conversation, or the project's empty state to start a new one. */
-export type ConversationRowKind = 'conversation' | 'new';
+/** What the row opens: a conversation, the project's empty state to start a new one, or its every conversation. */
+export type ConversationRowKind = 'conversation' | 'new' | 'all';
 
 export const ConversationRowProps = {
   label: { type: String, required: true },
@@ -21,7 +21,8 @@ export const ConversationRowProps = {
 </script>
 
 <script lang="ts" setup>
-import { CalendarClock, MessageCircle, Plus } from '@lucide/vue';
+import { CalendarClock, History, MessageCircle, Plus } from '@lucide/vue';
+import type { LucideIcon } from '@lucide/vue';
 import { useTranslate } from '@nzyme/vue-i18n/useTranslate.js';
 import { RouterLink } from 'vue-router';
 
@@ -31,6 +32,7 @@ import Spinner from './Spinner.vue';
 const props = defineProps(ConversationRowProps);
 
 const t = useTranslate();
+const icons: Record<ConversationRowKind, LucideIcon> = { conversation: MessageCircle, new: Plus, all: History };
 </script>
 
 <template>
@@ -41,7 +43,7 @@ const t = useTranslate();
   >
     <!-- A scheduled row keeps the bubble's place, so its title lines up with the others. -->
     <component
-      :is="props.kind === 'new' ? Plus : MessageCircle"
+      :is="icons[props.kind]"
       :class="[$style.conversationRow_icon, props.scheduled && $style.conversationRow_icon_hidden]"
       aria-hidden="true"
     />

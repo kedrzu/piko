@@ -17,11 +17,12 @@ export const RunHeaderProps = {
 </script>
 
 <script lang="ts" setup>
-import { CalendarClock, History, Settings2 } from '@lucide/vue';
+import { History, Settings2 } from '@lucide/vue';
 import { useTranslate } from '@nzyme/vue-i18n/useTranslate.js';
 
 import Button from './Button.vue';
 import * as l from './RunHeader.loc.js';
+import ScheduleTile from './ScheduleTile.vue';
 
 const props = defineProps(RunHeaderProps);
 
@@ -30,12 +31,7 @@ const t = useTranslate();
 
 <template>
   <div :class="$style.runHeader">
-    <span
-      :class="$style.runHeader_tile"
-      aria-hidden="true"
-    >
-      <CalendarClock :class="$style.runHeader_tileIcon" />
-    </span>
+    <ScheduleTile on-tint />
     <span :class="$style.runHeader_text">
       <span :class="$style.runHeader_title">{{ t(l.startedBy, { name: props.scheduleName }) }}</span>
       <span
@@ -70,23 +66,6 @@ const t = useTranslate();
   border-radius: $radius-m;
   background: $color-link-soft;
   line-height: $line-height-snug;
-}
-
-.runHeader_tile {
-  display: flex;
-  flex: none;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  border-radius: $radius-s;
-  background: $color-surface;
-  color: $color-link-ink;
-}
-
-.runHeader_tileIcon {
-  width: 15px;
-  height: 15px;
 }
 
 .runHeader_text {

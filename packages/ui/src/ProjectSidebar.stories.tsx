@@ -211,3 +211,49 @@ export const NoFiles: Story = {
         </div>
     ),
 };
+
+/** Screen 09's sidebar: Schedules open, with how many there are. */
+export const SchedulesOpen: Story = {
+    render: () => (
+        <div class={styles['backdrop']}>
+            <ProjectSidebar
+                memoryTo="/memory"
+                schedulesTo="/schedules"
+                schedulesCount={5}
+                schedulesSelected
+                projects={PROJECTS}
+            />
+        </div>
+    ),
+};
+
+const JOB_SEARCH: ProjectSidebarConversation[] = [
+    {
+        id: 'c1',
+        title: 'Sprawdzanie ofert na LinkedIn',
+        to: '/projects/p1/conversations/c1',
+        running: false,
+        scheduled: true,
+    },
+    { id: 'c2', title: 'List motywacyjny do Allegro', to: '/projects/p1/conversations/c2', running: false },
+    { id: 'c3', title: 'Widełki płacowe w Warszawie', to: '/projects/p1/conversations/c3', running: false },
+];
+
+/** Screen 11's sidebar: the project's every conversation open, under its conversations; one a schedule started. */
+export const AllConversationsOpen: Story = {
+    render: () => (
+        <div class={styles['backdrop']}>
+            <ProjectSidebar
+                memoryTo="/memory"
+                schedulesTo="/schedules"
+                schedulesCount={5}
+                projects={PROJECTS}
+                selectedId="p1"
+                conversations={JOB_SEARCH}
+                allConversationsTo="/projects/p1/history"
+                allConversationsSelected
+                files={[]}
+            />
+        </div>
+    ),
+};
