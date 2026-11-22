@@ -1,0 +1,39 @@
+running:
+  pl: Działa teraz
+  en[auto]: Running now
+
+finished:
+  pl: Zakończone
+  en[auto]: Finished
+
+late:
+  pl: Z opóźnieniem
+  en[auto]: Ran late
+
+skipped:
+  pl: Pominięte
+  en[auto]: Skipped
+
+failed:
+  pl: Nie udało się uruchomić
+  en[auto]: Couldn't start
+
+notRun:
+  pl: Jeszcze się nie uruchomił
+  en[auto]: Not run yet
+
+statusAt:
+  pl: '{status} · {at}'
+  en[auto]: '{status} · {at}'
+
+next:
+  pl: 'Następne: {at}'
+  en[auto]: 'Next: {at}'
+
+noMoreRuns:
+  pl: Więcej się nie uruchomi
+  en[auto]: No more runs
+
+paused:
+  pl: Wstrzymany
+  en[auto]: Paused

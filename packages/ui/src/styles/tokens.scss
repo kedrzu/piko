@@ -249,6 +249,7 @@ $line-height-relaxed: 1.5;
 $line-height-code: 1.6;
 
 $letter-spacing-eyebrow: 0.09em; // 1.2px at 13px
+$letter-spacing-column-head: 0.035em; // 0.4px at 11.5px, a table's column headers
 
 // Motion
 $duration-fast: 150ms;
@@ -320,4 +321,14 @@ $duration-progress: 1.4s;
     @include hover {
         background: $color-surface;
     }
+}
+
+/// The columns of the schedules table (screen 09): the tile, Name, Project, When, Last run and On. `ScheduleRowHeader`
+/// and `ScheduleRow` both lay out on it, so their columns line up.
+@mixin schedule-table-columns {
+    display: grid;
+    grid-template-columns: 30px minmax(0, 1fr) 170px 210px 220px 34px;
+    column-gap: $spacing-16;
+    align-items: center;
+    padding-inline: $spacing-16;
 }

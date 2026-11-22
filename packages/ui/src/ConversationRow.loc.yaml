@@ -1,3 +1,7 @@
 running:
   en: The agent is working
   pl: Agent pracuje
+
+scheduled:
+  pl: z harmonogramu
+  en[auto]: scheduled

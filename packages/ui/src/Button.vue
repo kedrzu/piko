@@ -7,9 +7,10 @@ import { defineProp } from '@nzyme/vue-utils/defineProp.js';
 
 /**
  * How much a button stands out: one primary action per step, secondary beside it, ghost for a way back; attention for
- * the fix on an attention tint (a banner saying what went wrong).
+ * the fix on an attention tint (a banner saying what went wrong); onTint for a secondary action on a tinted box (the
+ * run header).
  */
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'attention';
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'attention' | 'onTint';
 
 export const ButtonProps = {
   ...useButton.props,
@@ -141,6 +142,17 @@ const t = useTranslate();
   &:not(:disabled) {
     @include hover {
       --button-background: #{$color-surface-soft};
+    }
+  }
+}
+
+.button_onTint {
+  --button-background: #{$color-surface-glass};
+  --button-border: #{$color-border-strong};
+
+  &:not(:disabled) {
+    @include hover {
+      --button-background: #{$color-surface};
     }
   }
 }

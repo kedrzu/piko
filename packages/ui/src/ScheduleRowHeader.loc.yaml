@@ -1,0 +1,19 @@
+name:
+  pl: Nazwa
+  en[auto]: Name
+
+project:
+  pl: Projekt
+  en[auto]: Project
+
+when:
+  pl: Kiedy
+  en[auto]: When
+
+lastRun:
+  pl: Ostatnio
+  en[auto]: Last run
+
+on:
+  pl: Włączony
+  en[auto]: On

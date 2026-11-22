@@ -1,0 +1,11 @@
+startedBy:
+  pl: Uruchomione przez harmonogram {name}
+  en[auto]: Started by {name}
+
+allRuns:
+  pl: Wszystkie uruchomienia
+  en[auto]: All runs
+
+schedule:
+  pl: Harmonogram
+  en[auto]: Schedule

@@ -1,6 +1,7 @@
-import { ArrowLeft, ExternalLink, Link } from '@lucide/vue';
+import { ArrowLeft, ExternalLink, History, Link } from '@lucide/vue';
 import type { Meta, StoryObj } from '@storybook/vue3-vite';
 
+import styles from './Button.stories.module.scss';
 import Button from './Button.vue';
 
 const meta: Meta<typeof Button> = { title: 'Button', component: Button, tags: ['autodocs'] };
@@ -30,6 +31,20 @@ export const Ghost: Story = {
         >
             Wróć
         </Button>
+    ),
+};
+
+/** Pen `atoms/Button/On tint`: on a tinted box, as the run header has it. */
+export const OnTint: Story = {
+    render: () => (
+        <div class={styles['tint']}>
+            <Button
+                variant="onTint"
+                icon={History}
+            >
+                Wszystkie uruchomienia
+            </Button>
+        </div>
     ),
 };
 

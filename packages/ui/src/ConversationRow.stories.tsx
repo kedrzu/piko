@@ -44,6 +44,34 @@ export const Running: Story = {
     ),
 };
 
+/** Round 7: a conversation a schedule started, its calendar after the title. */
+export const Scheduled: Story = {
+    render: () => (
+        <div class={styles['backdrop']}>
+            <ConversationRow
+                label="Sprawdzanie ofert na LinkedIn"
+                to="/projects/p1/conversations/c4"
+                scheduled
+            />
+        </div>
+    ),
+};
+
+/** A scheduled conversation open while the agent works in it. */
+export const ScheduledRunning: Story = {
+    render: () => (
+        <div class={styles['backdrop']}>
+            <ConversationRow
+                label="Cotygodniowe statystyki"
+                to="/projects/p3/conversations/c5"
+                selected
+                scheduled
+                running
+            />
+        </div>
+    ),
+};
+
 export const NewConversation: Story = {
     render: () => (
         <div class={styles['backdrop']}>
