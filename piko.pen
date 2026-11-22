@@ -143,6 +143,22 @@
               ]
             },
             {
+              "id": "seB4b",
+              "type": "ref",
+              "reusable": true,
+              "ref": "C3khm7",
+              "name": "atoms/Button/Destructive",
+              "fill": "$attention-ink",
+              "descendants": {
+                "d7XCJ": {
+                  "icon": "trash-2"
+                },
+                "CuraD": {
+                  "content": "Delete"
+                }
+              }
+            },
+            {
               "type": "frame",
               "id": "msVTh",
               "name": "atoms/Button/Soft",
@@ -6985,7 +7001,7 @@
                   "type": "text",
                   "id": "o2FaYk",
                   "name": "Count",
-                  "fill": "$ink-faint",
+                  "fill": "$ink-muted",
                   "content": "12",
                   "fontFamily": "$font-body",
                   "fontSize": 12,
@@ -7053,7 +7069,7 @@
                       "type": "text",
                       "id": "zbMSA",
                       "name": "Time",
-                      "fill": "$ink-faint",
+                      "fill": "$ink-muted",
                       "content": "7:42",
                       "fontFamily": "$font-body",
                       "fontSize": 12,
@@ -7629,16 +7645,16 @@
                               "name": "Icon",
                               "width": 14,
                               "height": 14,
-                              "icon": "circle-check",
+                              "icon": "circle-play",
                               "library": "lucide",
-                              "fill": "$project-green"
+                              "fill": "$link-ink"
                             },
                             {
                               "type": "text",
                               "id": "R4pLI",
                               "name": "Label",
                               "fill": "$ink-body",
-                              "content": "Done · today 8:00",
+                              "content": "Started · today 8:00",
                               "fontFamily": "$font-body",
                               "fontSize": 13,
                               "fontWeight": "normal"
@@ -7649,7 +7665,7 @@
                           "type": "text",
                           "id": "OdxBX",
                           "name": "Next",
-                          "fill": "$ink-faint",
+                          "fill": "$ink-muted",
                           "content": "Next: tomorrow 8:00",
                           "fontFamily": "$font-body",
                           "fontSize": 12,
@@ -7676,16 +7692,32 @@
                       "opacity": 0.5
                     },
                     "kWYhA": {
-                      "opacity": 0.5
+                      "opacity": 1
+                    },
+                    "GGdvS": {
+                      "fill": "$ink-muted"
                     },
                     "w075Z": {
+                      "opacity": 1
+                    },
+                    "DviD7": {
                       "opacity": 0.5
+                    },
+                    "DPHHl": {
+                      "fill": "$ink-muted"
                     },
                     "dNu7p": {
-                      "opacity": 0.5
+                      "opacity": 1,
+                      "fill": "$ink-muted"
                     },
                     "VrYpK": {
+                      "opacity": 1
+                    },
+                    "j11MhJ": {
                       "opacity": 0.5
+                    },
+                    "R4pLI": {
+                      "fill": "$ink-muted"
                     },
                     "OdxBX": {
                       "content": "Paused",
@@ -7693,7 +7725,7 @@
                       "fontWeight": "600"
                     },
                     "x6IWu6": {
-                      "id": "zVHY0",
+                      "id": "Ju1RA",
                       "type": "ref",
                       "ref": "cAyC4",
                       "name": "Switch"
@@ -7708,20 +7740,35 @@
               "name": "atoms/Switch/On",
               "reusable": true,
               "width": 34,
-              "height": 20,
-              "fill": "$brand-1",
+              "height": 24,
               "cornerRadius": "$radius-pill",
-              "padding": 2,
-              "justifyContent": "end",
+              "padding": [
+                2,
+                0
+              ],
               "alignItems": "center",
               "children": [
                 {
-                  "type": "ellipse",
-                  "id": "Pbc8p",
-                  "name": "Knob",
-                  "fill": "$surface",
-                  "width": 16,
-                  "height": 16
+                  "type": "frame",
+                  "id": "uz0aP",
+                  "name": "Track",
+                  "width": "fill_container",
+                  "height": 20,
+                  "fill": "$brand-1-strong",
+                  "cornerRadius": "$radius-pill",
+                  "padding": 2,
+                  "justifyContent": "end",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "ellipse",
+                      "id": "Pbc8p",
+                      "name": "Knob",
+                      "fill": "$surface",
+                      "width": 16,
+                      "height": 16
+                    }
+                  ]
                 }
               ]
             },
@@ -7731,8 +7778,14 @@
               "reusable": true,
               "ref": "vyJn4",
               "name": "atoms/Switch/Off",
-              "fill": "$border-strong",
-              "justifyContent": "start"
+              "fill": [],
+              "justifyContent": "start",
+              "descendants": {
+                "uz0aP": {
+                  "fill": "$field-border",
+                  "justifyContent": "start"
+                }
+              }
             },
             {
               "id": "q3y33O",
@@ -12154,7 +12207,7 @@
                       "type": "text",
                       "id": "lMTvN",
                       "name": "Name",
-                      "fill": "$ink-faint",
+                      "fill": "$ink-muted",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
                       "content": "Name",
@@ -12167,7 +12220,7 @@
                       "type": "text",
                       "id": "bFOu9",
                       "name": "Project",
-                      "fill": "$ink-faint",
+                      "fill": "$ink-muted",
                       "textGrowth": "fixed-width",
                       "width": 170,
                       "content": "Project",
@@ -12180,7 +12233,7 @@
                       "type": "text",
                       "id": "vhRwq",
                       "name": "When",
-                      "fill": "$ink-faint",
+                      "fill": "$ink-muted",
                       "textGrowth": "fixed-width",
                       "width": 210,
                       "content": "When",
@@ -12193,7 +12246,7 @@
                       "type": "text",
                       "id": "ui9kV",
                       "name": "Last run",
-                      "fill": "$ink-faint",
+                      "fill": "$ink-muted",
                       "textGrowth": "fixed-width",
                       "width": 220,
                       "content": "Last run",
@@ -12206,7 +12259,7 @@
                       "type": "text",
                       "id": "lr6H2",
                       "name": "On",
-                      "fill": "$ink-faint",
+                      "fill": "$ink-muted",
                       "textGrowth": "fixed-width",
                       "width": 34,
                       "content": "On",
@@ -12237,11 +12290,11 @@
                       "content": "Every day at 8:00"
                     },
                     "j11MhJ": {
-                      "icon": "loader-circle",
+                      "icon": "circle-play",
                       "fill": "$link-ink"
                     },
                     "R4pLI": {
-                      "content": "Running now · today 8:00"
+                      "content": "Started · today 8:00"
                     },
                     "OdxBX": {
                       "content": "Next: tomorrow 8:00"
@@ -12330,11 +12383,11 @@
                       "content": "Mondays at 9:00"
                     },
                     "j11MhJ": {
-                      "icon": "circle-check",
-                      "fill": "$project-green"
+                      "icon": "circle-play",
+                      "fill": "$link-ink"
                     },
                     "R4pLI": {
-                      "content": "Done · Mon 16 Nov, 9:00"
+                      "content": "Started · Mon 16 Nov, 9:00"
                     },
                     "OdxBX": {
                       "content": "Next: Mon 23 Nov, 9:00"
@@ -12424,11 +12477,11 @@
                       "content": "Every evening until 14 Nov"
                     },
                     "j11MhJ": {
-                      "icon": "circle-check",
-                      "fill": "$project-green"
+                      "icon": "circle-play",
+                      "fill": "$link-ink"
                     },
                     "R4pLI": {
-                      "content": "Done · 14 Nov, 20:00"
+                      "content": "Started · 14 Nov, 20:00"
                     },
                     "OdxBX": {
                       "content": "No more runs"
@@ -12455,11 +12508,11 @@
                       "content": "Every month on the 1st at 9:00"
                     },
                     "j11MhJ": {
-                      "icon": "circle-check",
-                      "fill": "$project-green"
+                      "icon": "circle-play",
+                      "fill": "$link-ink"
                     },
                     "R4pLI": {
-                      "content": "Done · 1 Oct, 9:00"
+                      "content": "Started · 1 Oct, 9:00"
                     }
                   }
                 }
@@ -13051,7 +13104,7 @@
                               "content": "A question about the Allegro labels"
                             },
                             "v1x5GU": {
-                              "content": "Done"
+                              "content": "Finished at 8:04"
                             }
                           }
                         },
@@ -13104,7 +13157,7 @@
                               "content": "Sort my email"
                             },
                             "v1x5GU": {
-                              "content": "Done"
+                              "content": "Finished at 8:06"
                             }
                           }
                         },
@@ -13129,7 +13182,7 @@
                               "content": "A reply from the landlord"
                             },
                             "v1x5GU": {
-                              "content": "Done"
+                              "content": "Finished at 8:02"
                             }
                           }
                         }
@@ -13825,7 +13878,7 @@
                           "content": "Cover letter for Allegro"
                         },
                         "v1x5GU": {
-                          "content": "You · 14 messages · letter saved in Cover letters"
+                          "content": "Started by you"
                         },
                         "avoan": {
                           "enabled": false
@@ -13973,7 +14026,7 @@
                           "content": "Salary ranges in Warsaw"
                         },
                         "v1x5GU": {
-                          "content": "You · 6 messages"
+                          "content": "Started by you"
                         },
                         "avoan": {
                           "enabled": false
@@ -14082,7 +14135,7 @@
                           "content": "Rewrite my CV for product roles"
                         },
                         "v1x5GU": {
-                          "content": "You · 32 messages · CV.docx updated"
+                          "content": "Started by you"
                         },
                         "avoan": {
                           "enabled": false
@@ -14105,8 +14158,11 @@
             {
               "type": "frame",
               "id": "H5E409",
+              "x": 48,
+              "y": 715,
               "name": "Footer",
-              "width": "fill_container",
+              "enabled": false,
+              "width": "fill_container(1034)",
               "justifyContent": "center",
               "children": [
                 {
@@ -32439,7 +32495,7 @@
                               "content": "A question about the Allegro labels"
                             },
                             "v1x5GU": {
-                              "content": "Done"
+                              "content": "Finished at 8:04"
                             }
                           }
                         },
@@ -32492,7 +32548,7 @@
                               "content": "Sort my email"
                             },
                             "v1x5GU": {
-                              "content": "Done"
+                              "content": "Finished at 8:06"
                             }
                           }
                         },
@@ -32517,7 +32573,7 @@
                               "content": "A reply from the landlord"
                             },
                             "v1x5GU": {
-                              "content": "Done"
+                              "content": "Finished at 8:02"
                             }
                           }
                         }
@@ -33211,7 +33267,7 @@
                               "content": "A question about the Allegro labels"
                             },
                             "v1x5GU": {
-                              "content": "Done"
+                              "content": "Finished at 8:04"
                             }
                           }
                         },
@@ -33264,7 +33320,7 @@
                               "content": "Sort my email"
                             },
                             "v1x5GU": {
-                              "content": "Done"
+                              "content": "Finished at 8:06"
                             }
                           }
                         },
@@ -33289,7 +33345,7 @@
                               "content": "A reply from the landlord"
                             },
                             "v1x5GU": {
-                              "content": "Done"
+                              "content": "Finished at 8:02"
                             }
                           }
                         }
@@ -34001,7 +34057,7 @@
                               "content": "A question about the Allegro labels"
                             },
                             "v1x5GU": {
-                              "content": "Done"
+                              "content": "Finished at 8:04"
                             }
                           }
                         },
@@ -34054,7 +34110,7 @@
                               "content": "Sort my email"
                             },
                             "v1x5GU": {
-                              "content": "Done"
+                              "content": "Finished at 8:06"
                             }
                           }
                         },
@@ -34079,7 +34135,7 @@
                               "content": "A reply from the landlord"
                             },
                             "v1x5GU": {
-                              "content": "Done"
+                              "content": "Finished at 8:02"
                             }
                           }
                         }
@@ -34833,7 +34889,7 @@
                                   "content": "A question about the Allegro labels"
                                 },
                                 "v1x5GU": {
-                                  "content": "Done"
+                                  "content": "Finished at 8:04"
                                 }
                               }
                             },
@@ -34886,7 +34942,7 @@
                                   "content": "Sort my email"
                                 },
                                 "v1x5GU": {
-                                  "content": "Done"
+                                  "content": "Finished at 8:06"
                                 }
                               }
                             },
@@ -34911,7 +34967,7 @@
                                   "content": "A reply from the landlord"
                                 },
                                 "v1x5GU": {
-                                  "content": "Done"
+                                  "content": "Finished at 8:02"
                                 }
                               }
                             }
@@ -35218,14 +35274,11 @@
                   }
                 },
                 {
-                  "id": "w6cq9",
+                  "id": "gAPid",
                   "type": "ref",
-                  "ref": "C3khm7",
+                  "ref": "seB4b",
                   "name": "Delete",
                   "descendants": {
-                    "d7XCJ": {
-                      "icon": "trash-2"
-                    },
                     "CuraD": {
                       "content": "Delete schedule"
                     }
