@@ -14,15 +14,19 @@ Fulfils the `git-workflow` contract of the `dev` plugin (`skills/pipeline/refere
 
 Several tasks may run at once, each in its own Paseo worktree on its own branch with its own PR.
 
-Facts this rests on (checked 2026-11-08):
+Facts this rests on (checked 2026-11-24):
 
-- Remote `origin` = `https://github.com/kedrzu/piko.git` (private), main line `main`; `gh` is
+- Remote `origin` = `https://github.com/kedrzu/piko.git` (public), main line `main`; `gh` is
   logged in as `kedrzu`.
 - Repository settings: squash merge only (merge commits and rebase merges are off), the squash commit
   takes the PR title and body, and a PR's branch is deleted on merge.
-- The repository is private on GitHub's free plan, so GitHub refuses rulesets and branch protection:
-  nothing on the server stops a push to `main`. Agents never push to `main` anyway: `.claude/git.json`
-  lists it in `protectedBranches`, and the `git` plugin's hook blocks such a push.
+- The `main` ruleset (`gh api repos/kedrzu/piko/rulesets/27108021`; no classic branch protection), with
+  no bypass, the owner included: changes reach `main` only through a PR, squash only; every review
+  thread must be resolved; the checks `Build`, `Desktop` (`build.yml`) and `Verify Submodules`
+  (`verify-submodules.yml`) must pass on the PR's head, which need not be up to date with `main`; no
+  deletion, no force-push, linear history. No approving review is required.
+- Agents never push to `main` anyway: `.claude/git.json` lists it in `protectedBranches`, and the `git`
+  plugin's hook blocks such a push.
 - Tracker: GitHub Issues in the same repository. A task may have no issue.
 - Commit messages, PR titles, PR descriptions, issues and issue comments are in English. Polish is only
   for the conversation with the owner.
@@ -201,14 +205,16 @@ the task branch; node `k` is `<branch>-<k>` (`feat/30-session-list-2`).
 Only on the owner's word („mergujemy”, „merge it”) — it is irreversible and lands on `main`.
 
 1. Sync, the full `verify`, push; the PR must be out of draft.
-2. No required checks and no server-side rules (Facts), so nothing on GitHub stops a bad merge: before
-   merging, list unresolved review threads and act on each one or bring it to the owner — never resolve
-   one just to clear the way:
+2. GitHub refuses the merge while a review thread is unresolved (Facts). List them and act on each one
+   or bring it to the owner — never resolve one just to clear the way:
    ```bash
    gh api graphql -f query='{repository(owner:"kedrzu",name:"piko"){pullRequest(number:<PR>){reviewThreads(first:100){nodes{isResolved path line comments(first:1){nodes{body}}}}}}}' \
      --jq '.data.repository.pullRequest.reviewThreads.nodes[] | select(.isResolved | not)'
    ```
-3. Merge:
+3. Wait for the required checks (Facts): a merge right after a push is refused while they run.
+   `gh pr checks <PR> --watch --fail-fast` (for a stack, every node). A red check is fixed, pushed and
+   watched again; never retry the merge against it.
+4. Merge:
    - **One PR:** `gh pr merge <PR> --squash --match-head-commit "$(git rev-parse HEAD)"` — the PR title
      becomes the commit on `main`; the branch is deleted on merge.
    - **A stack:** `gh pr merge` cannot merge a stacked PR. Merge the **top** PR asynchronously; GitHub
@@ -219,5 +225,5 @@ Only on the owner's word („mergujemy”, „merge it”) — it is irreversibl
        | gh api -X PUT repos/kedrzu/piko/pulls/<top PR>/merge-async --input - --jq .uuid)
      gh api repos/kedrzu/piko/pulls/<top PR>/merge-async/$uuid --jq .status   # poll until not pending
      ```
-4. `gh pr view <PR> --json state,mergeCommit` confirms `MERGED`. A merged PR with `Closes #<N>` closes
+5. `gh pr view <PR> --json state,mergeCommit` confirms `MERGED`. A merged PR with `Closes #<N>` closes
    its issue.
