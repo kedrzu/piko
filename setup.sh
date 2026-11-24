@@ -51,12 +51,15 @@ require_bun_floor
 
 # --- Pen merge driver ---
 #
-# `.gitattributes` routes `*.pen` to the `pen` merge driver, which merges the design file node by node.
-# Registered before the catch-up merge below, which may be the first merge to touch the file. Local
-# config is shared by every worktree of this clone, and setting it again is harmless. A driver that
-# cannot run yet (nothing installed) makes git report a conflict, which the catch-up aborts and reports.
-git config merge.pen.name "Pen design file"
-git config merge.pen.driver "bun pen merge %O %A %B %P"
+# `.gitattributes` routes `*.pen` to the `pen` merge driver, `scripts/penMergeDriver.sh`, which merges the
+# design file node by node. Registered before the catch-up merge below, which may be the first merge to
+# touch the file. Registered per worktree: local config is shared by every worktree of this clone, so a
+# checkout on an older branch would otherwise register its own, possibly stale, driver for all of them.
+# A driver that cannot run yet (nothing installed) makes git report a conflict, with a report under
+# `$(git rev-parse --git-path pen-conflicts)`, which the catch-up aborts and reports.
+git config extensions.worktreeConfig true
+git config --worktree merge.pen.name "Pen design file"
+git config --worktree merge.pen.driver "sh scripts/penMergeDriver.sh %O %A %B %P"
 
 # --- Worktree: catch up with origin/main, copy local files ---
 #
