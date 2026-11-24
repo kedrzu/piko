@@ -1,6 +1,8 @@
 import type { Language } from '@nzyme/i18n/Language.js';
 import { translateToString } from '@nzyme/i18n/translateToString.js';
 
+import { calendarDaysBetween } from '@piko/common/utils/calendarDaysBetween.js';
+
 import * as l from './formatScheduleMoment.loc.js';
 
 /** What `formatScheduleMoment` needs. */
@@ -70,11 +72,4 @@ function formatDate(when: Date, today: Date, language: Language) {
         .map(type => parts.find(part => part.type === type)?.value)
         .filter(value => value !== undefined)
         .join(' ');
-}
-
-/** How many midnights lie from one time to another, in the local time zone; negative when `to` is earlier. */
-function calendarDaysBetween(from: Date, to: Date) {
-    const start = Date.UTC(from.getFullYear(), from.getMonth(), from.getDate());
-    const end = Date.UTC(to.getFullYear(), to.getMonth(), to.getDate());
-    return Math.round((end - start) / 86_400_000);
 }
