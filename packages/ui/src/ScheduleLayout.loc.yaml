@@ -1,0 +1,59 @@
+breadcrumb:
+  pl: Ścieżka
+  en[auto]: Breadcrumb
+
+schedules:
+  pl: Harmonogramy
+  en[auto]: Schedules
+
+runsIn:
+  pl: Działa w
+  en[auto]: Runs in
+
+on:
+  pl: Włączony
+  en[auto]: On
+
+off:
+  pl: Wyłączony
+  en[auto]: Off
+
+delete:
+  pl: Usuń
+  en[auto]: Delete
+
+runs:
+  pl: Uruchomienia
+  en[auto]: Runs
+
+noRuns:
+  pl: Jeszcze się nie uruchomił.
+  en[auto]: No runs yet.
+
+noRunsNext:
+  pl: 'Jeszcze się nie uruchomił. Następne: {at}.'
+  en[auto]: 'No runs yet. Next: {at}.'
+
+goneTitle:
+  pl: Tego harmonogramu już nie ma
+  en[auto]: This schedule is gone
+
+goneBody:
+  pl: Agent usunął harmonogram „{name}”. Rozmowy, które rozpoczął, nadal są w projekcie {project}.
+  en[auto]: The agent removed {name}. The conversations it started are still in {project}.
+
+back:
+  pl: Wróć do harmonogramów
+  en[auto]: Back to Schedules
+
+loadingRuns:
+  pl: Wczytuję uruchomienia
+  en[auto]: Loading the runs
+
+runsFailed:
+  pl: Nie udało się wczytać uruchomień. To nie Twój błąd, a harmonogram działa dalej.
+  en[auto]: Couldn't load the runs. It's not your fault, and the schedule keeps running.
+
+retry:
+  pl: Spróbuj ponownie
+  en[auto]: Try again

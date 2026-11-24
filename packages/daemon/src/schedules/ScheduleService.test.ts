@@ -57,6 +57,22 @@ test('creates a schedule as a file and lists it with its next term, by project, 
     expect((await schedules.list(alfa.id)).map(schedule => schedule.name)).toEqual(['alfa', 'Zeta']);
 });
 
+test('gives the newest run of the state as lastRun in the list and the update, and none without a state or runs', async () => {
+    const { schedules, alfa } = await setup();
+    const created = await schedules.create({ ...FUTURE, projectId: alfa.id });
+    const bare = await schedules.create({ ...FUTURE, projectId: alfa.id, name: 'Bez stanu' });
+    expect(created.lastRun).toBeUndefined();
+
+    await schedules.writeState({ project: alfa, scheduleId: created.id, state: state([run('ses_2'), run('ses_1')]) });
+    await schedules.writeState({ project: alfa, scheduleId: bare.id, state: state([]) });
+
+    const listed = (await schedules.list(alfa.id)).find(schedule => schedule.id === created.id);
+    expect(listed?.lastRun).toEqual(run('ses_2'));
+    const updated = await schedules.update({ projectId: alfa.id, scheduleId: created.id, name: 'Nowy' });
+    expect(updated.lastRun).toEqual(run('ses_2'));
+    expect((await schedules.list(alfa.id)).find(schedule => schedule.id === bare.id)).not.toHaveProperty('lastRun');
+});
+
 test('updates the given fields over the definition; no next term while paused or once the rule ran out', async () => {
     const { schedules, alfa } = await setup();
     const created = await schedules.create({ ...FUTURE, projectId: alfa.id });

@@ -1,0 +1,27 @@
+lede:
+  pl: Każda rozmowa w tym projekcie, także te rozpoczęte przez harmonogramy.
+  en[auto]: Every conversation in this project, the ones schedules started included.
+
+newConversation:
+  pl: Nowa rozmowa
+  en[auto]: New conversation
+
+filters:
+  pl: Pokaż rozmowy
+  en[auto]: Show conversations
+
+thisWeek:
+  pl: Ten tydzień
+  en[auto]: This week
+
+earlier:
+  pl: Wcześniej
+  en[auto]: Earlier
+
+loading:
+  pl: Wczytuję rozmowy
+  en[auto]: Loading the conversations
+
+empty:
+  pl: Nie ma tu jeszcze żadnej rozmowy.
+  en[auto]: No conversations here yet.

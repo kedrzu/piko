@@ -191,6 +191,7 @@ export function useProjectFile(options: UseProjectFileOptions): ProjectFileViewM
                 break;
             case 'projectsChanged':
             case 'memoryChanged':
+            case 'schedulesChanged':
             case 'pluginsChanged':
             case 'pluginInstalled':
             case 'fileAgentChanged':

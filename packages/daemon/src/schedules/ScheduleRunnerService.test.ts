@@ -86,6 +86,30 @@ test('a due term starts a conversation named after the schedule with its prompt,
     expect(conversations).toEqual(expected);
 });
 
+test('a run’s conversation is listed with its schedule while its prompt is being sent, before the run is recorded', async () => {
+    const fixture = await setup();
+    const schedule = await fixture.createSchedule(DAILY);
+    await fixture.tick('2026-11-13T06:00');
+    const sending = Promise.withResolvers<OpencodePromptReceipt>();
+    const promptStarted = Promise.withResolvers<void>();
+    fixture.prompt.mockImplementationOnce(() => {
+        promptStarted.resolve();
+        return sending.promise;
+    });
+
+    const ticking = fixture.tick('2026-11-13T07:00:02');
+    await promptStarted.promise;
+    const whileSending = await fixture.conversations.list(fixture.project.id);
+    const runsWhileSending = (await fixture.readState(schedule.id)).runs;
+    sending.resolve({ messageId: 'msg_1', admittedAt: 1 });
+    await ticking;
+
+    const expected: Conversation[] = [{ id: 'ses_1', updatedAt: 1, running: false, scheduleId: schedule.id }];
+    expect(runsWhileSending).toEqual([]);
+    expect(whileSending).toEqual(expected);
+    expect(await fixture.conversations.list(fixture.project.id)).toEqual(expected);
+});
+
 test('a weekend without ticks runs once, for the latest missed term only', async () => {
     const fixture = await setup();
     const schedule = await fixture.createSchedule(DAILY);

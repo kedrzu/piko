@@ -56,6 +56,27 @@ export const Memory: Story = {
     ),
 };
 
+export const Schedules: Story = {
+    render: () => (
+        <Tab
+            title="Harmonogramy"
+            to="/schedules"
+            icon="schedule"
+        />
+    ),
+};
+
+export const Schedule: Story = {
+    render: () => (
+        <Tab
+            title="Sortuj moją pocztę"
+            to="/projects/p1/schedules/s1"
+            icon="schedule"
+            color="green"
+        />
+    ),
+};
+
 export const Note: Story = {
     render: () => (
         <Tab

@@ -1,0 +1,8 @@
+// The schedules table of screen 09, which the rows sit in.
+.table {
+    width: 1034px;
+    overflow: hidden;
+    border: 1px solid $color-border;
+    border-radius: $radius-l;
+    background: $color-surface;
+}

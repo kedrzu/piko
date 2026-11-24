@@ -13,7 +13,7 @@ and nothing drew; five `Variants · …` frames (19–33), settled in round 2.
 
 - [ ] Daily work · components (`C1PeFe`): new `Row 3` with `molecules/Filter chip` (`HyXbi`),
   `molecules/Filter chip/On` (`zX8Re`), `molecules/History row` (`sdDvl`), `molecules/Sheet row` (`TG3R9`).
-- [ ] 11 Project · all conversations (`MN3wL`): header only → filters (All, Started by you, one chip per schedule)
+- [x] 11 Project · all conversations (`MN3wL`): header only → filters (All, Started by you, one chip per schedule)
   and the history in `This week` / `Earlier`, scheduled runs marked, the skipped and the late run shown.
 - [ ] 12 Project · empty (`bFs1b`): new; composer in the middle, three starter suggestions, drop files.
 - [ ] 13 Conversation · the agent's computer is waking up (`J5p5m`): new; `Status banner` above the composer.
@@ -47,7 +47,7 @@ Changed: the variant frames are gone (git history keeps them); the picks became 
   `6 files`, per D9.
 - [ ] `molecules/Nav item` (`k6dG9`): default label `About you` → `Memory`.
 - [ ] `organisms/Tab bar` (`osLpo`): `Project files` button (`n7BC6u`) hidden; files live in the sidebar.
-- [ ] `molecules/Run header` (`e3sGdM`): new; schedule name, due and ran times, why late, `All runs` and `Schedule`
+- [x] `molecules/Run header` (`e3sGdM`): new; schedule name, due and ran times, why late, `All runs` and `Schedule`
   as secondary (outlined) buttons 6 px apart. Replaces `molecules/Run marker` (`X6xelD`, deleted) in the three
   Main screens, `13` and `16`.
 - [ ] `molecules/Sidebar label` (`GHAlZ`): new; `Conversations` / `Files` labels inside an open project.
@@ -92,7 +92,7 @@ lighter than it, and the buttons keep a border. Applied to every tinted banner, 
 - [ ] Atoms · Buttons (`J5r3E`): new `atoms/Button/On tint` (`Nle7R`, Secondary with a `$surface-glass` fill) and
   `atoms/Button/On tint/Attention` (`qgvOv`, its border `$attention-border`, label and icon `$attention-ink`).
 - [ ] `molecules/Status banner` (`YTm72`): its button's fill `$surface` → `$surface-glass`.
-- [ ] `molecules/Run header` (`e3sGdM`): `All runs` and `Schedule` → `atoms/Button/On tint`.
+- [x] `molecules/Run header` (`e3sGdM`): `All runs` and `Schedule` → `atoms/Button/On tint`.
 - [ ] `organisms/Browser handoff` (`h1HlE`): border removed; fill `#FDF0EA` → `$attention-soft`; `Open the agent's
   browser` solid Attention → `On tint/Attention`; `Done, continue` fill → `$surface-glass`; raw colours of the
   thumbnail border and the instruction → `$attention-border`, `$ink-body`.
@@ -131,8 +131,116 @@ Asked: one schedule icon everywhere, the run header included; in the sidebar it 
 - [ ] Schedule icon `repeat` → `calendar-clock` (the Schedules nav item's icon) everywhere: `molecules/Run header`
   tile, `molecules/History row` chip, `molecules/Filter chip`, tabs of scheduled conversations, `16`'s reconnect
   card.
-- [ ] `molecules/Conversation row` (`lpPvh`): new `Schedule` icon (`g1fOgp`) after the label, hidden by default; the
+- [x] `molecules/Conversation row` (`lpPvh`): new `Schedule` icon (`g1fOgp`) after the label, hidden by default; the
   leading `Icon` default `repeat` → `message-circle`. Scheduled rows (LinkedIn check, Weekly stats, Morning
   routine, Sort my email) hide the leading icon and show the trailing one, in `organisms/Sidebar` and every screen.
 - [ ] Sidebar overrides of every screen rebuilt (an override on a template row had wiped them mid-round; rebuilt
   from the last saved file with the same content).
+
+## Round 8 · agent brief (schedules, #28)
+
+Asked: make `09` and `10` buildable: show only the data a schedule and its runs have (name, project, `when`, prompt,
+paused, next term; per run its term, when it was handled, started / skipped / failed, late, still running), draw the
+inline editing and the states. Removed everything the product doesn't have: per-run summaries, "Waiting for you" as a
+run state, plugin and account lines, per-schedule icons, the description line, "Ask for a new schedule".
+
+Changed: the schedule row and a new switch atom are components; `10` draws its runs as `History row` instances; six new
+screens.
+
+- [x] Daily work · components (`C1PeFe`): new `Row 4` (`R8WApW`) with `atoms/Switch/On` (`vyJn4`), `atoms/Switch/Off`
+  (`cAyC4`, an instance of On), `molecules/Schedule row/Paused` (`Ty0dF`) and `molecules/Text area/Filled/Grows`
+  (`q3y33O`, the text area whose input grows with the prompt, `fit_content(104)`); `molecules/Schedule row` moved
+  into Row 4.
+- [x] `molecules/Schedule row` (`PnF9h`): `Subtitle` removed; tile project colour and per-schedule icon →
+  `$link-soft` / `calendar-clock` / `$link-ink`; `When` 150 → 210 px; `Last run` 200 → 220 px and vertical: `Status`
+  (status icon + "Done · today 8:00") over `Next` ("Next: tomorrow 8:00", 12 px `$ink-faint`); hand-drawn `Toggle` →
+  `atoms/Switch/On`; width 1000 → 1034.
+- [x] `molecules/Schedule row/Paused` (`Ty0dF`): tile, name, project, when and status at 0.5 opacity; `Next` →
+  "Paused" (`$ink-body`, 600); switch → `atoms/Switch/Off`.
+- [x] 09 Schedules (`D7r3x`): rows rebuilt as eight `Schedule row` instances, one per last-run state: still running,
+  ran late, skipped, done, couldn't start (`$attention-ink` label), not run yet, "No more runs", paused. Status icons:
+  `loader-circle` `$link-ink`, `moon` `$project-amber`, `calendar-x` `$attention-muted`, `circle-check`
+  `$project-green`, `circle-alert` `$attention`, `circle-dashed` `$ink-faint`. Column `What it does` → `Name`, widths
+  follow the row. `Ask for a new schedule` hidden. Lede → "…in every project. Open one to see its runs and change
+  it." Notes reworded: late = runs once when piko is back for the latest missed time; skipped = the previous run
+  still waited (the "shows in Waiting for you" clause dropped). Table radius 16 → `$radius-l`.
+- [x] 10 Schedule · its runs (`G1Wg0U`): tab icon `mail` → `calendar-clock`, its needs-you dot hidden; header tile →
+  `calendar-clock` on `$link-soft`; meta → "Runs in" + project folder + `Email` as a link; toggle → `atoms/Switch/On`;
+  new `Delete` (`atoms/Button/Ghost`, `trash-2`). Runs → seven `molecules/History row` instances (still running, late,
+  skipped, done, couldn't start, done, done); skipped and failed runs hide the chevron (no conversation). How it runs:
+  `Change` → `Edit`, the prompt as several lines, `Runs in` shows the project with its folder and loses `Open project`,
+  `Needs` and the reconnect warning removed. List and panel radius 16 → `$radius-l`.
+- [x] 11 Project · all conversations (`MN3wL`): the waiting row (`UBkxZ`) → `LaLWi`, an ordinary finished run ("3 new
+  roles to look at", Today 7:00, no highlight, no dot); skipped row meta → "The previous run was still waiting for
+  you"; late row meta → "Due 7:00 · started 9:13", time 9:14 → 9:13.
+- [x] 75 Schedule · editing (`H0Y0UY`): new; 10 with How it runs as a form: Name (`Text field/Filled`), What it does
+  (`Text area/Filled/Grows`), Repeat (`Select/Filled`: Every day / Weekdays / Every week on / Every month on day) and
+  Time in a `Day and time` row (Day appears there for weekly and monthly), Runs in read-only, `Form actions` Save and
+  Cancel.
+- [x] 76 Schedule · a rule the picker can't show (`GUVm0`): new; When read-only ("Every day at 8:00 until 31
+  December") with the hint "This schedule repeats in a way you can't set here. Ask the agent in Email to change it."
+- [x] 77 Schedule · couldn't save (`DaeZG`): new; Every week on Sunday at 2:30, the daemon's error under the form
+  (`$attention-ink`, `circle-alert`): the time doesn't exist on the night the clocks go forward.
+- [x] 78 Schedule · delete? (`gZAuG`): new; 10 under the frosted scrim of `17`, dialog "Delete Sort my email?": its
+  run history is deleted, the conversations stay in Email; Cancel and Delete schedule (Attention).
+- [x] 79 Schedules · none yet (`B4HaS`): new; 09 without table or notes; centred `calendar-clock` tile, "No schedules
+  yet" and how the agent creates one when asked in a project, with an example. No button.
+- [x] 80 Schedule · gone (`vTtee`): new; 10's breadcrumb and tab, "This schedule is gone", the conversations stay in
+  Email, a "Back to Schedules" link.
+
+Open: `Runs in` has no Edit: the brief's edit form doesn't change the project, so the link would lead nowhere. The
+unused specimen `History row · scheduled, needs you` (`I2tLO`) and the sidebar's "Routine skipped today" waiting item
+still draw the removed waiting signal; they belong to the task that brings it back. `11`'s late row keeps its title
+"Ran late · 1 new role" (the brief only changed its second line).
+
+## Round 9 · implementation (schedules, #28)
+
+Asked: bring `09`–`11` and `75`–`80` in line with the built screens. Forced by the accessibility tests (contrast, target
+size) and by data the app doesn't have (whether a run waits for an answer, whether another project's run still runs,
+message counts), or approved by the owner.
+
+- [x] `molecules/Schedule row` (`PnF9h`): default status `circle-check` `$project-green` "Done · today 8:00" →
+  `circle-play` `$link-ink` "Started · today 8:00" (the app can't tell a finished run from one still running elsewhere);
+  `Next` `$ink-faint` → `$ink-muted` (contrast under 4.5:1).
+- [x] `molecules/Schedule row/Paused` (`Ty0dF`): name, project, when and status no longer at 0.5 opacity (contrast);
+  their text → `$ink-muted`; only the tile and the project and status icons stay at 0.5.
+- [x] `atoms/Switch/On` (`vyJn4`): 34×20 → 34×24, the 20 px `Track` (`uz0aP`) inside with 2 px above and below
+  (target size); fill `$brand-1` → `$brand-1-strong` (Lemonade's `$brand-1` is under 3:1 on white).
+- [x] `atoms/Switch/Off` (`cAyC4`): track `$border-strong` → `$field-border` (invisible on white, under 3:1).
+- [x] `molecules/History row` (`sdDvl`): `Time` `$ink-faint` → `$ink-muted` (contrast).
+- [x] `molecules/Filter chip` (`HyXbi`): `Count` `$ink-faint` → `$ink-muted` (contrast).
+- [x] `atoms/Button/Destructive` (`seB4b`): new, an instance of `atoms/Button/Attention` with fill `$attention-ink`,
+  `trash-2`, "Delete"; the code's `destructive` variant. White on `$attention` is 3.8:1. A variant rather than a
+  change to `Attention`, which `01` and `17` also use.
+- [x] 09 Schedules (`D7r3x`): table header labels `$ink-faint` → `$ink-muted` (contrast); "Running now · today 8:00"
+  (`loader-circle`) and the "Done · …" rows (`circle-check` `$project-green`) → "Started · …" with `circle-play`
+  `$link-ink` (the app doesn't know whether another project's run is still running).
+- [x] 10 Schedule · its runs (`G1Wg0U`), 75 (`H0Y0UY`), 76 (`GUVm0`), 77 (`DaeZG`), 78 (`gZAuG`): finished runs'
+  second line "Done" → "Finished at 8:04" / "Finished at 8:06" / "Finished at 8:02" (the app can't tell whether the
+  agent waits for an answer).
+- [x] 78 Schedule · delete? (`gZAuG`): `Delete schedule` (`gAPid`) `atoms/Button/Attention` →
+  `atoms/Button/Destructive` (contrast).
+- [x] 11 Project · all conversations (`MN3wL`): the person's rows (Cover letter for Allegro, Salary ranges in Warsaw,
+  Rewrite my CV) "You · N messages · …" → "Started by you" (message counts aren't known); `Footer` (`H5E409`) with
+  "Show 23 older" hidden (the list isn't paged).
+
+`77`'s error already read "Couldn't save. <the daemon's reason>"; unchanged.
+
+## Round 10 · implementation (schedules, #28)
+
+Asked: word a late run's timing as the built app does. The daemon doesn't know why a run started late, and the agent's
+environment still starting is a third likely cause, so the text names all three.
+
+- [x] `molecules/Run header` (`e3sGdM`): `Meta` (`G6hMR`) "Due Tue 7:00 · ran 7:42, your Mac was asleep until then" →
+  "Due Tue 7:00 · started 7:42, late: the computer was asleep, piko was closed or the agent's environment was still
+  starting"; `auto` → `fixed-width`, `fill_container`, so it wraps to a second line.
+- [x] 13 Conversation · the agent's computer is waking up (`J5p5m`), `Run header` (`lXEMc`), and 16 Conversation · a
+  connected account stopped working (`S0qTs`), `Run header` (`Uvxq8`): `Meta` override "Due today 7:00 · ran on time" →
+  "Due today 7:00 · started 7:00", the app's on-time form.
+- [x] 10 Schedule · its runs (`G1Wg0U`, row `R5Eazq`), 75 (`H0Y0UY`, `s4T6T`), 76 (`GUVm0`, `GBLEE`), 77 (`DaeZG`,
+  `pw5ad`), 78 (`gZAuG`, `kn1P2`): the late run's `Meta` "Due 8:00 · started 9:14, the computer was asleep or piko was
+  closed" → "Due 8:00 · started 9:14, late: the computer was asleep, piko was closed or the agent's environment was still
+  starting".
+- [x] 11 Project · all conversations (`MN3wL`), row `AqOtr`: `Meta` "Due 7:00 · started 9:13" → "Due 7:00 · started
+  9:13, late: the computer was asleep, piko was closed or the agent's environment was still starting" (two hours after
+  its term, the app says why).

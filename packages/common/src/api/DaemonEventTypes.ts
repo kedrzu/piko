@@ -20,7 +20,11 @@ export type DaemonEvent =
  * Something changed in the profile's data root, by the agent, the person or this daemon. Sent once for a burst of
  * changes; the app reloads what it shows.
  */
-export type DataRootEvent = ProjectsChangedEvent | ProjectFilesChangedEvent | MemoryChangedEvent;
+export type DataRootEvent =
+    | ProjectsChangedEvent
+    | ProjectFilesChangedEvent
+    | SchedulesChangedEvent
+    | MemoryChangedEvent;
 
 /** A project folder appeared, went, was renamed, or its marker changed: the project list may differ. */
 export interface ProjectsChangedEvent {
@@ -33,6 +37,16 @@ export interface ProjectsChangedEvent {
  */
 export interface ProjectFilesChangedEvent {
     type: 'projectFilesChanged';
+    projectId: string;
+}
+
+/**
+ * A project's schedules or their runs changed (a definition or a state file in the project's `.schedules`): list them
+ * again. Sent once per project for a burst of changes, instead of {@link ProjectFilesChangedEvent}; after the daemon's
+ * watcher was down, once for every project.
+ */
+export interface SchedulesChangedEvent {
+    type: 'schedulesChanged';
     projectId: string;
 }
 

@@ -88,6 +88,35 @@ test("sends one projectFilesChanged per project for a burst of changes to the pr
     expect(events.toSorted(byProjectId)).toEqual(expected.toSorted(byProjectId));
 });
 
+test('sends schedulesChanged, not projectFilesChanged, for changes under .schedules, once per project', async () => {
+    const { watcher, root, container } = await setup();
+    const alfa = await createProject(container, 'Alfa');
+    const beta = await createProject(container, 'Beta');
+    await mkdir(path.join(root, 'projects', 'Alfa', '.schedules'));
+    await settle();
+    const events = listen(watcher);
+
+    // A state written as the daemon does: a temporary file in `.schedules` renamed over the state.
+    await writeFile(path.join(root, 'projects', 'Alfa', '.schedules', 'raport.state.json.1.tmp'), '{}');
+    await rename(
+        path.join(root, 'projects', 'Alfa', '.schedules', 'raport.state.json.1.tmp'),
+        path.join(root, 'projects', 'Alfa', '.schedules', 'raport.state.json'),
+    );
+    await writeFile(path.join(root, 'projects', 'Alfa', '.schedules', 'raport.json'), '{}');
+    await settle();
+    expect(events).toEqual([{ type: 'schedulesChanged', projectId: alfa }] satisfies DataRootEvent[]);
+
+    events.length = 0;
+    await writeFile(path.join(root, 'projects', 'Beta', 'dane.csv'), 'a,b');
+    await writeFile(path.join(root, 'projects', 'Alfa', '.schedules', 'raport.json'), '{"a":1}');
+    await settle();
+    const expected: DataRootEvent[] = [
+        { type: 'projectFilesChanged', projectId: beta },
+        { type: 'schedulesChanged', projectId: alfa },
+    ];
+    expect(events.toSorted(byProjectId)).toEqual(expected.toSorted(byProjectId));
+});
+
 test('starts the watcher again after it failed', async () => {
     const tmp = await mkdtemp(path.join(os.tmpdir(), 'piko-data-root-'));
     const root = path.join(tmp, 'root');
@@ -114,6 +143,7 @@ test('starts the watcher again after it failed', async () => {
         { type: 'memoryChanged' },
         { type: 'projectFilesChanged', projectId: alfa },
         { type: 'projectsChanged' },
+        { type: 'schedulesChanged', projectId: alfa },
     ] satisfies DataRootEvent[]);
     expect(events.slice(afterRestart.length)).toEqual([{ type: 'memoryChanged' }] satisfies DataRootEvent[]);
 });

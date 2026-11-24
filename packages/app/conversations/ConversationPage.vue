@@ -1,4 +1,4 @@
-<!-- A conversation open (screens 56, 57, 59–61, 65–74): its messages with the agent's reply streaming and chips for the files it wrote, error lines, notes that a plugin's command was not run, the banner when the agent cannot answer, and the composer with Stop; a file open beside it (`?file=`, frame 26) with Open as a tab and Close. -->
+<!-- A conversation open (screens 56, 57, 59–61, 65–74): a schedule's run header over a run, its messages with the agent's reply streaming and chips for the files it wrote, error lines, notes that a plugin's command was not run, the banner when the agent cannot answer, and the composer with Stop; a file open beside it (`?file=`, frame 26) with Open as a tab and Close. -->
 
 <script lang="ts" setup>
 import { LogIn } from '@lucide/vue';
@@ -18,6 +18,7 @@ import Composer from '@piko/ui/Composer.vue';
 import ConversationLayout from '@piko/ui/ConversationLayout.vue';
 import FileChip from '@piko/ui/FileChip.vue';
 import MessageError from '@piko/ui/MessageError.vue';
+import RunHeader from '@piko/ui/RunHeader.vue';
 import SideView from '@piko/ui/SideView.vue';
 import StatusBanner from '@piko/ui/StatusBanner.vue';
 import UserMessage from '@piko/ui/UserMessage.vue';
@@ -30,10 +31,13 @@ import { fileKind } from '@/files/fileKind.js';
 import { fileTitle } from '@/files/fileTitle.js';
 import ProjectFileView from '@/files/ProjectFileView.vue';
 import { ProjectStore } from '@/projects/ProjectStore.js';
+import { describeRunTiming } from '@/schedules/describeRunTiming.js';
+import { ScheduleStore } from '@/schedules/ScheduleStore.js';
 import { TabStore } from '@/tabs/TabStore.js';
 import type { Tab } from '@/tabs/TabStore.js';
 
 import { ConversationStore } from './ConversationStore.js';
+import { OpenedRunStore } from './OpenedRunStore.js';
 import { useConversation } from './useConversation.js';
 import type { ConversationSendBody } from './useConversation.js';
 
@@ -41,6 +45,8 @@ const route = useRoute();
 const router = useRouter();
 const store = useService(ConversationStore);
 const projects = useService(ProjectStore);
+const schedules = useService(ScheduleStore);
+const openedRuns = useService(OpenedRunStore);
 const tabs = useService(TabStore);
 const fileAgents = useService(FileAgentStore);
 const t = useTranslate();
@@ -56,6 +62,31 @@ const sideFileView = useTemplateRef('sideFileView');
 const message = ref('');
 
 const title = computed(() => store.find(conversationId.value)?.title ?? t(lc.untitled));
+/** Whether a schedule's run, or possibly one (of unknown origin); `undefined` while the conversation is not listed. */
+const origin = computed(() => {
+  const listed = store.find(conversationId.value);
+  return listed ? store.originOf(listed) : undefined;
+});
+/** The schedule whose run this is; none for the person's conversation, or once the schedule is gone. */
+const schedule = computed(() => {
+  const scheduleId = store.find(conversationId.value)?.scheduleId;
+  return scheduleId === undefined
+    ? undefined
+    : schedules.state.schedules?.find(
+        candidate => candidate.projectId === projectId.value && candidate.id === scheduleId,
+      );
+});
+/** When the run was due and started; none when the run is not among the schedule's runs the daemon keeps. */
+const runDetail = computed(() => {
+  const current = schedule.value;
+  if (!current) {
+    return undefined;
+  }
+  const run = schedules
+    .runsOf({ projectId: projectId.value, scheduleId: current.id })
+    .runs?.find(candidate => candidate.conversationId === conversationId.value);
+  return run ? describeRunTiming({ run, now: Date.now(), language: language.value, standalone: true }) : undefined;
+});
 const project = computed(() => projects.state.projects?.find(candidate => candidate.id === projectId.value));
 /** The file open beside the conversation: its path in the project. */
 const sideFile = computed(() => {
@@ -125,6 +156,17 @@ const placeholder = computed(() => {
   }
   return introducing.value ? t(l.placeholderIntroduce) : t(l.placeholder);
 });
+
+// A run the person opens joins her conversations in the sidebar, for good. Here only: every list links to this screen.
+watch(
+  [conversationId, origin],
+  ([id, current]) => {
+    if (current === 'run' || current === 'unknown') {
+      openedRuns.markOpened(id);
+    }
+  },
+  { immediate: true },
+);
 
 watch(
   () => conversation.notFound,
@@ -247,6 +289,13 @@ function describeReset(resetAt: number | undefined) {
     <h1 :class="$style.conversationPage_title">
       {{ title }}
     </h1>
+    <RunHeader
+      v-if="schedule"
+      :schedule-name="schedule.name"
+      :detail="runDetail"
+      :runs-link="{ name: 'history', params: { projectId }, query: { schedule: schedule.id } }"
+      :schedule-link="{ name: 'schedule', params: { projectId, scheduleId: schedule.id } }"
+    />
     <template
       v-for="item in conversation.items"
       :key="item.key"

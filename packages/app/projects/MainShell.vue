@@ -1,4 +1,4 @@
-<!-- The app after the first run: Memory and the projects in the sidebar (App setup pinned first, a project not opened yet marked new) with the active tab's project, its conversations and its files, the open tabs, the screen of the route inside, and the new-project dialog. Starts the daemon's event stream. -->
+<!-- The app after the first run: Memory, Schedules (with how many) and the projects in the sidebar (App setup pinned first, a project not opened yet marked new) with the active tab's project, the conversations she started and the runs she opened, All conversations, its files, the open tabs, the screen of the route inside, and the new-project dialog. Starts the daemon's event stream. -->
 
 <script lang="ts" setup>
 import { NuxtPage } from '#components';
@@ -18,12 +18,14 @@ import type { TabBarItem } from '@piko/ui/TabBar.vue';
 
 import * as lc from '@/conversations/Conversations.loc.js';
 import { ConversationStore } from '@/conversations/ConversationStore.js';
+import { OpenedRunStore } from '@/conversations/OpenedRunStore.js';
 import { DaemonEventStream } from '@/daemon/DaemonEventStream.js';
 import { FileAgentStore } from '@/files/FileAgentStore.js';
 import { fileKind } from '@/files/fileKind.js';
 import { fileTitle } from '@/files/fileTitle.js';
 import { ProjectFileStore } from '@/files/ProjectFileStore.js';
 import type { ProjectFileRow } from '@/files/ProjectFileStore.js';
+import { ScheduleStore } from '@/schedules/ScheduleStore.js';
 import { TabStore } from '@/tabs/TabStore.js';
 import type { Tab } from '@/tabs/TabStore.js';
 
@@ -37,9 +39,11 @@ import ProjectsLoadFailed from './ProjectsLoadFailed.vue';
 
 const store = useService(ProjectStore);
 const conversationStore = useService(ConversationStore);
+const openedRuns = useService(OpenedRunStore);
 const fileStore = useService(ProjectFileStore);
 // Before the event stream starts: the daemon sends what the agent is writing as soon as the app connects.
 const fileAgents = useService(FileAgentStore);
+const scheduleStore = useService(ScheduleStore);
 const tabs = useService(TabStore);
 const events = useService(DaemonEventStream);
 const route = useRoute();
@@ -47,6 +51,7 @@ const router = useRouter();
 const shell = provideContext(MainShellContext);
 const t = useTranslate();
 const memoryOpen = computed(() => route.name === 'memory');
+const schedulesOpen = computed(() => route.name === 'schedules' || route.name === 'schedule');
 
 const items = computed(() =>
   (store.state.projects ?? [])
@@ -65,21 +70,34 @@ const activeTab = computed(() => tabs.targetOf(route));
 const activeKey = computed(() => (activeTab.value ? tabs.keyOf(activeTab.value) : undefined));
 const selected = computed(() => {
   const tab = activeTab.value;
-  const projectId = tab && tab.kind !== 'memory' ? tab.projectId : undefined;
+  // A schedule's tab opens its project too: the schedule's runs are named after its conversations.
+  const projectId = tab && tab.kind !== 'memory' && tab.kind !== 'schedules' ? tab.projectId : undefined;
   return items.value.find(item => item.id === projectId);
 });
 const selectedConversationId = computed(() =>
   route.name === 'conversation' ? String(route.params['conversationId']) : undefined,
 );
+/**
+ * The conversations the person started and the runs she opened; the other runs are in the project's history and on
+ * their schedule's screen. One of unknown origin may be a run, so it waits until known.
+ */
 const conversations = computed(() =>
   conversationStore.state.projectId === selected.value?.id
-    ? (conversationStore.state.conversations ?? []).map((conversation): ProjectSidebarConversation => ({
-        id: conversation.id,
-        title: conversation.title ?? t(lc.untitled),
-        to: { name: 'conversation', params: { projectId: selected.value?.id, conversationId: conversation.id } },
-        running: conversation.running,
-      }))
+    ? (conversationStore.state.conversations ?? [])
+        .filter(
+          conversation => conversationStore.originOf(conversation) === 'person' || openedRuns.isOpened(conversation.id),
+        )
+        .map((conversation): ProjectSidebarConversation => ({
+          id: conversation.id,
+          title: conversation.title ?? t(lc.untitled),
+          to: { name: 'conversation', params: { projectId: selected.value?.id, conversationId: conversation.id } },
+          running: conversation.running,
+          scheduled: conversationStore.originOf(conversation) === 'run',
+        }))
     : [],
+);
+const allConversationsSelected = computed(
+  () => route.name === 'history' && String(route.params['projectId']) === selected.value?.id,
 );
 const selectedFilePath = computed(() => {
   const path = route.query['path'];
@@ -104,6 +122,9 @@ watch(
   },
   { immediate: true },
 );
+
+// A schedule the agent removed loses its tab, unless its screen shows: it says the schedule is gone until left.
+watch([() => scheduleStore.state.schedules, activeKey], ([, key]) => tabs.dropGoneSchedules(key), { immediate: true });
 
 watch(
   () => selected.value?.id,
@@ -146,6 +167,8 @@ events.start();
 
 // A failure is kept by the store and shown in place of the route's screen.
 store.getProjects().catch(() => undefined);
+// For the sidebar's count; the events keep it current.
+void scheduleStore.load();
 
 function fileItem(projectId: string, { entry, depth, expanded }: ProjectFileRow): ProjectSidebarFile {
   return entry.kind === 'folder'
@@ -166,8 +189,23 @@ function tabItem(tab: Tab): TabBarItem {
   switch (tab.kind) {
     case 'memory':
       return { ...base, title: t(l.memory), icon: 'memory', color: 'violet' };
+    case 'schedules':
+      return { ...base, title: t(l.schedules), icon: 'schedule' };
+    case 'schedule': {
+      const live = scheduleStore.state.schedules?.find(
+        schedule => schedule.projectId === tab.projectId && schedule.id === tab.scheduleId,
+      );
+      return {
+        ...base,
+        title: live?.name ?? tab.title ?? t(l.schedules),
+        icon: 'schedule',
+        color: colorOf(tab.projectId),
+      };
+    }
     case 'newConversation':
       return { ...base, title: t(lc.newConversation), icon: 'conversation', color: colorOf(tab.projectId) };
+    case 'history':
+      return { ...base, title: t(l.allConversations), icon: 'conversation', color: colorOf(tab.projectId) };
     case 'conversation': {
       const live =
         conversationStore.state.projectId === tab.projectId ? conversationStore.find(tab.conversationId) : undefined;
@@ -211,10 +249,15 @@ function colorOf(projectId: string): ProjectColor {
       <ProjectSidebar
         :memory-to="{ name: 'memory' }"
         :memory-selected="memoryOpen"
+        :schedules-to="{ name: 'schedules' }"
+        :schedules-selected="schedulesOpen"
+        :schedules-count="scheduleStore.state.schedules?.length"
         :projects="items"
         :selected-id="selected?.id"
         :conversations="conversations"
         :selected-conversation-id="selectedConversationId"
+        :all-conversations-to="selected ? { name: 'history', params: { projectId: selected.id } } : undefined"
+        :all-conversations-selected="allConversationsSelected"
         :files="files"
         :selected-file-path="selectedFilePath"
         @toggle-folder="fileStore.toggle"

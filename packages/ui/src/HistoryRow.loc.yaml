@@ -1,0 +1,31 @@
+running:
+  pl: Działa
+  en[auto]: Running
+
+started:
+  pl: Uruchomione
+  en[auto]: Started
+
+finished:
+  pl: Zakończone
+  en[auto]: Finished
+
+late:
+  pl: Z opóźnieniem
+  en[auto]: Ran late
+
+skipped:
+  pl: Pominięte
+  en[auto]: Skipped
+
+failed:
+  pl: Nie udało się uruchomić
+  en[auto]: Couldn't start
+
+person:
+  pl: Twoja rozmowa
+  en[auto]: Your conversation
+
+schedule:
+  pl: Harmonogram
+  en[auto]: Schedule

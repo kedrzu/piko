@@ -1,5 +1,7 @@
 import { translateToString } from '@nzyme/i18n/translateToString.js';
 
+import { calendarDaysBetween } from '@piko/common/utils/calendarDaysBetween.js';
+
 import * as l from './formatChangedAt.loc.js';
 
 /** What `formatChangedAt` needs. */
@@ -48,11 +50,4 @@ export function formatChangedAt({ changedAt, now, language }: FormatChangedAtPar
         month: 'long',
         year: when.getFullYear() === today.getFullYear() ? undefined : 'numeric',
     });
-}
-
-/** How many midnights lie between two times, in the local time zone (a DST change does not count). */
-function calendarDaysBetween(earlier: Date, later: Date) {
-    const start = Date.UTC(earlier.getFullYear(), earlier.getMonth(), earlier.getDate());
-    const end = Date.UTC(later.getFullYear(), later.getMonth(), later.getDate());
-    return Math.round((end - start) / 86_400_000);
 }

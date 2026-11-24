@@ -1,0 +1,59 @@
+# `when` in words, for a schedule the app's form set up: one key per kind of repeat, a weekly one per weekday (Polish
+# words for the days differ in gender), and the ordinal of a month's day.
+
+daily:
+  en: Every day at {time}
+  pl: Codziennie o {time}
+
+weekdays:
+  en: Weekdays at {time}
+  pl: W dni robocze o {time}
+
+weeklyMO:
+  en: Every Monday at {time}
+  pl: W każdy poniedziałek o {time}
+
+weeklyTU:
+  en: Every Tuesday at {time}
+  pl: W każdy wtorek o {time}
+
+weeklyWE:
+  en: Every Wednesday at {time}
+  pl: W każdą środę o {time}
+
+weeklyTH:
+  en: Every Thursday at {time}
+  pl: W każdy czwartek o {time}
+
+weeklyFR:
+  en: Every Friday at {time}
+  pl: W każdy piątek o {time}
+
+weeklySA:
+  en: Every Saturday at {time}
+  pl: W każdą sobotę o {time}
+
+weeklySU:
+  en: Every Sunday at {time}
+  pl: W każdą niedzielę o {time}
+
+monthly:
+  en: Every month on the {day} at {time}
+  pl: Co miesiąc, {day} dnia, o {time}
+
+# The ordinal of a month's day, by the language's ordinal plural category (`Intl.PluralRules` with `type: 'ordinal'`).
+ordinalOne:
+  en: '{day}st'
+  pl: '{day}.'
+
+ordinalTwo:
+  en: '{day}nd'
+  pl: '{day}.'
+
+ordinalFew:
+  en: '{day}rd'
+  pl: '{day}.'
+
+ordinalOther:
+  en: '{day}th'
+  pl: '{day}.'

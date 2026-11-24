@@ -232,6 +232,9 @@ export const ScheduleRunnerService = defineService({
             let sent: ConversationSendResult;
             try {
                 conversationId = (await conversations.create(project.id)).id;
+                // Listed as the schedule's run from now on. Between OpenCode creating the session and `create()`
+                // returning (milliseconds), a list loaded may still show it without its schedule.
+                schedules.noteRunStarted({ project, scheduleId, conversationId });
                 await deps.rename({ sessionId: conversationId, title: definition.name });
                 // Sent as the person's message: the conversation shows what the schedule asked. Through the conversation
                 // service like any message, so a plugin's command runs only where the plugin is installed (design D42).

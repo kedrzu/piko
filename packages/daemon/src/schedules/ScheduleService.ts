@@ -18,6 +18,7 @@ import type {
 } from '@piko/common/api/ScheduleTypes.js';
 import { compareProjectsByName } from '@piko/common/utils/compareProjectsByName.js';
 
+import { SCHEDULES_FOLDER } from '../env.js';
 import { ProjectService } from '../projects/ProjectService.js';
 import type { LocalProject } from '../projects/ProjectService.js';
 import { isErrorCode } from '../utils/isErrorCode.js';
@@ -64,6 +65,13 @@ export interface ScheduleStateWriteParams {
     state: ScheduleState;
 }
 
+/** Params of {@link ScheduleServiceShape.noteRunStarted}. */
+export interface ScheduleRunStartedParams {
+    project: LocalProject;
+    scheduleId: string;
+    conversationId: string;
+}
+
 /**
  * A project's schedules: definition files `<id>.json` in its folder's `.schedules`, written by this API and by the
  * agent, each with the daemon's state beside it. The agent can write anything in the data root, links included, and a
@@ -86,8 +94,17 @@ export interface ScheduleServiceShape {
     remove(ref: ScheduleRef): Promise<void>;
     /** The schedule's runs from its state, newest first; none yet → empty. */
     listRuns(ref: ScheduleRef): Promise<ScheduleRun[]>;
-    /** The schedule that started each conversation, from the runs of the project's schedules that still exist. */
+    /**
+     * The schedule that started each conversation, from the runs of the project's schedules that still exist, and from
+     * the runs started and not yet written to their state.
+     */
     scheduleIdsByConversation(project: LocalProject): Promise<Map<string, string>>;
+    /**
+     * For the runner: the conversation a run has just created, known as the schedule's from now until `writeState()`
+     * records it. A conversation is listed from the moment it exists, while its run is written to the state only once
+     * the prompt is sent; without this, a list loaded in between would show a run as the person's own conversation.
+     */
+    noteRunStarted(params: ScheduleRunStartedParams): void;
     /**
      * For the runner: every definition file in the project, valid or not, with its state. A state whose definition is
      * gone is removed, so a schedule created later with the same id starts without history. A file named outside the id
@@ -115,7 +132,6 @@ interface ScheduleFolder {
     stateIds: string[];
 }
 
-const SCHEDULES_FOLDER = '.schedules';
 /** A schedule's id, its file's name: never a path, never hidden. */
 const SCHEDULE_ID = /^[a-z0-9][a-z0-9-]{0,63}$/;
 const DEFINITION_SUFFIX = '.json';
@@ -132,8 +148,10 @@ export const ScheduleService = defineService({
          * so a removed schedule's state is never written back; an update never merges over a definition being replaced.
          */
         let queue: Promise<unknown> = Promise.resolve();
+        /** Runs started and not yet in their state, by conversation id: kept in memory, gone with the daemon. */
+        const startedRuns = new Map<string, ScheduleRef>();
 
-        return { list, create, update, remove, listRuns, scheduleIdsByConversation, scan, writeState };
+        return { list, create, update, remove, listRuns, scheduleIdsByConversation, noteRunStarted, scan, writeState };
 
         async function list(projectId?: string) {
             const listed = projectId === undefined ? await projects.list() : [await requireProject(projectId)];
@@ -147,7 +165,8 @@ export const ScheduleService = defineService({
                 for (const id of folder.definitionIds) {
                     const result = await readDefinition(folder.dir, id);
                     if (result && 'definition' in result) {
-                        own.push(toSchedule(project, { id, definition: result.definition }));
+                        const state = await readState(folder.dir, id);
+                        own.push(toSchedule(project, { id, definition: result.definition }, state));
                     }
                 }
                 schedules.push(...own.toSorted(compareProjectsByName));
@@ -164,7 +183,7 @@ export const ScheduleService = defineService({
                 const id = randomUUID();
                 await replaceFile(definitionFile(dir, id), serialize(definition));
                 logger.info('Schedule created', { projectId: project.id, scheduleId: id });
-                return toSchedule(project, { id, definition });
+                return toSchedule(project, { id, definition }, null);
             });
         }
 
@@ -177,7 +196,7 @@ export const ScheduleService = defineService({
                 const definition = validate({ ...current, ...fields });
                 await replaceFile(definitionFile(dir, id), serialize(definition));
                 logger.info('Schedule updated', { projectId: project.id, scheduleId: id });
-                return toSchedule(project, { id, definition });
+                return toSchedule(project, { id, definition }, await readState(dir, id));
             });
         }
 
@@ -206,6 +225,11 @@ export const ScheduleService = defineService({
                 return scheduleIds;
             }
             const definitionIds = new Set(folder.definitionIds);
+            for (const [conversationId, run] of startedRuns) {
+                if (run.projectId === project.id && definitionIds.has(run.scheduleId)) {
+                    scheduleIds.set(conversationId, run.scheduleId);
+                }
+            }
             for (const id of folder.stateIds) {
                 if (!definitionIds.has(id)) {
                     continue;
@@ -218,6 +242,10 @@ export const ScheduleService = defineService({
                 }
             }
             return scheduleIds;
+        }
+
+        function noteRunStarted({ project, scheduleId, conversationId }: ScheduleRunStartedParams) {
+            startedRuns.set(conversationId, { projectId: project.id, scheduleId });
         }
 
         function scan(project: LocalProject) {
@@ -254,12 +282,29 @@ export const ScheduleService = defineService({
             return exclusive(async () => {
                 const dir = await findSchedulesFolder(project);
                 if (!dir || !(await isRegularFile(definitionFile(dir, scheduleId)))) {
+                    forgetStartedRuns(project, scheduleId, () => true);
                     return false;
                 }
                 const kept: ScheduleState = { ...state, runs: state.runs.slice(0, RUNS_LIMIT) };
                 await replaceFile(stateFile(dir, scheduleId), serialize(kept));
+                // A write that failed keeps them: the runs stay known as the schedule's until a write records them.
+                const recorded = new Set(kept.runs.map(run => run.conversationId));
+                forgetStartedRuns(project, scheduleId, conversationId => recorded.has(conversationId));
                 return true;
             });
+        }
+
+        /** Forgets the schedule's started runs whose conversation `isDone`: its state has them, or the schedule is gone. */
+        function forgetStartedRuns(
+            project: LocalProject,
+            scheduleId: string,
+            isDone: (conversationId: string) => boolean,
+        ) {
+            for (const [conversationId, run] of startedRuns) {
+                if (run.projectId === project.id && run.scheduleId === scheduleId && isDone(conversationId)) {
+                    startedRuns.delete(conversationId);
+                }
+            }
         }
 
         /** Runs `task` after every task queued before it. */
@@ -464,8 +509,11 @@ function serialize(value: ScheduleDefinition | ScheduleState) {
     return `${JSON.stringify(value, null, 4)}\n`;
 }
 
-/** The schedule as the API gives it, with its next term now, unless paused or the rule has run out. */
-function toSchedule(project: LocalProject, { id, definition }: StoredSchedule): Schedule {
+/**
+ * The schedule as the API gives it, with its next term now, unless paused or the rule has run out, and its newest run
+ * from `state`.
+ */
+function toSchedule(project: LocalProject, { id, definition }: StoredSchedule, state: ScheduleState | null): Schedule {
     const paused = definition.paused ?? false;
     const schedule: Schedule = {
         id,
@@ -484,6 +532,10 @@ function toSchedule(project: LocalProject, { id, definition }: StoredSchedule): 
         if (next != null) {
             schedule.nextRunAt = next;
         }
+    }
+    const lastRun = state?.runs[0];
+    if (lastRun) {
+        schedule.lastRun = lastRun;
     }
     return schedule;
 }

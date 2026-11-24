@@ -1,0 +1,21 @@
+# What a schedule's screen says of the schedule when it cannot be read, saved or deleted.
+
+saveFailed:
+  pl: Nie udało się zapisać zmian. Spróbuj ponownie.
+  en[auto]: The changes could not be saved. Try again.
+
+loadFailedTitle:
+  pl: Nie udało się wczytać harmonogramu
+  en[auto]: Couldn't load the schedule
+
+loadFailedBody:
+  pl: To nie Twój błąd, a harmonogram jest bezpieczny. Spróbuj ponownie; jeśli to się powtórzy, zamknij aplikację i otwórz ją jeszcze raz.
+  en[auto]: It's not your fault, and the schedule is safe. Try again; if it happens again, close the app and open it once more.
+
+retry:
+  pl: Spróbuj ponownie
+  en[auto]: Try again
+
+deleteFailed:
+  pl: Nie udało się połączyć z piko działającym w tle. Spróbuj ponownie; jeśli to się powtórzy, zamknij aplikację i otwórz ją jeszcze raz.
+  en[auto]: piko's background service didn't answer. Try again; if it happens again, close the app and open it once more.

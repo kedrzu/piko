@@ -148,6 +148,7 @@ export const ProjectFileStore = defineService({
                     break;
                 case 'projectsChanged':
                 case 'memoryChanged':
+                case 'schedulesChanged':
                 case 'pluginsChanged':
                 case 'pluginInstalled':
                 case 'fileAgentChanged':

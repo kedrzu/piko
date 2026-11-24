@@ -1,0 +1,112 @@
+title:
+  pl: Jak działa
+  en[auto]: How it runs
+
+when:
+  pl: Kiedy
+  en[auto]: When
+
+prompt:
+  pl: Co robi
+  en[auto]: What it does
+
+runsIn:
+  pl: Działa w
+  en[auto]: Runs in
+
+edit:
+  pl: Edytuj
+  en[auto]: Edit
+
+# The Edit buttons' names, each starting with the visible "Edit" and saying what it edits.
+editWhen:
+  pl: Edytuj, kiedy działa
+  en[auto]: Edit when it runs
+
+editPrompt:
+  pl: Edytuj, co robi
+  en[auto]: Edit what it does
+
+customRule:
+  pl: Ten harmonogram powtarza się w sposób, którego nie da się tu ustawić. Poproś agenta w projekcie {project}, żeby go zmienił.
+  en[auto]: This schedule repeats in a way you can't set here. Ask the agent in {project} to change it.
+
+name:
+  pl: Nazwa
+  en[auto]: Name
+
+repeat:
+  pl: Powtarzaj
+  en[auto]: Repeat
+
+daily:
+  pl: Codziennie
+  en[auto]: Every day
+
+weekdays:
+  pl: W dni robocze
+  en[auto]: Weekdays
+
+weekly:
+  pl: Co tydzień w
+  en[auto]: Every week on
+
+monthly:
+  pl: Co miesiąc dnia
+  en[auto]: Every month on day
+
+day:
+  pl: Dzień
+  en[auto]: Day
+
+monthDay:
+  pl: Dzień miesiąca
+  en[auto]: Day of the month
+
+MO:
+  pl: poniedziałek
+  en[auto]: Monday
+
+TU:
+  pl: wtorek
+  en[auto]: Tuesday
+
+WE:
+  pl: środa
+  en[auto]: Wednesday
+
+TH:
+  pl: czwartek
+  en[auto]: Thursday
+
+FR:
+  pl: piątek
+  en[auto]: Friday
+
+SA:
+  pl: sobota
+  en[auto]: Saturday
+
+SU:
+  pl: niedziela
+  en[auto]: Sunday
+
+time:
+  pl: Godzina
+  en[auto]: Time
+
+timeInvalid:
+  pl: Wpisz godzinę jak 8:00 albo 18:30.
+  en[auto]: Write the time like 8:00 or 18:30.
+
+save:
+  pl: Zapisz
+  en[auto]: Save
+
+cancel:
+  pl: Anuluj
+  en[auto]: Cancel
+
+saveFailed:
+  pl: 'Nie udało się zapisać. {reason}'
+  en[auto]: "Couldn't save. {reason}"

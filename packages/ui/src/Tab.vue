@@ -1,4 +1,4 @@
-<!-- A tab in the main area's tab bar: a link to its screen with an icon by kind (a conversation's speech bubble in its project's colour, or a spinner while the agent works; Memory's brain; a file's icon by type) and its title; the active one filled, with a × to close it. -->
+<!-- A tab in the main area's tab bar: a link to its screen with an icon by kind (a conversation's speech bubble in its project's colour, or a spinner while the agent works; Memory's brain; Schedules' and a schedule's calendar; a file's icon by type) and its title; the active one filled, with a × to close it. -->
 
 <script lang="ts">
 import { defineProp } from '@nzyme/vue-utils/defineProp.js';
@@ -7,8 +7,8 @@ import type { RouteLocationRaw } from 'vue-router';
 
 import type { ProjectColor } from './ProjectColor.js';
 
-/** What the tab shows, by its icon: a conversation, Memory, or a file by its type. */
-export type TabIcon = 'conversation' | 'memory' | 'note' | 'spreadsheet' | 'image' | 'file';
+/** What the tab shows, by its icon: a conversation, Memory, Schedules or a schedule, or a file by its type. */
+export type TabIcon = 'conversation' | 'memory' | 'schedule' | 'note' | 'spreadsheet' | 'image' | 'file';
 
 export const TabProps = {
   title: { type: String, required: true },
@@ -30,7 +30,7 @@ export const TabEmits = {
 </script>
 
 <script lang="ts" setup>
-import { Brain, File, FileText, Image, MessageCircle, Sheet, X } from '@lucide/vue';
+import { Brain, CalendarClock, File, FileText, Image, MessageCircle, Sheet, X } from '@lucide/vue';
 import { assertNever } from '@nzyme/utils/assertNever.js';
 import { useTranslate } from '@nzyme/vue-i18n/useTranslate.js';
 import { computed } from 'vue';
@@ -49,6 +49,8 @@ const iconComponent = computed(() => {
       return MessageCircle;
     case 'memory':
       return Brain;
+    case 'schedule':
+      return CalendarClock;
     case 'note':
       return FileText;
     case 'spreadsheet':

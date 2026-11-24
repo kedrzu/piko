@@ -1,0 +1,6 @@
+// The icons in a row, at the History row's 17px.
+.row {
+    display: flex;
+    gap: $spacing-16;
+    font-size: 17px;
+}

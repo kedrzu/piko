@@ -24,7 +24,7 @@ export function parseDaemonEvent(data: string): DaemonEvent | null {
     if (type === 'streamRestored' || type === 'projectsChanged' || type === 'memoryChanged') {
         return { type };
     }
-    if (type === 'projectFilesChanged') {
+    if (type === 'projectFilesChanged' || type === 'schedulesChanged') {
         const projectId = readString(value, 'projectId');
         return projectId === undefined ? null : { type, projectId };
     }

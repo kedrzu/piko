@@ -59,3 +59,18 @@ export const Disabled: Story = {
         />
     ),
 };
+
+/** Options whose labels are not their values, always holding one: no "Choose…" prompt. */
+export const LabelledOptions: Story = {
+    render: () => (
+        <SelectField
+            label="Powtarzaj"
+            options={[
+                { value: 'daily', label: 'Codziennie' },
+                { value: 'weekly', label: 'Co tydzień w' },
+            ]}
+            modelValue="weekly"
+            noPrompt
+        />
+    ),
+};
